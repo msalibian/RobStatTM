@@ -1,2 +1,5 @@
 # robustbroli
-Broli - 2nd edition
+
+Working space for the code of the 2nd edition of "the book".
+
+
