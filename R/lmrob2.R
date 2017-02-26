@@ -14,14 +14,13 @@ lmrob2 <-
   function(formula, data, subset, weights, na.action, 
            model = TRUE, x = !control$compute.rd, y = FALSE,
            singular.ok = TRUE, contrasts = NULL, offset = NULL,
-           control = NULL, initial='PY', ...)
+           control = NULL, candidates='PY', ...)
   {
     ## to avoid problems with setting argument
     ## call lmrob.control here either with or without method arg.
-    if (miss.ctrl <- missing(control))
-      control <- if (missing(method))
-        lmrob.control(...) else lmrob.control(method = method, ...)
-    else if (length(list(...))) ## "sophisticated version" of chk.s(...)
+    if (missing(control)) {
+      control <- lmrob.control(...) 
+    } else if (length(list(...))) ## "sophisticated version" of chk.s(...)
       warning("arguments .. in ",
               sub(")$", "", sub("^list\\(", "", deparse(list(...), control = c()))), "  are disregarded.\n",
               "  Maybe use  lmrob(*, control=lmrob.control(....) with all these.")
@@ -130,43 +129,47 @@ lmrob2 <-
         }
         if (is.function(control$eps.x))
           control$eps.x <- control$eps.x(max(abs(x)))
-        if (!is.null(ini <- init)) {
-          if (is.character(init)) {
-            init <- switch(init,
-                           "M-S" = lmrob.M.S(x, y, control, mf),
-                           "S"   = lmrob.S  (x, y, control, mf=mf),
-                           stop('init must be "S", "M-S", function or list'))
-            if(ini == "M-S") { ## "M-S" sometimes reverts to "S":
-              ini <- init$control$method
-              ## if(identical(ini, "M-S"))
-              ##     control$method <- paste0(ini, control$method)
-            }
-          } else if (is.function(init)) {
-            init <- init(x=x, y=y, control=control, mf=mf)
-          } else if (is.list(init)) {
-            ## MK: set init$weights, init$residuals here ??
-            ##	   (needed in lmrob..D..fit)
-            ##	   or disallow method = D... ? would need to fix also
-            ##	  lmrob.kappa: tuning.psi / tuning.chi choice
-            if (singular.fit) {
-              ## make sure the initial coefficients vector matches
-              ## to the reduced x
-              init$coef <- na.omit(init$coef)
-              if (length(init$coef) != ncol(x))
-                stop("Length of initial coefficients vector does not match rank of singular design matrix x")
-            }
-          } else stop("unknown init argument")
+        # if (!is.null(ini <- init)) {
+        #   if (is.character(init)) {
+            # if there are factors
+            init <- lmrob.M.S(x, y, control, mf) # candidates
+            # else
+            init <- lmrob.S(x, y, control, mf=mf) # candidates
+          #     switch(init,
+          #                  "M-S" = lmrob.M.S(x, y, control, mf),
+          #                  "S"   = lmrob.S  (x, y, control, mf=mf),
+          #                  stop('init must be "S", "M-S", function or list'))
+          #   if(ini == "M-S") { ## "M-S" sometimes reverts to "S":
+          #     ini <- init$control$method
+          #     ## if(identical(ini, "M-S"))
+          #     ##     control$method <- paste0(ini, control$method)
+          #   }
+          # } else if (is.function(init)) {
+          #   init <- init(x=x, y=y, control=control, mf=mf)
+          # } else if (is.list(init)) {
+          #   ## MK: set init$weights, init$residuals here ??
+          #   ##	   (needed in lmrob..D..fit)
+          #   ##	   or disallow method = D... ? would need to fix also
+          #   ##	  lmrob.kappa: tuning.psi / tuning.chi choice
+          #   if (singular.fit) {
+          #     ## make sure the initial coefficients vector matches
+          #     ## to the reduced x
+          #     init$coef <- na.omit(init$coef)
+          #     if (length(init$coef) != ncol(x))
+          #       stop("Length of initial coefficients vector does not match rank of singular design matrix x")
+          #   }
+          # } else stop("unknown init argument")
           stopifnot(is.numeric(init$coef), is.numeric(init$scale))
           ## modify (default) control$method, possibly dropping first letter:
-          if (control$method == "MM" || substr(control$method, 1, 1) == "S")
-            control$method <- substring(control$method, 2)
+          # if (control$method == "MM" || substr(control$method, 1, 1) == "S")
+          #   control$method <- substring(control$method, 2)
           ## check for control$cov argument
-          if (class(init)[1] != "lmrob.S" && control$cov == '.vcov.avar1')
-            control$cov <- ".vcov.w"
-        }
+          # if (class(init)[1] != "lmrob.S" && control$cov == '.vcov.avar1')
+          #   control$cov <- ".vcov.w"
+        # }
         z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
-        if(is.character(ini) && !grepl(paste0("^", ini), control$method))
-          control$method <- paste0(ini, control$method)
+        # if(is.character(ini) && !grepl(paste0("^", ini), control$method))
+        #   control$method <- paste0(ini, control$method)
         if (singular.fit) {
           coef <- numeric(p)
           coef[p2] <- NA
