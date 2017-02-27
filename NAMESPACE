@@ -77,10 +77,10 @@ export(Sn, Qn, Qn.old,
        .Mwgt.psi1,
        .Mchi.tuning.default,  .Mpsi.tuning.default, .regularize.Mpsi,
        .Mchi.tuning.defaults, .Mpsi.tuning.defaults,
-       .psi2ipsi, .psi.ggw.findc, .psi.lqq.findc,
+       .psi2ipsi, # .psi.ggw.findc, .psi.lqq.findc,
 
-       lmrob, lmrob.fit,
-       lmrob.fit.MM, lmrob..M..fit, lmrob..D..fit,
+       lmrob, lmrob2, lmrob.fit,
+       lmrob.fit.MM, lmrob..M..fit, # lmrob..D..fit,
        lmrob.S, lmrob.lar, lmrob.M.S,
        lmrob.control,
        .lmrob.hat, # was lmrob.leverages()

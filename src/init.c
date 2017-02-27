@@ -107,7 +107,7 @@ static R_FortranMethodDef FortEntries[] = {
     {NULL, NULL, 0}
 };
 
-void R_init_robustbase(DllInfo *dll)
+void R_init_robustbroli(DllInfo *dll)
 {
     R_registerRoutines(dll, CEntries, CallEntries, FortEntries, NULL);
     R_useDynamicSymbols(dll, FALSE);

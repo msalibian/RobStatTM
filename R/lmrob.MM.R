@@ -643,6 +643,8 @@ lmrob.S <- function (x, y, control, trace.lev = control$trace.lev, mf = NULL)
   stopifnot(length(c.chi) > 0, c.chi >= 0, length(bb) > 0,
             length(best.r) > 0, best.r >= 1, length(y) == n, n > 0)
   
+  # print('about to call R_lmrob_S')
+  
   b <- .C(R_lmrob_S,
           x = as.double(x),
           y = as.double(y),
@@ -1264,11 +1266,12 @@ lmrob.rweights <- function(resid, scale, cc, psi, eps = 16 * .Machine$double.eps
 #   list(nodes=x, weights= if (modify) w*exp(x^2) else w)
 # }
 # 
-# .convSs <- function(ss)
-#   switch(ss,
-#          "simple"= 0L,
-#          "nonsingular"= 1L,
-#          stop("unknown setting for parameter ss"))
+
+.convSs <- function(ss)
+  switch(ss,
+         "simple"= 0L,
+         "nonsingular"= 1L,
+         stop("unknown setting for parameter ss"))
 
 
 outlierStats <- function(object, x = object$x,

@@ -1,7 +1,7 @@
 
-require(lmrob)
-require(penseinit)
-require(quantreg)
+# require(lmrob)
+# require(penseinit)
+# require(quantreg)
  
 
 mscale=function(u, ep,delta)
@@ -52,7 +52,7 @@ gg
 }
         
  MMPY=function(X,y,  intercept=TRUE)
-#Compute an MM-estimator taking as initial Peña Yohai
+#Compute an MM-estimator taking as initial Pe?a Yohai
 #INPUT
 #X nxp matrix, where n is the number of observations and p the number of  columns, the 1's of the intercept are not included
 #y vector of dimension  n with the responses
@@ -124,13 +124,13 @@ out
 }
 
  SM_PY=function(y,X,Z, intercept=TRUE)
-#old penayohai2 Compute an MM-estimator for mixed model using lmrob and taking as initial an SM estimator based on Peña-Yohai
+#old penayohai2 Compute an MM-estimator for mixed model using lmrob and taking as initial an SM estimator based on Pe?a-Yohai
 #INPUT
 #y response vector
 #X matrix of continuous covariables
 #Z matrix of  qualitative covariables
 #OUTPUT
-#out_lmrob output of lmrob take as initial a S-M estimator for mixed models computed with Peña Yohai
+#out_lmrob output of lmrob take as initial a S-M estimator for mixed models computed with Pe?a Yohai
 {
 n=nrow(X)
 q=ncol(Z)
@@ -143,7 +143,7 @@ gamma=matrix(0, (q+intercept),p)
 for( i in 1:p)
     {gamma[,i]=rq(X[,i]~Z)$coeff}
 X1=X-Z%*%gamma[hh1:hh3,]
-# We compute an MMestimator  ny lmrob using as covariables X1 as initial Peña Yohai
+# We compute an MMestimator  ny lmrob using as covariables X1 as initial Pe?a Yohai
 dee=.5*(1-((p+1)/n))
 out= pyinit(intercept=intercept,X=X1, y=y, deltaesc=dee, cc.scale=1.547, prosac=.5,clean.method="threshold", C.res = 2, prop=.2, py.nit = 20, en.tol=1e-5)
 betapy=out$initCoef[,1]
