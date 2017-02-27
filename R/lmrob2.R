@@ -134,8 +134,8 @@ lmrob2 <-
         # if (!is.null(ini <- init)) {
         #   if (is.character(init)) {
             # if there are factors
-            print('About to compute M-S')
-            init <- lmrob.M.S(x, y, control, mf) # candidates
+            # print('About to compute M-S')
+            # init <- lmrob.M.S(x, y, control, mf) # candidates
             # else
             print('About to compute S')
             init <- lmrob.S(x, y, control, mf=mf) # candidates
