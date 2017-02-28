@@ -4,20 +4,22 @@
 # require(quantreg)
  
 
-mscale=function(u, ep,delta)
-#M scaleof a sample u  
-#ep accuracy
-#delta breakdown point (right side)
-{s0=median(abs(u))/.6745
-h=1
-it=0
-while((h>ep)&(it<50))
-{       it=it+1
-s1=(1/delta)*(s0^2)*mean(rho.bi((u/s0),1.547))
-s1=s1^(1/2)
-h=abs(s1-s0)/s0
-s0=s1}
-s0}
+mscale <- function(u, tol, delta, max.it=100) {
+  # M-scale of a sample u  
+  # tol: accuracy
+  # delta: breakdown point (right side)
+  # Initial 
+  s0 <- median(abs(u))/.6745
+  err <- tol + 1
+  it <- 0
+  while( (err > ep) & ( it < max.it) ) {
+    it <- it+1
+    s1 <- sqrt( s0^2 * mean(rho.bi((u/s0),1.547)) / delta )
+    err <- abs(s1-s0)/s0
+    s0 <- s1
+  }
+  return(s0)
+}
 
 
 
@@ -35,6 +37,40 @@ V
 }
 
 
+rho <- function(u, cc=1.5477) {
+  w <- as.numeric( abs(u) <= cc )
+  v <- (u^2/(2)*(1-(u^2/(cc^2))+(u^4/(3*cc^4))))*w +(1-w)*(cc^2/6)
+  v <- v*6/cc^2
+  return(v)
+}
+
+# rhoint <- function(e)
+#   return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
+# 
+# uniroot( function(e) (rhoint(e)-.5), lower=1, upper=2)$root
+# 
+
+rhoprime <- function(r, cc) { 
+  # bisquare rho' = psi function
+  r <- r / cc
+  gg <- r*(1-r^2)^2*as.numeric(abs(r)<=1)
+  return(gg)
+}
+
+rhoprime2 <- function(r, cc) {
+  #Derivative of the bisquare psi function
+  r <- r/cc
+  gg <- (1-r^2)*(1-5*r^2)*as.numeric(abs(r)<=1)/cc
+  return(gg)
+}
+
+# effi <- function(e) {
+#   a <- integrate(function(a, cc) (rhoprime(a, cc)^2)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value
+#   b <- integrate(function(a, cc) rhoprime2(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value
+#   return( 1/(a/b^2) ) # efficiency!
+# }
+# 
+# uniroot( function(e) (effi(e)-.85), lower=3, upper=4)$root
 
   psibs=function(t,c)  
 # bisquare psi function
@@ -51,31 +87,38 @@ V
 gg
 }
         
- MMPY=function(X,y,  intercept=TRUE)
-#Compute an MM-estimator taking as initial Pe?a Yohai
-#INPUT
-#X nxp matrix, where n is the number of observations and p the number of  columns, the 1's of the intercept are not included
-#y vector of dimension  n with the responses
-#intercept FALSE the regression does not includes intercept, TRUE, the regression includes intercept
-#OUTPUT
-#outMM output of the MM estimator (lmrob) with 85% of efficiency and PY as initial
-{
-cont1=lmrob.control(tuning.psi=3.44)
-n=nrow(X)
-p=ncol(X)
-if(intercept==TRUE )
-{ p=p+1}
-dee=.5*(1-(p/n))
-a <- pyinit(intercept,X=X, y=y, deltaesc=dee, cc.scale=1.547, prosac=.5,clean.method="threshold", C.res = 2, prop=.2, py.nit = 20, en.tol=1e-5)
-betapy2=a$initCoef[,1]
-sspy2=a$objF[1]
-uu=list(coeff=betapy2,scale=sspy2)
- if(intercept==TRUE)
-    { outMM=lmrob(y~X, control=cont1,init=uu)}else
-    { outMM=lmrob(y~X-1, control=cont1,init=uu)}
-outMM
-}
-
+ MMPY <- function(X, y, control, mf) {
+   # This function will be called from lmrob, so control will be valid
+   # X will already contain a column of ones if needed
+   #Compute an MM-estimator taking as initial Pe?a Yohai
+   #INPUT
+   #X nxp matrix, where n is the number of observations and p the number of  columns
+   #y vector of dimension  n with the responses
+   #
+   #OUTPUT
+   #outMM output of the MM estimator (lmrob) with 85% of efficiency and PY as initial
+   #
+   # 
+   # cont1=lmrob.control(tuning.psi=3.44)
+   n <- nrow(X)
+   p <- ncol(X)
+   # if(intercept==TRUE )
+   # { p=p+1}
+   dee <- .5*(1-(p/n))
+   a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
+               cc.scale=control$tuning.chi, 
+               prosac=.5, clean.method='threshold', C.res = 2, prop=.2, 
+               py.nit = 20, en.tol=1e-5, mscale.rho.fun='bisquare')
+   betapy2 <- a$initCoef[,1]
+   sspy2 <- a$objF[1]
+   S.init <- list(coeff=betapy2, scale=sspy2)
+   outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
+   # if(intercept==TRUE)
+   #    { outMM=lmrob(y~X, control=cont1,init=uu)}else
+   #    { outMM=lmrob(y~X-1, control=cont1,init=uu)}
+   return(outMM)
+ }
+ 
 
 DCML_FINAL=function(X,y, outMM, intercept=TRUE)
 #INPUT

@@ -20,7 +20,7 @@ lmrob2 <-
     ## to avoid problems with setting argument
     ## call lmrob.control here either with or without method arg.
     if (missing(control)) {
-      control <- lmrob.control(...) 
+      control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434) # new defaults
     } else if (length(list(...))) ## "sophisticated version" of chk.s(...)
       warning("arguments .. in ",
               sub(")$", "", sub("^list\\(", "", deparse(list(...), control = c()))), "  are disregarded.\n",
@@ -137,8 +137,8 @@ lmrob2 <-
             # print('About to compute M-S')
             # init <- lmrob.M.S(x, y, control, mf) # candidates
             # else
-            print('About to compute S')
-            init <- lmrob.S(x, y, control, mf=mf) # candidates
+            # print('About to compute S')
+            # init <- lmrob.S(x, y, control, mf=mf) # candidates
           #     switch(init,
           #                  "M-S" = lmrob.M.S(x, y, control, mf),
           #                  "S"   = lmrob.S  (x, y, control, mf=mf),
@@ -171,8 +171,10 @@ lmrob2 <-
           # if (class(init)[1] != "lmrob.S" && control$cov == '.vcov.avar1')
           #   control$cov <- ".vcov.w"
         # }
-        print('About to compute M step')
-        z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
+        print('About to compute MMPY')
+        z <- MMPY(X=x, y=y, control=control, mf=mf)
+        # print('About to compute M step')
+        # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
         # if(is.character(ini) && !grepl(paste0("^", ini), control$method))
         #   control$method <- paste0(ini, control$method)
         if (singular.fit) {
