@@ -12,4 +12,5 @@ set.seed(123)
 ## Default for a very long time:
 m1 <- lmrob2(Y ~ ., data=coleman)
 
-
+X <- model.matrix(Y ~ ., data=coleman)
+MMPY(X=X, y=coleman$Y, intercept=FALSE)
