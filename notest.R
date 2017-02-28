@@ -4,6 +4,7 @@
 
 
 library(robustbroli)
+library(pyinit)
 data(coleman)
 set.seed(123)
 # source('R/lmrob2.R')

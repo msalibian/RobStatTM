@@ -1,6 +1,10 @@
 
 ### The first part of lmrob()  much cut'n'paste from lm() - on purpose!
 
+
+# R CMD INSTALL --preclean --clean robustbroli 
+
+
 ## lmrob2: back to basics!
 ## For continuous explanatory variables: 
 ## the estimator is an S-initial estimator computed with 
@@ -163,7 +167,7 @@ lmrob2 <-
           #       stop("Length of initial coefficients vector does not match rank of singular design matrix x")
           #   }
           # } else stop("unknown init argument")
-          stopifnot(is.numeric(init$coef), is.numeric(init$scale))
+          # stopifnot(is.numeric(init$coef), is.numeric(init$scale))
           ## modify (default) control$method, possibly dropping first letter:
           # if (control$method == "MM" || substr(control$method, 1, 1) == "S")
           #   control$method <- substring(control$method, 2)

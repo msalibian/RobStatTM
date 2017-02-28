@@ -47,6 +47,8 @@ importFrom("methods", is, new, setClass, setMethod, slot, "slot<-")
 
 importFrom("DEoptimR", JDEoptim)
 
+# importFrom('pyinit', pyinit)
+
 ## Functions defined in this package
 export(Sn, Qn, Qn.old,
        s_Sn, s_Qn, s_mad, s_IQR,
