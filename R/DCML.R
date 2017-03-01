@@ -116,7 +116,16 @@ gg
    print('In MMPY')
    print(paste0('method: ', control$method))
    print('calling lmrob.fit')
-   control$method <- 'M'
+   control$method <- 'M' 
+   control$cov <- ".vcov.w"
+   # # lmrob() does the above when is.list(init)==TRUE, in particular:
+   #
+   # if (control$method == "MM" || substr(control$method, 1, 1) == "S")
+   #   control$method <- substring(control$method, 2)
+   # ## check for control$cov argument
+   # if (class(init)[1] != "lmrob.S" && control$cov == '.vcov.avar1')
+   #   control$cov <- ".vcov.w"
+   
    outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
    # if(intercept==TRUE)
    #    { outMM=lmrob(y~X, control=cont1,init=uu)}else
