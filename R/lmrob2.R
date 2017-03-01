@@ -24,7 +24,7 @@ lmrob2 <-
     ## to avoid problems with setting argument
     ## call lmrob.control here either with or without method arg.
     if (missing(control)) {
-      control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434, trace.lev=1) # new defaults
+      control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434) # new defaults
     } else if (length(list(...))) ## "sophisticated version" of chk.s(...)
       warning("arguments .. in ",
               sub(")$", "", sub("^list\\(", "", deparse(list(...), control = c()))), "  are disregarded.\n",
@@ -262,18 +262,18 @@ lmrob2 <-
     z
   }
 
-if(getRversion() < "3.1.0") globalVariables(".lm.fit")
-
-##' @title Warn about extraneous arguments in the "..."	 (of its caller)
-##' @return
-##' @author Martin Maechler, June 2012
-chk.s <- function(...) {
-  if(length(list(...)))
-    warning("arguments  ",
-            sub(")$", '', sub("^list\\(", '', deparse(list(...), control=c()))),
-            "  are disregarded in\n ", deparse(sys.call(-1), control=c()),
-            call. = FALSE)
-}
+# if(getRversion() < "3.1.0") globalVariables(".lm.fit")
+# 
+# ##' @title Warn about extraneous arguments in the "..."	 (of its caller)
+# ##' @return
+# ##' @author Martin Maechler, June 2012
+# chk.s <- function(...) {
+#   if(length(list(...)))
+#     warning("arguments  ",
+#             sub(")$", '', sub("^list\\(", '', deparse(list(...), control=c()))),
+#             "  are disregarded in\n ", deparse(sys.call(-1), control=c()),
+#             call. = FALSE)
+# }
 
 
 # ##' Robust Mahalanobis Distances

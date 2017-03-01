@@ -154,6 +154,10 @@ lmrob <-
           if (class(init)[1] != "lmrob.S" && control$cov == '.vcov.avar1')
             control$cov <- ".vcov.w"
         }
+        print('In lmrob')
+        print(paste0('init: ',init))
+        print(paste0('method: ', control$method))
+        print('calling lmrob.fit')
         z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
         if(is.character(ini) && !grepl(paste0("^", ini), control$method))
           control$method <- paste0(ini, control$method)

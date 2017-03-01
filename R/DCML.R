@@ -105,20 +105,63 @@ gg
    # if(intercept==TRUE )
    # { p=p+1}
    dee <- .5*(1-(p/n))
+   print(dee)
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
                cc.scale=control$tuning.chi, 
                prosac=.5, clean.method='threshold', C.res = 2, prop=.2, 
                py.nit = 20, en.tol=1e-5, mscale.rho.fun='bisquare')
    betapy2 <- a$initCoef[,1]
    sspy2 <- a$objF[1]
-   S.init <- list(coeff=betapy2, scale=sspy2)
+   S.init <- list(coef=betapy2, scale=sspy2)
+   print('In MMPY')
+   print(paste0('method: ', control$method))
+   print('calling lmrob.fit')
+   control$method <- 'M'
    outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
    # if(intercept==TRUE)
    #    { outMM=lmrob(y~X, control=cont1,init=uu)}else
    #    { outMM=lmrob(y~X-1, control=cont1,init=uu)}
    return(outMM)
  }
+
+old.MMPY <- function(X, y, intercept=FALSE) {
+   # X will already contain a column of ones if needed
+   #Compute an MM-estimator taking as initial Pe?a Yohai
+   #INPUT
+   #X nxp matrix, where n is the number of observations and p the number of  columns
+   #y vector of dimension  n with the responses
+   #
+   #OUTPUT
+   #outMM output of the MM estimator (lmrob) with 85% of efficiency and PY as initial
+   #
+   # 
+  
+   cont1 <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
+   n <- nrow(X)
+   p <- ncol(X)
+   if(intercept)
+   { p=p+1}
+   dee <- .5*(1-(p/n))
+   print(dee)
+   a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
+               cc.scale=cont1$tuning.chi, 
+               prosac=.5, clean.method='threshold', C.res = 2, prop=.2, 
+               py.nit = 20, en.tol=1e-5, mscale.rho.fun='bisquare')
+   betapy2 <- a$initCoef[,1]
+   sspy2 <- a$objF[1]
+   S.init <- list(coef=betapy2, scale=sspy2)
+   print('In old.MMPY')
+   print(paste0('method: ', cont1$method))
+   # print('calling lmrob.fit')
+   # control$method <- 'M'
+   # outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
+   if(intercept)
+      { outMM=lmrob(y~X, control=cont1,init=S.init)}else
+      { outMM=lmrob(y~X-1, control=cont1,init=S.init)}
+   return(outMM)
+ }
  
+  
 
 DCML_FINAL=function(X,y, outMM, intercept=TRUE)
 #INPUT
