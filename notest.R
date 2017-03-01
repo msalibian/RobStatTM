@@ -6,6 +6,8 @@
 # library(robustbroli)
 library(robustbase)
 library(pyinit)
+source('R/lmrob2.R')
+source('R/DCML.R')
 data(coleman)
 set.seed(123)
 # source('R/lmrob2.R')
