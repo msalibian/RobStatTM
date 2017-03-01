@@ -229,6 +229,9 @@ lmrob.fit <- function(x, y, control, init=NULL, mf=NULL) {
     for (step in strsplit(method,'')[[1]]) {
       ## now we have either M or D steps
       est <- paste0(est, step)
+      print(method)
+      print(step)
+      print(est)
       init <- switch(step, ## 'control' may differ from 'init$control' when both (init, control) are spec.
                      ## D(AS)-Step
                      D = lmrob..D..fit(init, x, mf = mf,
