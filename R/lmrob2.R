@@ -40,6 +40,8 @@ lmrob2 <-
     mf[[1]] <- as.name("model.frame")
     mf <- eval(mf, parent.frame())
     
+    print(mf)
+    
     mt <- attr(mf, "terms") # allow model.frame to update it
     y <- model.response(mf, "numeric")
     w <- as.vector(model.weights(mf))

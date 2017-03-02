@@ -6,6 +6,7 @@
 # library(robustbroli)
 library(robustbase)
 library(pyinit)
+library(quantreg)
 source('R/lmrob2.R')
 source('R/DCML.R')
 data(coleman)
@@ -29,3 +30,17 @@ m2 <- lmrob(Y ~ ., data=coleman, init=S.init, control=lmrob.control(trace.lev=1)
 
 X <- model.matrix(Y ~ ., data=coleman)
 MMPY(X=X, y=coleman$Y, intercept=FALSE)
+
+co2 <- coleman
+set.seed(123)
+co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
+X <- model.matrix(Y ~ . , data=co2)
+
+mf <- model.frame(Y ~ . , data=co2)
+a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
+
+Z <- X[, 6:8]
+X <- X[, 1:5]
+old.SMPY(X=X, y=coleman$Y, Z=Z, intercept=TRUE)
+
+
