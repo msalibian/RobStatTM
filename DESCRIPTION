@@ -2,16 +2,13 @@ Package: robustbroli
 Version: 0.1
 Date: 2016-12-08
 Title: El Broli
-Authors@R: c(person("Martin","Maechler", role=c("aut","cre"), email="maechler@stat.math.ethz.ch")
-         , person("Matias", "Salibian-Barrera", role = "aut", email = "matias@stat.ubc.ca",
-                  comment = "lmrob orig.")
-         , person("Manuel", "Koller", role = "aut", email = "koller.manuel@gmail.com",
-                  comment = "lmrob, psi-func.")
+Authors@R: c(person("Matias", "Salibian-Barrera", role = "aut", email = "matias@stat.ubc.ca"),
+          person("Victor", "Yhoai", role = "aut", email = "vyohai@gmail.com")
           )
 Maintainer: Matias Salibian-Barrera <matias@stat.ubc.ca>
 Description: The book "Robust Statistics,
  Theory and Methods" by 'Maronna, Martin and Yohai', 2nd ed. 
-Depends: R (>= 3.0.2)
+Depends: R (>= 3.0.2), robustbase, pyinit
 Imports: stats, graphics, utils, methods, DEoptimR
 Suggests: grid, MASS, lattice, boot, cluster, Matrix, robust,
         fit.models, MPV, xtable, ggplot2, GGally, RColorBrewer,
