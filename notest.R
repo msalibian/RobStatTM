@@ -20,8 +20,21 @@ m2 <- old.MMPY(X=X, y=coleman$Y, intercept=FALSE)
 # names(m2$coef) <- names(m2$coefficients) <- names(coef(m1))
 all.equal(coef(m1), coef(m2), check.attributes=FALSE)
 all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
-m3 <- lmrob(Y ~ ., data=coleman, 
-            control=lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434))
+# dee <- .5*(1-(ncol(X)/nrow(X)))
+# m3 <- lmrob(Y ~ ., data=coleman, 
+#             control=lmrob.control(tuning.chi = 1.5477, bb = .5, tuning.psi = 3.4434))
+# all.equal(coef(m1), coef(m3), check.attributes=FALSE)
+
+## Default for a very long time:
+m1 <- lmrob2(Y ~ .-1, data=coleman)
+X <- model.matrix(Y ~ .-1, data=coleman)
+m2 <- old.MMPY(X=X, y=coleman$Y, intercept=FALSE)
+# names(m2$coef) <- names(m2$coefficients) <- names(coef(m1))
+all.equal(coef(m1), coef(m2), check.attributes=FALSE)
+all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
+
+
+
 
 # m2 <- lmrob(Y ~ ., data=coleman)
 # S.init <- list(coef=coef(m2$init), scale=m2$scale)
@@ -135,6 +148,7 @@ outlmrob <- lmrob(y~XX,control=control,init=uu)
 } else {
   outlmrob <- lmrob(y~XX-1,control=control,init=uu)
 }
+
 control$method <- 'M' 
 control$cov <- ".vcov.w"
 # # lmrob() does the above when is.list(init)==TRUE, in particular:
