@@ -289,6 +289,7 @@ old.SMPY=function(y,X,Z, intercept=TRUE)
    #OUTPUT
    #out_lmrob output of lmrob take as initial a S-M estimator for mixed models computed with Pe?a Yohai
  {
+   cont1 <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
    n=nrow(X)
    q=ncol(Z)
    p=ncol(X)

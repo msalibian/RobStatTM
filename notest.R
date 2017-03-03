@@ -56,12 +56,20 @@ X <- a$x2
 old.SMPY(X=X, y=coleman$Y, Z=Z, intercept=FALSE)
 svd(Z)$d
 
+# set.seed(123456)
+# x1 <- rnorm(50)
+# x2 <- rnorm(50)
+# x3 <- runif(50)
+# dum <- as.factor(LETTERS[rbinom(50, size=7, prob=.3)+1])
+# y <- rnorm(50)
+# co2 <- data.frame(x1=x1, x2=x2, x3=x3, dum=dum, Y=y)
 
 # SMPY "by hand"
-control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
 co2 <- coleman
 set.seed(123)
 co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
+
+control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
 mf <- model.frame(Y ~ . , data=co2)
 y <- co2$Y
 (int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1))
@@ -116,8 +124,17 @@ uu <- list(coef=beta00, scale=ss)
 control <- lmrob.control(tuning.chi = 1.5477, bb = dee, tuning.psi = 3.4434)
 outlmrob <- lmrob(y~XX,control=control,init=uu)
 outlmrob$coef
+uu$scale
 
 # pretty much the same as
 control <- lmrob.control(tuning.chi = 1.5477, tuning.psi = 3.4434, init='M-S')
-lmrob(Y ~ . , control=control, data=co2)$scale
-summary(lm(Y ~ . , data=co2))$sigma
+o2 <- lmrob(Y ~ . , control=control, data=co2)
+o2$coef
+o2$scale
+
+
+# old.SMPY=function(y,X,Z, intercept=TRUE)
+old.SMPY(y=y, X=X, Z=Z, intercept=int.present)
+
+
+# summary(lm(Y ~ . , data=co2))$sigma
