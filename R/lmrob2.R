@@ -175,7 +175,7 @@ lmrob2 <-
           # if (class(init)[1] != "lmrob.S" && control$cov == '.vcov.avar1')
           #   control$cov <- ".vcov.w"
         # }
-        print('About to compute MMPY')
+        # print('About to compute MMPY')
         z <- MMPY(X=x, y=y, control=control, mf=mf)
         # print('About to compute M step')
         # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R

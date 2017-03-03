@@ -105,7 +105,6 @@ gg
    # if(intercept==TRUE )
    # { p=p+1}
    dee <- .5*(1-(p/n))
-   print(dee)
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
                cc.scale=control$tuning.chi, 
                prosac=.5, clean.method='threshold', C.res = 2, prop=.2, 
@@ -113,9 +112,6 @@ gg
    betapy2 <- a$initCoef[,1]
    sspy2 <- a$objF[1]
    S.init <- list(coef=betapy2, scale=sspy2)
-   print('In MMPY')
-   print(paste0('method: ', control$method))
-   print('calling lmrob.fit')
    control$method <- 'M' 
    control$cov <- ".vcov.w"
    # # lmrob() does the above when is.list(init)==TRUE, in particular:
@@ -151,7 +147,6 @@ old.MMPY <- function(X, y, intercept=FALSE) {
    if(intercept)
    { p=p+1}
    dee <- .5*(1-(p/n))
-   print(dee)
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
                cc.scale=cont1$tuning.chi, 
                prosac=.5, clean.method='threshold', C.res = 2, prop=.2, 
@@ -159,8 +154,6 @@ old.MMPY <- function(X, y, intercept=FALSE) {
    betapy2 <- a$initCoef[,1]
    sspy2 <- a$objF[1]
    S.init <- list(coef=betapy2, scale=sspy2)
-   print('In old.MMPY')
-   print(paste0('method: ', cont1$method))
    # print('calling lmrob.fit')
    # control$method <- 'M'
    # outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
