@@ -4,7 +4,7 @@
 # require(quantreg)
  
 
-mscale <- function(u, tol, delta, max.it=100) {
+mscale <- function(u, tol, delta=.5, max.it=100, tuning.chi=1.5477) {
   # M-scale of a sample u  
   # tol: accuracy
   # delta: breakdown point (right side)
@@ -12,9 +12,9 @@ mscale <- function(u, tol, delta, max.it=100) {
   s0 <- median(abs(u))/.6745
   err <- tol + 1
   it <- 0
-  while( (err > ep) & ( it < max.it) ) {
+  while( (err > tol) & ( it < max.it) ) {
     it <- it+1
-    s1 <- sqrt( s0^2 * mean(rho.bi((u/s0),1.547)) / delta )
+    s1 <- sqrt( s0^2 * mean(rho((u/s0), tuning.chi)) / delta )
     err <- abs(s1-s0)/s0
     s0 <- s1
   }
@@ -218,7 +218,7 @@ out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
 out
 }
 
-SMPY <- function(y, X, Z, intercept=TRUE) {
+SMPY <- function(mf, y, control) { # y, X, Z, intercept=TRUE) {
 
   # Compute an MM-estimator for mixed model using lmrob and taking as initial 
   # an SM estimator based on Pe?a-Yohai
@@ -230,20 +230,25 @@ SMPY <- function(y, X, Z, intercept=TRUE) {
   # out_lmrob output of lmrob take as initial a S-M estimator for 
   # mixed models computed with Pe?a Yohai
   
+  (int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1))
+  a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
+  Z <- a$x1
+  X <- a$x2
+  # if there's an intercept it is in Z
   n <- nrow(X)
   q <- ncol(Z)
   p <- ncol(X)
-  hh1 <- 1
-  hh2 <- p
-  hh3 <- q
-  if(intercept) {
-    hh1 <- 2
-    hh2 <- p + 1
-    hh3 <- q + 1
-  }
-  gamma <- matrix(0, hh3, p)
+  # hh1 <- 1
+  # hh2 <- p
+  # hh3 <- q
+  # if(intercept) {
+  #   hh1 <- 2
+  #   hh2 <- p + 1
+  #   hh3 <- q + 1
+  # }
+  gamma <- matrix(0, q, p)
   #Eliminate Z from X by L1 regression , obtaining a matrix X1
-  for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z))
+  for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z-1))
   X1 <- X - Z %*% gamma[hh1:hh3,]
   # We compute an MMestimator  ny lmrob using as covariables X1 as initial Pe?a Yohai
   dee <- .5*(1-((p+1)/n))
