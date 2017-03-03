@@ -38,9 +38,18 @@ X <- model.matrix(Y ~ . , data=co2)
 
 mf <- model.frame(Y ~ . , data=co2)
 a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
+head(a$x1) # x1 = factors, x2 = continuous
+head(a$x2)
 
-Z <- X[, 6:8]
-X <- X[, 1:5]
-old.SMPY(X=X, y=coleman$Y, Z=Z, intercept=TRUE)
+mf <- model.frame(Y ~ .*educ , data=co2)
+a <- splitFrame(mf, type='fi') # type = c("f","fi", "fii"))
+head(a$x1) # x1 = factors + interactions
+head(a$x2) # x2 = continuous
+
+mf <- model.frame(Y ~ . -1, data=co2)
+a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
+Z <- a$x1
+X <- a$x2
+old.SMPY(X=X, y=coleman$Y, Z=Z, intercept=FALSE)
 
 
