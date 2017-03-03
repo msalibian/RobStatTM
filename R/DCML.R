@@ -211,65 +211,65 @@ out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
 out
 }
 
-SMPY <- function(mf, y, control) { # y, X, Z, intercept=TRUE) {
-
-  # Compute an MM-estimator for mixed model using lmrob and taking as initial 
-  # an SM estimator based on Pe?a-Yohai
-  #INPUT
-  # y response vector
-  # X matrix of continuous covariables
-  # Z matrix of  qualitative covariables
-  #OUTPUT
-  # out_lmrob output of lmrob take as initial a S-M estimator for 
-  # mixed models computed with Pe?a Yohai
-  
-  (int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1))
+SMPY <- function(mf, y, control=lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)) { # y, X, Z, intercept=TRUE) {
+  # 
+  #   control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
+  #   mf <- model.frame(Y ~ . , data=co2)
+  # y <- co2$Y
+  int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
   a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
-  Z <- a$x1
+  Zorig <- Z <- a$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
   X <- a$x2
-  # if there's an intercept it is in Z
+  if(int.present) Z <- Zorig[, -1]
   n <- nrow(X)
   q <- ncol(Z)
   p <- ncol(X)
-  # hh1 <- 1
-  # hh2 <- p
-  # hh3 <- q
-  # if(intercept) {
-  #   hh1 <- 2
-  #   hh2 <- p + 1
-  #   hh3 <- q + 1
-  # }
   gamma <- matrix(0, q, p)
   #Eliminate Z from X by L1 regression , obtaining a matrix X1
+  oldw <- options()$warn
+  options(warn=-1)
   for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z-1))
-  X1 <- X - Z %*% gamma[hh1:hh3,]
-  # We compute an MMestimator  ny lmrob using as covariables X1 as initial Pe?a Yohai
+  options(warn=oldw)
+  X1 <- X - Z %*% gamma
   dee <- .5*(1-((p+1)/n))
-  out <- pyinit(intercept=intercept, X=X1, y=y, 
-                deltaesc=dee, cc.scale=1.547, 
-                prosac=.5, clean.method="threshold", C.res = 2, prop=.2, 
-                py.nit = 20, en.tol=1e-5)
-  betapy <- out$initCoef[,1]
-  sspy <- out$objF[1]
-  uu <- list(coeff=betapy,scale=sspy)
-  out0 <- lmrob(y1~X1, control=cont1,init=uu) 
+  initial <- pyinit(intercept=int.present, X=X1, y=y, 
+                    deltaesc=dee, cc.scale=control$tuning.chi, 
+                    prosac=.5, clean.method="threshold", C.res = 2, prop=.2, 
+                    py.nit = 20, en.tol=1e-5)
+  betapy <- initial$initCoef[,1]
+  sspy <- initial$objF[1]
+  uu <- list(coef=betapy, scale=sspy)
+  if(int.present) {
+    out0 <- lmrob(y~X1, control=control,init=uu) } else {
+      out0 <- lmrob(y~X1 - 1, control=control,init=uu)
+    }
   beta <- out0$coeff
   # after eliminating the influence of X1 we make an L1 regression using as covariables Z
-  y1 <- y-X1%*%beta[hh1:hh2]
-  fi <- coef(rq(y1~Z))
+  y1 <- resid(out0) # y-X1%*%beta
+  options(warn=-1)
+  fi <- coef(rq(y1~Z-1))
+  options(warn=oldw)
   # retransform the coefficients to the original matrices X and Z
-  oo <- NULL
-  if(intercept) oo <- fi[1]
-  tt <- gamma[hh1:hh3,]
-  if(p==1) tt <- matrix(tt,q,p)
-  beta00 <- c(oo,beta[hh1:hh2],fi[hh1:hh3]-  tt%*%beta[hh1:hh2])
-  res <- y1-fi[1]-Z%*%fi[hh1:hh3]
-  dee <- .5*(1-((p+q+intercept)/n))
-  ss <- mscale(u=res, tol=1e-5, delta=dee)
+  if(int.present) {
+    beta00 <- c(beta, fi - gamma %*% beta[-1])
+  } else { beta00 <- c(beta, fi - gamma %*% beta) }
+  res <- as.vector( y1-Z%*%fi )
+  # XX <- cbind(X,Z)
+  nc <- ncol(X) + ncol(Z) + if(int.present) 1 else 0
+  dee <- .5*(1-(nc/n))
+  ss <- mscale(u=res, tol=1e-5, delta=dee, tuning.chi=control$tuning.chi)
   uu <- list(coef=beta00, scale=ss)
-  XX <- cbind(X,Z)
   #Compute the MMestimator using lmrob
-  outlmrob <- lmrob(y~XX,control=cont1,init=uu)$coeff
+  # control <- lmrob.control(tuning.chi = 1.5477, bb = dee, tuning.psi = 3.4434)
+  # outlmrob <- lmrob(y~XX,control=control,init=uu)$coef
+  control$method <- 'M' 
+  control$cov <- ".vcov.w"
+  # # lmrob() does the above when is.list(init)==TRUE, in particular:
+  #
+  XX <- model.matrix(attr(mf, 'terms'), mf)
+  stopifnot(ncol(XX)==nc)
+  control$bb <- dee
+  outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
   return(outlmrob) 
 }
 

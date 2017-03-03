@@ -64,13 +64,17 @@ svd(Z)$d
 # co2 <- data.frame(x1=x1, x2=x2, x3=x3, dum=dum, Y=y)
 
 # SMPY "by hand"
+
+## Create data set
 co2 <- coleman
 set.seed(123)
 co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
+mf <- model.frame(Y ~ . -1 , data=co2)
+y <- co2$Y
+outlmrob3 <- SMPY(mf=mf, y=y)
+
 
 control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
-mf <- model.frame(Y ~ . , data=co2)
-y <- co2$Y
 (int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1))
 a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
 Zorig <- Z <- a$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
@@ -81,9 +85,12 @@ q <- ncol(Z)
 p <- ncol(X)
 gamma <- matrix(0, q, p)
 #Eliminate Z from X by L1 regression , obtaining a matrix X1
+options(warn=-1)
 for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z-1))
+options(warn=0)
 X1 <- X - Z %*% gamma
-dee <- .5*(1-((p+1)/n))
+pp <- p + if(int.present) 1 else 0
+dee <- .5*(1-(pp/n))
 initial <- pyinit(intercept=int.present, X=X1, y=y, 
               deltaesc=dee, cc.scale=control$tuning.chi, 
               prosac=.5, clean.method="threshold", C.res = 2, prop=.2, 
@@ -103,7 +110,9 @@ if(int.present) {
 beta <- out0$coeff
 # after eliminating the influence of X1 we make an L1 regression using as covariables Z
 y1 <- resid(out0) # y-X1%*%beta
+options(warn=-1)
 fi <- coef(rq(y1~Z-1))
+options(warn=0)
 # retransform the coefficients to the original matrices X and Z
 # oo <- NULL
 # if(int.present) oo <- fi[1]
@@ -121,9 +130,28 @@ ss <- mscale(u=res, tol=1e-5, delta=dee, tuning.chi=control$tuning.chi)
 uu <- list(coef=beta00, scale=ss)
 #Compute the MMestimator using lmrob
 control <- lmrob.control(tuning.chi = 1.5477, bb = dee, tuning.psi = 3.4434)
+if(int.present) {
 outlmrob <- lmrob(y~XX,control=control,init=uu)
-outlmrob$coef
-uu$scale
+} else {
+  outlmrob <- lmrob(y~XX-1,control=control,init=uu)
+}
+control$method <- 'M' 
+control$cov <- ".vcov.w"
+# # lmrob() does the above when is.list(init)==TRUE, in particular:
+#
+XX2 <- model.matrix(attr(mf, 'terms'), mf)
+outlmrob2 <- lmrob.fit(XX2, y, control, init=uu, mf=mf)
+
+
+all.equal(coef(outlmrob), coef(outlmrob2), check.attributes=FALSE)
+all.equal(coef(outlmrob), coef(outlmrob3), check.attributes=FALSE)
+all.equal(coef(outlmrob2), coef(outlmrob3), check.attributes=FALSE)
+all.equal(outlmrob$cov[,], outlmrob2$cov[,], check.attributes=FALSE)
+all.equal(outlmrob3$cov[,], outlmrob2$cov[,], check.attributes=FALSE)
+
+
+
+
 
 # pretty much the same as
 control <- lmrob.control(tuning.chi = 1.5477, tuning.psi = 3.4434, init='M-S')
