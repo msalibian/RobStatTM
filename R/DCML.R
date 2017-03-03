@@ -231,7 +231,8 @@ SMPY <- function(mf, y, control=lmrob.control(tuning.chi = 1.5477, bb = 0.5, tun
   for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z-1))
   options(warn=oldw)
   X1 <- X - Z %*% gamma
-  dee <- .5*(1-((p+1)/n))
+  pp <- p + if(int.present) 1 else 0
+  dee <- .5*(1-(pp/n))
   initial <- pyinit(intercept=int.present, X=X1, y=y, 
                     deltaesc=dee, cc.scale=control$tuning.chi, 
                     prosac=.5, clean.method="threshold", C.res = 2, prop=.2, 
@@ -268,7 +269,6 @@ SMPY <- function(mf, y, control=lmrob.control(tuning.chi = 1.5477, bb = 0.5, tun
   #
   XX <- model.matrix(attr(mf, 'terms'), mf)
   stopifnot(ncol(XX)==nc)
-  control$bb <- dee
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
   return(outlmrob) 
 }

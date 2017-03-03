@@ -42,47 +42,47 @@ all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
 # X <- model.matrix(Y ~ ., data=coleman)
 # MMPY(X=X, y=coleman$Y, intercept=FALSE)
 
-# With factors!
-co2 <- coleman
-set.seed(123)
-co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
-X <- model.matrix(Y ~ . , data=co2)
-
-mf <- model.frame(Y ~ . , data=co2)
-(int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1))
-a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
-head(a$x1) # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
-head(a$x2)
-
-mf <- model.frame(Y ~ .*educ , data=co2)
-a <- splitFrame(mf, type='fi') # type = c("f","fi", "fii"))
-head(a$x1) # x1 = factors + interactions
-head(a$x2) # x2 = continuous
-
-mf <- model.frame(Y ~ . -1, data=co2)
-# is there an intercept?
-(int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1))
-a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
-Z <- a$x1
-X <- a$x2
-old.SMPY(X=X, y=coleman$Y, Z=Z, intercept=FALSE)
-svd(Z)$d
-
-# set.seed(123456)
-# x1 <- rnorm(50)
-# x2 <- rnorm(50)
-# x3 <- runif(50)
-# dum <- as.factor(LETTERS[rbinom(50, size=7, prob=.3)+1])
-# y <- rnorm(50)
-# co2 <- data.frame(x1=x1, x2=x2, x3=x3, dum=dum, Y=y)
-
-# SMPY "by hand"
+# # With factors!
+# co2 <- coleman
+# set.seed(123)
+# co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
+# X <- model.matrix(Y ~ . , data=co2)
+# 
+# mf <- model.frame(Y ~ . , data=co2)
+# (int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1))
+# a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
+# head(a$x1) # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
+# head(a$x2)
+# 
+# mf <- model.frame(Y ~ .*educ , data=co2)
+# a <- splitFrame(mf, type='fi') # type = c("f","fi", "fii"))
+# head(a$x1) # x1 = factors + interactions
+# head(a$x2) # x2 = continuous
+# 
+# mf <- model.frame(Y ~ . -1, data=co2)
+# # is there an intercept?
+# (int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1))
+# a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
+# Z <- a$x1
+# X <- a$x2
+# old.SMPY(X=X, y=coleman$Y, Z=Z, intercept=FALSE)
+# svd(Z)$d
+# 
+# # set.seed(123456)
+# # x1 <- rnorm(50)
+# # x2 <- rnorm(50)
+# # x3 <- runif(50)
+# # dum <- as.factor(LETTERS[rbinom(50, size=7, prob=.3)+1])
+# # y <- rnorm(50)
+# # co2 <- data.frame(x1=x1, x2=x2, x3=x3, dum=dum, Y=y)
+# 
+# # SMPY "by hand"
 
 ## Create data set
 co2 <- coleman
 set.seed(123)
 co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
-mf <- model.frame(Y ~ . -1 , data=co2)
+mf <- model.frame(Y ~ .  , data=co2)
 y <- co2$Y
 outlmrob3 <- SMPY(mf=mf, y=y)
 
@@ -136,25 +136,30 @@ if(int.present) {
 beta00 <- c(beta, fi - gamma %*% beta[-1])
 } else { beta00 <- c(beta, fi - gamma %*% beta) }
 res <- as.vector( y1-Z%*%fi )
-XX <- cbind(X,Z)
-nc <- ncol(XX) + if(int.present) 1 else 0
+# XX <- cbind(X,Z)
+nc <- ncol(X) + ncol(Z) + if(int.present) 1 else 0
 dee <- .5*(1-(nc/n))
 ss <- mscale(u=res, tol=1e-5, delta=dee, tuning.chi=control$tuning.chi)
 uu <- list(coef=beta00, scale=ss)
-#Compute the MMestimator using lmrob
-control <- lmrob.control(tuning.chi = 1.5477, bb = dee, tuning.psi = 3.4434)
+# Compute the MMestimator using lmrob
+# control <- lmrob.control(tuning.chi = 1.5477, bb = dee, tuning.psi = 3.4434)
+XX <- cbind(X,Z)
 if(int.present) {
 outlmrob <- lmrob(y~XX,control=control,init=uu)
 } else {
   outlmrob <- lmrob(y~XX-1,control=control,init=uu)
 }
-
 control$method <- 'M' 
 control$cov <- ".vcov.w"
 # # lmrob() does the above when is.list(init)==TRUE, in particular:
 #
 XX2 <- model.matrix(attr(mf, 'terms'), mf)
 outlmrob2 <- lmrob.fit(XX2, y, control, init=uu, mf=mf)
+
+# doesn't work when int.present is FALSE
+# gives different results when int.present is TRUE
+# old.SMPY=function(y,X,Z, intercept=TRUE)
+# old.SMPY(y=y, X=X, Z=Z, intercept=int.present)
 
 
 all.equal(coef(outlmrob), coef(outlmrob2), check.attributes=FALSE)
@@ -174,8 +179,6 @@ o2$coef
 o2$scale
 
 
-# old.SMPY=function(y,X,Z, intercept=TRUE)
-old.SMPY(y=y, X=X, Z=Z, intercept=int.present)
 
 
 # summary(lm(Y ~ . , data=co2))$sigma
