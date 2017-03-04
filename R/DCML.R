@@ -107,8 +107,11 @@ gg
    dee <- .5*(1-(p/n))
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
                cc.scale=control$tuning.chi, 
-               prosac=.5, clean.method='threshold', C.res = 2, prop=.2, 
-               py.nit = 20, en.tol=1e-5, mscale.rho.fun='bisquare')
+               prosac=control$prosac, clean.method=control$clean.method, 
+               C.res = control$C.res, prop=control$prop, 
+               py.nit = control$py.nit, en.tol=control$en.tol, 
+               mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
+               mscale.rho.fun=control$mscale.rho.fun)
    betapy2 <- a$initCoef[,1]
    sspy2 <- a$objF[1]
    S.init <- list(coef=betapy2, scale=sspy2)
@@ -235,8 +238,11 @@ SMPY <- function(mf, y, control=lmrob.control(tuning.chi = 1.5477, bb = 0.5, tun
   dee <- .5*(1-(pp/n))
   initial <- pyinit(intercept=int.present, X=X1, y=y, 
                     deltaesc=dee, cc.scale=control$tuning.chi, 
-                    prosac=.5, clean.method="threshold", C.res = 2, prop=.2, 
-                    py.nit = 20, en.tol=1e-5)
+  prosac=control$prosac, clean.method=control$clean.method, 
+  C.res = control$C.res, prop=control$prop, 
+  py.nit = control$py.nit, en.tol=control$en.tol, 
+  mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
+  mscale.rho.fun=control$mscale.rho.fun)
   betapy <- initial$initCoef[,1]
   sspy <- initial$objF[1]
   uu <- list(coef=betapy, scale=sspy)

@@ -269,6 +269,11 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
                             compute.rd = FALSE, psi = 'bisquare',
                             split.type = c("f", "fi", "fii"),
+                            # pyinit control 
+                            prosac = 0.5, clean.method = 'threshold', 
+                            C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
+                            mscale.maxit = 200, mscale.tol = 1e-08, 
+                            mscale.rho.fun = 'bisquare',
                             ...) {
   if (missing(max.it)) max.it <- 500
   if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
