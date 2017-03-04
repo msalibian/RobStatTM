@@ -18,17 +18,14 @@ lmrob2 <-
   function(formula, data, subset, weights, na.action, 
            model = TRUE, x = !control$compute.rd, y = FALSE,
            singular.ok = TRUE, contrasts = NULL, offset = NULL,
-           control = NULL, candidates='PY', ...)
+           control = NULL)
   {
     ## candidates = 'PY' or 'SS', type of candidates for S-estimator
     ## to avoid problems with setting argument
     ## call lmrob.control here either with or without method arg.
     if (missing(control)) {
-      control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434) # new defaults
-    } else if (length(list(...))) ## "sophisticated version" of chk.s(...)
-      warning("arguments .. in ",
-              sub(")$", "", sub("^list\\(", "", deparse(list(...), control = c()))), "  are disregarded.\n",
-              "  Maybe use  lmrob(*, control=lmrob.control(....) with all these.")
+      control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434) # new defaults
+    } 
     ret.x <- x
     ret.y <- y
     cl <- match.call()
@@ -268,7 +265,8 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
                             max.it = 500, refine.tol = 1e-7, rel.tol = 1e-7,
                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
                             compute.rd = FALSE, psi = 'bisquare',
-                            split.type = c("f", "fi", "fii"),
+                            split.type = "f",
+                            compute.rd=FALSE, 
                             # pyinit control 
                             prosac = 0.5, clean.method = 'threshold', 
                             C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
