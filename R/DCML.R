@@ -214,7 +214,7 @@ out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
 out
 }
 
-SMPY <- function(mf, y, control=lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)) { # y, X, Z, intercept=TRUE) {
+SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)) { # y, X, Z, intercept=TRUE) {
   # 
   #   control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
   #   mf <- model.frame(Y ~ . , data=co2)
@@ -330,61 +330,90 @@ old.SMPY=function(y,X,Z, intercept=TRUE)
  }
  
 
-splitFrame <- function(mf, x = model.matrix(mt, mf),
-                       type = c("f","fi", "fii"))
-{
-  mt <- attr(mf, "terms")
-  type <- match.arg(type)
-  x <- as.matrix(x)
-  p <- ncol(x)
-  
-  ## --- split categorical and interactions of categorical vars.
-  ##     from continuous variables
-  factors <- attr(mt, "factors")
-  factor.idx <- attr(mt, "dataClasses") == "factor"
-  if (!any(factor.idx)) ## There are no factors
-    return(list(x1.idx = rep.int(FALSE, p), x1=matrix(,nrow(x),0L), x2=x))
-  switch(type,
-         ## --- include interactions cat * cont in x1:
-         fi = { factor.asgn <- which(factor.idx %*% factors > 0) },
-         ## --- include also continuous variables that interact with factors in x1:
-         ##     make sure to include interactions of continuous variables
-         ##     interacting with categorical variables, too
-         fii = { factor.asgn <- numeric(0)
-         factors.cat <- factors
-         factors.cat[factors.cat > 0] <- 1L ## fix triple+ interactions
-         factors.cat[, factor.idx %*% factors == 0] <- 0L
-         for (i in 1:ncol(factors)) {
-           comp <- factors[,i] > 0
-           ## if any of the components is a factor: include in x1 and continue
-           if (any(factor.idx[comp])) {
-             factor.asgn <- c(factor.asgn, i)
-           } else {
-             ## if there is an interaction of this term with a categorical var.
-             tmp <- colSums(factors.cat[comp,,drop=FALSE]) >= sum(comp)
-             if (any(tmp)) {
-               ## if no other continuous variables are involved
-               ## include in x1 and continue
-               ## if (identical(factors[!comp, tmp], factors.cat[!comp, tmp]))
-               if (!all(colSums(factors[!factor.idx & !comp, tmp, drop=FALSE]) > 0))
-                 factor.asgn <- c(factor.asgn, i)
-             }
-           }
-         } },
-         ## --- do not include interactions cat * cont in x1:
-         f = { factor.asgn <- which(factor.idx %*% factors & !(!factor.idx) %*% factors) },
-         stop("unknown split type"))
-  x1.idx <- attr(x, "assign") %in% c(0, factor.asgn) ## also include intercept
-  names(x1.idx) <- colnames(x)
-  
-  ## x1: factors and (depending on type) interactions of / with factors
-  ## x2: continuous variables
-  list(x1 = x[,  x1.idx, drop=FALSE],
-       x1.idx = x1.idx,
-       x2 = x[, !x1.idx, drop=FALSE])
+# splitFrame <- function(mf, x = model.matrix(mt, mf),
+#                        type = c("f","fi", "fii"))
+# {
+#   mt <- attr(mf, "terms")
+#   type <- match.arg(type)
+#   x <- as.matrix(x)
+#   p <- ncol(x)
+#   
+#   ## --- split categorical and interactions of categorical vars.
+#   ##     from continuous variables
+#   factors <- attr(mt, "factors")
+#   factor.idx <- attr(mt, "dataClasses") == "factor"
+#   if (!any(factor.idx)) ## There are no factors
+#     return(list(x1.idx = rep.int(FALSE, p), x1=matrix(,nrow(x),0L), x2=x))
+#   switch(type,
+#          ## --- include interactions cat * cont in x1:
+#          fi = { factor.asgn <- which(factor.idx %*% factors > 0) },
+#          ## --- include also continuous variables that interact with factors in x1:
+#          ##     make sure to include interactions of continuous variables
+#          ##     interacting with categorical variables, too
+#          fii = { factor.asgn <- numeric(0)
+#          factors.cat <- factors
+#          factors.cat[factors.cat > 0] <- 1L ## fix triple+ interactions
+#          factors.cat[, factor.idx %*% factors == 0] <- 0L
+#          for (i in 1:ncol(factors)) {
+#            comp <- factors[,i] > 0
+#            ## if any of the components is a factor: include in x1 and continue
+#            if (any(factor.idx[comp])) {
+#              factor.asgn <- c(factor.asgn, i)
+#            } else {
+#              ## if there is an interaction of this term with a categorical var.
+#              tmp <- colSums(factors.cat[comp,,drop=FALSE]) >= sum(comp)
+#              if (any(tmp)) {
+#                ## if no other continuous variables are involved
+#                ## include in x1 and continue
+#                ## if (identical(factors[!comp, tmp], factors.cat[!comp, tmp]))
+#                if (!all(colSums(factors[!factor.idx & !comp, tmp, drop=FALSE]) > 0))
+#                  factor.asgn <- c(factor.asgn, i)
+#              }
+#            }
+#          } },
+#          ## --- do not include interactions cat * cont in x1:
+#          f = { factor.asgn <- which(factor.idx %*% factors & !(!factor.idx) %*% factors) },
+#          stop("unknown split type"))
+#   x1.idx <- attr(x, "assign") %in% c(0, factor.asgn) ## also include intercept
+#   names(x1.idx) <- colnames(x)
+#   
+#   ## x1: factors and (depending on type) interactions of / with factors
+#   ## x2: continuous variables
+#   list(x1 = x[,  x1.idx, drop=FALSE],
+#        x1.idx = x1.idx,
+#        x2 = x[, !x1.idx, drop=FALSE])
+# }
+
+
+
+lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
+                            tuning.psi = 3.4434, # 85% efficiency
+                            max.it = 500, refine.tol = 1e-7, rel.tol = 1e-7,
+                            solve.tol = 1e-7, trace.lev = 0, mts = 1000,
+                            compute.rd = FALSE, psi = 'bisquare',
+                            split.type = "f",
+                            cov = FALSE, method='MM', subsampling='simple',
+                            # pyinit control 
+                            prosac = 0.5, clean.method = 'threshold', 
+                            C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
+                            mscale.maxit = 200, mscale.tol = 1e-08, 
+                            mscale.rho.fun = 'bisquare',
+                            ...) {
+  if (missing(max.it)) max.it <- 500
+  if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
+  if(!missing(psi)) psi <- .regularize.Mpsi(psi)
+  c(list(seed = as.integer(seed), psi=psi,
+         tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
+         max.it=max.it, 
+         refine.tol=refine.tol,
+         rel.tol=rel.tol, solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
+         compute.rd=compute.rd, 
+         cov=cov, split.type = match.arg(split.type), method=method,  
+         subsampling=subsampling,
+         prosac=prosac, clean.method=clean.method, C.res=C.res,
+         prop=prop, py.nit=py.nit, en.tol=en.tol, mscale.maxit=mscale.maxit,
+         mscale.tol=mscale.tol, mscale.rho.fun='bisquare', 
+         list(...)))
 }
 
-
-
- 
  
