@@ -59,6 +59,8 @@ X <- a$x2
 y <- co2$Y
 # I think we need to remove the intercept from Z?
 Z <- Z[, -1]
-smpy.victor <- SM_PY(y=y, X=X, Z=Z, intercept=TRUE)
+(smpy.victor <- SM_PY(y=y, X=X, Z=Z, intercept=TRUE))
+# (Intercept)   XXsalaryP  XXfatherWc   XXsstatus XXteacherSc XXmotherLev     XXeducB     XXeducC 
+# 30.52589694 -1.74676055  0.09130605  0.66585957  1.20644662 -4.25507104 -0.50330768 -0.30525631 
 
 

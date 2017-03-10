@@ -13,19 +13,26 @@
 ## M estimator, and finally report the Distance Constrained 
 ## Maximum Likelihood one (DCML)
 ## 
-## (We made the default convergence settings for the S less strict)
+## For continuous-categorical explanatory variables:
+## the estimator is an MS-estimator computed with 
+## Pena-Yohai candidates (default) or SubSampling candidates
+## (we use the Fast-S algorithm), then we iterate an
+## M estimator, and finally report the Distance Constrained 
+## Maximum Likelihood one (DCML)
+## 
+## We also made the default convergence settings for the S less strict
 lmrob2 <-
   function(formula, data, subset, weights, na.action, 
            model = TRUE, x = !control$compute.rd, y = FALSE,
            singular.ok = TRUE, contrasts = NULL, offset = NULL,
-           control = NULL)
+           control = lmrob2.control(), candidates='PY')
   {
     ## candidates = 'PY' or 'SS', type of candidates for S-estimator
     ## to avoid problems with setting argument
     ## call lmrob.control here either with or without method arg.
-    if (missing(control)) {
-      control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434) # new defaults
-    } 
+    # if (missing(control)) {
+    #   control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434) # new defaults
+    # } 
     ret.x <- x
     ret.y <- y
     cl <- match.call()
@@ -173,7 +180,29 @@ lmrob2 <-
           #   control$cov <- ".vcov.w"
         # }
         # print('About to compute MMPY')
-        z <- MMPY(X=x, y=y, control=control, mf=mf)
+        # Check if there are factors
+        if( control$method=="SM" ) {
+          split <- splitFrame(mf, x, control$split.type)
+          if (ncol(split$x1) == 0) {
+            control$method <- 'MM'
+            warning("No categorical variables found in model. Reverting to an MM-estimator.")
+          }
+        }
+        if( control$method=="SM" ) {
+          if( control$candidates=='PY' ) {
+            z <- SMPY(mf=mf, y=y, control=control, split=split)
+          } else {
+            init <- lmrob.M.S(x, y, control, mf) 
+            z <- lmrob.fit(x, y, control, init=init, mf = mf)
+          }
+        } else {
+          if( control$candidates=='PY' ) {
+            z <- MMPY(X=x, y=y, control=control, mf=mf)
+          } else { 
+            init <- lmrob.S(x, y, control, mf=mf) # candidates
+            z <- lmrob.fit(x, y, control, init=init, mf = mf)
+          }
+        }
         # print('About to compute M step')
         # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
         # if(is.character(ini) && !grepl(paste0("^", ini), control$method))

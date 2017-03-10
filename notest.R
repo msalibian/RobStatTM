@@ -2,6 +2,7 @@
 
 # R CMD INSTALL --preclean --clean robustbroli 
 
+rm(list=ls())
 
 # library(robustbroli)
 library(robustbase)
@@ -35,14 +36,20 @@ all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
 
 
 
+# With factors!
 
-# m2 <- lmrob(Y ~ ., data=coleman)
-# S.init <- list(coef=coef(m2$init), scale=m2$scale)
-# m2 <- lmrob(Y ~ ., data=coleman, init=S.init, control=lmrob.control(trace.lev=1))
-# X <- model.matrix(Y ~ ., data=coleman)
-# MMPY(X=X, y=coleman$Y, intercept=FALSE)
+co2 <- coleman
+set.seed(123)
+co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
 
-# # With factors!
+# Matias' version of SM+PY
+(m1 <- lmrob2(Y ~ ., control=lmrob2.control(method='SM'), data=co2))$coef
+(m0 <- lmrob(Y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=co2))$coef
+(m0 <- lmrob(Y ~ ., control=lmrob.control(tuning.psi=3.4434), data=co2))$coef
+
+
+
+
 # co2 <- coleman
 # set.seed(123)
 # co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])

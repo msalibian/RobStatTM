@@ -1,8 +1,9 @@
 
-require(lmrob)
-require(penseinit)
+
+require(robustbase) # require(lmrob)
+require(pyinit) # require(penseinit)
 require(quantreg)
- 
+
 
 mscale=function(u, ep,delta)
 #M scaleof a sample u  
@@ -52,7 +53,7 @@ gg
 }
         
  MMPY=function(X,y,  intercept=TRUE)
-#Compute an MM-estimator taking as initial Peña Yohai
+#Compute an MM-estimator taking as initial Pe?a Yohai
 #INPUT
 #X nxp matrix, where n is the number of observations and p the number of  columns, the 1's of the intercept are not included
 #y vector of dimension  n with the responses

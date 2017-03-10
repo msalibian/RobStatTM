@@ -214,15 +214,17 @@ out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
 out
 }
 
-SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)) { # y, X, Z, intercept=TRUE) {
+SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434), split) { # y, X, Z, intercept=TRUE) {
   # 
   #   control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
   #   mf <- model.frame(Y ~ . , data=co2)
   # y <- co2$Y
   int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
-  a <- splitFrame(mf, type='f') # type = c("f","fi", "fii"))
-  Zorig <- Z <- a$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
-  X <- a$x2
+  if(missing(split)) {
+  split <- splitFrame(mf, type=control$split.type) # type = c("f","fi", "fii"))
+  }
+  Zorig <- Z <- split$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
+  X <- split$x2
   if(int.present) Z <- Zorig[, -1]
   n <- nrow(X)
   q <- ncol(Z)
@@ -274,7 +276,7 @@ SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tu
   # # lmrob() does the above when is.list(init)==TRUE, in particular:
   #
   XX <- model.matrix(attr(mf, 'terms'), mf)
-  stopifnot(ncol(XX)==nc)
+  # stopifnot(ncol(XX)==nc)
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
   return(outlmrob) 
 }
@@ -288,45 +290,51 @@ old.SMPY=function(y,X,Z, intercept=TRUE)
    #OUTPUT
    #out_lmrob output of lmrob take as initial a S-M estimator for mixed models computed with Pe?a Yohai
  {
-   cont1 <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
-   n=nrow(X)
-   q=ncol(Z)
-   p=ncol(X)
-   hh1=1+intercept
-   hh2=p+intercept
-   hh3=q+intercept
-   gamma=matrix(0, (q+intercept),p)
-   #Eliminate Z from X by L1 regression , obtaining a matrix X1
-   for( i in 1:p)
-   {gamma[,i]=rq(X[,i]~Z)$coeff}
-   X1=X-Z%*%gamma[hh1:hh3,]
-   # We compute an MMestimator  ny lmrob using as covariables X1 as initial Pe?a Yohai
-   dee=.5*(1-((p+1)/n))
-   out= pyinit(intercept=intercept,X=X1, y=y, deltaesc=dee, cc.scale=1.547, prosac=.5,clean.method="threshold", C.res = 2, prop=.2, py.nit = 20, en.tol=1e-5)
-   betapy=out$initCoef[,1]
-   sspy=out$objF[1]
-   uu=list(coeff=betapy,scale=sspy)
-   out0=lmrob(y1~X1, control=cont1,init=uu) 
-   beta=out0$coeff
-   # after eliminating the influence of X1 we make an L1 regression using as covariables Z
-   y1=y-X1%*%beta[hh1:hh2]
-   fi=rq(y1~Z)$coeff
-   # retransform the coefficients to the original matrices X and Z
-   oo=NULL
-   if(intercept==TRUE)
-     oo=fi[1]
-   tt=gamma[hh1:hh3,]
-   if(p==1)
-     tt=matrix(tt,q,p)
-   beta00=c(oo,beta[hh1:hh2],fi[hh1:hh3]-  tt%*%beta[hh1:hh2])
-   res=y1-fi[1]-Z%*%fi[hh1:hh3]
-   dee=.5*(1-((p+q+intercept)/n))
-   ss=mscale(res,.0001,dee)
-   uu=list(coeff=beta00,scale=ss)
-   XX=cbind(X,Z)
-   #Compute the MMestimator using lmrob
-   out_lmrob=lmrob(y~XX,control=cont1,init=uu)$coeff
-   out_lmrob  
+    cont1=lmrob.control(tuning.psi=3.44) 
+    n=nrow(X)
+    q=ncol(Z)
+    p=ncol(X)
+    hh1=1+intercept
+    hh2=p+intercept
+    hh3=q+intercept
+    gamma=matrix(0, (q+intercept),p)
+    
+    
+    for( i in 1:p)
+    {gamma[,i]=rq(X[,i]~Z)$coeff}
+    X1=X-Z%*%gamma[hh1:hh3,]
+    #aa=c(dim(Z),dim(X),dim(X1),dim(y))
+    
+    
+    dee=.5*(1-((p+1)/n))
+    out= pyinit(intercept=intercept,X=X1, y=y, deltaesc=dee, cc.scale=1.547, prosac=.5,clean.method="threshold", C.res = 2, prop=.2, py.nit = 20, en.tol=1e-5)
+    betapy=out$initCoef[,1]
+    sspy=out$objF[1]
+    uu=list(coeff=betapy,scale=sspy)
+    out0=lmrob(y~X1, control=cont1,init=uu) 
+    beta=out0$coeff
+    
+    y1=y-X1%*%beta[hh1:hh2]
+    
+    
+    fi=rq(y1~Z)$coeff
+    oo=NULL
+    if(intercept==TRUE)
+      oo=fi[1]
+    #print(length(beta))
+    #print(dim(gamma[hh1:hh3,]))
+    tt=gamma[hh1:hh3,]
+    if(p==1)
+      tt=matrix(tt,q,p)
+    beta00=c(oo,beta[hh1:hh2],fi[hh1:hh3]-  tt%*%beta[hh1:hh2])
+    res=y1-fi[1]-Z%*%fi[hh1:hh3]
+    res=as.vector(res)
+    dee=.5*(1-((p+q+intercept)/n))
+    ss=mscale(res,.0001,dee)
+    uu=list(coeff=beta00,scale=ss)
+    XX=cbind(X,Z)
+    beta0=lmrob(y~XX,control=cont1,init=uu)$coeff
+    beta0
  }
  
 
@@ -385,7 +393,6 @@ old.SMPY=function(y,X,Z, intercept=TRUE)
 # }
 
 
-
 lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
                             tuning.psi = 3.4434, # 85% efficiency
                             max.it = 500, refine.tol = 1e-7, rel.tol = 1e-7,
@@ -393,12 +400,15 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
                             compute.rd = FALSE, psi = 'bisquare',
                             split.type = "f",
                             cov = FALSE, method='MM', subsampling='simple',
+                            candidates = 'PY', 
                             # pyinit control 
                             prosac = 0.5, clean.method = 'threshold', 
                             C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
                             mscale.maxit = 200, mscale.tol = 1e-08, 
                             mscale.rho.fun = 'bisquare',
                             ...) {
+  # parameters for lmrob2, including the initial Pen~a-Yohai
+  # method == "SM" is for categorical explanatory variables
   if (missing(max.it)) max.it <- 500
   if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
   if(!missing(psi)) psi <- .regularize.Mpsi(psi)
@@ -407,9 +417,10 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
          max.it=max.it, 
          refine.tol=refine.tol,
          rel.tol=rel.tol, solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
-         compute.rd=compute.rd, 
+         compute.rd=compute.rd, split.type=split.type, 
          cov=cov, split.type = match.arg(split.type), method=method,  
          subsampling=subsampling,
+         candidates=candidates, 
          prosac=prosac, clean.method=clean.method, C.res=C.res,
          prop=prop, py.nit=py.nit, en.tol=en.tol, mscale.maxit=mscale.maxit,
          mscale.tol=mscale.tol, mscale.rho.fun='bisquare', 
