@@ -36,16 +36,20 @@ set.seed(123)
 
 
 ## Default for a very long time:
-m2 <- lmrob2(Y ~ ., data=coleman)
-m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates="SS"), data=coleman)
+m2 <- lmrob2(Y ~ ., data=coleman) # MMPY
+m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates="SS", initial='S'), data=coleman)
 m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
-# names(m2$coef) <- names(m2$coefficients) <- names(coef(m1))
+c(m0$scale, m1$scale, m2$scale)
 all.equal(coef(m1), coef(m0), check.attributes=FALSE)
 all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
 
 ## Default for a very long time:
-m1 <- lmrob2(Y ~ . - 1, control=lmrob2.control(candidates="SS"), data=coleman)
-m0 <- lmrob(Y ~ . -1, data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
+m2 <- lmrob2(Y ~ . - 1 , data=coleman) # MMPY
+m1 <- lmrob2(Y ~ . - 1 , control=lmrob2.control(candidates="SS", initial='S'), data=coleman)
+m0 <- lmrob(Y ~ . - 1 , data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
+c(m0$scale, m1$scale, m2$scale)
+all.equal(coef(m1), coef(m0), check.attributes=FALSE)
+all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
 
 
 # With factors!
@@ -55,13 +59,34 @@ set.seed(123)
 co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
 
 # Matias' version of SM+PY
-(m1 <- lmrob2(Y ~ ., control=lmrob2.control(initial='SM'), data=co2))$coef
+(m2 <- lmrob2(Y ~ ., control=lmrob2.control(candidates='PY', initial='SM'), data=co2))$coef
+(m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates='SS', initial='SM'), data=co2))$coef
 (m0 <- lmrob(Y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=co2))$coef
-c(m1$scale, m0$scale)
+c(m0$scale, m1$scale, m2$scale)
 
-(m1 <- lmrob2(Y ~ . , control=lmrob2.control(initial='S', candidates='SS', prosac=.1), data=co2))$coef
-(m0 <- lmrob(Y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), data=co2))$coef
-c(m1$scale, m0$scale)
+(m2 <- lmrob2(Y ~ .-1, control=lmrob2.control(candidates='PY', initial='SM'), data=co2))$coef
+(m1 <- lmrob2(Y ~ .-1, control=lmrob2.control(candidates='SS', initial='SM'), data=co2))$coef
+(m0 <- lmrob(Y ~ .-1, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=co2))$coef
+c(m0$scale, m1$scale, m2$scale)
+
+rm(list=ls())
+library(robustbase)
+library(pyinit)
+library(quantreg)
+data(coleman)
+co2 <- coleman
+set.seed(123)
+co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
+
+source('R/DCML_FINAL.R')
+mf <- model.frame(Y ~ . -1, data=co2)
+a <- splitFrame(mf, type='f') 
+Z <- a$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1
+X <- a$x2
+y <- co2$Y
+(smpy.victor <- SM_PY(y=y, X=X, Z=Z, intercept=TRUE))
+SMPY(mf=mf, y=y, split=a)
+
 
 
 

@@ -185,6 +185,7 @@ lmrob2 <-
           split <- splitFrame(mf, x, control$split.type)
           if (ncol(split$x1) == 0) {
             control$method <- 'MM'
+            control$initial <- 'S'
             warning("No categorical variables found in model. Reverting to an MM-estimator.")
           }
         }
@@ -193,6 +194,8 @@ lmrob2 <-
             z <- SMPY(mf=mf, y=y, control=control, split=split)
           } else {
             init <- lmrob.M.S(x, y, control, mf) 
+            control$method <- 'M' 
+            control$cov <- ".vcov.w"
             z <- lmrob.fit(x, y, control, init=init, mf = mf)
           }
         } else {
@@ -200,6 +203,8 @@ lmrob2 <-
             z <- MMPY(X=x, y=y, control=control, mf=mf)
           } else { 
             init <- lmrob.S(x, y, control, mf=mf) # candidates
+            control$method <- 'M' 
+            control$cov <- ".vcov.avar1"
             z <- lmrob.fit(x, y, control, init=init, mf = mf)
           }
         }
