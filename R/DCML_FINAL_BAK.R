@@ -1,6 +1,6 @@
 
-require(lmrob)
-require(penseinit)
+require(robustbase) # require(lmrob)
+require(pyinit) # require(penseinit)
 require(quantreg)
  
 
@@ -52,7 +52,7 @@ gg
 }
         
  MMPY=function(X,y,  intercept=TRUE)
-#Compute an MM-estimator taking as initial Peña Yohai
+#Compute an MM-estimator taking as initial Pe?a Yohai
 #INPUT
 #X nxp matrix, where n is the number of observations and p the number of  columns, the 1's of the intercept are not included
 #y vector of dimension  n with the responses
@@ -122,68 +122,56 @@ sigma=mscale(resid, .00001,dee)
 out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
 out
 }
-SM_PY= function(y,X,Z, intercept=TRUE)
 
+ SM_PY=function(y,X,Z, intercept=TRUE)
+#old penayohai2 Compute an MM-estimator for mixed model using lmrob and taking as initial an SM estimator based on Pe?a-Yohai
+#INPUT
+#y response vector
+#X matrix of continuous covariables
+#Z matrix of  qualitative covariables
+#OUTPUT
+#out_lmrob output of lmrob take as initial a S-M estimator for mixed models computed with Pe?a Yohai
 {
-cont1=lmrob.control(tuning.psi=3.44) 
 n=nrow(X)
 q=ncol(Z)
 p=ncol(X)
 hh1=1+intercept
 hh2=p+intercept
 hh3=q+intercept
- gamma=matrix(0, (q+intercept),p)
- 
-  
+gamma=matrix(0, (q+intercept),p)
+#Eliminate Z from X by L1 regression , obtaining a matrix X1
 for( i in 1:p)
-{gamma[,i]=rq(X[,i]~Z)$coeff}
+    {gamma[,i]=rq(X[,i]~Z)$coeff}
 X1=X-Z%*%gamma[hh1:hh3,]
-#aa=c(dim(Z),dim(X),dim(X1),dim(y))
- 
-
+# We compute an MMestimator  ny lmrob using as covariables X1 as initial Pe?a Yohai
 dee=.5*(1-((p+1)/n))
 out= pyinit(intercept=intercept,X=X1, y=y, deltaesc=dee, cc.scale=1.547, prosac=.5,clean.method="threshold", C.res = 2, prop=.2, py.nit = 20, en.tol=1e-5)
-  betapy=out$initCoef[,1]
-     sspy=out$objF[1]
-     uu=list(coeff=betapy,scale=sspy)
-     out0=lmrob(y~X1, control=cont1,init=uu) 
-     beta=out0$coeff
-
+betapy=out$initCoef[,1]
+sspy=out$objF[1]
+uu=list(coeff=betapy,scale=sspy)
+out0=lmrob(y1~X1, control=cont1,init=uu) 
+beta=out0$coeff
+# after eliminating the influence of X1 we make an L1 regression using as covariables Z
 y1=y-X1%*%beta[hh1:hh2]
-
-
 fi=rq(y1~Z)$coeff
+# retransform the coefficients to the original matrices X and Z
 oo=NULL
 if(intercept==TRUE)
 oo=fi[1]
-#print(length(beta))
-#print(dim(gamma[hh1:hh3,]))
 tt=gamma[hh1:hh3,]
 if(p==1)
 tt=matrix(tt,q,p)
 beta00=c(oo,beta[hh1:hh2],fi[hh1:hh3]-  tt%*%beta[hh1:hh2])
 res=y1-fi[1]-Z%*%fi[hh1:hh3]
-res=as.vector(res)
- dee=.5*(1-((p+q+intercept)/n))
+dee=.5*(1-((p+q+intercept)/n))
 ss=mscale(res,.0001,dee)
 uu=list(coeff=beta00,scale=ss)
 XX=cbind(X,Z)
-beta0=lmrob(y~XX,control=cont1,init=uu)$coeff
-beta0
+#Compute the MMestimator using lmrob
+out_lmrob=lmrob(y~XX,control=cont1,init=uu)$coeff
+out_lmrob  
 }
 
-
-rho.bi=function(x,k)
-{
-# bicuadratic rho function
-n=length(x)
-dif=(abs(x)-k<0)
-ro1=vector("numeric",n)
-ro1[dif]=(x[dif]^2)/2-(x[dif]^4)/(2*(k^2))+(x[dif]^6)/(6*(k^4))
-ro1[!dif]=k^2/6
-ro1=ro1*6/(k^2)
-ro1
-}
 
 
 
