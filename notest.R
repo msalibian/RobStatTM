@@ -14,26 +14,38 @@ data(coleman)
 set.seed(123)
 # source('R/lmrob2.R')
 
-## Default for a very long time:
-m1 <- lmrob2(Y ~ ., data=coleman)
-X <- model.matrix(Y ~ ., data=coleman)
-m2 <- old.MMPY(X=X, y=coleman$Y, intercept=FALSE)
-# names(m2$coef) <- names(m2$coefficients) <- names(coef(m1))
-all.equal(coef(m1), coef(m2), check.attributes=FALSE)
-all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
-# dee <- .5*(1-(ncol(X)/nrow(X)))
-# m3 <- lmrob(Y ~ ., data=coleman, 
-#             control=lmrob.control(tuning.chi = 1.5477, bb = .5, tuning.psi = 3.4434))
-# all.equal(coef(m1), coef(m3), check.attributes=FALSE)
+# ## Default for a very long time:
+# m1 <- lmrob2(Y ~ ., data=coleman)
+# X <- model.matrix(Y ~ ., data=coleman)
+# m2 <- old.MMPY(X=X, y=coleman$Y, intercept=FALSE)
+# # names(m2$coef) <- names(m2$coefficients) <- names(coef(m1))
+# all.equal(coef(m1), coef(m2), check.attributes=FALSE)
+# all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
+# # dee <- .5*(1-(ncol(X)/nrow(X)))
+# # m3 <- lmrob(Y ~ ., data=coleman, 
+# #             control=lmrob.control(tuning.chi = 1.5477, bb = .5, tuning.psi = 3.4434))
+# # all.equal(coef(m1), coef(m3), check.attributes=FALSE)
+# 
+# ## Default for a very long time:
+# m1 <- lmrob2(Y ~ .-1, data=coleman)
+# X <- model.matrix(Y ~ .-1, data=coleman)
+# m2 <- old.MMPY(X=X, y=coleman$Y, intercept=FALSE)
+# # names(m2$coef) <- names(m2$coefficients) <- names(coef(m1))
+# all.equal(coef(m1), coef(m2), check.attributes=FALSE)
+# all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
+
 
 ## Default for a very long time:
-m1 <- lmrob2(Y ~ .-1, data=coleman)
-X <- model.matrix(Y ~ .-1, data=coleman)
-m2 <- old.MMPY(X=X, y=coleman$Y, intercept=FALSE)
+m2 <- lmrob2(Y ~ ., data=coleman)
+m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates="SS"), data=coleman)
+m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
 # names(m2$coef) <- names(m2$coefficients) <- names(coef(m1))
-all.equal(coef(m1), coef(m2), check.attributes=FALSE)
-all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
+all.equal(coef(m1), coef(m0), check.attributes=FALSE)
+all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
 
+## Default for a very long time:
+m1 <- lmrob2(Y ~ . - 1, control=lmrob2.control(candidates="SS"), data=coleman)
+m0 <- lmrob(Y ~ . -1, data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
 
 
 # With factors!
@@ -43,9 +55,13 @@ set.seed(123)
 co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
 
 # Matias' version of SM+PY
-(m1 <- lmrob2(Y ~ ., control=lmrob2.control(method='SM'), data=co2))$coef
+(m1 <- lmrob2(Y ~ ., control=lmrob2.control(initial='SM'), data=co2))$coef
 (m0 <- lmrob(Y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=co2))$coef
-(m0 <- lmrob(Y ~ ., control=lmrob.control(tuning.psi=3.4434), data=co2))$coef
+c(m1$scale, m0$scale)
+
+(m1 <- lmrob2(Y ~ . , control=lmrob2.control(initial='S', candidates='SS', prosac=.1), data=co2))$coef
+(m0 <- lmrob(Y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), data=co2))$coef
+c(m1$scale, m0$scale)
 
 
 

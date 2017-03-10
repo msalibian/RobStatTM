@@ -392,39 +392,3 @@ old.SMPY=function(y,X,Z, intercept=TRUE)
 #        x2 = x[, !x1.idx, drop=FALSE])
 # }
 
-
-lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
-                            tuning.psi = 3.4434, # 85% efficiency
-                            max.it = 500, refine.tol = 1e-7, rel.tol = 1e-7,
-                            solve.tol = 1e-7, trace.lev = 0, mts = 1000,
-                            compute.rd = FALSE, psi = 'bisquare',
-                            split.type = "f",
-                            cov = FALSE, method='MM', subsampling='simple',
-                            candidates = 'PY', 
-                            # pyinit control 
-                            prosac = 0.5, clean.method = 'threshold', 
-                            C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
-                            mscale.maxit = 200, mscale.tol = 1e-08, 
-                            mscale.rho.fun = 'bisquare',
-                            ...) {
-  # parameters for lmrob2, including the initial Pen~a-Yohai
-  # method == "SM" is for categorical explanatory variables
-  if (missing(max.it)) max.it <- 500
-  if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
-  if(!missing(psi)) psi <- .regularize.Mpsi(psi)
-  c(list(seed = as.integer(seed), psi=psi,
-         tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
-         max.it=max.it, 
-         refine.tol=refine.tol,
-         rel.tol=rel.tol, solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
-         compute.rd=compute.rd, split.type=split.type, 
-         cov=cov, split.type = match.arg(split.type), method=method,  
-         subsampling=subsampling,
-         candidates=candidates, 
-         prosac=prosac, clean.method=clean.method, C.res=C.res,
-         prop=prop, py.nit=py.nit, en.tol=en.tol, mscale.maxit=mscale.maxit,
-         mscale.tol=mscale.tol, mscale.rho.fun='bisquare', 
-         list(...)))
-}
-
- 
