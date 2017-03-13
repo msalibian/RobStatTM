@@ -123,8 +123,6 @@ sigma=mscale(resid, .00001,dee)
 out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
 out
 }
-
-
 SM_PY= function(y,X,Z, intercept=TRUE)
 
 {
@@ -137,60 +135,43 @@ hh2=p+intercept
 hh3=q+intercept
  gamma=matrix(0, (q+intercept),p)
  
- 
+  
 for( i in 1:p)
-{
-if(intercept==TRUE)
-gamma[,i]=rq(X[,i]~Z)$coeff
-if(intercept==FALSE)
-gamma[,i]=rq(X[,i]~Z-1)$coeff}
+{gamma[,i]=rq(X[,i]~Z)$coeff}
 X1=X-Z%*%gamma[hh1:hh3,]
 #aa=c(dim(Z),dim(X),dim(X1),dim(y))
  
-p1=p+intercept
-dee=.5*(1-((p+intercept)/n))
+
+dee=.5*(1-((p+1)/n))
 out= pyinit(intercept=intercept,X=X1, y=y, deltaesc=dee, cc.scale=1.547, prosac=.5,clean.method="threshold", C.res = 2, prop=.2, py.nit = 20, en.tol=1e-5)
   betapy=out$initCoef[,1]
      sspy=out$objF[1]
      uu=list(coeff=betapy,scale=sspy)
-if(intercept==TRUE)
      out0=lmrob(y~X1, control=cont1,init=uu) 
-if(intercept==FALSE)
-     out0=lmrob(y~X1-1, control=cont1,init=uu) 
-
      beta=out0$coeff
 
 y1=y-X1%*%beta[hh1:hh2]
+
+
+fi=rq(y1~Z)$coeff
 oo=NULL
 if(intercept==TRUE)
-{fi=rq(y1~Z)$coeff
-oo=fi[1]}
-if(intercept==FALSE)
-fi=rq(y1~Z-1)$coeff
- 
+oo=fi[1]
 #print(length(beta))
 #print(dim(gamma[hh1:hh3,]))
 tt=gamma[hh1:hh3,]
 if(p==1)
 tt=matrix(tt,q,p)
 beta00=c(oo,beta[hh1:hh2],fi[hh1:hh3]-  tt%*%beta[hh1:hh2])
-if(intercept==TRUE)
 res=y1-fi[1]-Z%*%fi[hh1:hh3]
-if(intercept==FALSE)
-res=y1-Z%*%fi[hh1:hh3]
-
-
 res=as.vector(res)
  dee=.5*(1-((p+q+intercept)/n))
 ss=mscale(res,.0001,dee)
 uu=list(coeff=beta00,scale=ss)
 XX=cbind(X,Z)
-if(intercept==TRUE)
 beta0=lmrob(y~XX,control=cont1,init=uu)$coeff
-if(intercept==FALSE)
-beta0=lmrob(y~XX-1,control=cont1,init=uu) 
-beta0}
-		
+beta0
+}
 
 
 rho.bi=function(x,k)
