@@ -269,6 +269,7 @@ SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tu
   # XX <- cbind(X,Z)
   nc <- ncol(X) + ncol(Z) + if(int.present) 1 else 0
   dee <- .5*(1-(nc/n))
+  print(summary(res))
   ss <- mscale(u=res, tol=1e-5, delta=dee, tuning.chi=control$tuning.chi)
   uu <- list(coef=beta00, scale=ss)
   #Compute the MMestimator using lmrob
@@ -280,6 +281,9 @@ SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tu
   #
   XX <- model.matrix(attr(mf, 'terms'), mf)
   # stopifnot(ncol(XX)==nc)
+  # print(uu)
+  # uu$control <- control
+  # uu$control$method <- 'S'
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
   return(outlmrob) 
 }

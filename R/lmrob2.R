@@ -191,8 +191,10 @@ lmrob2 <-
         }
         if( control$initial=="SM" ) {
           if( control$candidates=='PY' ) {
+            print('about to call SMPY')
             z <- SMPY(mf=mf, y=y, control=control, split=split)
           } else {
+            print('about to call lmrob.M.S')
             init <- lmrob.M.S(x, y, control, mf) 
             control$method <- 'M' 
             control$cov <- ".vcov.w"

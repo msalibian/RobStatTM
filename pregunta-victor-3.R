@@ -14,14 +14,14 @@ n <- nrow(co2)
 set.seed(123)
 (m2 <- lmrob2(Y ~ .-1, control=lmrob2.control(candidates='PY', initial='SM'), data=co2))$coef
 dee <- .5*(1-(length(m2$coef)/n))
-cc <-  find.tuning.chi(dee)
+cc <-  find.tuning.chi(.5) # find.tuning.chi(dee)
 mscale(u=m2$resid, tol=1e-7, delta=dee, tuning.chi = cc)
 m2$scale
 # m2$resid
 set.seed(123)
 (m1 <- lmrob2(Y ~ .-1, control=lmrob2.control(candidates='SS', initial='SM'), data=co2))$coef
-mscale(u=m1$resid, tol=1e-7, delta=dee, tuning.chi = cc)
 m1$scale
+mscale(u=m1$resid, tol=1e-7, delta=dee, tuning.chi = cc)
 # m1$resid 
 set.seed(123)
 (m0 <- lmrob(Y ~ .-1, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=co2))$coef
