@@ -194,8 +194,8 @@ res=y1-fi[1]-Z%*%fi[hh1:hh3]
 if(intercept==FALSE)
 res=y1-Z%*%fi[hh1:hh3]
 
-
 res=as.vector(res)
+print(summary(res))
  dee=.5*(1-((p+q+intercept)/n))
 ss=mscale(res,.0001,dee)
 uu=list(coeff=beta00,scale=ss)
