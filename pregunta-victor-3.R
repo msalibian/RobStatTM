@@ -2,8 +2,8 @@ rm(list=ls())
 library(robustbase)
 library(pyinit)
 library(quantreg)
-source('R/lmrob2.R')
-source('R/DCML.R')
+source('lmrob2.R')
+source('DCML.R')
 data(coleman)
 # Create simple data set with factors
 co2 <- coleman
@@ -38,7 +38,7 @@ co2 <- coleman
 set.seed(123)
 co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
 
-source('R/DCML_FINAL.R')
+source('DCML_FINAL.R')
 mf <- model.frame(Y ~ . -1, data=co2)
 a <- splitFrame(mf, type='f')
 Z <- a$x1 # x1 = factors, x2 = continuous, if there'
@@ -48,10 +48,13 @@ y <- co2$Y
 (smpy.victor <- SM_PY(y=y, X=X, Z=Z, intercept=FALSE))
 n <- nrow(Z)
 dee <- .5*(1-(length(smpy.victor$coef)/n))
-cc <-  find.tuning.chi(dee)
+cc <-  find.tuning.chi(.5) # find.tuning.chi(dee)
 # smpy.victor
 smpy.victor$scale
-mscale(u=smpy.victor$resid, ep=1e-7, delta=.3)*find.tuning.chi(.5)/cc
+mscale(u=smpy.victor$resid, ep=1e-7, delta=dee)*1.547/find.tuning.chi(dee) 
 mad(smpy.victor$resid)
 
+s <- mscale(u=smpy.victor$resid, ep=1e-7, delta=dee)*1.547/find.tuning.chi(dee) 
+mean(rho(smpy.victor$resid/s, cc=find.tuning.chi(dee)))
+dee
 

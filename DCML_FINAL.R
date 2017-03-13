@@ -21,22 +21,6 @@ s0=s1}
 s0}
 
 
-
-rho <- function(u, cc=1.5477) {
-  w <- as.numeric( abs(u) <= cc )
-  v <- (u^2/(2)*(1-(u^2/(cc^2))+(u^4/(3*cc^4))))*w +(1-w)*(cc^2/6)
-  v <- v*6/cc^2
-  return(v)
-}
-
-rhoint <- function(e)
-  return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
-
-find.tuning.chi <- function(delta, low=.5, upp=10) {
-  return( uniroot( function(e) (rhoint(e)-delta), lower=low, upper=upp)$root )
-}
-
-
 covdcml=function(resLS,res0,C,sig0,t0,p,n)
 ##Computation of the asymptotic covariance matrix of the DCML estimator
 {t0=1-t0
@@ -199,6 +183,7 @@ print(summary(res))
  dee=.5*(1-((p+q+intercept)/n))
 ss=mscale(res,.0001,dee)
 uu=list(coeff=beta00,scale=ss)
+print(uu$coeff)
 XX=cbind(X,Z)
 if(intercept==TRUE)
 beta0=lmrob(y~XX,control=cont1,init=uu)$coeff

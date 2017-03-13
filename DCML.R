@@ -281,7 +281,7 @@ SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tu
   #
   XX <- model.matrix(attr(mf, 'terms'), mf)
   # stopifnot(ncol(XX)==nc)
-  # print(uu)
+  print(uu)
   # uu$control <- control
   # uu$control$method <- 'S'
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
