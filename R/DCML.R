@@ -44,11 +44,14 @@ rho <- function(u, cc=1.5477) {
   return(v)
 }
 
-# rhoint <- function(e)
-#   return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
-# 
-# uniroot( function(e) (rhoint(e)-.5), lower=1, upper=2)$root
-# 
+rhoint <- function(e)
+  return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
+
+
+find.tuning.chi <- function(delta, low=.5, upp=10) {
+  return( uniroot( function(e) (rhoint(e)-delta), lower=low, upper=upp)$root )
+}
+
 
 rhoprime <- function(r, cc) { 
   # bisquare rho' = psi function
