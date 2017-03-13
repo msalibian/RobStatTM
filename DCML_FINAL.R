@@ -186,7 +186,7 @@ uu=list(coeff=beta00,scale=ss)
 print(uu$coeff)
 XX=cbind(X,Z)
 if(intercept==TRUE)
-beta0=lmrob(y~XX,control=cont1,init=uu)$coeff
+beta0=lmrob(y~XX,control=cont1,init=uu) #$coeff
 if(intercept==FALSE)
 beta0=lmrob(y~XX-1,control=cont1,init=uu) 
 beta0}
