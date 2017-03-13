@@ -270,8 +270,10 @@ SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tu
   nc <- ncol(X) + ncol(Z) + if(int.present) 1 else 0
   dee <- .5*(1-(nc/n))
   print(summary(res))
+  print(mad(res))
   ss <- mscale(u=res, tol=1e-5, delta=dee, tuning.chi=control$tuning.chi)
   uu <- list(coef=beta00, scale=ss)
+  print(ss)
   #Compute the MMestimator using lmrob
   # control <- lmrob.control(tuning.chi = 1.5477, bb = dee, tuning.psi = 3.4434)
   # outlmrob <- lmrob(y~XX,control=control,init=uu)$coef
