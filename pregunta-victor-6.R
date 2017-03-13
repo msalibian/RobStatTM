@@ -43,5 +43,7 @@ n <- nrow(co2)
 set.seed(123)
 # PY initial
 m2 <- lmrob2(Y ~ ., control=lmrob2.control(candidates='PY', initial='SM'), data=co2)
+m2$scale
 # subsampling initial
 (m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates='SS', initial='SM'), data=co2))$init$coef
+m1$scale
