@@ -217,22 +217,21 @@ out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
 out
 }
 
-SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434), split) { # y, X, Z, intercept=TRUE) {
-  # 
-  #   control <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
-  #   mf <- model.frame(Y ~ . , data=co2)
-  # y <- co2$Y
+SMPY <- function(mf, y, control, split, corr.b=TRUE) { 
+  if(missing(control)) 
+    control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
   int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
   if(missing(split)) {
-  split <- splitFrame(mf, type=control$split.type) # type = c("f","fi", "fii"))
+    split <- splitFrame(mf, type=control$split.type) 
   }
-  Zorig <- Z <- split$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
+  Z <- split$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
   X <- split$x2
-  if(int.present) Z <- Zorig[, -1]
+  if(int.present) Z <- Z[, -1]
   n <- nrow(X)
   q <- ncol(Z)
   p <- ncol(X)
-  gamma <- matrix(0, q, p)
+  dee <- control$bb
+  gamma <- matrix(NA, q, p)
   #Eliminate Z from X by L1 regression , obtaining a matrix X1
   oldw <- options()$warn
   options(warn=-1)
@@ -240,16 +239,25 @@ SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tu
   options(warn=oldw)
   X1 <- X - Z %*% gamma
   pp <- p + if(int.present) 1 else 0
-  dee <- .5*(1-(pp/n))
+  if(corr.b) dee <- dee*(1-(pp/n))
   initial <- pyinit(intercept=int.present, X=X1, y=y, 
                     deltaesc=dee, cc.scale=control$tuning.chi, 
-  prosac=control$prosac, clean.method=control$clean.method, 
-  C.res = control$C.res, prop=control$prop, 
-  py.nit = control$py.nit, en.tol=control$en.tol, 
-  mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
-  mscale.rho.fun=control$mscale.rho.fun)
-  betapy <- initial$initCoef[,1]
-  sspy <- initial$objF[1]
+                    prosac=control$prosac, clean.method=control$clean.method, 
+                    C.res = control$C.res, prop=control$prop, 
+                    py.nit = control$py.nit, en.tol=control$en.tol, 
+                    mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
+                    mscale.rho.fun=control$mscale.rho.fun)
+  kk <- dim(initial$initCoef)[2]
+  best.ss <- +Inf
+  for(i in 1:kk) {
+    tmp <- refine.sm(x=X1, y=y, initial.beta=initial$initCoef[,i], 
+                     #initial.scale=initial$objF[1], 
+                     k=500, conv=1, b=dee, cc=control$tuning.chi, step='S')
+    if(tmp$scale.rw < best.ss) {
+      best.ss <- sspy <- tmp$scale.rw # initial$objF[1]
+      betapy <- tmp$beta.rw # initial$initCoef[,1]
+    }
+  }
   uu <- list(coef=betapy, scale=sspy)
   if(int.present) {
     out0 <- lmrob(y~X1, control=control,init=uu) } else {
@@ -268,26 +276,24 @@ SMPY <- function(mf, y, control=lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tu
   res <- as.vector( y1-Z%*%fi )
   # XX <- cbind(X,Z)
   nc <- ncol(X) + ncol(Z) + if(int.present) 1 else 0
-  dee <- .5*(1-(nc/n))
-  print(summary(res))
-  print(mad(res))
-  ss <- mscale(u=res, tol=1e-5, delta=dee, tuning.chi=control$tuning.chi)
-  uu <- list(coef=beta00, scale=ss)
-  print(ss)
-  #Compute the MMestimator using lmrob
-  # control <- lmrob.control(tuning.chi = 1.5477, bb = dee, tuning.psi = 3.4434)
-  # outlmrob <- lmrob(y~XX,control=control,init=uu)$coef
+  dee <- control$bb
+  if(corr.b) dee <- dee * (1-(nc/n))
+  ss <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+  XX <- model.matrix(attr(mf, 'terms'), mf)
+  uu <- list(coef=beta00, scale=ss, residuals=res)
+  # print(uu)
+  # tmp <- refine.sm(x=XX, y=y, initial.beta=beta00,
+  #                   k=500, conv=1, b=dee, cc=control$tuning.chi, step='S')
+  # print(tmp$conver)
+  # uu <- list(coef=as.vector(tmp$beta.rw), scale=tmp$scale.rw)
+  # print(uu)
+  # Compute the MMestimator using lmrob
   control$method <- 'M' 
   control$cov <- ".vcov.w"
-  # # lmrob() does the above when is.list(init)==TRUE, in particular:
+  # lmrob() sets the above when is.list(init)==TRUE
   #
-  XX <- model.matrix(attr(mf, 'terms'), mf)
-  # stopifnot(ncol(XX)==nc)
-  print(uu)
-  # uu$control <- control
-  # uu$control$method <- 'S'
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
-  return(outlmrob) 
+  return(c(outlmrob, init.SMPY=uu)) 
 }
 
 old.SMPY=function(y,X,Z, intercept=TRUE)

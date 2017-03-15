@@ -192,7 +192,7 @@ lmrob2 <-
         if( control$initial=="SM" ) {
           if( control$candidates=='PY' ) {
             # print('about to call SMPY')
-            z <- SMPY(mf=mf, y=y, control=control, split=split)
+            z <- SMPY(mf=mf, y=y, control=control, split=split, corr.b=FALSE)
           } else {
             # print('about to call lmrob.M.S')
             init <- lmrob.M.S(x, y, control, mf) 
@@ -800,12 +800,12 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
                             max.it = 500, refine.tol = 1e-7, rel.tol = 1e-7,
                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
                             compute.rd = FALSE, psi = 'bisquare',
-                            split.type = "f",
+                            split.type = "f", # help(splitFrame, package='robustbase')
                             cov = FALSE, initial='S', method='MM', subsampling='simple',
                             candidates = 'PY', fast.s.large.n = 2000, 
                             groups = 5, n.group = 400, 
                             k.fast.s = 1, best.r.s = 2, k.max = 200, maxit.scale = 200, 
-                            k.m_s = 20, nResample = 500,
+                            k.m_s = 20, nResample = 500, 
                             # pyinit control 
                             prosac = 0.5, clean.method = 'threshold', 
                             C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
