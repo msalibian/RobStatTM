@@ -258,7 +258,7 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   for(i in 1:kk) {
     tmp <- refine.sm(x=Xtmp, y=y, initial.beta=initial$initCoef[,i], 
                      #initial.scale=initial$objF[1], 
-                     k=500, conv=1, b=dee, cc=control$tuning.chi, step='S')
+                     k=control$refine.PY, conv=1, b=dee, cc=control$tuning.chi, step='S')
     if(tmp$scale.rw < best.ss) {
       best.ss <- sspy <- tmp$scale.rw # initial$objF[1]
       betapy <- tmp$beta.rw # initial$initCoef[,1]

@@ -802,7 +802,7 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
                             refine.PY = 100, # no. of steps to refine PY candidates
                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
                             compute.rd = FALSE, psi = 'bisquare',
-                            corr.b = FALSE, # for MMPY and SMPY
+                            corr.b = TRUE, # for MMPY and SMPY
                             split.type = "f", # help(splitFrame, package='robustbase')
                             cov = FALSE, initial='S', method='MM', subsampling='simple',
                             candidates = 'PY', fast.s.large.n = 2000, 
