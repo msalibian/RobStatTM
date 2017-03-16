@@ -12,21 +12,30 @@ source('refineSM.R')
 # co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
 data(coleman)
 co2 <- coleman
-nadd <- 20
+nadd <- 100
 co2 <- rbind(as.matrix(co2), matrix(rnorm(ncol(co2)*nadd), nadd, ncol(co2)))
 co2 <- as.data.frame(co2)
-set.seed(123)
+set.seed(123456)
 co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=3, prob=.3)+1])
 
 # Matias' version of SM+PY
 set.seed(123)
-(m2 <- lmrob2(Y ~ .-1, control=lmrob2.control(candidates='PY', initial='SM'), data=co2))$coef
+(m2 <- lmrob2(Y ~ .-1, control=lmrob2.control(candidates='PY', initial='SM', corr.b=TRUE, refine.PY=500), data=co2))$coef
 set.seed(123)
 (m1 <- lmrob2(Y ~ .-1, control=lmrob2.control(candidates='SS', initial='SM'), data=co2))$coef
-# mean(rho(resid(m1$init)/m1$scale, cc=cc))
-# mean(rho(m2$init.SMPY.residuals/m2$init.SMPY.scale, cc=cc))
 set.seed(123)
 (m0 <- lmrob(Y ~ .-1, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=co2))$coef
+c(m0$scale, m1$scale, m2$scale)
+
+
+# Matias' version of SM+PY
+set.seed(123)
+(m2 <- lmrob2(Y ~ ., control=lmrob2.control(candidates='PY', initial='SM', corr.b=TRUE, refine.PY=500), data=co2))$coef
+set.seed(123)
+(m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates='SS', initial='SM'), data=co2))$coef
+set.seed(123)
+(m0 <- lmrob(Y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=co2))$coef
+c(m0$scale, m1$scale, m2$scale)
 
 
 

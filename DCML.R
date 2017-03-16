@@ -90,7 +90,7 @@ rhoprime2 <- function(r, cc) {
 gg
 }
         
- MMPY <- function(X, y, control, mf) {
+ MMPY <- function(X, y, control, mf, corr.b=control$corr.b) {
    # This function will be called from lmrob, so control will be valid
    # X will already contain a column of ones if needed
    #Compute an MM-estimator taking as initial Pe?a Yohai
@@ -107,7 +107,8 @@ gg
    p <- ncol(X)
    # if(intercept==TRUE )
    # { p=p+1}
-   dee <- .5*(1-(p/n))
+   dee <- control$bb
+   if(corr.b) dee <- dee * (1-(nc/n))
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
                cc.scale=control$tuning.chi, 
                prosac=control$prosac, clean.method=control$clean.method, 
@@ -115,6 +116,7 @@ gg
                py.nit = control$py.nit, en.tol=control$en.tol, 
                mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
                mscale.rho.fun=control$mscale.rho.fun)
+   # refine these PY candidates!
    betapy2 <- a$initCoef[,1]
    sspy2 <- a$objF[1]
    S.init <- list(coef=betapy2, scale=sspy2)
@@ -217,7 +219,7 @@ out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
 out
 }
 
-SMPY <- function(mf, y, control, split, corr.b=TRUE) { 
+SMPY <- function(mf, y, control, split, corr.b=control$corr.b) { 
   if(missing(control)) 
     control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
   int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
@@ -251,8 +253,10 @@ SMPY <- function(mf, y, control, split, corr.b=TRUE) {
   # refine the PY candidates to get something closer to an S-estimator for y ~ X1
   kk <- dim(initial$initCoef)[2]
   best.ss <- +Inf
+  Xtmp <- X1
+  if(int.present) Xtmp <- cbind(rep(1, nrow(Xtmp)), Xtmp)
   for(i in 1:kk) {
-    tmp <- refine.sm(x=X1, y=y, initial.beta=initial$initCoef[,i], 
+    tmp <- refine.sm(x=Xtmp, y=y, initial.beta=initial$initCoef[,i], 
                      #initial.scale=initial$objF[1], 
                      k=500, conv=1, b=dee, cc=control$tuning.chi, step='S')
     if(tmp$scale.rw < best.ss) {
@@ -261,17 +265,17 @@ SMPY <- function(mf, y, control, split, corr.b=TRUE) {
     }
   }
   uu <- list(coef=betapy, scale=sspy)
-  beta <- uu$coef
-  y1 <- as.vector(y - X1 %*% beta)
+  # beta <- uu$coef
+  # y1 <- as.vector(y - X1 %*% beta)
   #
   # Do an M-step starting from this S?
   #
-  # if(int.present) {
-  #   out0 <- lmrob(y~X1, control=control,init=uu) } else {
-  #     out0 <- lmrob(y~X1 - 1, control=control,init=uu)
-  #   }
-  # beta <- out0$coeff
-  # y1 <- resid( out0 )
+  if(int.present) {
+    out0 <- lmrob(y~X1, control=control,init=uu) } else {
+      out0 <- lmrob(y~X1 - 1, control=control,init=uu)
+    }
+  beta <- out0$coeff
+  y1 <- resid( out0 )
   #
   # after eliminating the influence of X1 we make an L1 regression using as covariables Z
   # fit the model I( y1 - X1 %*% hat(beta) ) ~ Z

@@ -192,7 +192,7 @@ lmrob2 <-
         if( control$initial=="SM" ) {
           if( control$candidates=='PY' ) {
             # print('about to call SMPY')
-            z <- SMPY(mf=mf, y=y, control=control, split=split, corr.b=FALSE)
+            z <- SMPY(mf=mf, y=y, control=control, split=split)
           } else {
             # print('about to call lmrob.M.S')
             init <- lmrob.M.S(x, y, control, mf) 
@@ -799,8 +799,10 @@ lmrob2 <-
 lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
                             tuning.psi = 3.4434, # 85% efficiency
                             max.it = 500, refine.tol = 1e-7, rel.tol = 1e-7,
+                            refine.PY = 100, # no. of steps to refine PY candidates
                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
                             compute.rd = FALSE, psi = 'bisquare',
+                            corr.b = FALSE, # for MMPY and SMPY
                             split.type = "f", # help(splitFrame, package='robustbase')
                             cov = FALSE, initial='S', method='MM', subsampling='simple',
                             candidates = 'PY', fast.s.large.n = 2000, 
@@ -821,7 +823,7 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
   c(list(seed = as.integer(seed), psi=psi,
          tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
          max.it=max.it, 
-         refine.tol=refine.tol,
+         refine.tol=refine.tol, corr.b = corr.b, refine.PY = refine.PY, 
          rel.tol=rel.tol, solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
          compute.rd=compute.rd, split.type=split.type, 
          cov=cov, split.type = match.arg(split.type), initial=initial,  
