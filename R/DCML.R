@@ -108,7 +108,7 @@ gg
    # if(intercept==TRUE )
    # { p=p+1}
    dee <- control$bb
-   if(corr.b) dee <- dee * (1-(nc/n))
+   if(corr.b) dee <- dee * (1-(p/n))
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
                cc.scale=control$tuning.chi, 
                prosac=control$prosac, clean.method=control$clean.method, 
@@ -116,11 +116,25 @@ gg
                py.nit = control$py.nit, en.tol=control$en.tol, 
                mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
                mscale.rho.fun=control$mscale.rho.fun)
-   # refine these PY candidates!
-   betapy2 <- a$initCoef[,1]
-   sspy2 <- a$objF[1]
-   S.init <- list(coef=betapy2, scale=sspy2)
-   control$method <- 'M' 
+   # betapy2 <- a$initCoef[,1]
+   # sspy2 <- a$objF[1]
+   # refine the PY candidates to get something closer to an S-estimator for y ~ X1
+   kk <- dim(a$initCoef)[2]
+   best.ss <- +Inf
+   for(i in 1:kk) {
+     tmp <- refine.sm(x=X, y=y, initial.beta=a$initCoef[,i], 
+                      #initial.scale=initial$objF[1], 
+                      k=control$refine.PY, conv=1, b=dee, cc=control$tuning.chi, step='S')
+     if(tmp$scale.rw < best.ss) {
+       best.ss <- tmp$scale.rw # initial$objF[1]
+       betapy <- tmp$beta.rw # initial$initCoef[,1]
+     }
+   }
+   # uu <- list(coef=betapy, scale=best.ss)
+   # betapy2 <- betapy
+   # sspy2 <- best.ss
+   S.init <- list(coef=betapy, scale=best.ss)
+   control$method <- 'M'
    control$cov <- ".vcov.w"
    # # lmrob() does the above when is.list(init)==TRUE, in particular:
    #
@@ -250,7 +264,7 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
                     py.nit = control$py.nit, en.tol=control$en.tol, 
                     mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
                     mscale.rho.fun=control$mscale.rho.fun)
-  # refine the PY candidates to get something closer to an S-estimator for y ~ X1
+  # beta <- uu$coef  # refine the PY candidates to get something closer to an S-estimator for y ~ X1
   kk <- dim(initial$initCoef)[2]
   best.ss <- +Inf
   Xtmp <- X1
@@ -265,7 +279,7 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
     }
   }
   uu <- list(coef=betapy, scale=sspy)
-  # beta <- uu$coef
+
   # y1 <- as.vector(y - X1 %*% beta)
   #
   # Do an M-step starting from this S?

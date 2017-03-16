@@ -10,6 +10,8 @@ library(pyinit)
 library(quantreg)
 source('R/lmrob2.R')
 source('R/DCML.R')
+source('R/refineSM.R')
+
 data(coleman)
 set.seed(123)
 # source('R/lmrob2.R')
@@ -41,7 +43,9 @@ m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates="SS", initial='S'), data=c
 m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
 c(m0$scale, m1$scale, m2$scale)
 all.equal(coef(m1), coef(m0), check.attributes=FALSE)
+all.equal(coef(m2), coef(m0), check.attributes=FALSE)
 all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
+all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
 
 ## Default for a very long time:
 m2 <- lmrob2(Y ~ . - 1 , data=coleman) # MMPY
@@ -49,7 +53,9 @@ m1 <- lmrob2(Y ~ . - 1 , control=lmrob2.control(candidates="SS", initial='S'), d
 m0 <- lmrob(Y ~ . - 1 , data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
 c(m0$scale, m1$scale, m2$scale)
 all.equal(coef(m1), coef(m0), check.attributes=FALSE)
+all.equal(coef(m2), coef(m0), check.attributes=FALSE)
 all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
+all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
 
 
 # With factors!
