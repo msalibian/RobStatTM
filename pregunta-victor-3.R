@@ -5,11 +5,19 @@ library(quantreg)
 source('lmrob2.R')
 source('DCML.R')
 source('refineSM.R')
+# data(coleman)
+# # Create simple data set with factors
+# co2 <- coleman
+# set.seed(123)
+# co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
 data(coleman)
-# Create simple data set with factors
 co2 <- coleman
+nadd <- 20
+co2 <- rbind(as.matrix(co2), matrix(rnorm(ncol(co2)*nadd), nadd, ncol(co2)))
+co2 <- as.data.frame(co2)
 set.seed(123)
-co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
+co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=3, prob=.3)+1])
+
 # Matias' version of SM+PY
 set.seed(123)
 (m2 <- lmrob2(Y ~ .-1, control=lmrob2.control(candidates='PY', initial='SM'), data=co2))$coef

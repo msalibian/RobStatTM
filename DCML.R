@@ -237,6 +237,7 @@ SMPY <- function(mf, y, control, split, corr.b=TRUE) {
   options(warn=-1)
   for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z-1))
   options(warn=oldw)
+  # Now regress y on X1, find PY candidates
   X1 <- X - Z %*% gamma
   pp <- p + if(int.present) 1 else 0
   if(corr.b) dee <- dee*(1-(pp/n))
@@ -247,6 +248,7 @@ SMPY <- function(mf, y, control, split, corr.b=TRUE) {
                     py.nit = control$py.nit, en.tol=control$en.tol, 
                     mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
                     mscale.rho.fun=control$mscale.rho.fun)
+  # refine the PY candidates to get something closer to an S-estimator for y ~ X1
   kk <- dim(initial$initCoef)[2]
   best.ss <- +Inf
   for(i in 1:kk) {
@@ -259,13 +261,20 @@ SMPY <- function(mf, y, control, split, corr.b=TRUE) {
     }
   }
   uu <- list(coef=betapy, scale=sspy)
-  if(int.present) {
-    out0 <- lmrob(y~X1, control=control,init=uu) } else {
-      out0 <- lmrob(y~X1 - 1, control=control,init=uu)
-    }
-  beta <- out0$coeff
+  beta <- uu$coef
+  y1 <- as.vector(y - X1 %*% beta)
+  #
+  # Do an M-step starting from this S?
+  #
+  # if(int.present) {
+  #   out0 <- lmrob(y~X1, control=control,init=uu) } else {
+  #     out0 <- lmrob(y~X1 - 1, control=control,init=uu)
+  #   }
+  # beta <- out0$coeff
+  # y1 <- resid( out0 )
+  #
   # after eliminating the influence of X1 we make an L1 regression using as covariables Z
-  y1 <- resid(out0) # y-X1%*%beta
+  # fit the model I( y1 - X1 %*% hat(beta) ) ~ Z
   options(warn=-1)
   fi <- coef(rq(y1~Z-1))
   options(warn=oldw)
@@ -273,7 +282,7 @@ SMPY <- function(mf, y, control, split, corr.b=TRUE) {
   if(int.present) {
     beta00 <- c(beta, fi - gamma %*% beta[-1])
   } else { beta00 <- c(beta, fi - gamma %*% beta) }
-  res <- as.vector( y1-Z%*%fi )
+  res <- as.vector( y1 - Z%*%fi )
   # XX <- cbind(X,Z)
   nc <- ncol(X) + ncol(Z) + if(int.present) 1 else 0
   dee <- control$bb

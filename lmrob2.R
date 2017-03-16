@@ -196,6 +196,7 @@ lmrob2 <-
           } else {
             # print('about to call lmrob.M.S')
             init <- lmrob.M.S(x, y, control, mf) 
+            # print(coef(init))
             control$method <- 'M' 
             control$cov <- ".vcov.w"
             z <- lmrob.fit(x, y, control, init=init, mf = mf)
