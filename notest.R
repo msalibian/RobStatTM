@@ -74,22 +74,42 @@ all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
 n <- 100
 p <- 5
 lf <- 4
-set.seed(123)
+set.seed(123456)
 x1 <- rnorm(n)
 x2 <- rexp(n)
 x3 <- runif(n)
-x4 <- rbinom(n, size=4, prob=.7)
+x4 <- runif(n) # rbinom(n, size=4, prob=.7)
 f1 <- as.factor(LETTERS[rbinom(n, size=lf, prob=.5) + 1])
 f2 <- as.factor(rbinom(n, size=lf, prob=.5) + 1)
-y <- rnorm(n, sd=.5) + 2 # 2*(as.numeric(f2) - 1)
+set.seed(77)
+# y2 <- rnorm(n, sd=.5) + 2*(as.numeric(f2) - 1)
+# dat2 <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y2)
+y <- rnorm(n, sd=.5) + 0 # 2*(as.numeric(f2) - 1)
 dat <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y)
 
-(m2 <- lmrob2(y ~ .-f1-1, control=lmrob2.control(candidates='PY', initial='SM'), data=dat))$coef # MMPY
+m2 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
+m2$scale
+
+m22 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
+m22$scale
+
+
 set.seed(123)
-(m1 <- lmrob2(y ~ . -f1-1, control=lmrob2.control(candidates='SS', initial='SM'), data=dat))$coef # MMPY
+(m1 <- lmrob2(y ~ ., control=lmrob2.control(candidates='SS', initial='SM'), data=dat))$coef # MMPY
 set.seed(123)
-(m0 <- lmrob(y ~ . -f1-1, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'),  init='M-S', data=dat))$coef # MMPY
+(m12 <- lmrob2(y ~ ., control=lmrob2.control(candidates='SS', initial='SM'), data=dat2))$coef # MMPY
+
+set.seed(123)
+(m0 <- lmrob(y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'),  init='M-S', data=dat))$coef # MMPY
+set.seed(123)
+(m02 <- lmrob(y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'),  init='M-S', data=dat2))$coef # MMPY
+
 c(m0$scale, m1$scale, m2$scale)
+c(m02$scale, m12$scale, m22$scale)
+
+
+
+
 all.equal(coef(m1), coef(m0), check.attributes=FALSE)
 all.equal(coef(m2), coef(m0), check.attributes=FALSE)
 

@@ -280,7 +280,6 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
     }
   }
   uu <- list(coef=betapy, scale=sspy)
-
   # y1 <- as.vector(y - X1 %*% beta)
   #
   # Do an M-step starting from this S?
@@ -433,4 +432,95 @@ old.SMPY=function(y,X,Z, intercept=TRUE)
 #        x1.idx = x1.idx,
 #        x2 = x[, !x1.idx, drop=FALSE])
 # }
+
+
+SMPY2 <- function(mf, y, control, split, corr.b=control$corr.b) { 
+  if(missing(control)) 
+    control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
+  int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
+  if(missing(split)) {
+    split <- splitFrame(mf, type=control$split.type) 
+  }
+  Z <- split$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
+  X <- split$x2
+  if(int.present) Z <- Z[, -1]
+  n <- nrow(X)
+  q <- ncol(Z)
+  p <- ncol(X)
+  dee <- control$bb
+  # gamma <- matrix(NA, q, p)
+  # #Eliminate Z from X by L1 regression , obtaining a matrix X1
+  # oldw <- options()$warn
+  # options(warn=-1)
+  # for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z-1))
+  # options(warn=oldw)
+  # # Now regress y on X1, find PY candidates
+  # X1 <- X - Z %*% gamma
+  pp <- p + if(int.present) 1 else 0
+  if(corr.b) dee <- dee*(1-(pp/n))
+  initial <- pyinit(intercept=int.present, X=X, y=y, 
+                    deltaesc=dee, cc.scale=control$tuning.chi, 
+                    prosac=control$prosac, clean.method=control$clean.method, 
+                    C.res = control$C.res, prop=control$prop, 
+                    py.nit = control$py.nit, en.tol=control$en.tol, 
+                    mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
+                    mscale.rho.fun=control$mscale.rho.fun)
+  # beta <- uu$coef  # refine the PY candidates to get something closer to an S-estimator for y ~ X1
+  kk <- dim(initial$initCoef)[2]
+  best.ss <- +Inf
+  Xtmp <- X
+  if(int.present) Xtmp <- cbind(rep(1, nrow(Xtmp)), Xtmp)
+  for(i in 1:kk) {
+    tmp <- refine.sm(x=Xtmp, y=y, initial.beta=initial$initCoef[,i], 
+                     #initial.scale=initial$objF[1], 
+                     k=control$refine.PY, conv=1, b=dee, cc=control$tuning.chi, step='S')
+    if(tmp$scale.rw < best.ss) {
+      best.ss <- sspy <- tmp$scale.rw # initial$objF[1]
+      betapy <- tmp$beta.rw # initial$initCoef[,1]
+    }
+  }
+  uu <- list(coef=betapy, scale=sspy)
+  # y1 <- as.vector(y - X1 %*% beta)
+  #
+  # Do an M-step starting from this S?
+  #
+  if(int.present) {
+    out0 <- lmrob(y~X, control=control,init=uu) } else {
+      out0 <- lmrob(y~X - 1, control=control,init=uu)
+    }
+  beta <- out0$coeff
+  y1 <- resid( out0 )
+  #
+  # after eliminating the influence of X1 we make an L1 regression using as covariables Z
+  # fit the model I( y1 - X1 %*% hat(beta) ) ~ Z
+  oldw <- options()$warn
+  options(warn=-1)
+  fi <- coef(rq(y1~Z-1))
+  options(warn=oldw)
+  # retransform the coefficients to the original matrices X and Z
+  beta00 <- c(beta, fi)
+  # if(int.present) {
+  #   beta00 <- c(beta, fi - gamma %*% beta[-1])
+  # } else { beta00 <- c(beta, fi - gamma %*% beta) }
+  res <- as.vector( y1 - Z%*%fi )
+  # XX <- cbind(X,Z)
+  nc <- ncol(X) + ncol(Z) + if(int.present) 1 else 0
+  dee <- control$bb
+  if(corr.b) dee <- dee * (1-(nc/n))
+  ss <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+  XX <- model.matrix(attr(mf, 'terms'), mf)
+  uu <- list(coef=beta00, scale=ss, residuals=res)
+  # tmp <- refine.sm(x=XX, y=y, initial.beta=beta00,
+  #                   k=500, conv=1, b=dee, cc=control$tuning.chi, step='S')
+  # print(tmp$conver)
+  # uu <- list(coef=as.vector(tmp$beta.rw), scale=tmp$scale.rw)
+  # print(uu)
+  # Compute the MMestimator using lmrob
+  control$method <- 'M' 
+  control$cov <- ".vcov.w"
+  # lmrob() sets the above when is.list(init)==TRUE
+  #
+  outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
+  return(c(outlmrob, init.SMPY=uu)) 
+}
 
