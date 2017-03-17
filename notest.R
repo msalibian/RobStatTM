@@ -82,10 +82,10 @@ x4 <- runif(n) # rbinom(n, size=4, prob=.7)
 f1 <- as.factor(LETTERS[rbinom(n, size=lf, prob=.5) + 1])
 f2 <- as.factor(rbinom(n, size=lf, prob=.5) + 1)
 set.seed(77)
-# y2 <- rnorm(n, sd=.5) + 2*(as.numeric(f2) - 1)
-# dat2 <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y2)
-y <- rnorm(n, sd=.5) + 0 # 2*(as.numeric(f2) - 1)
-dat <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y)
+y2 <- rnorm(n, sd=.5) + 7*x2 # 2*(as.numeric(f2) - 1)
+dat2 <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y2)
+# y <- rnorm(n, sd=.5) + 0 # 2*(as.numeric(f2) - 1)
+# dat <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y)
 
 m2 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
 m2$scale
