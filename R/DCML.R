@@ -109,7 +109,6 @@ gg
    # { p=p+1}
    dee <- control$bb
    if(corr.b) dee <- dee * (1-(p/n))
-   print(head(X))
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
                cc.scale=control$tuning.chi, 
                prosac=control$prosac, clean.method=control$clean.method, 
