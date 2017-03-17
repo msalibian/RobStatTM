@@ -13,8 +13,6 @@ source('R/DCML.R')
 source('R/refineSM.R')
 
 data(coleman)
-set.seed(123)
-# source('R/lmrob2.R')
 
 # ## Default for a very long time:
 # m1 <- lmrob2(Y ~ ., data=coleman)
@@ -59,6 +57,72 @@ all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
 
 
 # With factors!
+data(breslow.dat, package='robust')
+data(stack.dat, package='robust')
+st2 <- stack.dat
+for(j in 1:length(st2)) st2[[j]] <- as.double(st2[[j]])
+m2 <- lmrob2(Loss ~ ., control=lmrob2.control(corr.b=TRUE), data = st2)
+m1 <- lmrob2(Loss ~ ., control=lmrob2.control(candidates="SS", initial='S', corr.b=FALSE), data=st2)
+m0 <- lmrob(Loss ~ ., data=st2, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
+c(m0$scale, m1$scale, m2$scale)
+all.equal(coef(m1), coef(m0), check.attributes=FALSE)
+all.equal(coef(m2), coef(m0), check.attributes=FALSE)
+all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
+all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
+
+# synthetic data
+n <- 100
+p <- 5
+lf <- 4
+set.seed(123)
+x1 <- rnorm(n)
+x2 <- rexp(n)
+x3 <- runif(n)
+x4 <- rbinom(n, size=4, prob=.7)
+f1 <- as.factor(LETTERS[rbinom(n, size=lf, prob=.5) + 1])
+f2 <- as.factor(rbinom(n, size=lf, prob=.5) + 1)
+y <- rnorm(n, sd=.5) + 2 # 2*(as.numeric(f2) - 1)
+dat <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y)
+
+(m2 <- lmrob2(y ~ .-f1-1, control=lmrob2.control(candidates='PY', initial='SM'), data=dat))$coef # MMPY
+set.seed(123)
+(m1 <- lmrob2(y ~ . -f1-1, control=lmrob2.control(candidates='SS', initial='SM'), data=dat))$coef # MMPY
+set.seed(123)
+(m0 <- lmrob(y ~ . -f1-1, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'),  init='M-S', data=dat))$coef # MMPY
+c(m0$scale, m1$scale, m2$scale)
+all.equal(coef(m1), coef(m0), check.attributes=FALSE)
+all.equal(coef(m2), coef(m0), check.attributes=FALSE)
+
+
+X <- model.matrix(y ~ ., data=dat)
+m2 <- old.MMPY(X=X, y=dat$y, intercept=FALSE)
+
+
+
+m1 <- lmrob2(y ~ .  , control=lmrob2.control(candidates="SS", initial='S'), data=dat)
+m0 <- lmrob(y ~ .  , control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), data=dat)
+c(m0$scale, m1$scale, m2$scale)
+all.equal(coef(m1), coef(m0), check.attributes=FALSE)
+all.equal(coef(m2), coef(m0), check.attributes=FALSE)
+all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
+all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
+
+
+
+
+# bombs! a single 2-level factor + intercept is trouble!
+br2 <- breslow.dat
+for(j in 1:length(br2)) if(class(br2[[j]])=='integer') br2[[j]] <- as.double(br2[[j]])
+m2 <- lmrob2(Ysum ~ Base + Age + Trt, control=lmrob2.control(initial='SM', corr.b=TRUE), data = br2)
+m1 <- lmrob2(Ysum ~ Base + Age + Trt, control=lmrob2.control(candidates="SS", initial='S', corr.b=FALSE), data = br2)
+m0 <- lmrob(Ysum ~ Base + Age + Trt, data=br2, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
+c(m0$scale, m1$scale, m2$scale)
+all.equal(coef(m1), coef(m0), check.attributes=FALSE)
+all.equal(coef(m2), coef(m0), check.attributes=FALSE)
+all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
+all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
+
+
 
 co2 <- coleman
 set.seed(123)

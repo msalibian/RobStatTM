@@ -109,6 +109,7 @@ gg
    # { p=p+1}
    dee <- control$bb
    if(corr.b) dee <- dee * (1-(p/n))
+   print(head(X))
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
                cc.scale=control$tuning.chi, 
                prosac=control$prosac, clean.method=control$clean.method, 
@@ -308,7 +309,6 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   ss <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
   XX <- model.matrix(attr(mf, 'terms'), mf)
   uu <- list(coef=beta00, scale=ss, residuals=res)
-  # print(uu)
   # tmp <- refine.sm(x=XX, y=y, initial.beta=beta00,
   #                   k=500, conv=1, b=dee, cc=control$tuning.chi, step='S')
   # print(tmp$conver)
