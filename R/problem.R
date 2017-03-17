@@ -29,10 +29,11 @@ load('problem500.RData')
 
 # Y ~ N( 0, 0.5^2 )
 summary(lm(y~., data=dat))$sigma
+# [1] 0.4891255
 
 # Y ~ 7 * X_2 + N( 0, 0.5^2 )
 summary(lm(y~., data=dat2))$sigma
-
+# [1] 0.4891255
 
 # Y ~ N( 0, 0.5^2 )
 mf <- model.frame(y ~ . , data=dat)
@@ -43,6 +44,7 @@ y <- dat$y
 options(warn=-1)
 smpy.v <- SM_PY(y=y, X=X, Z=Z, intercept=FALSE)
 smpy.v$scale
+# [1] 0.4955712
 
 # Y ~ 7 * X_2 + N( 0, 0.5^2 )
 mf <- model.frame(y ~ . , data=dat2)
@@ -53,8 +55,9 @@ y <- dat2$y
 options(warn=-1)
 smpy.v2 <- SM_PY(y=y, X=X, Z=Z, intercept=FALSE)
 smpy.v2$scale
+# [1] 1.319966
 
-
+# With Matias' code (problem is less severe, but it's there)
 rm(list=ls())
 library(robustbase)
 library(pyinit)
@@ -67,24 +70,42 @@ load('problem500.Rdata')
 
 summary(lm(y~., data=dat))$sigma
 summary(lm(y~., data=dat2))$sigma
+# [1] 0.4891255
 
+# PY candidates + SM
+# Y ~ N( 0, 0.5^2 )
 m2 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
 m2$scale
+# [1] 0.4969734
 
+# PY candidates + SM
+# Y ~ 7 * X_2 + N( 0, 0.5^2 )
 m22 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
 m22$scale
+# [1] 0.6262317
 
-# with sub-sampling candidates it works well
+# with sub-sampling candidates + SM it works well
+# Y ~ N( 0, 0.5^2 )
+set.seed(123)
 m1 <- lmrob2(y ~ ., control=lmrob2.control(candidates='SS', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
 m1$scale
+# [1] 0.4870675
 
+# with sub-sampling candidates + SM it works well
+# Y ~ 7 * X_2 + N( 0, 0.5^2 )
+set.seed(123)
 m12 <- lmrob2(y ~ ., control=lmrob2.control(candidates='SS', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
 m12$scale
+# [1] 0.4870614
 
 # with PY candidates + "regular S"  it works well
+set.seed(123)
 m0 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='S', prosac=.02, refine.PY=500), data=dat) #)$coef # MMPY
 m0$scale
+# [1] 0.4845817
 
+set.seed(123)
 m02 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='S', prosac=.02, refine.PY=500), data=dat2) #)$coef # MMPY
 m02$scale
+# [1] 0.4845817
 
