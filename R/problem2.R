@@ -26,43 +26,38 @@
 rm(list=ls())
 source('DCML_FINAL_NEW.R')
 load('problem500.RData')
-# dat2$y <- dat$y + 7 * dat$x1
+# otra transformacion, ningun problema si dejo el intercept
+# # horrible si no
+dat2$y <- dat$y + 8 * dat$x1 - 10 * dat$x2
 
 # Y ~ N( 0, 0.5^2 )
-summary(lm(y~., data=dat))$sigma
-# [1] 0.4891255
-
-# Y ~ 7 * X_2 + N( 0, 0.5^2 )
-summary(lm(y~., data=dat2))$sigma
-# [1] 0.4891255
-
-# Y ~ N( 0, 0.5^2 )
-mf <- model.frame(y ~ ., data=dat)
+mf <- model.frame(y ~ .-1, data=dat)
+int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
 a <- splitFrame(mf, type='f')
 Z <- a$x1 
+if(int.present) Z <- Z[, -1]
 X <- a$x2
 y <- dat$y
 options(warn=-1)
-smpy.v <- SM_PY(y=y, X=X, Z=Z, intercept=FALSE)
+smpy.v <- SM_PY(y=y, X=X, Z=Z, intercept=int.present)
 smpy.v$scale
-# [1] 0.4969133
 
 # Y ~ 7 * X_2 + N( 0, 0.5^2 )
-mf <- model.frame(y ~ ., data=dat2)
+mf <- model.frame(y ~ .-1, data=dat2)
+int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
 a <- splitFrame(mf, type='f')
 Z <- a$x1
+if(int.present) Z <- Z[, -1]
 X <- a$x2
 y <- dat2$y
 options(warn=-1)
-smpy.v2 <- SM_PY(y=y, X=X, Z=Z, intercept=FALSE)
+smpy.v2 <- SM_PY(y=y, X=X, Z=Z, intercept=int.present)
 smpy.v2$scale
-# [1] 0.5035206
-
-mscale(smpy.v2$res, 1e-7, .487)
-mscale(smpy.v$res, 1e-7, .487)
 
 cbind(round(smpy.v$coef, 4),  round(smpy.v2$coef, 4))
 
+
+# > round(cbind(coef(m2), coef(m22)), 4)
 # [,1]    [,2]
 # x1   0.0256  0.0183
 # x2  -0.0108  6.9997
@@ -77,6 +72,10 @@ cbind(round(smpy.v$coef, 4),  round(smpy.v2$coef, 4))
 # f23 -0.0008  0.0088
 # f24  0.0234  0.0138
 # f25 -0.0978 -0.0965
+# > 
+
+  mscale(smpy.v2$res, 1e-7, .487)
+mscale(smpy.v$res, 1e-7, .487)
 
 
 
@@ -90,49 +89,55 @@ source('DCML.R')
 source('refineSM.R')
 
 load('problem500.RData')
-# dat2$y <- dat$y + 10 * dat$x4
+dat2$y <- dat$y + 8 * dat$x1 - 10 * dat$x2
+# otra transformacion, ningun problema si dejo el intercept
+# # horrible si no
 
-summary(lm(y~., data=dat))$sigma
-summary(lm(y~., data=dat2))$sigma
-# [1] 0.4891255
 
+the.f <- formula(y ~ . -1)
 # PY candidates + SM
 # Y ~ N( 0, 0.5^2 )
-m2 <- lmrob2(y ~ .-1, control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
+m2 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
 m2$scale
-# [1] 0.4969241
+# [1] 0.496774
 
 # PY candidates + SM
 # Y ~ 7 * X_2 + N( 0, 0.5^2 )
-m22 <- lmrob2(y ~ .-1, control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
+m22 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
 m22$scale
-# [1] 0.5344962
+# [1] 0.5033762
 
+round(c(m2$scale, m22$scale), 4)
 round(cbind(coef(m2), coef(m22)), 4)
+
+
 
 
 # with sub-sampling candidates + SM it works well
 # Y ~ N( 0, 0.5^2 )
 set.seed(123)
-m1 <- lmrob2(y ~ ., control=lmrob2.control(candidates='SS', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
+m1 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='SS', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
 m1$scale
 # [1] 0.4870675
 
 # with sub-sampling candidates + SM it works well
 # Y ~ 7 * X_2 + N( 0, 0.5^2 )
 set.seed(123)
-m12 <- lmrob2(y ~ ., control=lmrob2.control(candidates='SS', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
+m12 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='SS', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
 m12$scale
 # [1] 0.4870614
 
 # with PY candidates + "regular S"  it works well
 set.seed(123)
-m0 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='S', prosac=.02, refine.PY=500), data=dat) #)$coef # MMPY
+m0 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='S', prosac=.02, refine.PY=500), data=dat) #)$coef # MMPY
 m0$scale
 # [1] 0.4845817
 
 set.seed(123)
-m02 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='S', prosac=.02, refine.PY=500), data=dat2) #)$coef # MMPY
+m02 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='S', prosac=.02, refine.PY=500), data=dat2) #)$coef # MMPY
 m02$scale
 # [1] 0.4845817
+# 
 
+round(c(m0$scale, m02$scale, m1$scale, m12$scale, m2$scale, m22$scale), 4)
+round(cbind(coef(m0), coef(m02), coef(m1), coef(m12), coef(m2), coef(m22)), 4)
