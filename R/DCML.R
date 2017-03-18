@@ -247,14 +247,20 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   q <- ncol(Z)
   p <- ncol(X)
   dee <- control$bb
-  gamma <- matrix(NA, q, p)
+  gamma <- matrix(NA, q + as.numeric(int.present), p)
   #Eliminate Z from X by L1 regression , obtaining a matrix X1
   oldw <- options()$warn
   options(warn=-1)
-  for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z-1))
+  if(int.present) {
+    for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z))
+    X1 <- X - Z %*% gamma[-1,]
+  } else {
+    for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z-1))
+    X1 <- X - Z %*% gamma
+  }  
   options(warn=oldw)
   # Now regress y on X1, find PY candidates
-  X1 <- X - Z %*% gamma
+  # 
   pp <- p + if(int.present) 1 else 0
   if(corr.b) dee <- dee*(1-(pp/n))
   initial <- pyinit(intercept=int.present, X=X1, y=y, 
@@ -271,7 +277,7 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   if(int.present) Xtmp <- cbind(rep(1, nrow(Xtmp)), Xtmp)
   for(i in 1:kk) {
     tmp <- refine.sm(x=Xtmp, y=y, initial.beta=initial$initCoef[,i], 
-                     #initial.scale=initial$objF[1], 
+                     initial.scale=initial$objF[i], 
                      k=control$refine.PY, conv=1, b=dee, cc=control$tuning.chi, step='S')
     if(tmp$scale.rw < best.ss) {
       best.ss <- sspy <- tmp$scale.rw # initial$objF[1]
@@ -288,18 +294,26 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
       out0 <- lmrob(y~X1 - 1, control=control,init=uu)
     }
   beta <- out0$coeff
-  y1 <- resid( out0 )
+  y1 <- resid( out0 ) + if(int.present) beta[1] else 0
   #
   # after eliminating the influence of X1 we make an L1 regression using as covariables Z
   # fit the model I( y1 - X1 %*% hat(beta) ) ~ Z
   options(warn=-1)
-  fi <- coef(rq(y1~Z-1))
+  if(int.present) { 
+    fi <- rq(y1~Z)
+  } else {
+    fi <- rq(y1~Z-1)
+  }
+  cofi <- coef(fi)
   options(warn=oldw)
   # retransform the coefficients to the original matrices X and Z
   if(int.present) {
-    beta00 <- c(beta, fi - gamma %*% beta[-1])
-  } else { beta00 <- c(beta, fi - gamma %*% beta) }
-  res <- as.vector( y1 - Z%*%fi )
+    beta00 <- c(cofi[1], beta[-1], cofi[-1] - gamma[-1,] %*% beta[-1])
+    res <- as.vector(y1 - cofi[1] - Z %*% cofi[-1] )
+  } else { 
+    beta00 <- c(beta, cofi - gamma %*% beta) 
+    res <- as.vector( y1 - Z%*%cofi )
+  }
   # XX <- cbind(X,Z)
   nc <- ncol(X) + ncol(Z) + if(int.present) 1 else 0
   dee <- control$bb

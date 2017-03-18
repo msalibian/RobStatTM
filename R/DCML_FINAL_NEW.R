@@ -168,6 +168,7 @@ oo=fi[1]}
 if(intercept==FALSE)
 fi=rq(y1~Z-1)$coeff
  
+print(fi)
 #print(length(beta))
 #print(dim(gamma[hh1:hh3,]))
 tt=gamma[hh1:hh3,]
@@ -179,15 +180,14 @@ res=y1-fi[1]-Z%*%fi[hh1:hh3]
 if(intercept==FALSE)
 res=y1-Z%*%fi[hh1:hh3]
 
-
+print(beta00)
 res=as.vector(res)
  dee=.5*(1-((p+q+intercept)/n))
 ss=mscale(res,.0001,dee)
 uu=list(coeff=beta00,scale=ss)
-print(ss)
 XX=cbind(X,Z)
 if(intercept==TRUE)
-beta0=lmrob(y~XX,control=cont1,init=uu)$coeff
+beta0=lmrob(y~XX,control=cont1,init=uu)
 if(intercept==FALSE)
 beta0=lmrob(y~XX-1,control=cont1,init=uu) 
 beta0}
