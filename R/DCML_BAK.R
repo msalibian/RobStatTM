@@ -151,7 +151,41 @@ gg
    return(outMM)
  }
 
-
+old.MMPY <- function(X, y, intercept=FALSE) {
+   # X will already contain a column of ones if needed
+   #Compute an MM-estimator taking as initial Pe?a Yohai
+   #INPUT
+   #X nxp matrix, where n is the number of observations and p the number of  columns
+   #y vector of dimension  n with the responses
+   #
+   #OUTPUT
+   #outMM output of the MM estimator (lmrob) with 85% of efficiency and PY as initial
+   #
+   # 
+  
+   cont1 <- lmrob.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
+   n <- nrow(X)
+   p <- ncol(X)
+   if(intercept)
+   { p=p+1}
+   dee <- .5*(1-(p/n))
+   a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
+               cc.scale=cont1$tuning.chi, 
+               prosac=.5, clean.method='threshold', C.res = 2, prop=.2, 
+               py.nit = 20, en.tol=1e-5, mscale.rho.fun='bisquare')
+   betapy2 <- a$initCoef[,1]
+   sspy2 <- a$objF[1]
+   S.init <- list(coef=betapy2, scale=sspy2)
+   # print('calling lmrob.fit')
+   # control$method <- 'M'
+   # outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
+   if(intercept)
+      { outMM=lmrob(y~X, control=cont1,init=S.init)}else
+      { outMM=lmrob(y~X-1, control=cont1,init=S.init)}
+   return(outMM)
+ }
+ 
+  
 
 DCML_FINAL=function(X,y, outMM, intercept=TRUE)
 #INPUT
@@ -202,35 +236,34 @@ out
 SMPY <- function(mf, y, control, split, corr.b=control$corr.b) { 
   if(missing(control)) 
     control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
-  # int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
+  int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
   if(missing(split)) {
     split <- splitFrame(mf, type=control$split.type) 
   }
   Z <- split$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
   X <- split$x2
-  # if(int.present) Z <- Z[, -1]
+  if(int.present) Z <- Z[, -1]
   n <- nrow(X)
   q <- ncol(Z)
   p <- ncol(X)
   dee <- control$bb
-  gamma <- matrix(NA, q, p)
+  gamma <- matrix(NA, q + as.numeric(int.present), p)
   #Eliminate Z from X by L1 regression , obtaining a matrix X1
   oldw <- options()$warn
   options(warn=-1)
-  # if(int.present) {
-  #   for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z))
-  #   X1 <- X - Z %*% gamma[-1,]
-  # } else {
+  if(int.present) {
+    for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z))
+    X1 <- X - Z %*% gamma[-1,]
+  } else {
     for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z-1))
     X1 <- X - Z %*% gamma
-  # }  
-  y0 <- as.vector( resid( m0 <- rq(y ~ Z - 1) ) )
+  }  
   options(warn=oldw)
   # Now regress y on X1, find PY candidates
   # 
-  pp <- p # + if(int.present) 1 else 0
+  pp <- p + if(int.present) 1 else 0
   if(corr.b) dee <- dee*(1-(pp/n))
-  initial <- pyinit(intercept=FALSE, X=X1, y=y0, 
+  initial <- pyinit(intercept=int.present, X=X1, y=y, 
                     deltaesc=dee, cc.scale=control$tuning.chi, 
                     prosac=control$prosac, clean.method=control$clean.method, 
                     C.res = control$C.res, prop=control$prop, 
@@ -241,9 +274,9 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   kk <- dim(initial$initCoef)[2]
   best.ss <- +Inf
   Xtmp <- X1
-  # if(int.present) Xtmp <- cbind(rep(1, nrow(Xtmp)), Xtmp)
+  if(int.present) Xtmp <- cbind(rep(1, nrow(Xtmp)), Xtmp)
   for(i in 1:kk) {
-    tmp <- refine.sm(x=Xtmp, y=y0, initial.beta=initial$initCoef[,i], 
+    tmp <- refine.sm(x=Xtmp, y=y, initial.beta=initial$initCoef[,i], 
                      initial.scale=initial$objF[i], 
                      k=control$refine.PY, conv=1, b=dee, cc=control$tuning.chi, step='S')
     if(tmp$scale.rw < best.ss) {
@@ -256,33 +289,33 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   #
   # Do an M-step starting from this S?
   #
-  # if(int.present) {
-    out0 <- lmrob(y0~X1-1, control=control,init=uu) # } else {
-    #   out0 <- lmrob(y0~X1 - 1, control=control,init=uu)
-    # }
+  if(int.present) {
+    out0 <- lmrob(y~X1, control=control,init=uu) } else {
+      out0 <- lmrob(y~X1 - 1, control=control,init=uu)
+    }
   beta <- out0$coeff
-  y1 <- resid( out0 ) # + if(int.present) beta[1] else 0
+  y1 <- resid( out0 ) + if(int.present) beta[1] else 0
   #
   # after eliminating the influence of X1 we make an L1 regression using as covariables Z
   # fit the model I( y1 - X1 %*% hat(beta) ) ~ Z
   options(warn=-1)
-  # if(int.present) { 
-  #   fi <- rq(y1~Z)
-  # } else {
+  if(int.present) { 
+    fi <- rq(y1~Z)
+  } else {
     fi <- rq(y1~Z-1)
-  # }
+  }
   cofi <- coef(fi)
   options(warn=oldw)
   # retransform the coefficients to the original matrices X and Z
-  # if(int.present) {
-  #   beta00 <- c(cofi[1], beta[-1], cofi[-1] - gamma[-1,] %*% beta[-1])
-  #   res <- as.vector(y1 - cofi[1] - Z %*% cofi[-1] )
-  # } else { 
+  if(int.present) {
+    beta00 <- c(cofi[1], beta[-1], cofi[-1] - gamma[-1,] %*% beta[-1])
+    res <- as.vector(y1 - cofi[1] - Z %*% cofi[-1] )
+  } else { 
     beta00 <- c(beta, cofi - gamma %*% beta) 
     res <- as.vector( y1 - Z%*%cofi )
-  # }
+  }
   # XX <- cbind(X,Z)
-  nc <- ncol(X) + ncol(Z) # + if(int.present) 1 else 0
+  nc <- ncol(X) + ncol(Z) + if(int.present) 1 else 0
   dee <- control$bb
   if(corr.b) dee <- dee * (1-(nc/n))
   ss <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
