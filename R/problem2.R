@@ -94,7 +94,7 @@ dat2$y <- dat$y + 5 * dat$x1 - 5 * dat$x2
 # # horrible si no
 
 
-the.f <- formula(y ~ . -1)
+the.f <- formula(y ~ . )
 # PY candidates + SM
 # Y ~ N( 0, 0.5^2 )
 m2 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
