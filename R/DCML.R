@@ -259,13 +259,14 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   # print(beta)
   # sih <- sspy
   # res <- as.vector(y - cbind(X, Z) %*% beta)
-  res <- as.vector(y - cbind(X, Z) %*% as.vector(c(betapy, gammapy)) )
-#  tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
-#  res <- tmp$residuals
+  r1 <- as.vector(y - cbind(X, Z) %*% as.vector(c(betapy, gammapy)) )
+  tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
+  res <- tmp$residuals
   sih <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
 #   beta <- c(betapy, gammapy <- tmp$coef)
+  gammapy <- gammapy + coef(tmp)
   print(c(sih, sspy)) # same?
-  max.it <- 10
+  max.it <- 20
   for(i in 1:max.it) {
     weights <- f.w( tmp$residuals/sih, cc=control$tuning.chi)
     xw <- X * sqrt(weights)
@@ -283,6 +284,7 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
     }
   }  
   beta00 <- c(betapy, gammapy)
+  print(sspy)
   # print(beta00)
   # out0 <- lmrob(y1~X1-1, control=control,init=uu) 
   # beta <- out0$coeff

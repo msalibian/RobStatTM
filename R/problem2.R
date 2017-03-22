@@ -96,7 +96,7 @@ dat2$y <- dat$y +  5  * dat$x2 + 8 * dat$x1
 lm(formula=the.f, data=dat)
 lm(formula=the.f, data=dat2)
 
-the.f <- formula(y ~ .)
+the.f <- formula(y ~ .-1)
 # PY candidates + SM
 # Y ~ N( 0, 0.5^2 )
 m2 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
@@ -111,8 +111,6 @@ m22$scale
 
 round(c(m2$scale, m22$scale), 4)
 round(cbind(coef(m2), coef(m22)), 4)
-
-
 
 
 # with sub-sampling candidates + SM it works well
