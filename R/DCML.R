@@ -254,15 +254,17 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   # betapy <- initial$initCoef[,1]
   # sspy <- initial$objF[1]
   # uu <- list(coef=betapy, scale=sspy)
-  beta <- c(betapy, gammapy <- (coef(tmp0) - gamma %*% betapy))  
+  # beta <- c(betapy, gammapy <- (coef(tmp0) - gamma %*% betapy))  
+  gammapy <- as.vector(coef(tmp0) - gamma %*% betapy)
   # print(beta)
-  sih <- sspy
-  res <- as.vector(y - cbind(X, Z) %*% beta)
+  # sih <- sspy
+  # res <- as.vector(y - cbind(X, Z) %*% beta)
+  res <- as.vector(y - cbind(X, Z) %*% as.vector(c(betapy, gammapy)) )
 #  tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
 #  res <- tmp$residuals
   sih <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
 #   beta <- c(betapy, gammapy <- tmp$coef)
-  # print(c(sih, sspy)) # same?
+  print(c(sih, sspy)) # same?
   max.it <- 10
   for(i in 1:max.it) {
     weights <- f.w( tmp$residuals/sih, cc=control$tuning.chi)
@@ -309,10 +311,13 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
     # res <- as.vector( y1 - Z%*%cofi )
   # }
   # XX <- cbind(X,Z)
-  nc <- ncol(X) + ncol(Z) # + if(int.present) 1 else 0
-  dee <- control$bb
-  if(corr.b) dee <- dee * (1-(nc/n))
-  ss <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+  
+  # nc <- ncol(X) + ncol(Z) # + if(int.present) 1 else 0
+  # dee <- control$bb
+  # if(corr.b) dee <- dee * (1-(nc/n))
+  # ss <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+  
+  ss <- sspy
   XX <- model.matrix(attr(mf, 'terms'), mf)
   # int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
   # print(head(XX))
@@ -322,7 +327,7 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
     beta00 <- c(beta00[ii], beta00[-ii])
   }
   uu <- list(coef=beta00, scale=ss, residuals=res)
-  print(beta00)
+  # print(beta00)
   # tmp <- refine.sm(x=XX, y=y, initial.beta=beta00,
   #                   k=500, conv=1, b=dee, cc=control$tuning.chi, step='S')
   # print(tmp$conver)
