@@ -89,25 +89,18 @@ source('DCML.R')
 source('refineSM.R')
 
 load('problem500.RData')
-dat2$y <- dat$y +  5  * dat$x2 + 8 * dat$x1
+dat2$y <- dat$y +  5*dat$x2 # + 8 * dat$x1
 # otra transformacion, ningun problema si dejo el intercept
 # # horrible si no
 
-lm(formula=the.f, data=dat)
-lm(formula=the.f, data=dat2)
-
-the.f <- formula(y ~ .-1)
+the.f <- formula(y ~ .)
 # PY candidates + SM
 # Y ~ N( 0, 0.5^2 )
 m2 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
-m2$scale
-# [1] 0.496774
 
 # PY candidates + SM
 # Y ~ 7 * X_2 + N( 0, 0.5^2 )
 m22 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
-m22$scale
-# [1] 0.5033762
 
 round(c(m2$scale, m22$scale), 4)
 round(cbind(coef(m2), coef(m22)), 4)
@@ -117,27 +110,18 @@ round(cbind(coef(m2), coef(m22)), 4)
 # Y ~ N( 0, 0.5^2 )
 set.seed(123)
 m1 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='SS', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
-m1$scale
-# [1] 0.4870675
 
 # with sub-sampling candidates + SM it works well
 # Y ~ 7 * X_2 + N( 0, 0.5^2 )
 set.seed(123)
 m12 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='SS', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
-m12$scale
-# [1] 0.4870614
 
 # with PY candidates + "regular S"  it works well
 set.seed(123)
 m0 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='S', prosac=.02, refine.PY=500), data=dat) #)$coef # MMPY
-m0$scale
-# [1] 0.4845817
 
 set.seed(123)
 m02 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='S', prosac=.02, refine.PY=500), data=dat2) #)$coef # MMPY
-m02$scale
-# [1] 0.4845817
-# 
 
 round(c(m0$scale, m02$scale, m1$scale, m12$scale, m2$scale, m22$scale), 4)
 round(cbind(coef(m0), coef(m02), coef(m1), coef(m12), coef(m2), coef(m22)), 4)
