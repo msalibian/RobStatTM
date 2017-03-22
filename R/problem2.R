@@ -89,7 +89,7 @@ source('DCML.R')
 source('refineSM.R')
 
 load('problem500.RData')
-dat2$y <- dat$y - 7  * dat$x2 + 8 * dat$x1
+dat2$y <- dat$y - 7  * dat$x2 # + 8 * dat$x1
 # otra transformacion, ningun problema si dejo el intercept
 # # horrible si no
 

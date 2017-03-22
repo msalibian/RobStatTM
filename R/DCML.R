@@ -206,7 +206,8 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   if(missing(split)) {
     split <- splitFrame(mf, type=control$split.type) 
   }
-  Z <- split$x1 # x1 = factors, x2 = continuous, if there's an intercept it's in x1!
+  # step 1 - build design matrices, x1 = factors, x2 = continuous, intercept is in x1
+  Z <- split$x1  
   X <- split$x2
   # if(int.present) Z <- Z[, -1]
   n <- nrow(X)
@@ -214,39 +215,37 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   p <- ncol(X)
   dee <- control$bb
   gamma <- matrix(NA, q, p)
-  #Eliminate Z from X by L1 regression , obtaining a matrix X1
+  # Eliminate Z from ea. column of X with L1 regression, result goes in X1
   # oldw <- options()$warn
   # options(warn=-1)
   # if(int.present) {
   #   for( i in 1:p) gamma[,i] <- coef(rq(X[,i]~Z))
   #   X1 <- X - Z %*% gamma[-1,]
   # } else {
-    for( i in 1:p) gamma[,i] <- coef( lmrob.lar(x=Z, y=X[,i], control = control, mf = NULL) ) # coef(rq(X[,i]~Z-1))
-    X1 <- X - Z %*% gamma
+  for( i in 1:p) gamma[,i] <- coef( lmrob.lar(x=Z, y=X[,i], control = control, mf = NULL) ) # coef(rq(X[,i]~Z-1))
+  X1 <- X - Z %*% gamma
   # }  
-  # y0 <- as.vector( resid( m0 <- rq(y ~ Z - 1) ) )
+  # Eliminate Z from y, L1 regression, result goes in y1
   tmp0 <- lmrob.lar(x=Z, y=y, control = control, mf = NULL)
-  y0 <- as.vector(tmp0$residuals)
-  print(head(Z))
-  # options(warn=oldw)
-  # Now regress y on X1, find PY candidates
-  # 
+  y1 <- as.vector(tmp0$residuals)
+  # Now regress y1 on X1, find PY candidates
   pp <- p # + if(int.present) 1 else 0
   if(corr.b) dee <- dee*(1-(pp/n))
-  initial <- pyinit(intercept=FALSE, X=X1, y=y0, 
+  initial <- pyinit(intercept=FALSE, X=X1, y=y1, 
                     deltaesc=dee, cc.scale=control$tuning.chi, 
                     prosac=control$prosac, clean.method=control$clean.method, 
                     C.res = control$C.res, prop=control$prop, 
                     py.nit = control$py.nit, en.tol=control$en.tol, 
                     mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
                     mscale.rho.fun=control$mscale.rho.fun)
-  # beta <- uu$coef  # refine the PY candidates to get something closer to an S-estimator for y ~ X1
+  # choose best candidates including factors into consideration!
+  # 
   # kk <- dim(initial$initCoef)[2]
   # best.ss <- +Inf
   # Xtmp <- X1
   # # if(int.present) Xtmp <- cbind(rep(1, nrow(Xtmp)), Xtmp)
   # for(i in 1:kk) {
-  #   tmp <- refine.sm(x=Xtmp, y=y0, initial.beta=initial$initCoef[,i],
+  #   tmp <- refine.sm(x=Xtmp, y=y1, initial.beta=initial$initCoef[,i],
   #                    initial.scale=initial$objF[i],
   #                    k=control$refine.PY, conv=1, b=dee, cc=control$tuning.chi, step='S')
   #   if(tmp$scale.rw < best.ss) {
@@ -254,21 +253,14 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   #     betapy <- tmp$beta.rw # initial$initCoef[,1]
   #   }
   # }
-  # choose best candidates including factors into consideration!
+  
   betapy <- initial$initCoef[,1]
   sspy <- initial$objF[1]
   uu <- list(coef=betapy, scale=sspy)
-  # print(uu)
-  # r <- as.vector(y0 - X1 %*% betapy)
-  # print(c(mean(rho(r/sspy, cc=control$tuning.chi)), dee))
-  # y1 <- as.vector(y - X1 %*% beta)
   #
   # Do an M-step starting from this S?
   #
-  # if(int.present) {
-    out0 <- lmrob(y0~X1-1, control=control,init=uu) # } else {
-    #   out0 <- lmrob(y0~X1 - 1, control=control,init=uu)
-    # }
+  out0 <- lmrob(y1~X1-1, control=control,init=uu) 
   beta <- out0$coeff
   y1 <- resid( out0 ) # + if(int.present) beta[1] else 0
   #
