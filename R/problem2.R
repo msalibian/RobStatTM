@@ -89,14 +89,14 @@ source('DCML.R')
 source('refineSM.R')
 
 load('problem500.RData')
-dat2$y <- dat$y - 7  * dat$x2 # + 8 * dat$x1
+dat2$y <- dat$y +  5  * dat$x2 + 8 * dat$x1
 # otra transformacion, ningun problema si dejo el intercept
 # # horrible si no
 
 lm(formula=the.f, data=dat)
 lm(formula=the.f, data=dat2)
 
-the.f <- formula(y ~ . -1)
+the.f <- formula(y ~ .)
 # PY candidates + SM
 # Y ~ N( 0, 0.5^2 )
 m2 <- lmrob2(formula=the.f, control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY

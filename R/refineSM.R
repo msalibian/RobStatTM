@@ -83,11 +83,10 @@ our.solve <- function(a,b) {
 }
 
 
-## Weight function
+## Weight function   # weight function = psi(u)/u
 f.w <- function(u, cc) {
   tmp <- (1 - (u/cc)^2)^2
   tmp[abs(u/cc) > 1] <- 0
   return(tmp)
 }
-
 

@@ -239,31 +239,53 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
                     mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
                     mscale.rho.fun=control$mscale.rho.fun)
   # choose best candidates including factors into consideration!
-  # 
-  # kk <- dim(initial$initCoef)[2]
-  # best.ss <- +Inf
-  # Xtmp <- X1
-  # # if(int.present) Xtmp <- cbind(rep(1, nrow(Xtmp)), Xtmp)
-  # for(i in 1:kk) {
-  #   tmp <- refine.sm(x=Xtmp, y=y1, initial.beta=initial$initCoef[,i],
-  #                    initial.scale=initial$objF[i],
-  #                    k=control$refine.PY, conv=1, b=dee, cc=control$tuning.chi, step='S')
-  #   if(tmp$scale.rw < best.ss) {
-  #     best.ss <- sspy <- tmp$scale.rw # initial$objF[1]
-  #     betapy <- tmp$beta.rw # initial$initCoef[,1]
-  #   }
-  # }
-  
-  betapy <- initial$initCoef[,1]
-  sspy <- initial$objF[1]
-  uu <- list(coef=betapy, scale=sspy)
-  #
-  # Do an M-step starting from this S?
-  #
-  out0 <- lmrob(y1~X1-1, control=control,init=uu) 
-  beta <- out0$coeff
-  y1 <- resid( out0 ) # + if(int.present) beta[1] else 0
-  #
+  # recompute scales adjusting for Z
+  dee <- control$bb
+  if(corr.b) dee <- dee*(1-(ncol(X1)+ncol(Z))/n)
+  kk <- dim(initial$initCoef)[2]
+  for(i in 1:kk) {
+    r <- as.vector(y1 - X1 %*% initial$initCoef[,i])
+    tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
+    initial$objF[i] <- mscale(u=tmp$residuals, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+  }
+  best.i <- which.min(initial$objF)
+  betapy <- initial$initCoef[,best.i]
+  sspy <- initial$objF[best.i]
+  # betapy <- initial$initCoef[,1]
+  # sspy <- initial$objF[1]
+  # uu <- list(coef=betapy, scale=sspy)
+  beta <- c(betapy, gammapy <- (coef(tmp0) - gamma %*% betapy))  
+  # print(beta)
+  sih <- sspy
+  res <- as.vector(y - cbind(X, Z) %*% beta)
+#  tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
+#  res <- tmp$residuals
+  sih <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+#   beta <- c(betapy, gammapy <- tmp$coef)
+  # print(c(sih, sspy)) # same?
+  max.it <- 10
+  for(i in 1:max.it) {
+    weights <- f.w( tmp$residuals/sih, cc=control$tuning.chi)
+    xw <- X * sqrt(weights)
+    yw <- y * sqrt(weights)
+    beta <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
+    r1 <- as.vector(y - X %*% beta)
+    tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
+    sih <- mscale(u=tmp$residuals, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+    # print(c(sspy, sih))
+    if(sih < sspy) {
+      sspy <- sih
+      betapy <- beta
+      gammapy <- tmp$coeff
+      res <- tmp$residuals
+    }
+  }  
+  beta00 <- c(betapy, gammapy)
+  # print(beta00)
+  # out0 <- lmrob(y1~X1-1, control=control,init=uu) 
+  # beta <- out0$coeff
+  # y1 <- resid( out0 ) # + if(int.present) beta[1] else 0
+  # #
   # after eliminating the influence of X1 we make an L1 regression using as covariables Z
   # fit the model I( y1 - X1 %*% hat(beta) ) ~ Z
   # options(warn=-1)
@@ -272,16 +294,18 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   # } else {
     # fi <- rq(y1~Z-1)
   # }
-  tmpfi <-  lmrob.lar(x=Z, y=y1, control = control, mf = NULL)
-  cofi <- coef(tmpfi) + coef(tmp0)
+  # beta <- betapy
+  # y1 <- as.vector(y1 - X1 %*% beta)
+  # tmpfi <-  lmrob.lar(x=Z, y=y1, control = control, mf = NULL)
+  # cofi <- coef(tmpfi) + coef(tmp0)
   # options(warn=oldw)
   # retransform the coefficients to the original matrices X and Z
   # if(int.present) {
   #   beta00 <- c(cofi[1], beta[-1], cofi[-1] - gamma[-1,] %*% beta[-1])
   #   res <- as.vector(y1 - cofi[1] - Z %*% cofi[-1] )
   # } else { 
-    res <- resid(tmpfi) # as.vector( y1 - Z%*%cofi )
-    beta00 <- c(beta, cofi - gamma %*% beta) # + coef(m0)) 
+    # res <- resid(tmpfi) # as.vector( y1 - Z%*%cofi )
+    # beta00 <- c(beta, cofi - gamma %*% beta) # + coef(m0)) 
     # res <- as.vector( y1 - Z%*%cofi )
   # }
   # XX <- cbind(X,Z)
@@ -290,7 +314,15 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   if(corr.b) dee <- dee * (1-(nc/n))
   ss <- mscale(u=res, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
   XX <- model.matrix(attr(mf, 'terms'), mf)
+  # int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
+  # print(head(XX))
+  # print(head(cbind(X, Z)))
+  ii <- charmatch('(Intercept)', colnames(cbind(X, Z)))
+  if(!is.na(ii)) {
+    beta00 <- c(beta00[ii], beta00[-ii])
+  }
   uu <- list(coef=beta00, scale=ss, residuals=res)
+  print(beta00)
   # tmp <- refine.sm(x=XX, y=y, initial.beta=beta00,
   #                   k=500, conv=1, b=dee, cc=control$tuning.chi, step='S')
   # print(tmp$conver)
