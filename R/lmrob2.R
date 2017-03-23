@@ -214,25 +214,27 @@ lmrob2 <-
         # DCML
         # LS is already computed in z0
         ##Begin the computation of the DCML
-        beta.R <- as.vector(z$coefficients)
-        beta.LS <- as.vector(z0$coefficients)
-        p <- length(beta.R)
-        n <- length(z$residuals)
-        dee <- control$bb
-        if(control$corr.b) dee <- dee*(1-p/n)
-        si.dcml <- mscale(u=z$residuals, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
-        deltas <- .3*p/n 
-        CC <- t(x * z$rweights) %*% x / sum(z$rweights) 	
-        # print(all.equal(CC, t(x) %*% diag(z$rweights) %*% x / sum(z$rweights)))
-        d <- as.numeric(crossprod(beta.R-beta.LS, CC %*% (beta.R-beta.LS)))/si.dcml^2
-        t0 <- min(1, sqrt(deltas/d))
-        beta.dcml <- t0*coef(z0) +(1-t0)*coef(z)
-        V.dcml <- cov.dcml(res.LS=z0$residuals, res.R=z$residuals, CC=CC, 
-                      sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
-        re.dcml <- as.vector(y - x %*% beta.dcml)
-        si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+        z2 <- DCML(x=x, y=y, z=z, z0=z0, control=control)
         
-        # out=list(coef=beta.dcml, cov=V.dcml, resid=re.dclml,   sigma=si.dcml.final )
+        # beta.R <- as.vector(z$coefficients)
+        # beta.LS <- as.vector(z0$coefficients)
+        # p <- length(beta.R)
+        # n <- length(z$residuals)
+        # dee <- control$bb
+        # if(control$corr.b) dee <- dee*(1-p/n)
+        # si.dcml <- mscale(u=z$residuals, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+        # deltas <- .3*p/n 
+        # CC <- t(x * z$rweights) %*% x / sum(z$rweights) 	
+        # # print(all.equal(CC, t(x) %*% diag(z$rweights) %*% x / sum(z$rweights)))
+        # d <- as.numeric(crossprod(beta.R-beta.LS, CC %*% (beta.R-beta.LS)))/si.dcml^2
+        # t0 <- min(1, sqrt(deltas/d))
+        # beta.dcml <- t0*coef(z0) +(1-t0)*coef(z)
+        # V.dcml <- cov.dcml(res.LS=z0$residuals, res.R=z$residuals, CC=CC, 
+        #               sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
+        # re.dcml <- as.vector(y - x %*% beta.dcml)
+        # si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+        # out.dcml <- list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml,   sigma=si.dcml.final )
+        # print(all.equal(z2, out.dcml))
         
         
         # print('About to compute M step')

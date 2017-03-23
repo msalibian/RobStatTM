@@ -86,14 +86,16 @@ rhoprime2 <- function(r, cc) {
 
 
         
- 
- psibspri=function (t,c)   
-#Derivative of the bisquare psi function
-{ r=t/c
- gg=(1-r^2)*(1-5*r^2)*(abs(r)<=1)/c
-gg
-}
-        
+#  
+#  psibspri=function (t,c)   
+# #Derivative of the bisquare psi function
+# { r=t/c
+#  gg=(1-r^2)*(1-5*r^2)*(abs(r)<=1)/c
+# gg
+# }
+#         
+
+
 MMPY <- function(X, y, control, mf, corr.b=control$corr.b) {
    # This function will be called from lmrob, so control will be valid
    # X will already contain a column of ones if needed
@@ -137,48 +139,73 @@ MMPY <- function(X, y, control, mf, corr.b=control$corr.b) {
 
 
 
-DCML <- function(X,y, outMM, intercept=TRUE) {
-#INPUT
-#X nxp matrix, where n is the number of observations and p the number of  columns, the 1's of the intercept are not included
-#y vector of dimension  n with the responses
-#intercept FALSE the regression does not includes intercept, TRUE, the regression includes intercept
-#outMM output of MMPY or SM_PY
-#OUTPUT
-#coef vector of coefficients, the first element is the intercept when there is one
-#cov covariance matrix of the coefficients
-#resid vector of residuals
-#weight  vector with weights that the MMestimator assigns to every observation
-#sigma standad error of errot term
-XX=X
-n=nrow(X)
-p=ncol(X)
-if(intercept==TRUE )
-    {XX=cbind(rep(1,n),X)
-    p=p+1}
-cont1=lmrob.control(tuning.psi=3.44)
-if(intercept==TRUE)
-   {out3=lm(y~X)}else
-   {out3=lm(y~X-1)}
-betaLS=out3$coeff
-resLS=out3$resid
-dee=.5*(1-(p/n))
-beta0=outMM$coeff
-weight=outMM$rweights
-residuos=outMM$resid
-sigma=mscale(residuos,.00001,dee)
-##Begin the computation of the DCML
-deltas=.3*p/n 
-C=t(XX)%*%diag(weight)%*%XX/sum(weight) 	
-d=(beta0-betaLS)%*%C%*%(beta0-betaLS)
-d=d/sigma^2
-t0=min(1,sqrt(deltas/d))
-beta1=t0*betaLS+(1-t0)*beta0
-V=covdcml (resLS,residuos,C,sigma,t0,p,n)/n	
-resid=y-XX%*%beta1
-sigma=mscale(resid, .00001,dee) 
-out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
-out
+# DCML <- function(X,y, outMM, intercept=TRUE) {
+# #INPUT
+# #X nxp matrix, where n is the number of observations and p the number of  columns, the 1's of the intercept are not included
+# #y vector of dimension  n with the responses
+# #intercept FALSE the regression does not includes intercept, TRUE, the regression includes intercept
+# #outMM output of MMPY or SM_PY
+# #OUTPUT
+# #coef vector of coefficients, the first element is the intercept when there is one
+# #cov covariance matrix of the coefficients
+# #resid vector of residuals
+# #weight  vector with weights that the MMestimator assigns to every observation
+# #sigma standad error of errot term
+# XX=X
+# n=nrow(X)
+# p=ncol(X)
+# if(intercept==TRUE )
+#     {XX=cbind(rep(1,n),X)
+#     p=p+1}
+# cont1=lmrob.control(tuning.psi=3.44)
+# if(intercept==TRUE)
+#    {out3=lm(y~X)}else
+#    {out3=lm(y~X-1)}
+# betaLS=out3$coeff
+# resLS=out3$resid
+# dee=.5*(1-(p/n))
+# beta0=outMM$coeff
+# weight=outMM$rweights
+# residuos=outMM$resid
+# sigma=mscale(residuos,.00001,dee)
+# ##Begin the computation of the DCML
+# deltas=.3*p/n 
+# C=t(XX)%*%diag(weight)%*%XX/sum(weight) 	
+# d=(beta0-betaLS)%*%C%*%(beta0-betaLS)
+# d=d/sigma^2
+# t0=min(1,sqrt(deltas/d))
+# beta1=t0*betaLS+(1-t0)*beta0
+# V=covdcml (resLS,residuos,C,sigma,t0,p,n)/n	
+# resid=y-XX%*%beta1
+# sigma=mscale(resid, .00001,dee) 
+# out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
+# out
+# }
+
+DCML <- function(x, y, z, z0, control) {
+  # x: design matrix
+  # z: robust fit
+  # z0: LS fit
+  beta.R <- as.vector(z$coefficients)
+  beta.LS <- as.vector(z0$coefficients)
+  p <- length(beta.R)
+  n <- length(z$residuals)
+  dee <- control$bb
+  if(control$corr.b) dee <- dee*(1-p/n)
+  si.dcml <- mscale(u=z$residuals, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  deltas <- .3*p/n 
+  CC <- t(x * z$rweights) %*% x / sum(z$rweights) 	
+  # print(all.equal(CC, t(x) %*% diag(z$rweights) %*% x / sum(z$rweights)))
+  d <- as.numeric(crossprod(beta.R-beta.LS, CC %*% (beta.R-beta.LS)))/si.dcml^2
+  t0 <- min(1, sqrt(deltas/d))
+  beta.dcml <- t0*coef(z0) +(1-t0)*coef(z)
+  V.dcml <- cov.dcml(res.LS=z0$residuals, res.R=z$residuals, CC=CC, 
+                     sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
+  re.dcml <- as.vector(y - x %*% beta.dcml)
+  si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, sigma=si.dcml.final))
 }
+
 
 SMPY <- function(mf, y, control, split, corr.b=control$corr.b) { 
   if(missing(control)) 
