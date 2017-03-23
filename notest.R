@@ -55,6 +55,15 @@ all.equal(coef(m2), coef(m0), check.attributes=FALSE)
 all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
 all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
 
+round(summary(lm(Y~.-1, data=coleman))$cov.unscaled * summary(lm(Y~.-1, data=coleman))$sigma^2, 5)
+
+
+set.seed(123)
+x1 <- rnorm(100)
+x2 <- rnorm(100)
+y <- rnorm(100, sd=.5)
+m2 <- lmrob2(y~x1+x2, control=lmrob2.control(candidates='SS'))
+round(summary(lm(y~x1+x2))$cov.unscaled * summary(lm(y~x1+x2))$sigma^2, 5)
 
 # With factors!
 data(breslow.dat, package='robust')
@@ -69,6 +78,10 @@ all.equal(coef(m1), coef(m0), check.attributes=FALSE)
 all.equal(coef(m2), coef(m0), check.attributes=FALSE)
 all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
 all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
+
+
+sqrt(summary(lm(Loss~., data=st2))$cov[1,1]) * summary(lm(Loss~.,data=st2))$sigma
+
 
 # synthetic data
 n <- 100
@@ -141,7 +154,6 @@ all.equal(coef(m1), coef(m0), check.attributes=FALSE)
 all.equal(coef(m2), coef(m0), check.attributes=FALSE)
 all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
 all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
-
 
 
 co2 <- coleman

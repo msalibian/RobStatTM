@@ -23,17 +23,24 @@ mscale <- function(u, tol, delta=.5, max.it=100, tuning.chi=1.5477) {
 
 
 
-covdcml=function(resLS,res0,C,sig0,t0,p,n)
-##Computation of the asymptotic covariance matrix of the DCML estimator
-{t0=1-t0
-c=mean(psibs(res0/sig0,3.44)*resLS)
-a1=mean(psibs(res0/sig0,3.44)^2)
-b=mean(psibspri(res0/sig0,3.44))
-deltasca=0.5*(1-(p/n))
-a2=mscale(resLS,.00001,deltasca)^2
-tuti=t0^2*sig0^2*a1/b^2 + a2*(1-t0)^2 +2*t0*(1-t0)*sig0*c/b
-V=tuti*solve(C)
-V
+cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
+  ##Computation of the asymptotic covariance matrix of the DCML estimator
+  t0 <- 1-t0
+  # c <- mean(psibs(res0/sig0,3.44)*resLS)
+  # a1=mean(psibs(res0/sig0,3.44)^2)
+  # b=mean(psibspri(res0/sig0,3.44))
+  tpr <- rhoprime(r=res.R/sig.R, cc=control$tuning.psi)
+  c0 <- mean( tpr * res.LS )
+  a1 <- mean( tpr^2 )
+  b0 <- mean(rhoprime2(r=res.R/sig.R, cc=control$tuning.psi))
+  dee <- control$bb
+  if(control$corr.b) dee <- dee * (1 - p/n)
+  #a2=mscale(resLS,.00001,deltasca)^2
+  a2 <- mscale(u=res.LS, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  # tuti=t0^2*sig0^2*a1/b^2 + a2*(1-t0)^2 +2*t0*(1-t0)*sig0*c/b
+  tt <- t0^2*sig.R^2*a1/b0^2 + a2^2*(1-t0)^2 +2*t0*(1-t0)*sig.R*c0/b0
+  V <- tt*solve(CC)
+  return(V)
 }
 
 
@@ -60,6 +67,8 @@ rhoprime <- function(r, cc) {
   return(gg)
 }
 
+
+
 rhoprime2 <- function(r, cc) {
   #Derivative of the bisquare psi function
   r <- r/cc
@@ -75,12 +84,7 @@ rhoprime2 <- function(r, cc) {
 # 
 # uniroot( function(e) (effi(e)-.85), lower=3, upper=4)$root
 
-  psibs=function(t,c)  
-# bisquare psi function
- {r=t/c
- gg=r*(1-r^2)^2*(abs(r)<=1)
- gg
-}
+
         
  
  psibspri=function (t,c)   

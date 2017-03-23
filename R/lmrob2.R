@@ -213,15 +213,33 @@ lmrob2 <-
         }
         # DCML
         # LS is already computed in z0
-        # mscale(u, tol, delta = 0.5, max.it = 100, tuning.chi = 1.5477)
-        # coef(z0)
-        # resid(z0)
-        # dee <- control$bb
-        # if(corr.b) dee <- dee*(1-(ncol(X1)+ncol(Z))/n)
-        # 
-        print(names(z0))
-        print(names(z))
-        print(summary(resid(z0)))
+        ##Begin the computation of the DCML
+        beta.R <- as.vector(z$coefficients)
+        beta.LS <- as.vector(z0$coefficients)
+        p <- length(beta.R)
+        n <- length(z$residuals)
+        dee <- control$bb
+        if(control$corr.b) dee <- dee*(1-p/n)
+        si.dcml <- mscale(z$residuals, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+        deltas <- .3*p/n 
+        CC <- t(x * z$rweights) %*% x / sum(z$rweights) 	
+        d <- as.numeric(crossprod(beta.R-beta.LS, CC %*% (beta.R-beta.LS)))/si.dcml^2
+        t0 <- min(1, sqrt(deltas/d))
+        beta.dcml <- t0*coef(z0) +(1-t0)*coef(z)
+        V <- cov.dcml(res.LS=z0$residuals, res.R=z$residuals, CC=CC, 
+                      sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
+        # print(V / as.matrix(z$cov))
+        zz <- z$cov 
+        attributes(zz) <- NULL
+        print(matrix(zz, p, p)) # * z$scale)
+        print(V)
+        # V <- covdcml (z0$residuals,z$residuals, CC, si.dcml, t0, p, n) / n	
+        # resid=y-XX%*%beta1
+        # sigma=mscale(resid, .00001,dee) 
+        # out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
+        
+        
+        
         # print('About to compute M step')
         # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
         # if(is.character(ini) && !grepl(paste0("^", ini), control$method))
