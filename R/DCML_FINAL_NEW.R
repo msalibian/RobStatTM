@@ -25,11 +25,11 @@ s0}
 covdcml=function(resLS,res0,C,sig0,t0,p,n)
 ##Computation of the asymptotic covariance matrix of the DCML estimator
 {t0=1-t0
-c=mean(psibs(res0/sig0,3.44)*resLS)
-a1=mean(psibs(res0/sig0,3.44)^2)
-b=mean(psibspri(res0/sig0,3.44))
+c=mean(psibs(res0/sig0,3.4434)*resLS)
+a1=mean(psibs(res0/sig0,3.4434)^2)
+b=mean(psibspri(res0/sig0,3.4434))
 deltasca=0.5*(1-(p/n))
-a2=mscale(resLS,.00001,deltasca)^2
+a2=mscale(resLS,1e-8,deltasca)^2
 tuti=t0^2*sig0^2*a1/b^2 + a2*(1-t0)^2 +2*t0*(1-t0)*sig0*c/b
 V=tuti*solve(C)
 V
@@ -61,7 +61,7 @@ gg
 #OUTPUT
 #outMM output of the MM estimator (lmrob) with 85% of efficiency and PY as initial
 {
-cont1=lmrob.control(tuning.psi=3.44)
+cont1=lmrob.control(tuning.psi=3.4434)
 n=nrow(X)
 p=ncol(X)
 if(intercept==TRUE )
@@ -99,7 +99,7 @@ p=ncol(X)
 if(intercept==TRUE )
     {XX=cbind(rep(1,n),X)
     p=p+1}
-cont1=lmrob.control(tuning.psi=3.44)
+cont1=lmrob.control(tuning.psi=3.4434)
 if(intercept==TRUE)
    {out3=lm(y~X)}else
    {out3=lm(y~X-1)}
@@ -109,7 +109,7 @@ dee=.5*(1-(p/n))
 beta0=outMM$coeff
 weight=outMM$rweights
 residuos=outMM$resid
-sigma=mscale(residuos,.00001,dee)
+sigma=mscale(residuos,1e-8,dee)
 ##Begin the computation of the DCML
 deltas=.3*p/n 
 C=t(XX)%*%diag(weight)%*%XX/sum(weight) 	
@@ -119,7 +119,7 @@ t0=min(1,sqrt(deltas/d))
 beta1=t0*betaLS+(1-t0)*beta0
 V=covdcml (resLS,residuos,C,sigma,t0,p,n)/n	
 resid=y-XX%*%beta1
-sigma=mscale(resid, .00001,dee) 
+sigma=mscale(resid, 1e-8,dee) 
 out=list(coef=beta1, cov=V, resid=resid,   sigma=sigma )
 out
 }
