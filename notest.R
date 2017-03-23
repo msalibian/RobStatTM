@@ -71,13 +71,17 @@ source('R/DCML.R')
 source('R/refineSM.R')
 
 set.seed(123)
-x1 <- rnorm(50)
-x2 <- rexp(50, rate=.3)
-x3 <- runif(50)
-y <- rnorm(50, sd=1.5)
-m2 <- lmrob2(y~x1+x2+x3, control=lmrob2.control(candidates='SS'))
-summary(m2)
-summary(lm(y~x1+x2+x3))
+n <- 1000
+x1 <- rnorm(n)
+x2 <- rexp(n, rate=.3)
+x3 <- runif(n)
+y <- 2*x1 - x2 + 1 + rnorm(n, sd=.5)
+ou <- rbinom(n, size=1, prob=.2)
+y[ou==1] <- 8
+x2[ou==1] <- 2
+coef(m2 <- lmrob2(y~x1+x2+x3))
+coef(m0 <- lm(y~x1+x2+x3))
+coef(m1 <- lmrob(y~x1+x2+x3))
 
 # > m2 <- lmrob2(y~x1+x2+x3, control=lmrob2.control(candidates='PY'))
 # (Intercept)         x1         x2        x3
