@@ -246,11 +246,11 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   betapy <- initial$initCoef[,1]
   r <- as.vector(y1 - X1 %*% betapy)
   best.tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-  sspy <- mscale(u=best.tmp$residuals, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+  sspy <- mscale(u=best.tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
   for(i in 2:kk) {
     r <- as.vector(y1 - X1 %*% initial$initCoef[,i])
     tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-    s.cand <- mscale(u=tmp$residuals, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+    s.cand <- mscale(u=tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
     if( s.cand < sspy ) {
       sspy <- s.cand
       betapy <- initial$initCoef[,i]
@@ -272,7 +272,7 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
     beta <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
     r1 <- as.vector(y - X %*% beta)
     tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
-    sih <- mscale(u=tmp$residuals, tol=1e-7, delta=dee, tuning.chi=control$tuning.chi)
+    sih <- mscale(u=tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
     if(sih < sspy) {
       sspy <- sih
       betapy <- beta
