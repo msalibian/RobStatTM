@@ -90,7 +90,7 @@ rhoprime2 <- function(r, cc) {
 gg
 }
         
- MMPY <- function(X, y, control, mf, corr.b=control$corr.b) {
+MMPY <- function(X, y, control, mf, corr.b=control$corr.b) {
    # This function will be called from lmrob, so control will be valid
    # X will already contain a column of ones if needed
    # Compute an MM-estimator taking as initial Pe?a Yohai
@@ -133,7 +133,7 @@ gg
 
 
 
-DCML_FINAL=function(X,y, outMM, intercept=TRUE)
+DCML <- function(X,y, outMM, intercept=TRUE) {
 #INPUT
 #X nxp matrix, where n is the number of observations and p the number of  columns, the 1's of the intercept are not included
 #y vector of dimension  n with the responses
@@ -145,9 +145,6 @@ DCML_FINAL=function(X,y, outMM, intercept=TRUE)
 #resid vector of residuals
 #weight  vector with weights that the MMestimator assigns to every observation
 #sigma standad error of errot term
- 
-
-{
 XX=X
 n=nrow(X)
 p=ncol(X)
@@ -264,5 +261,5 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   control$cov <- ".vcov.w"
   # lmrob() sets the above when is.list(init)==TRUE
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
-  return(c(outlmrob, init.SMPY=uu)) 
+  return(outlmrob) #, init.SMPY=uu)) 
 }

@@ -211,6 +211,17 @@ lmrob2 <-
             z <- lmrob.fit(x, y, control, init=init, mf = mf)
           }
         }
+        # DCML
+        # LS is already computed in z0
+        # mscale(u, tol, delta = 0.5, max.it = 100, tuning.chi = 1.5477)
+        # coef(z0)
+        # resid(z0)
+        # dee <- control$bb
+        # if(corr.b) dee <- dee*(1-(ncol(X1)+ncol(Z))/n)
+        # 
+        print(names(z0))
+        print(names(z))
+        print(summary(resid(z0)))
         # print('About to compute M step')
         # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
         # if(is.character(ini) && !grepl(paste0("^", ini), control$method))
