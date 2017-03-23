@@ -58,12 +58,56 @@ all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
 round(summary(lm(Y~.-1, data=coleman))$cov.unscaled * summary(lm(Y~.-1, data=coleman))$sigma^2, 5)
 
 
+
+
+rm(list=ls())
+
+# library(robustbroli)
+library(robustbase)
+library(pyinit)
+library(quantreg)
+source('R/lmrob2.R')
+source('R/DCML.R')
+source('R/refineSM.R')
+
 set.seed(123)
-x1 <- rnorm(100)
-x2 <- rnorm(100)
-y <- rnorm(100, sd=.5)
-m2 <- lmrob2(y~x1+x2, control=lmrob2.control(candidates='SS'))
+x1 <- rnorm(20)
+x2 <- rexp(20, rate=.3)
+x3 <- runif(20)
+y <- rnorm(20, sd=1.5)
+m2 <- lmrob2(y~x1+x2+x3, control=lmrob2.control(candidates='PY'))
+
+# > m2 <- lmrob2(y~x1+x2+x3, control=lmrob2.control(candidates='PY'))
+# (Intercept)         x1         x2        x3
+# (Intercept)    7.680582  1.2390906 -1.0037035 -6.585118
+# x1             1.239091  1.2299773 -0.1744918 -1.257578
+# x2            -1.003703 -0.1744918  0.2207745  0.346452
+# x3            -6.585118 -1.2575779  0.3464520 11.460809
+# 
+
+
+rm(list=ls())
+source('R/DCML_FINAL_NEW.R')
+set.seed(123)
+x1 <- rnorm(20)
+x2 <- rexp(20, rate=.3)
+x3 <- runif(20)
+y <- rnorm(20, sd=3.5)
+mf <- model.frame(y ~ x1 + x2 + x3)
+int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
+a <- splitFrame(mf, type='f')
+Z <- a$x1 
+if(int.present) Z <- Z[, -1]
+X <- a$x2
+options(warn=-1)
+smpy.v <- MMPY(y=y, X=X, intercept=FALSE)
+DCML_FINAL(X=X,y=y, outMM=smpy.v, intercept=FALSE)$cov
+  
+
 round(summary(lm(y~x1+x2))$cov.unscaled * summary(lm(y~x1+x2))$sigma^2, 5)
+
+
+
 
 # With factors!
 data(breslow.dat, package='robust')
@@ -83,6 +127,8 @@ all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
 sqrt(summary(lm(Loss~., data=st2))$cov[1,1]) * summary(lm(Loss~.,data=st2))$sigma
 
 
+
+
 # synthetic data
 n <- 100
 p <- 5
@@ -100,7 +146,8 @@ dat2 <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y2)
 # y <- rnorm(n, sd=.5) + 0 # 2*(as.numeric(f2) - 1)
 # dat <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y)
 
-m2 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat) #)$coef # MMPY
+
+m2 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
 m2$scale
 
 m22 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY

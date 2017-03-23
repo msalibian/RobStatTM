@@ -203,7 +203,7 @@ DCML <- function(x, y, z, z0, control) {
                      sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
   re.dcml <- as.vector(y - x %*% beta.dcml)
   si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
-  return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, sigma=si.dcml.final))
+  return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, scale=si.dcml.final))
 }
 
 
