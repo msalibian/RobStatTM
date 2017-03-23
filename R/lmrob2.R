@@ -100,7 +100,7 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
       y <- wts * y
     }
     ## check for singular fit
-    
+
     if(getRversion() >= "3.1.0") {
       z0 <- .lm.fit(x, y, tol = control$solve.tol)
       piv <- z0$pivot
@@ -166,7 +166,7 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
       z$cov <- z2$cov
       z$fitted.values <- y - z2$residuals
       z$rweights <- z$loss <- NULL
-      
+
       # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
       # if(is.character(ini) && !grepl(paste0("^", ini), control$method))
       #   control$method <- paste0(ini, control$method)
@@ -259,43 +259,89 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
 
 lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
                             tuning.psi = 3.4434, # 85% efficiency
-                            max.it = 500, refine.tol = 1e-7, rel.tol = 1e-7,
+                            max.it = 100, refine.tol = 1e-7, rel.tol = 1e-7,
                             refine.PY = 100, # no. of steps to refine PY candidates
                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
                             compute.rd = FALSE, psi = 'bisquare',
                             corr.b = TRUE, # for MMPY and SMPY
                             split.type = "f", # help(splitFrame, package='robustbase')
-                            cov = FALSE, initial='S', method='MM', subsampling='simple',
-                            fast.s.large.n = 2000, 
-                            groups = 5, n.group = 400, 
-                            k.fast.s = 1, best.r.s = 2, k.max = 200, maxit.scale = 200, 
-                            k.m_s = 20, nResample = 500, 
-                            # pyinit control 
+                            # cov = FALSE, 
+                            initial='S', method='MM', subsampling='simple',
+                            # fast.s.large.n = 2000, 
+                            # groups = 5, n.group = 400, 
+                            # k.fast.s = 1, best.r.s = 2, k.max = 200, maxit.scale = 200, 
+                            # k.m_s = 20, nResample = 500, 
+                            # # pyinit control 
                             prosac = 0.5, clean.method = 'threshold', 
                             C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
                             mscale.maxit = 200, mscale.tol = 1e-08, 
-                            mscale.rho.fun = 'bisquare',
-                            ...) {
-  if (missing(max.it)) max.it <- 500
-  if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
-  if(!missing(psi)) psi <- .regularize.Mpsi(psi)
+                            mscale.rho.fun = 'bisquare') {
+  # if (missing(max.it)) max.it <- 500
+  # if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
+  # if(!missing(psi)) psi <- .regularize.Mpsi(psi)
   c(list(seed = as.integer(seed), psi=psi,
          tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
-         max.it=max.it, 
-         refine.tol=refine.tol, corr.b = corr.b, refine.PY = refine.PY, 
-         rel.tol=rel.tol, solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
-         compute.rd=compute.rd, split.type=split.type, 
-         cov=cov, split.type = match.arg(split.type), initial=initial,  
-         method=method, subsampling=subsampling,
-         fast.s.large.n = fast.s.large.n, 
-         groups = groups, n.group = n.group, 
-         k.fast.s = k.fast.s, best.r.s = best.r.s, k.max = k.max, maxit.scale = maxit.scale, 
-         k.m_s = k.m_s, nResample = nResample,
+         max.it=max.it,
+         refine.tol=refine.tol,
+         corr.b = corr.b, refine.PY = refine.PY, 
+         rel.tol=rel.tol,
+         solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
+         compute.rd=compute.rd, 
+         split.type=split.type, 
+         # cov=cov, split.type = match.arg(split.type), 
+         initial=initial, method=method, subsampling=subsampling,
+         # fast.s.large.n = fast.s.large.n, 
+         # groups = groups, n.group = n.group, 
+         # k.fast.s = k.fast.s, best.r.s = best.r.s, k.max = k.max, maxit.scale = maxit.scale, 
+         # k.m_s = k.m_s, nResample = nResample,
          prosac=prosac, clean.method=clean.method, C.res=C.res,
          prop=prop, py.nit=py.nit, en.tol=en.tol, mscale.maxit=mscale.maxit,
-         mscale.tol=mscale.tol, mscale.rho.fun='bisquare', 
-         list(...)))
+         mscale.tol=mscale.tol, mscale.rho.fun='bisquare'))
 }
+
+
+
+# lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
+#                             tuning.psi = 3.4434, # 85% efficiency
+#                             max.it = 500, refine.tol = 1e-7, rel.tol = 1e-7,
+#                             refine.PY = 100, # no. of steps to refine PY candidates
+#                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
+#                             compute.rd = FALSE, psi = 'bisquare',
+#                             corr.b = TRUE, # for MMPY and SMPY
+#                             split.type = "f", # help(splitFrame, package='robustbase')
+#                             cov = FALSE, initial='S', method='MM', subsampling='simple',
+#                             fast.s.large.n = 2000, 
+#                             groups = 5, n.group = 400, 
+#                             k.fast.s = 1, best.r.s = 2, k.max = 200, maxit.scale = 200, 
+#                             k.m_s = 20, nResample = 500, 
+#                             # pyinit control 
+#                             prosac = 0.5, clean.method = 'threshold', 
+#                             C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
+#                             mscale.maxit = 200, mscale.tol = 1e-08, 
+#                             mscale.rho.fun = 'bisquare',
+#                             ...) {
+#   if (missing(max.it)) max.it <- 500
+#   if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
+#   if(!missing(psi)) psi <- .regularize.Mpsi(psi)
+#   c(list(seed = as.integer(seed), psi=psi,
+#          tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
+#          max.it=max.it, 
+#          refine.tol=refine.tol, corr.b = corr.b, refine.PY = refine.PY, 
+#          rel.tol=rel.tol, solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
+#          compute.rd=compute.rd, split.type=split.type, 
+#          cov=cov, split.type = match.arg(split.type), initial=initial,  
+#          method=method, subsampling=subsampling,
+#          fast.s.large.n = fast.s.large.n, 
+#          groups = groups, n.group = n.group, 
+#          k.fast.s = k.fast.s, best.r.s = best.r.s, k.max = k.max, maxit.scale = maxit.scale, 
+#          k.m_s = k.m_s, nResample = nResample,
+#          prosac=prosac, clean.method=clean.method, C.res=C.res,
+#          prop=prop, py.nit=py.nit, en.tol=en.tol, mscale.maxit=mscale.maxit,
+#          mscale.tol=mscale.tol, mscale.rho.fun='bisquare', 
+#          list(...)))
+# }
+
+
 
 print.lmrob2 <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
@@ -452,13 +498,13 @@ print.summary.lmrob2 <- function (x, digits = max(3, getOption("digits") - 3),
     }
     cat("\n")
     
-    if (!is.null(rw <- x$rweights)) {
-      if (any(zero.w <- x$weights == 0))
-        rw <- rw[!zero.w]
-      eps.outlier <- if (is.function(EO <- control$eps.outlier))
-        EO(nobs(x)) else EO
-      summarizeRobWeights(rw, digits = digits, eps = eps.outlier, ...)
-    }
+    # if (!is.null(rw <- x$rweights)) {
+    #   if (any(zero.w <- x$weights == 0))
+    #     rw <- rw[!zero.w]
+    #   eps.outlier <- if (is.function(EO <- control$eps.outlier))
+    #     EO(nobs(x)) else EO
+    #   summarizeRobWeights(rw, digits = digits, eps = eps.outlier, ...)
+    # }
     
   } else cat("\nNo Coefficients\n")
   invisible(x)
