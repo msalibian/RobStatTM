@@ -1,0 +1,13 @@
+# useDynLib(robustbroli, .registration=TRUE)
+
+importFrom("robustbase", lmrob.fit, lmrob.lar, splitFrame)
+
+importFrom("pyinit", pyinit)
+
+
+## Functions defined in this package
+export(lmrob2, MMPY, MSPY, lmrob2.control, DCML, cov.dcml, refine.sm
+## mscale, f.w, rho, rhoprime, rhoprime2 
+       )
+
+

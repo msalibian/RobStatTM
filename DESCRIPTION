@@ -12,3 +12,4 @@ Imports: stats, graphics, utils, methods, DEoptimR
 LazyData: yes
 License: GPL (>= 2)
 Author: Matias Salibian-Barrera [aut] (lmrob orig.), Victor Yohai [aut].
+RoxygenNote: 6.0.1

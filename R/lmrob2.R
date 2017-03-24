@@ -1,26 +1,48 @@
-
-### The first part of lmrob()  much cut'n'paste from lm() - on purpose!
-
-
-# R CMD INSTALL --preclean --clean robustbroli 
-
-
-## lmrob2: back to basics!
-## For continuous explanatory variables: 
-## the estimator is an S-initial estimator computed with 
-## Pena-Yohai candidates (default) or SubSampling candidates
-## (we use the Fast-S algorithm), then we iterate an
-## M estimator, and finally report the Distance Constrained 
-## Maximum Likelihood one (DCML)
-## 
-## For continuous-categorical explanatory variables:
-## the estimator is an MS-estimator computed with 
-## Pena-Yohai candidates (default) or SubSampling candidates
-## (we use the Fast-S algorithm), then we iterate an
-## M estimator, and finally report the Distance Constrained 
-## Maximum Likelihood one (DCML)
-## 
-## We also made the default convergence settings for the S less strict
+#' Robust DCML linear regression estimators 
+#'
+#' This function computes MM-based Distance Constrained
+#' Maximum Likelihood regression estimators for linear models.
+#' 
+#' These are the details. In particular, this function computes the
+#' DCML estimators combining the least squares estimator and a
+#' robust MM-estimator, the latter computed using Pen~a-Yohai
+#' candidates (instead of subsampling ones).
+#'
+#' @param formula a symbolic description of the model to be fit. 
+#' @param data an optional data frame, list or environment containing
+#' the variables in the model. If not found in \code{data}, model variables
+#' are taken from \code{environment(formula)}, which usually is the
+#' root environment of the current R session.
+#' @param subset an optional vector specifying a subset of observations to be used.
+#' @param weights an optional vector of weights to be used in the fitting process.
+#' @param na.action a function to indicates what should happen when the data contain NAs. 
+#' The default is set by the \link{na.action} setting of \link{options}, and is 
+#' \code{na.fail} if that is unset. 
+#' @param model logical value indicating whether to return the model frame
+#' @param x logical value indicating whether to return the model matrix
+#' @param y logical value indicating whether to return the vector of responses
+#' @param singular.ok logical value. If \code{FALSE} a singular fit produces an error.
+#' @param contrasts an optional list. See the \code{contrasts.arg} of \link{model.matrix.default}.
+#' @param offset this can be used to specify an a priori known component to be included 
+#' in the linear predictor during fitting. An offset term can be included in the formula 
+#' instead or as well, and if both are specified their sum is used.
+#' @param control a list specifying control parameters as returned by the function 
+#' \link{lmrob2.control}.
+#'
+#' @return A list with the following components:
+#' \item{coefficients}{The estimated vector of regression coefficients} 
+#' \item{scale}{The estimated scale of the residuals}
+#' \item{residuals}{The vector of residuals associated with the fit} 
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @references \url{http://thebook}
+#' @seealso \code{\link{lmrob}}
+#'
+#' @examples
+#' data(coleman)
+#' m2 <- lmrob2(Y ~ ., data=coleman)
+#'
+#' @export
 lmrob2 <- function(formula, data, subset, weights, na.action, 
                    model = TRUE, x = !control$compute.rd, y = FALSE,
                    singular.ok = TRUE, contrasts = NULL, offset = NULL,
@@ -140,7 +162,7 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
       # DCML
       # LS is already computed in z0
       z2 <- DCML(x=x, y=y, z=z, z0=z0, control=control)
-      # print(z2$t0)
+
       z$coefficients <- z2$coefficients
       z$scale <- z2$scale
       z$residuals <- z2$residuals
@@ -239,7 +261,7 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
 lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
                             tuning.psi = 3.4434, # 85% efficiency
                             max.it = 100, refine.tol = 1e-7, rel.tol = 1e-7,
-                            refine.PY = 20, # no. of steps to refine PY candidates
+                            refine.PY = 10, # no. of steps to refine PY candidates
                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
                             compute.rd = FALSE, psi = 'bisquare',
                             corr.b = TRUE, # for MMPY and SMPY
@@ -247,7 +269,7 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
                             initial='S', #'S' or 'MS'
                             prosac = 0.5, clean.method = 'threshold', 
                             C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
-                            mscale.maxit = 200, mscale.tol = 1e-08, 
+                            mscale.maxit = 50, mscale.tol = 1e-06, 
                             mscale.rho.fun = 'bisquare') {
   return(list(seed = as.integer(seed), psi=psi,
          tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
@@ -529,3 +551,29 @@ f.w <- function(u, cc) {
   return(tmp)
 }
 
+
+
+
+
+### The first part of lmrob()  much cut'n'paste from lm() - on purpose!
+
+
+# R CMD INSTALL --preclean --clean robustbroli 
+
+
+## lmrob2: back to basics!
+## For continuous explanatory variables: 
+## the estimator is an S-initial estimator computed with 
+## Pena-Yohai candidates (default) or SubSampling candidates
+## (we use the Fast-S algorithm), then we iterate an
+## M estimator, and finally report the Distance Constrained 
+## Maximum Likelihood one (DCML)
+## 
+## For continuous-categorical explanatory variables:
+## the estimator is an MS-estimator computed with 
+## Pena-Yohai candidates (default) or SubSampling candidates
+## (we use the Fast-S algorithm), then we iterate an
+## M estimator, and finally report the Distance Constrained 
+## Maximum Likelihood one (DCML)
+## 
+## We also made the default convergence settings for the S less strict
