@@ -293,7 +293,8 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
 #' @param refine.PY number of refinement steps for the Pen~a-Yohai candidates
 #' @param solve.tol relative tolerance for inversion
 #' @param trace.lev positive values (increasingly) provide details on the progress of the MM-algorithm 
-#' @param mts maximum number of samples
+#' @param mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function 
+#' that performs M-iterations (lmrob..M..fit), so set here. 
 #' @param compute.rd logical value indicating whether robust leverage distances need to be computed. 
 #' @param psi string specifying the type of loss function to be used.
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied 
