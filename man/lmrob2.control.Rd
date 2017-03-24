@@ -2,7 +2,8 @@
 % Please edit documentation in R/lmrob2.R
 \name{lmrob2.control}
 \alias{lmrob2.control}
-\title{Tuning parameters for lmrob2}
+\title{lmrob2.control
+Tuning parameters for lmrob2}
 \usage{
 lmrob2.control(seed = NULL, tuning.chi = 1.5477, bb = 0.5,
   tuning.psi = 3.4434, max.it = 100, refine.tol = 1e-07,

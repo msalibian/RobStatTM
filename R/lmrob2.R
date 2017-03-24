@@ -56,6 +56,7 @@
 #' data(coleman)
 #' m2 <- lmrob2(Y ~ ., data=coleman)
 #'
+#' @rdname lmrob2
 #' @export
 lmrob2 <- function(formula, data, subset, weights, na.action, 
                    model = TRUE, x = !control$compute.rd, y = FALSE,
@@ -269,7 +270,7 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
 
 
 
-
+#' lmrob2.control
 #' Tuning parameters for lmrob2
 #'
 #' This function sets tuning parameters for the MM-based Distance Constrained
@@ -328,6 +329,7 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
 #' data(coleman)
 #' m2 <- lmrob2(Y ~ ., data=coleman, control=lmrob2.control(refine.PY=50))
 #'
+#' @rdname lmrob2.control
 #' @export
 lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
                             tuning.psi = 3.4434, # 85% efficiency
