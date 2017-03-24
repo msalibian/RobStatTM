@@ -1,9 +1,3 @@
-
-# require(lmrob)
-# require(penseinit)
-# require(quantreg)
- 
-
 mscale <- function(u, tol, delta=.5, max.it=100, tuning.chi=1.5477) {
   # M-scale of a sample u  
   # tol: accuracy
