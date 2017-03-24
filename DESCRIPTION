@@ -10,6 +10,6 @@ Description: Distance Constrained Maximum Likelihood estimation for linear regre
 Depends: R (>= 3.0.2), robustbase, pyinit
 Imports: stats, graphics, utils, methods, DEoptimR
 LazyData: yes
-License: GPL (>= 2)
+License: GPL (>= 3)
 Author: Matias Salibian-Barrera [aut] (lmrob orig.), Victor Yohai [aut].
 RoxygenNote: 6.0.1
