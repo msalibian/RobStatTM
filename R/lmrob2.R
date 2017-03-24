@@ -128,38 +128,19 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
       if( control$initial=="SM" ) {
         split <- splitFrame(mf, x, control$split.type)
         if (ncol(split$x1) == 0) {
-          control$method <- 'MM'
           control$initial <- 'S'
           warning("No categorical variables found in model. Reverting to an MM-estimator.")
         }
       }
       if( control$initial=="SM" ) {
-        # if( control$candidates=='PY' ) {
-        # print('about to call SMPY')
         z <- SMPY(mf=mf, y=y, control=control, split=split)
-        # } else {
-        #   # print('about to call lmrob.M.S')
-        #   init <- lmrob.M.S(x, y, control, mf) 
-        #   # print(coef(init))
-        #   control$method <- 'M' 
-        #   control$cov <- ".vcov.w"
-        #   z <- lmrob.fit(x, y, control, init=init, mf = mf)
-        # }
-      } else {
-        # if( control$candidates=='PY' ) {
+      } else if( control$initial == "S" ) {
         z <- MMPY(X=x, y=y, control=control, mf=mf)
-        # } else { 
-        #   init <- lmrob.S(x, y, control, mf=mf) # candidates
-        #   control$method <- 'M' 
-        #   control$cov <- ".vcov.avar1"
-        #   z <- lmrob.fit(x, y, control, init=init, mf = mf)
-        # }
-      }
+      } else stop('Unknown value for lmrob2.control()$initial')
       # DCML
       # LS is already computed in z0
-      ##Begin the computation of the DCML
       z2 <- DCML(x=x, y=y, z=z, z0=z0, control=control)
-      
+      # print(z2$t0)
       z$coefficients <- z2$coefficients
       z$scale <- z2$scale
       z$residuals <- z2$residuals
@@ -168,8 +149,6 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
       z$rweights <- z$loss <- NULL
 
       # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
-      # if(is.character(ini) && !grepl(paste0("^", ini), control$method))
-      #   control$method <- paste0(ini, control$method)
       if (singular.fit) {
         coef <- numeric(p)
         coef[p2] <- NA
@@ -260,26 +239,18 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
 lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
                             tuning.psi = 3.4434, # 85% efficiency
                             max.it = 100, refine.tol = 1e-7, rel.tol = 1e-7,
-                            refine.PY = 100, # no. of steps to refine PY candidates
+                            refine.PY = 20, # no. of steps to refine PY candidates
                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
                             compute.rd = FALSE, psi = 'bisquare',
                             corr.b = TRUE, # for MMPY and SMPY
                             split.type = "f", # help(splitFrame, package='robustbase')
-                            # cov = FALSE, 
-                            initial='S', method='MM', subsampling='simple',
-                            # fast.s.large.n = 2000, 
-                            # groups = 5, n.group = 400, 
-                            # k.fast.s = 1, best.r.s = 2, k.max = 200, maxit.scale = 200, 
-                            # k.m_s = 20, nResample = 500, 
-                            # # pyinit control 
+                            initial='S', #'S' or 'MS'
+#                            method='MM', subsampling='simple',
                             prosac = 0.5, clean.method = 'threshold', 
                             C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
                             mscale.maxit = 200, mscale.tol = 1e-08, 
                             mscale.rho.fun = 'bisquare') {
-  # if (missing(max.it)) max.it <- 500
-  # if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
-  # if(!missing(psi)) psi <- .regularize.Mpsi(psi)
-  c(list(seed = as.integer(seed), psi=psi,
+  return(list(seed = as.integer(seed), psi=psi,
          tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
          max.it=max.it,
          refine.tol=refine.tol,
@@ -288,12 +259,7 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
          solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
          compute.rd=compute.rd, 
          split.type=split.type, 
-         # cov=cov, split.type = match.arg(split.type), 
-         initial=initial, method=method, subsampling=subsampling,
-         # fast.s.large.n = fast.s.large.n, 
-         # groups = groups, n.group = n.group, 
-         # k.fast.s = k.fast.s, best.r.s = best.r.s, k.max = k.max, maxit.scale = maxit.scale, 
-         # k.m_s = k.m_s, nResample = nResample,
+         initial=initial, # method=method, subsampling=subsampling,
          prosac=prosac, clean.method=clean.method, C.res=C.res,
          prop=prop, py.nit=py.nit, en.tol=en.tol, mscale.maxit=mscale.maxit,
          mscale.tol=mscale.tol, mscale.rho.fun='bisquare'))
@@ -301,45 +267,6 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
 
 
 
-# lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
-#                             tuning.psi = 3.4434, # 85% efficiency
-#                             max.it = 500, refine.tol = 1e-7, rel.tol = 1e-7,
-#                             refine.PY = 100, # no. of steps to refine PY candidates
-#                             solve.tol = 1e-7, trace.lev = 0, mts = 1000,
-#                             compute.rd = FALSE, psi = 'bisquare',
-#                             corr.b = TRUE, # for MMPY and SMPY
-#                             split.type = "f", # help(splitFrame, package='robustbase')
-#                             cov = FALSE, initial='S', method='MM', subsampling='simple',
-#                             fast.s.large.n = 2000, 
-#                             groups = 5, n.group = 400, 
-#                             k.fast.s = 1, best.r.s = 2, k.max = 200, maxit.scale = 200, 
-#                             k.m_s = 20, nResample = 500, 
-#                             # pyinit control 
-#                             prosac = 0.5, clean.method = 'threshold', 
-#                             C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
-#                             mscale.maxit = 200, mscale.tol = 1e-08, 
-#                             mscale.rho.fun = 'bisquare',
-#                             ...) {
-#   if (missing(max.it)) max.it <- 500
-#   if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
-#   if(!missing(psi)) psi <- .regularize.Mpsi(psi)
-#   c(list(seed = as.integer(seed), psi=psi,
-#          tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
-#          max.it=max.it, 
-#          refine.tol=refine.tol, corr.b = corr.b, refine.PY = refine.PY, 
-#          rel.tol=rel.tol, solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
-#          compute.rd=compute.rd, split.type=split.type, 
-#          cov=cov, split.type = match.arg(split.type), initial=initial,  
-#          method=method, subsampling=subsampling,
-#          fast.s.large.n = fast.s.large.n, 
-#          groups = groups, n.group = n.group, 
-#          k.fast.s = k.fast.s, best.r.s = best.r.s, k.max = k.max, maxit.scale = maxit.scale, 
-#          k.m_s = k.m_s, nResample = nResample,
-#          prosac=prosac, clean.method=clean.method, C.res=C.res,
-#          prop=prop, py.nit=py.nit, en.tol=en.tol, mscale.maxit=mscale.maxit,
-#          mscale.tol=mscale.tol, mscale.rho.fun='bisquare', 
-#          list(...)))
-# }
 
 
 

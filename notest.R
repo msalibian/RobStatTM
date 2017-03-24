@@ -37,9 +37,9 @@ data(coleman)
 
 ## Default for a very long time:
 m2 <- lmrob2(Y ~ ., data=coleman) # MMPY
-m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates="SS", initial='S'), data=coleman)
+# m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates="SS", initial='S'), data=coleman)
 m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
-c(m0$scale, m1$scale, m2$scale)
+c(m0$scale, m2$scale)
 all.equal(coef(m1), coef(m0), check.attributes=FALSE)
 all.equal(coef(m2), coef(m0), check.attributes=FALSE)
 all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
@@ -71,12 +71,12 @@ source('R/DCML.R')
 source('R/refineSM.R')
 
 set.seed(123)
-n <- 1000
+n <- 50
 x1 <- rnorm(n)
 x2 <- rexp(n, rate=.3)
 x3 <- runif(n)
 y <- 2*x1 - x2 + 1 + rnorm(n, sd=.5)
-ou <- rbinom(n, size=1, prob=.2)
+ou <- rbinom(n, size=1, prob=.05)
 y[ou==1] <- 8
 x2[ou==1] <- 2
 coef(m2 <- lmrob2(y~x1+x2+x3))

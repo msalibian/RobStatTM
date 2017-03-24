@@ -46,12 +46,12 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
     xw <- x * sqrt(weights) # sqrt(W)
     yw <- y *   sqrt(weights)
     beta.1 <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
-    if(any(is.na(beta.1))) { beta.1 <- initial.beta
-    scale <- initial.scale
-    break
+    if(any(is.na(beta.1))) { 
+      beta.1 <- initial.beta
+      scale <- initial.scale
+      break
     }
-    if( (conv==1) )
-    {
+    if( (conv==1) ) {
       # check for convergence
       if( norm.sm( beta - beta.1 ) / norm.sm(beta) < 1e-7 ) { # magic number alert!!!
         converged <- TRUE
