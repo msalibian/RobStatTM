@@ -1,42 +1,13 @@
-useDynLib(robustbroli, .registration=TRUE)
+# useDynLib(robustbroli, .registration=TRUE)
 
+importFrom("robustbase", lmrob.fit, lmrob.lar, splitFrame)
 
-importFrom("robustbase", lmrob.fit)
+importFrom("pyinit", pyinit)
 
-if(FALSE) {##MM
-    stopifnot(require(codetoolsBioC), require(robustbase))
-    findExternalDeps("robustbase")
-}
-importFrom("grDevices", dev.interactive, extendrange)
-importFrom("graphics", abline, box, legend, lines, matplot, mtext,
-           panel.smooth, par, plot, points, strheight, text, title)
-importFrom("stats",
-           aggregate, alias, as.formula, binomial,
-           coef, cor, cov, cov.wt, cov2cor, delete.response, deviance, dnorm, dpois,
-           family, fitted, fivenum, formula,
-           gaussian, glm, glm.fit, hatvalues,
-           integrate, is.empty.model, lm.fit, lm.wfit,
-           mad, mahalanobis, median, model.frame, model.matrix, model.matrix.lm,
-           model.offset, model.response, model.weights,
-           na.fail, na.omit, na.pass, napredict, naresid,
-           nlminb, nls, nls.control, nobs,
-           optim, optimize, pbinom, pchisq, pf, pgamma, pnorm, poisson, ppois,
-           predict, printCoefmat, pt,
-           qchisq, qnorm, qpois, qqline, qqnorm, qt, quantile,
-           resid, residuals, residuals.lm, setNames, splinefun, symnum,
-           terms, uniroot, var, vcov, weights, .checkMFClasses, .getXlevels,
-
-           ## S3 generics (*not* shown yet by  findExternalDeps() above):
-           anova, case.names, confint,
-           dummy.coef, logLik, profile, variable.names
-           )
-
-
-
-# importFrom('pyinit', pyinit)
 
 ## Functions defined in this package
-export(lmrob2, MMPY, MSPY 
+export(lmrob2, MMPY, MSPY, lmrob2.control, DCML, cov.dcml, 
+       refine.sm, mscale, f.w, rho, rhoprime, rhoprime2 
        )
 
 

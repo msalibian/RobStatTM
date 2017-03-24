@@ -10,107 +10,40 @@ library(pyinit)
 library(quantreg)
 source('R/lmrob2.R')
 source('R/DCML.R')
-source('R/refineSM.R')
+# source('R/refineSM.R')
 
 data(coleman)
 
-# ## Default for a very long time:
-# m1 <- lmrob2(Y ~ ., data=coleman)
-# X <- model.matrix(Y ~ ., data=coleman)
-# m2 <- old.MMPY(X=X, y=coleman$Y, intercept=FALSE)
-# # names(m2$coef) <- names(m2$coefficients) <- names(coef(m1))
-# all.equal(coef(m1), coef(m2), check.attributes=FALSE)
-# all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
-# # dee <- .5*(1-(ncol(X)/nrow(X)))
-# # m3 <- lmrob(Y ~ ., data=coleman, 
-# #             control=lmrob.control(tuning.chi = 1.5477, bb = .5, tuning.psi = 3.4434))
-# # all.equal(coef(m1), coef(m3), check.attributes=FALSE)
-# 
-# ## Default for a very long time:
-# m1 <- lmrob2(Y ~ .-1, data=coleman)
-# X <- model.matrix(Y ~ .-1, data=coleman)
-# m2 <- old.MMPY(X=X, y=coleman$Y, intercept=FALSE)
-# # names(m2$coef) <- names(m2$coefficients) <- names(coef(m1))
-# all.equal(coef(m1), coef(m2), check.attributes=FALSE)
-# all.equal(m1$cov[,], m2$cov[,], check.attributes=FALSE)
-
-
 ## Default for a very long time:
 m2 <- lmrob2(Y ~ ., data=coleman) # MMPY
-# m1 <- lmrob2(Y ~ ., control=lmrob2.control(candidates="SS", initial='S'), data=coleman)
 m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
-c(m0$scale, m2$scale)
-all.equal(coef(m1), coef(m0), check.attributes=FALSE)
-all.equal(coef(m2), coef(m0), check.attributes=FALSE)
-all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
-all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
 
 ## Default for a very long time:
 m2 <- lmrob2(Y ~ . - 1 , data=coleman) # MMPY
-m1 <- lmrob2(Y ~ . - 1 , control=lmrob2.control(candidates="SS", initial='S'), data=coleman)
 m0 <- lmrob(Y ~ . - 1 , data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
-c(m0$scale, m1$scale, m2$scale)
-all.equal(coef(m1), coef(m0), check.attributes=FALSE)
-all.equal(coef(m2), coef(m0), check.attributes=FALSE)
-all.equal(m1$cov[,], m0$cov[,], check.attributes=FALSE)
-all.equal(m2$cov[,], m0$cov[,], check.attributes=FALSE)
-
-round(summary(lm(Y~.-1, data=coleman))$cov.unscaled * summary(lm(Y~.-1, data=coleman))$sigma^2, 5)
 
 
 
 
-rm(list=ls())
-
-# library(robustbroli)
-library(robustbase)
-library(pyinit)
-library(quantreg)
-source('R/lmrob2.R')
-source('R/DCML.R')
-source('R/refineSM.R')
-
-set.seed(123)
-n <- 50
-x1 <- rnorm(n)
-x2 <- rexp(n, rate=.3)
-x3 <- runif(n)
-y <- 2*x1 - x2 + 1 + rnorm(n, sd=.5)
-ou <- rbinom(n, size=1, prob=.05)
-y[ou==1] <- 8
-x2[ou==1] <- 2
-coef(m2 <- lmrob2(y~x1+x2+x3))
-coef(m0 <- lm(y~x1+x2+x3))
-coef(m1 <- lmrob(y~x1+x2+x3))
-
-# > m2 <- lmrob2(y~x1+x2+x3, control=lmrob2.control(candidates='PY'))
-# (Intercept)         x1         x2        x3
-# (Intercept)    7.680582  1.2390906 -1.0037035 -6.585118
-# x1             1.239091  1.2299773 -0.1744918 -1.257578
-# x2            -1.003703 -0.1744918  0.2207745  0.346452
-# x3            -6.585118 -1.2575779  0.3464520 11.460809
+# rm(list=ls())
+# source('R/DCML_FINAL_NEW.R')
+# set.seed(123)
+# x1 <- rnorm(20)
+# x2 <- rexp(20, rate=.3)
+# x3 <- runif(20)
+# y <- rnorm(20, sd=3.5)
+# mf <- model.frame(y ~ x1 + x2 + x3)
+# int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
+# a <- splitFrame(mf, type='f')
+# Z <- a$x1 
+# if(int.present) Z <- Z[, -1]
+# X <- a$x2
+# options(warn=-1)
+# smpy.v <- MMPY(y=y, X=X, intercept=FALSE)
+# DCML_FINAL(X=X,y=y, outMM=smpy.v, intercept=FALSE)$cov
+#   
 # 
-
-
-rm(list=ls())
-source('R/DCML_FINAL_NEW.R')
-set.seed(123)
-x1 <- rnorm(20)
-x2 <- rexp(20, rate=.3)
-x3 <- runif(20)
-y <- rnorm(20, sd=3.5)
-mf <- model.frame(y ~ x1 + x2 + x3)
-int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
-a <- splitFrame(mf, type='f')
-Z <- a$x1 
-if(int.present) Z <- Z[, -1]
-X <- a$x2
-options(warn=-1)
-smpy.v <- MMPY(y=y, X=X, intercept=FALSE)
-DCML_FINAL(X=X,y=y, outMM=smpy.v, intercept=FALSE)$cov
-  
-
-round(summary(lm(y~x1+x2))$cov.unscaled * summary(lm(y~x1+x2))$sigma^2, 5)
+# round(summary(lm(y~x1+x2))$cov.unscaled * summary(lm(y~x1+x2))$sigma^2, 5)
 
 
 
@@ -136,7 +69,7 @@ sqrt(summary(lm(Loss~., data=st2))$cov[1,1]) * summary(lm(Loss~.,data=st2))$sigm
 
 
 # synthetic data
-n <- 100
+n <- 50
 p <- 5
 lf <- 4
 set.seed(123456)
@@ -148,15 +81,19 @@ f1 <- as.factor(LETTERS[rbinom(n, size=lf, prob=.5) + 1])
 f2 <- as.factor(rbinom(n, size=lf, prob=.5) + 1)
 set.seed(77)
 y2 <- rnorm(n, sd=.5) + 7*x2 # 2*(as.numeric(f2) - 1)
+ou <- rbinom(n, size=1, prob=.1)
+y2[ou==1] <- rnorm(sum(ou), mean=-7, sd=.2)
+x3[ou==1] <- runif(sum(ou), min=-1.2, max=-.8)
 dat2 <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y2)
 # y <- rnorm(n, sd=.5) + 0 # 2*(as.numeric(f2) - 1)
 # dat <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y)
 
 
-m2 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
-m2$scale
+m2 <- lmrob2(y ~ ., control=lmrob2.control(initial='SM', refine.PY=10), data=dat2) #)$coef # MMPY
+m0 <- lm(y~., data=dat2)
 
-m22 <- lmrob2(y ~ ., control=lmrob2.control(candidates='PY', initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
+
+m22 <- lmrob2(y ~ ., control=lmrob2.control(initial='SM', refine.PY=500), data=dat2) #)$coef # MMPY
 m22$scale
 
 
