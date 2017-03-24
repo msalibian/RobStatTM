@@ -16,7 +16,7 @@
 #' @param subset an optional vector specifying a subset of observations to be used.
 #' @param weights an optional vector of weights to be used in the fitting process.
 #' @param na.action a function to indicates what should happen when the data contain NAs. 
-#' The default is set by the \link{na.action} setting of \link{options}, and is 
+#' The default is set by the \link{na.action} setting of \code{\link[base]{options}}, and is 
 #' \code{na.fail} if that is unset. 
 #' @param model logical value indicating whether to return the model frame
 #' @param x logical value indicating whether to return the model matrix

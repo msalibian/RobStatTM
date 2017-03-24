@@ -21,7 +21,7 @@ root environment of the current R session.}
 \item{weights}{an optional vector of weights to be used in the fitting process.}
 
 \item{na.action}{a function to indicates what should happen when the data contain NAs. 
-The default is set by the \link{na.action} setting of \link{options}, and is 
+The default is set by the \link{na.action} setting of \code{\link[base]{options}}, and is 
 \code{na.fail} if that is unset.}
 
 \item{model}{logical value indicating whether to return the model frame}
