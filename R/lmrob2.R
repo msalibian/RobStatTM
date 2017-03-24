@@ -3,7 +3,7 @@
 #' This function computes MM-based Distance Constrained
 #' Maximum Likelihood regression estimators for linear models.
 #' 
-#' These are the details. In particular, this function computes the
+#' This function computes the
 #' DCML estimators combining the least squares estimator and a
 #' robust MM-estimator, the latter computed using Pen~a-Yohai
 #' candidates (instead of subsampling ones).
@@ -526,20 +526,41 @@ print.summary.lmrob2 <- function (x, digits = max(3, getOption("digits") - 3),
 }
 
 
+#' IRWLS iterations for S- or M-estimators 
+#'
+#' This function performs iterative improvements for S- or 
+#' M-estimators. 
+#' 
+#' This function performs iterative improvements for S- or 
+#' M-estimators, both iterations are formally the same, the
+#' only difference is that for M-iterations the residual
+#' scale estimate remains fixed, while for S-iterations
+#' it is updated at each step. In this case, we follow
+#' the Fast-S algorithm of Salibian-Barrera and Yohai 
+#' an use one step update for the M-scale, as opposed 
+#' to a full computation. 
+#'
+#' @param x design matrix
+#' @param y vector of responses
+#' @param initial.beta vector of initial regression estimates 
+#' @param initial.scale initial residual scale estimate. If missing the (scaled) median of
+#' the absolute residuals is used. 
+#' @param k maximum number of refining steps to be performed
+#' @param conv an integer indicating whether to check for convergence (1) at each step,
+#' or to force running k steps (0)
+#' @param b tuning constant for the M-scale estimator, used if iterations are for an S-estimator.
+#' @param cc tuning constant for the rho function. 
+#' @param step a string indicating whether the iterations are to compute an S-estiamator 
+#' ('S') or an M-estimator ('M')
+#' @return A list with the following components:
+#' \item{beta.rw}{The updated vector of regression coefficients}
+#' \item{scale.rw}{The corresponding estimated residual scale}
+#' \item{converged}{A logical value indicating whether the algorithm
+#' converged}
+#' 
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}.
 refine.sm <- function(x, y, initial.beta, initial.scale, k=50, 
                       conv=1, b, cc, step='M') {
-  # does "k" IRWLS refining steps from "initial.beta"
-  #
-  # if "initial.scale" is present, it's used, o/w the MAD is used
-  # k = number of refining steps
-  # conv = 0 means "do k steps and don't check for convergence"
-  # conv = 1 means "stop when convergence is detected, or the
-  #                 maximum number of iterations is achieved"
-  # b and cc = tuning constants of the equation
-  # step = 'M' means M-IRWLS iterations (scale is not updated)
-  # step = 'S' means S-IRWLS iterations (scale is updated)
-  # 
-  
   
   n <- dim(x)[1]
   # p <- dim(x)[2]
