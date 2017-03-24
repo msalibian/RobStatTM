@@ -56,7 +56,6 @@
 #' data(coleman)
 #' m2 <- lmrob2(Y ~ ., data=coleman, control=lmrob2.control(refine.PY=50))
 #'
-#' @rdname lmrob2.control
 #' @export
 lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
                             tuning.psi = 3.4434, # 85% efficiency

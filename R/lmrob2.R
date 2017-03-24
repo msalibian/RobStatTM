@@ -56,7 +56,6 @@
 #' data(coleman)
 #' m2 <- lmrob2(Y ~ ., data=coleman)
 #'
-#' @rdname lmrob2
 #' @export
 lmrob2 <- function(formula, data, subset, weights, na.action, 
                    model = TRUE, x = !control$compute.rd, y = FALSE,
