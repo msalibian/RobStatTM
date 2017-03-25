@@ -173,7 +173,7 @@ rhoprime2 <- function(r, cc) {
 #' @param X design matrix 
 #' @param y response vector
 #' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
-#' @mf model frame 
+#' @param mf model frame 
 #' 
 #' @return an \code{\link{lmrob}} object witht the M-estimator 
 #' obtained starting from the S-estimator computed with the 
@@ -182,7 +182,7 @@ rhoprime2 <- function(r, cc) {
 #' the argument \code{control}.  
 #' 
 #' @rdname MMPY
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
@@ -230,26 +230,27 @@ MMPY <- function(X, y, control, mf) {
 }
 
 
-#' MM regression estimator using Pen~a-Yohai candidates
+#' DCML regression estimator
 #'
-#' This function computes MM-regression estimator using Pen~a-Yohai 
-#' candidates for the initial S-estimator. This function is used
+#' This function computes the DCML regression estimator. This function is used
 #' internally by \code{\link{lmrob2}}, and not meant to be used
 #' directly.
 #'
-#' @param X design matrix 
+#' @param x design matrix 
 #' @param y response vector
+#' @param z robust fit as returned by \code{\link{{MMPY}} or \code{\link{{SMPY}}
+#' @param z0 least squares fit as returned by \code{\link{lm.fit}}
 #' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
-#' @mf model frame 
 #' 
-#' @return an \code{\link{lmrob}} object witht the M-estimator 
-#' obtained starting from the S-estimator computed with the 
-#' Pen~a-Yohai initial candidates. The properties of the final
-#' estimator (efficiency, etc.) are determined by the tuning constants in
-#' the argument \code{control}.  
+#' @return a list with the following components
+#' \item{coefficients}{the vector of regression coefficients}
+#' \item{cov}{the estimated covariance matrix of the DCML regression estimator}
+#' \item{residuals}{the vector of regression residuals from the DCML fit}
+#' \item{scale}{a robust residual (M-)scale estimate}
+#' \item{t0}{the mixing proportion between the least squares and robust regression estimators}
 #' 
 #' @rdname DCML
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
@@ -278,31 +279,33 @@ DCML <- function(x, y, z, z0, control) {
   return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, scale=si.dcml.final, t0=t0))
 }
 
-#' MM regression estimator using Pen~a-Yohai candidates
+#' SM regression estimator using Pen~a-Yohai candidates
 #'
-#' This function computes MM-regression estimator using Pen~a-Yohai 
-#' candidates for the initial S-estimator. This function is used
+#' This function computes a robust regression estimator when there
+#' are categorical / dummy explanatory variables. It uses Pen~a-Yohai 
+#' candidates for the S-estimator. This function is used
 #' internally by \code{\link{lmrob2}}, and not meant to be used
 #' directly.
 #'
-#' @param X design matrix 
+#' @param mf model frame 
 #' @param y response vector
 #' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
-#' @mf model frame 
+#' @param split a list as returned by \code{\link{splitFrame}} containing the continuous and
+#' dummy components of the design matrix
 #' 
 #' @return an \code{\link{lmrob}} object witht the M-estimator 
-#' obtained starting from the S-estimator computed with the 
+#' obtained starting from the MS-estimator computed with the 
 #' Pen~a-Yohai initial candidates. The properties of the final
 #' estimator (efficiency, etc.) are determined by the tuning constants in
 #' the argument \code{control}.  
 #' 
 #' @rdname SMPY
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @export
-SMPY <- function(mf, y, control, split, corr.b=control$corr.b) { 
+SMPY <- function(mf, y, control, split) { 
   if(missing(control)) 
     control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
   # int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
@@ -324,7 +327,7 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   tmp0 <- lmrob.lar(x=Z, y=y, control = control, mf = NULL)
   y1 <- as.vector(tmp0$residuals)
   # Now regress y1 on X1, find PY candidates
-  if(corr.b) dee <- dee*(1-p/n)
+  if(control$corr.b) dee <- dee*(1-p/n)
   initial <- pyinit(intercept=FALSE, X=X1, y=y1, 
                     deltaesc=dee, cc.scale=control$tuning.chi, 
                     prosac=control$prosac, clean.method=control$clean.method, 
@@ -335,7 +338,7 @@ SMPY <- function(mf, y, control, split, corr.b=control$corr.b) {
   # choose best candidates including factors into consideration!
   # recompute scales adjusting for Z
   dee <- control$bb
-  if(corr.b) dee <- dee*(1-(ncol(X1)+ncol(Z))/n)
+  if(control$corr.b) dee <- dee*(1-(ncol(X1)+ncol(Z))/n)
   kk <- dim(initial$initCoef)[2]
   # do the first, then iterate over the rest looking for a better one
   betapy <- initial$initCoef[,1]
