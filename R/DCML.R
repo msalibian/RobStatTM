@@ -1,3 +1,44 @@
+#' M-scale estimator 
+#'
+#' This function computes an M-scale, which is a robust
+#' scale (spread) estimator. 
+#' M-estimators of scale are a robust alternative to 
+#' the sample standard deviation. Given a vector of
+#' residuals \code{r}, the M-scale estimator \code{s} 
+#' solves the non-linear equation \code{mean(rho(r/s, cc))=b},
+#' where \code{b} and \code{cc} are user-chosen tuning constants.
+#' In this package the function \code{rho} is one of 
+#' Tukey's bisquare family. 
+#' The breakdown point of the estimator is \code{min(b, 1-b)},
+#' so the optimal choice for \code{b} is 0.5. To obtain a 
+#' consisten estimator the constant 
+#' \code{cc} should be chosen such that E(rho(Z, cc)) = b, where
+#' Z is a standard normal random variable. 
+#'
+#' The iterative algorithm starts from the scaled median of
+#' the absolute values of the input vector, and then 
+#' cycles through the equation s^2 = s^2 * mean(rho(r/s, cc)) / b. 
+#' In this package the function \code{rho} is one of 
+#' Tukey's bisquare family. 
+#'
+#' @param u vector of residuals
+#' @param tol relative tolerance for convergence
+#' @param max.it maximum number of iterations allowed
+#' @param delta the right hand side of the M-scale equation
+#' @param tuning.chi the tuning constant for the rho function  
+#' 
+#' @return The scale estimate value at the last iteration or at convergence. 
+#' 
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#'
+#' @examples
+#' set.seed(123)
+#' # 10% of outliers, sd of good points is 1.5
+#' r <- c(rnorm(45, sd=1.5), rnorm(5, mean=-5, sd=.5))
+#' mscale(u=r, tol=1e-7, delta=.5, max.it=100, tuning.chi=1.5477)
+#' sd(r)
+#' 
+#' @export
 mscale <- function(u, tol, delta=.5, max.it=100, tuning.chi=1.5477) {
   # M-scale of a sample u  
   # tol: accuracy
@@ -16,7 +57,23 @@ mscale <- function(u, tol, delta=.5, max.it=100, tuning.chi=1.5477) {
 }
 
 
-
+#' Approximate covariance matrix of the DCML regression estimator. 
+#'
+#' The estimated covariance matrix of the DCML regression estimator.
+#'
+#' @param res.LS vector of residuals from the least squares fit
+#' @param res.R vector of residuals from the robust regression fit
+#' @param CC estimated covariance matrix of the robust regression estimator
+#' @param t0 mixing parameter
+#' @param p,n the dimensions of the problem, needed for the finite
+#' sample correction of the tuning constant of the M-scale
+#' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
+#' 
+#' @return The scale estimate value at the last iteration or at convergence. 
+#' 
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#'
+#' @export
 cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
   ##Computation of the asymptotic covariance matrix of the DCML estimator
   t0 <- 1-t0
@@ -34,6 +91,15 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 }
 
 
+#' Tukey's bisquare rho function 
+#'
+#' @param u point or vector at which rho is to be evaluated 
+#' @param cc tuning parameter
+#' 
+#' @return The value of \code{rho_cc} at \code{u} 
+#' 
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#'
 rho <- function(u, cc=1.5477) {
   w <- as.numeric( abs(u) <= cc )
   v <- (u^2/(2)*(1-(u^2/(cc^2))+(u^4/(3*cc^4))))*w +(1-w)*(cc^2/6)
@@ -50,6 +116,15 @@ find.tuning.chi <- function(delta, low=.5, upp=10) {
 }
 
 
+#' The first derivative of Tukey's bisquare rho function 
+#'
+#' @param r point or vector at which rho' is to be evaluated 
+#' @param cc tuning parameter
+#' 
+#' @return The value of \code{rho_cc'} at \code{r} 
+#' 
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#'
 rhoprime <- function(r, cc) { 
   # bisquare rho' = psi function
   r <- r / cc
@@ -58,6 +133,15 @@ rhoprime <- function(r, cc) {
 }
 
 
+#' The second derivative of Tukey's bisquare rho function 
+#'
+#' @param r point or vector at which rho'' (second derivative) is to be evaluated 
+#' @param cc tuning parameter
+#' 
+#' @return The value of \code{rho_cc''} at \code{r} 
+#' 
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#'
 
 rhoprime2 <- function(r, cc) {
   #Derivative of the bisquare psi function
