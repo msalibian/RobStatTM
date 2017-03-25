@@ -66,7 +66,7 @@ This function computes MM-based Distance Constrained
 Maximum Likelihood regression estimators for linear models.
 }
 \details{
-These are the details. In particular, this function computes the
+This function computes the
 DCML estimators combining the least squares estimator and a
 robust MM-estimator, the latter computed using Pen~a-Yohai
 candidates (instead of subsampling ones).

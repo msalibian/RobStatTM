@@ -93,7 +93,7 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 }
 
 
-#' Tukey's bisquare rho function 
+#' Tukey bisquare rho function 
 #'
 #' @param u point or vector at which rho is to be evaluated 
 #' @param cc tuning parameter
@@ -119,12 +119,12 @@ find.tuning.chi <- function(delta, low=.5, upp=10) {
 }
 
 
-#' The first derivative of Tukey's bisquare rho function 
+#' The first derivative of Tukeys bisquare rho function 
 #'
-#' @param r point or vector at which rho' is to be evaluated 
+#' @param r point or vector at which the derivative of rho is to be evaluated 
 #' @param cc tuning parameter
 #' 
-#' @return The value of \code{rho_cc'} at \code{r} 
+#' @return The value of the first derivative \code{rho_cc} at \code{r} 
 #' 
 #' @rdname rhoprime
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
@@ -137,12 +137,12 @@ rhoprime <- function(r, cc) {
 }
 
 
-#' The second derivative of Tukey's bisquare rho function 
+#' The second derivative of Tukey bisquare rho function 
 #'
-#' @param r point or vector at which rho'' (second derivative) is to be evaluated 
+#' @param r point or vector at which the second derivative of rho is to be evaluated 
 #' @param cc tuning parameter
 #' 
-#' @return The value of \code{rho_cc''} at \code{r} 
+#' @return The value of the second derivative of \code{rho_cc} at \code{r} 
 #' 
 #' @rdname rhoprime2
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}

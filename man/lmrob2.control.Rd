@@ -41,7 +41,8 @@ have a normal distribution}
 
 \item{trace.lev}{positive values (increasingly) provide details on the progress of the MM-algorithm}
 
-\item{mts}{maximum number of samples}
+\item{mts}{maximum number of subsamples. Un-used, but passed (unnecessarily) to the function 
+that performs M-iterations (lmrob..M..fit), so set here.}
 
 \item{compute.rd}{logical value indicating whether robust leverage distances need to be computed.}
 
