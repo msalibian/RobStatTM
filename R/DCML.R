@@ -31,6 +31,7 @@
 #' 
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
+#' @rdname mscale
 #' @examples
 #' set.seed(123)
 #' # 10% of outliers, sd of good points is 1.5
@@ -71,6 +72,7 @@ mscale <- function(u, tol, delta=.5, max.it=100, tuning.chi=1.5477) {
 #' 
 #' @return The scale estimate value at the last iteration or at convergence. 
 #' 
+#' @rdname cov.dcml
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
 #' @export
@@ -98,6 +100,7 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 #' 
 #' @return The value of \code{rho_cc} at \code{u} 
 #' 
+#' @rdname rho
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
 rho <- function(u, cc=1.5477) {
@@ -123,6 +126,7 @@ find.tuning.chi <- function(delta, low=.5, upp=10) {
 #' 
 #' @return The value of \code{rho_cc'} at \code{r} 
 #' 
+#' @rdname rhoprime
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
 rhoprime <- function(r, cc) { 
@@ -140,9 +144,9 @@ rhoprime <- function(r, cc) {
 #' 
 #' @return The value of \code{rho_cc''} at \code{r} 
 #' 
+#' @rdname rhoprime2
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
-
 rhoprime2 <- function(r, cc) {
   #Derivative of the bisquare psi function
   r <- r/cc
@@ -159,8 +163,31 @@ rhoprime2 <- function(r, cc) {
 # uniroot( function(e) (effi(e)-.85), lower=3, upper=4)$root
 
 
-        
-MMPY <- function(X, y, control, mf, corr.b=control$corr.b) {
+#' MM regression estimator using Pen~a-Yohai candidates
+#'
+#' This function computes MM-regression estimator using Pen~a-Yohai 
+#' candidates for the initial S-estimator. This function is used
+#' internally by \code{\link{lmrob2}}, and not meant to be used
+#' directly.
+#'
+#' @param X design matrix 
+#' @param y response vector
+#' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
+#' @mf model frame 
+#' 
+#' @return an \code{\link{lmrob}} object witht the M-estimator 
+#' obtained starting from the S-estimator computed with the 
+#' Pen~a-Yohai initial candidates. The properties of the final
+#' estimator (efficiency, etc.) are determined by the tuning constants in
+#' the argument \code{control}.  
+#' 
+#' @rdname MMPY
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @references \url{http://thebook}
+#' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
+#'
+#' @export
+MMPY <- function(X, y, control, mf) {
    # This function will be called from lmrob, so control will be valid
    # X will already contain a column of ones if needed
    # Compute an MM-estimator taking as initial Pe?a Yohai
@@ -173,7 +200,7 @@ MMPY <- function(X, y, control, mf, corr.b=control$corr.b) {
    n <- nrow(X)
    p <- ncol(X)
    dee <- control$bb
-   if(corr.b) dee <- dee * (1-(p/n))
+   if(control$corr.b) dee <- dee * (1-(p/n))
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee, 
                cc.scale=control$tuning.chi, 
                prosac=control$prosac, clean.method=control$clean.method, 
@@ -203,7 +230,30 @@ MMPY <- function(X, y, control, mf, corr.b=control$corr.b) {
 }
 
 
-
+#' MM regression estimator using Pen~a-Yohai candidates
+#'
+#' This function computes MM-regression estimator using Pen~a-Yohai 
+#' candidates for the initial S-estimator. This function is used
+#' internally by \code{\link{lmrob2}}, and not meant to be used
+#' directly.
+#'
+#' @param X design matrix 
+#' @param y response vector
+#' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
+#' @mf model frame 
+#' 
+#' @return an \code{\link{lmrob}} object witht the M-estimator 
+#' obtained starting from the S-estimator computed with the 
+#' Pen~a-Yohai initial candidates. The properties of the final
+#' estimator (efficiency, etc.) are determined by the tuning constants in
+#' the argument \code{control}.  
+#' 
+#' @rdname DCML
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @references \url{http://thebook}
+#' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
+#'
+#' @export
 DCML <- function(x, y, z, z0, control) {
   # x: design matrix
   # z: robust fit
@@ -228,7 +278,30 @@ DCML <- function(x, y, z, z0, control) {
   return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, scale=si.dcml.final, t0=t0))
 }
 
-
+#' MM regression estimator using Pen~a-Yohai candidates
+#'
+#' This function computes MM-regression estimator using Pen~a-Yohai 
+#' candidates for the initial S-estimator. This function is used
+#' internally by \code{\link{lmrob2}}, and not meant to be used
+#' directly.
+#'
+#' @param X design matrix 
+#' @param y response vector
+#' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
+#' @mf model frame 
+#' 
+#' @return an \code{\link{lmrob}} object witht the M-estimator 
+#' obtained starting from the S-estimator computed with the 
+#' Pen~a-Yohai initial candidates. The properties of the final
+#' estimator (efficiency, etc.) are determined by the tuning constants in
+#' the argument \code{control}.  
+#' 
+#' @rdname SMPY
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @references \url{http://thebook}
+#' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
+#'
+#' @export
 SMPY <- function(mf, y, control, split, corr.b=control$corr.b) { 
   if(missing(control)) 
     control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
