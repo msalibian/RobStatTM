@@ -22,22 +22,24 @@ tm <- function(x, alpha) {
 
 bb <- seq(-2, 3, length=100)
 nbb <- length(bb)
-lms.ob <- lts.ob <- s.ob <- ls.ob <- rep(NA, nbb)
+m.ob <- lms.ob <- lts.ob <- s.ob <- ls.ob <- rep(NA, nbb)
 for(i in 1:nbb) {
   re <- y - bb[i]*x
   s.ob[i] <- mscale(re, tol=1e-7)
   ls.ob[i] <- mean(re^2)
   lms.ob[i] <- median(re^2)
   lts.ob[i] <- tm(re, alpha=.5)
+  m.ob[i] <- mean(rho(re))
 }
 
 s.ob <- s.ob/max(s.ob)
 ls.ob <- ls.ob/max(ls.ob)
 lts.ob <- lts.ob/max(lts.ob)
 lms.ob <- lms.ob/max(lms.ob)
-
+m.ob <- m.ob/max(m.ob)
 plot(bb, ls.ob, type='l', lwd=3, col='gray30')
 lines(bb, s.ob, lwd=3, lty=1, col='gray50')
 lines(bb, lts.ob, lwd=3, lty=1, col='gray70')
 lines(bb, lms.ob, lwd=3, lty=1, col='black')
+lines(bb, m.ob, lwd=3, lty=1, col='blue')
 
