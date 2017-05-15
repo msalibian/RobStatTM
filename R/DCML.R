@@ -65,6 +65,7 @@ mscale <- function(u, tol, delta=.5, max.it=100, tuning.chi=1.5477) {
 #' @param res.LS vector of residuals from the least squares fit
 #' @param res.R vector of residuals from the robust regression fit
 #' @param CC estimated covariance matrix of the robust regression estimator
+#' @param sig.R robust estimate of the scale of the residuals
 #' @param t0 mixing parameter
 #' @param p,n the dimensions of the problem, needed for the finite
 #' sample correction of the tuning constant of the M-scale

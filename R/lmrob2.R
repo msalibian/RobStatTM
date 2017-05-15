@@ -300,22 +300,22 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied 
 #' to the M-scale parameter \code{bb}
 #' @param split.type determines how categorical and continuous variables are split. See 
-#' \link{\code{splitFrame}} in package \link{\code{robustbase}}. 
+#' \code{\link{splitFrame}} in package \code{\link{robustbase}}. 
 #' @param initial string specifying the initial value for the M-step of the MM-estimator. Valid
 #' options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is 
 #' appropriate when there are categorical explanatory variables in the model.
-#' @param prosac For \code{pyinit}, proportion of observations to remove based on PSCs. See \link{\code{pyinit}}.
+#' @param prosac For \code{pyinit}, proportion of observations to remove based on PSCs. See \code{\link{pyinit}}.
 #' @param clean.method For \code{pyinit}, how to clean the data based on large residuals. If 
 #' \code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will 
 #' be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will 
-#' be removed. See \link{\code{pyinit}}.
-#' @param C.res See parameter \code{clean.method} above. See \link{\code{pyinit}}.
-#' @param prop See parameter \code{clean.method} above. See \link{\code{pyinit}}.
-#' @param py.nit Maximum number of iterations. See \link{\code{pyinit}}.
-#' @param en.tol Relative tolerance for convergence.  See \link{\code{pyinit}}.
-#' @param mscale.maxit Maximum number of iterations for the M-scale algorithm. See \link{\code{pyinit}}. 
-#' @param mscale.tol Convergence tolerance for the M-scale algorithm. See \link{\code{pyinit}}.
-#' @param mscale.rho.fun String indicating the loss function used for the M-scale. See \link{\code{pyinit}}.
+#' be removed. See \code{\link{pyinit}}.
+#' @param C.res See parameter \code{clean.method} above. See \code{\link{pyinit}}.
+#' @param prop See parameter \code{clean.method} above. See \code{\link{pyinit}}.
+#' @param py.nit Maximum number of iterations. See \code{\link{pyinit}}.
+#' @param en.tol Relative tolerance for convergence.  See \code{\link{pyinit}}.
+#' @param mscale.maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}. 
+#' @param mscale.tol Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.
+#' @param mscale.rho.fun String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.
 #'
 #' @return A list with the necessary tuning parameters. 
 #' 
