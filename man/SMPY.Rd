@@ -11,7 +11,7 @@ SMPY(mf, y, control, split)
 
 \item{y}{response vector}
 
-\item{control}{a list of control parameters as returned by \code{\link{lmrob2.control}}}
+\item{control}{a list of control parameters as returned by \code{\link{lmrobdet.control}}}
 
 \item{split}{a list as returned by \code{\link{splitFrame}} containing the continuous and
 dummy components of the design matrix}
@@ -27,7 +27,7 @@ the argument \code{control}.
 This function computes a robust regression estimator when there
 are categorical / dummy explanatory variables. It uses Pen~a-Yohai 
 candidates for the S-estimator. This function is used
-internally by \code{\link{lmrob2}}, and not meant to be used
+internally by \code{\link{lmrobdet}}, and not meant to be used
 directly.
 }
 \references{

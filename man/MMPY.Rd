@@ -11,7 +11,7 @@ MMPY(X, y, control, mf)
 
 \item{y}{response vector}
 
-\item{control}{a list of control parameters as returned by \code{\link{lmrob2.control}}}
+\item{control}{a list of control parameters as returned by \code{\link{lmrobdet.control}}}
 
 \item{mf}{model frame}
 }
@@ -25,7 +25,7 @@ the argument \code{control}.
 \description{
 This function computes MM-regression estimator using Pen~a-Yohai 
 candidates for the initial S-estimator. This function is used
-internally by \code{\link{lmrob2}}, and not meant to be used
+internally by \code{\link{lmrobdet}}, and not meant to be used
 directly.
 }
 \references{

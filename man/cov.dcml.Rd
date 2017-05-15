@@ -20,7 +20,7 @@ cov.dcml(res.LS, res.R, CC, sig.R, t0, p, n, control)
 \item{p, n}{the dimensions of the problem, needed for the finite
 sample correction of the tuning constant of the M-scale}
 
-\item{control}{a list of control parameters as returned by \code{\link{lmrob2.control}}}
+\item{control}{a list of control parameters as returned by \code{\link{lmrobdet.control}}}
 }
 \value{
 The scale estimate value at the last iteration or at convergence.

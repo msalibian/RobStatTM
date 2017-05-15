@@ -44,7 +44,7 @@ lmrob.RFPE <- function (object, scale = NULL)
   (a + b/d)*6 / tun^2
 }
 
-drop1.lmrob <- function (object, scope, scale, keep, ...)
+drop1.lmrob <- function (object, scope, scale, keep)
 {
   # if ( (casefold(object$control$method) != "sm") ) # & (casefold(object$control$method) != "m-sm") )
   #   stop("drop1 is only available for MM-estimates.")
@@ -139,7 +139,7 @@ drop1.lmrob <- function (object, scope, scale, keep, ...)
 #'
 #' @export
 step.lmrob <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
-                        keep = NULL, steps = 1000, whole.path=FALSE,...)
+                        keep = NULL, steps = 1000, whole.path=FALSE)
 {
   if (missing(direction))
     direction <- "backward"

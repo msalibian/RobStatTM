@@ -15,7 +15,7 @@ DCML(x, y, z, z0, control)
 
 \item{z0}{least squares fit as returned by \code{\link{lm.fit}}}
 
-\item{control}{a list of control parameters as returned by \code{\link{lmrob2.control}}}
+\item{control}{a list of control parameters as returned by \code{\link{lmrobdet.control}}}
 }
 \value{
 a list with the following components
@@ -27,7 +27,7 @@ a list with the following components
 }
 \description{
 This function computes the DCML regression estimator. This function is used
-internally by \code{\link{lmrob2}}, and not meant to be used
+internally by \code{\link{lmrobdet}}, and not meant to be used
 directly.
 }
 \references{
