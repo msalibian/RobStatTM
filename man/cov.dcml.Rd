@@ -13,6 +13,8 @@ cov.dcml(res.LS, res.R, CC, sig.R, t0, p, n, control)
 
 \item{CC}{estimated covariance matrix of the robust regression estimator}
 
+\item{sig.R}{robust estimate of the scale of the residuals}
+
 \item{t0}{mixing parameter}
 
 \item{p, n}{the dimensions of the problem, needed for the finite

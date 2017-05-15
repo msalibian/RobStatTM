@@ -52,32 +52,32 @@ that performs M-iterations (lmrob..M..fit), so set here.}
 to the M-scale parameter \code{bb}}
 
 \item{split.type}{determines how categorical and continuous variables are split. See 
-\link{\code{splitFrame}} in package \link{\code{robustbase}}.}
+\code{\link[robustbase]{splitFrame}}.}
 
 \item{initial}{string specifying the initial value for the M-step of the MM-estimator. Valid
 options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is 
 appropriate when there are categorical explanatory variables in the model.}
 
-\item{prosac}{For \code{pyinit}, proportion of observations to remove based on PSCs. See \link{\code{pyinit}}.}
+\item{prosac}{For \code{pyinit}, proportion of observations to remove based on PSCs. See \code{\link{pyinit}}.}
 
 \item{clean.method}{For \code{pyinit}, how to clean the data based on large residuals. If 
 \code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will 
 be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will 
-be removed. See \link{\code{pyinit}}.}
+be removed. See \code{\link{pyinit}}.}
 
-\item{C.res}{See parameter \code{clean.method} above. See \link{\code{pyinit}}.}
+\item{C.res}{See parameter \code{clean.method} above. See \code{\link{pyinit}}.}
 
-\item{prop}{See parameter \code{clean.method} above. See \link{\code{pyinit}}.}
+\item{prop}{See parameter \code{clean.method} above. See \code{\link{pyinit}}.}
 
-\item{py.nit}{Maximum number of iterations. See \link{\code{pyinit}}.}
+\item{py.nit}{Maximum number of iterations. See \code{\link{pyinit}}.}
 
-\item{en.tol}{Relative tolerance for convergence.  See \link{\code{pyinit}}.}
+\item{en.tol}{Relative tolerance for convergence.  See \code{\link{pyinit}}.}
 
-\item{mscale.maxit}{Maximum number of iterations for the M-scale algorithm. See \link{\code{pyinit}}.}
+\item{mscale.maxit}{Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}.}
 
-\item{mscale.tol}{Convergence tolerance for the M-scale algorithm. See \link{\code{pyinit}}.}
+\item{mscale.tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.}
 
-\item{mscale.rho.fun}{String indicating the loss function used for the M-scale. See \link{\code{pyinit}}.}
+\item{mscale.rho.fun}{String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.}
 }
 \value{
 A list with the necessary tuning parameters.

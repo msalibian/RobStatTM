@@ -11,6 +11,8 @@ DCML(x, y, z, z0, control)
 
 \item{y}{response vector}
 
+\item{z}{robust fit as returned by \code{\link{MMPY}} or \code{\link{SMPY}}}
+
 \item{z0}{least squares fit as returned by \code{\link{lm.fit}}}
 
 \item{control}{a list of control parameters as returned by \code{\link{lmrob2.control}}}

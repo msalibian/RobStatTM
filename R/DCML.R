@@ -239,7 +239,7 @@ MMPY <- function(X, y, control, mf) {
 #'
 #' @param x design matrix 
 #' @param y response vector
-#' @param z robust fit as returned by \code{\link{{MMPY}} or \code{\link{{SMPY}}
+#' @param z robust fit as returned by \code{\link{MMPY}} or \code{\link{SMPY}}
 #' @param z0 least squares fit as returned by \code{\link{lm.fit}}
 #' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
 #' 
