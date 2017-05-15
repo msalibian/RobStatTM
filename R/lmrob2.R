@@ -27,7 +27,7 @@
 #' in the linear predictor during fitting. An offset term can be included in the formula 
 #' instead or as well, and if both are specified their sum is used.
 #' @param control a list specifying control parameters as returned by the function 
-#' \link{lmrob2.control}.
+#' \link{lmrobdet.control}.
 #'
 #' @return A list with the following components:
 #' \item{coefficients}{The estimated vector of regression coefficients} 
@@ -54,13 +54,13 @@
 #'
 #' @examples
 #' data(coleman)
-#' m2 <- lmrob2(Y ~ ., data=coleman)
+#' m2 <- lmrobdet(Y ~ ., data=coleman)
 #'
 #' @export
-lmrob2 <- function(formula, data, subset, weights, na.action, 
+lmrobdet <- function(formula, data, subset, weights, na.action, 
                    model = TRUE, x = !control$compute.rd, y = FALSE,
                    singular.ok = TRUE, contrasts = NULL, offset = NULL,
-                   control = lmrob2.control())
+                   control = lmrobdet.control())
 {
   ret.x <- x
   ret.y <- y
@@ -172,11 +172,11 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
         z <- SMPY(mf=mf, y=y, control=control, split=split)
       } else if( control$initial == "S" ) {
         z <- MMPY(X=x, y=y, control=control, mf=mf)
-      } else stop('Unknown value for lmrob2.control()$initial')
+      } else stop('Unknown value for lmrobdet.control()$initial')
       # DCML
       # LS is already computed in z0
       z2 <- DCML(x=x, y=y, z=z, z0=z0, control=control)
-
+      z$MM <- z
       z$coefficients <- z2$coefficients
       z$scale <- z2$scale
       z$residuals <- z2$residuals
@@ -262,20 +262,20 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
       model.matrix(mt, mf, contrasts) else x
   if (ret.y)
     z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
-  class(z) <- c("lmrob2", "lmrob")
+  class(z) <- c("lmrobdet", "lmrob")
   z
 }
 
 
-#' Tuning parameters for lmrob2
+#' Tuning parameters for lmrobdet
 #'
 #' This function sets tuning parameters for the MM-based Distance Constrained
-#' Maximum Likelihood regression estimators computed by \code{lmrob2}.
+#' Maximum Likelihood regression estimators computed by \code{lmrobdet}.
 #' 
 #' There are 2 sets of tuning parameters: those related to the MM-estimator,
 #' and those controlling the initial Pen~a-Yohai estimator. 
 #'
-#' @rdname lmrob2.control
+#' @rdname lmrobdet.control
 #' @param seed \code{NULL}
 #' @param tuning.chi tuning constant for the function used to compute the M-scale
 #' for the S-estimator. For the estimator to be consistent it needs to 
@@ -325,10 +325,10 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
 #'
 #' @examples
 #' data(coleman)
-#' m2 <- lmrob2(Y ~ ., data=coleman, control=lmrob2.control(refine.PY=50))
+#' m2 <- lmrobdet(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
 #'
 #' @export
-lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
+lmrobdet.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Breakdown point
                             tuning.psi = 3.4434, # 85% efficiency
                             max.it = 100, refine.tol = 1e-7, rel.tol = 1e-7,
                             refine.PY = 10, # no. of steps to refine PY candidates
@@ -359,7 +359,7 @@ lmrob2.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% Br
 
 
 
-print.lmrob2 <- function(x, digits = max(3, getOption("digits") - 3), ...)
+print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
   cat("\nCall:\n", cl <- deparse(x$call, width.cutoff=72), "\n", sep = "")
   control <- x$control
@@ -385,10 +385,10 @@ print.lmrob2 <- function(x, digits = max(3, getOption("digits") - 3), ...)
 }
 
 
-summary.lmrob2 <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
+summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
 {
   if (is.null(object$terms))
-    stop("invalid 'lmrob2' object:  no terms component")
+    stop("invalid 'lmrobdet' object:  no terms component")
   p <- object$rank
   df <- object$df.residual #was $degree.freedom
   sigma <- object[["scale"]]
@@ -428,12 +428,12 @@ summary.lmrob2 <- function(object, correlation = FALSE, symbolic.cor = FALSE, ..
   }
   ans$aliased <- aliased # used in print method
   ans$sigma <- sigma # 'sigma': in summary.lm() & 'fit.models' pkg
-  structure(ans, class = "summary.lmrob2")
+  structure(ans, class = "summary.lmrobdet")
 }
 
 
 
-print.summary.lmrob2 <- function (x, digits = max(3, getOption("digits") - 3),
+print.summary.lmrobdet <- function (x, digits = max(3, getOption("digits") - 3),
                                   symbolic.cor = x$symbolic.cor,
                                   signif.stars = getOption("show.signif.stars"), ...)
 {
@@ -650,7 +650,7 @@ f.w <- function(u, cc) {
 # R CMD INSTALL --preclean --clean robustbroli 
 
 
-## lmrob2: back to basics!
+## lmrobdet: back to basics!
 ## For continuous explanatory variables: 
 ## the estimator is an S-initial estimator computed with 
 ## Pena-Yohai candidates (default) or SubSampling candidates

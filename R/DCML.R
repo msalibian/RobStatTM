@@ -69,7 +69,7 @@ mscale <- function(u, tol, delta=.5, max.it=100, tuning.chi=1.5477) {
 #' @param t0 mixing parameter
 #' @param p,n the dimensions of the problem, needed for the finite
 #' sample correction of the tuning constant of the M-scale
-#' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
+#' @param control a list of control parameters as returned by \code{\link{lmrobdet.control}}
 #' 
 #' @return The scale estimate value at the last iteration or at convergence. 
 #' 
@@ -168,12 +168,12 @@ rhoprime2 <- function(r, cc) {
 #'
 #' This function computes MM-regression estimator using Pen~a-Yohai 
 #' candidates for the initial S-estimator. This function is used
-#' internally by \code{\link{lmrob2}}, and not meant to be used
+#' internally by \code{\link{lmrobdet}}, and not meant to be used
 #' directly.
 #'
 #' @param X design matrix 
 #' @param y response vector
-#' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
+#' @param control a list of control parameters as returned by \code{\link{lmrobdet.control}}
 #' @param mf model frame 
 #' 
 #' @return an \code{\link{lmrob}} object witht the M-estimator 
@@ -234,14 +234,14 @@ MMPY <- function(X, y, control, mf) {
 #' DCML regression estimator
 #'
 #' This function computes the DCML regression estimator. This function is used
-#' internally by \code{\link{lmrob2}}, and not meant to be used
+#' internally by \code{\link{lmrobdet}}, and not meant to be used
 #' directly.
 #'
 #' @param x design matrix 
 #' @param y response vector
 #' @param z robust fit as returned by \code{\link{MMPY}} or \code{\link{SMPY}}
 #' @param z0 least squares fit as returned by \code{\link{lm.fit}}
-#' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
+#' @param control a list of control parameters as returned by \code{\link{lmrobdet.control}}
 #' 
 #' @return a list with the following components
 #' \item{coefficients}{the vector of regression coefficients}
@@ -285,12 +285,12 @@ DCML <- function(x, y, z, z0, control) {
 #' This function computes a robust regression estimator when there
 #' are categorical / dummy explanatory variables. It uses Pen~a-Yohai 
 #' candidates for the S-estimator. This function is used
-#' internally by \code{\link{lmrob2}}, and not meant to be used
+#' internally by \code{\link{lmrobdet}}, and not meant to be used
 #' directly.
 #'
 #' @param mf model frame 
 #' @param y response vector
-#' @param control a list of control parameters as returned by \code{\link{lmrob2.control}}
+#' @param control a list of control parameters as returned by \code{\link{lmrobdet.control}}
 #' @param split a list as returned by \code{\link{splitFrame}} containing the continuous and
 #' dummy components of the design matrix
 #' 
@@ -308,7 +308,7 @@ DCML <- function(x, y, z, z0, control) {
 #' @export
 SMPY <- function(mf, y, control, split) { 
   if(missing(control)) 
-    control <- lmrob2.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
+    control <- lmrobdet.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
   # int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
   if(missing(split)) {
     split <- splitFrame(mf, type=control$split.type) 
