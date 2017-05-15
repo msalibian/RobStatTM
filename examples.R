@@ -4,14 +4,14 @@
 
 library(robustbroli)
 data(coleman)
-m2 <- lmrob2(Y ~ ., data=coleman)
+m2 <- lmrobdet(Y ~ ., data=coleman)
 m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
 
 summary(m2)
 summary(m0)
 
 ## Default for a very long time:
-m2 <- lmrob2(Y ~ . - 1 , data=coleman) # MMPY
+m2 <- lmrobdet(Y ~ . - 1 , data=coleman) # MMPY
 m0 <- lmrob(Y ~ . - 1 , data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
 
 plot(m2)
@@ -20,7 +20,7 @@ data(stack.dat, package='robust')
 # pyinit can't take integers?
 st2 <- stack.dat
 for(j in 1:length(st2)) st2[[j]] <- as.double(st2[[j]])
-m2 <- lmrob2(Loss ~ ., control=lmrob2.control(corr.b=TRUE), data = st2)
+m2 <- lmrobdet(Loss ~ ., control=lmrobdet.control(corr.b=TRUE), data = st2)
 m0 <- lmrob(Loss ~ ., data=st2, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
 m2$coef
 m0$coef
@@ -50,10 +50,10 @@ dat2 <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y2)
 # dat <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, f1=f1, f2=f2, y=y)
 
 
-m2 <- lmrob2(y ~ ., control=lmrob2.control(initial='SM', refine.PY=10), data=dat2) #)$coef # MMPY
+m2 <- lmrobdet(y ~ ., control=lmrobdet.control(initial='SM', refine.PY=10), data=dat2) #)$coef # MMPY
 
 # MMPY with factors needs very small prosac, it's not robust anymore!
-m22 <- lmrob2(y ~ ., control=lmrob2.control(initial='S', refine.PY=10, prosac=.02), data=dat2) #)$coef # MMPY
+m22 <- lmrobdet(y ~ ., control=lmrobdet.control(initial='S', refine.PY=10, prosac=.02), data=dat2) #)$coef # MMPY
 
 m1 <- lmrob(y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=dat2)
 
@@ -90,14 +90,14 @@ set.seed(123)
 co2$educ <- as.factor(LETTERS[rbinom(nrow(co2), size=2, prob=.3)+1])
 
 # Matias' version of SM+PY
-(m2 <- lmrob2(Y ~ ., control=lmrob2.control(initial='SM'), data=co2))$coef
+(m2 <- lmrobdet(Y ~ ., control=lmrobdet.control(initial='SM'), data=co2))$coef
 (m0 <- lmrob(Y ~ ., control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=co2))$coef
 c(m0$scale, m2$scale)
 coef(m2)
 coef(m0)
 coef(lm(Y~., data=co2))
 
-(m2 <- lmrob2(Y ~ .-1, control=lmrob2.control(initial='SM'), data=co2))$coef
+(m2 <- lmrobdet(Y ~ .-1, control=lmrobdet.control(initial='SM'), data=co2))$coef
 (m0 <- lmrob(Y ~ .-1, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'), init='M-S', data=co2))$coef
 c(m0$scale, m2$scale)
 coef(m2)
