@@ -300,7 +300,7 @@ lmrob2 <- function(formula, data, subset, weights, na.action,
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied 
 #' to the M-scale parameter \code{bb}
 #' @param split.type determines how categorical and continuous variables are split. See 
-#' \code{\link{splitFrame}} in package \code{\link{robustbase}}. 
+#' \code{\link[robustbase]{splitFrame}}. 
 #' @param initial string specifying the initial value for the M-step of the MM-estimator. Valid
 #' options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is 
 #' appropriate when there are categorical explanatory variables in the model.
