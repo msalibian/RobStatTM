@@ -1,38 +1,38 @@
-#' Robust DCML linear regression estimators 
+#' Robust DCML linear regression estimators
 #'
 #' This function computes MM-based Distance Constrained
 #' Maximum Likelihood regression estimators for linear models.
-#' 
+#'
 #' This function computes the
 #' DCML estimators combining the least squares estimator and a
 #' robust MM-estimator, the latter computed using Pen~a-Yohai
 #' candidates (instead of subsampling ones).
 #'
-#' @param formula a symbolic description of the model to be fit. 
+#' @param formula a symbolic description of the model to be fit.
 #' @param data an optional data frame, list or environment containing
 #' the variables in the model. If not found in \code{data}, model variables
 #' are taken from \code{environment(formula)}, which usually is the
 #' root environment of the current R session.
 #' @param subset an optional vector specifying a subset of observations to be used.
 #' @param weights an optional vector of weights to be used in the fitting process.
-#' @param na.action a function to indicates what should happen when the data contain NAs. 
-#' The default is set by the \link{na.action} setting of \code{\link[base]{options}}, and is 
-#' \code{na.fail} if that is unset. 
+#' @param na.action a function to indicates what should happen when the data contain NAs.
+#' The default is set by the \link{na.action} setting of \code{\link[base]{options}}, and is
+#' \code{na.fail} if that is unset.
 #' @param model logical value indicating whether to return the model frame
 #' @param x logical value indicating whether to return the model matrix
 #' @param y logical value indicating whether to return the vector of responses
 #' @param singular.ok logical value. If \code{FALSE} a singular fit produces an error.
 #' @param contrasts an optional list. See the \code{contrasts.arg} of \link{model.matrix.default}.
-#' @param offset this can be used to specify an a priori known component to be included 
-#' in the linear predictor during fitting. An offset term can be included in the formula 
+#' @param offset this can be used to specify an a priori known component to be included
+#' in the linear predictor during fitting. An offset term can be included in the formula
 #' instead or as well, and if both are specified their sum is used.
-#' @param control a list specifying control parameters as returned by the function 
+#' @param control a list specifying control parameters as returned by the function
 #' \link{lmrobdet.control}.
 #'
 #' @return A list with the following components:
-#' \item{coefficients}{The estimated vector of regression coefficients} 
+#' \item{coefficients}{The estimated vector of regression coefficients}
 #' \item{scale}{The estimated scale of the residuals}
-#' \item{residuals}{The vector of residuals associated with the DCML fit} 
+#' \item{residuals}{The vector of residuals associated with the DCML fit}
 #' \item{converged}{Logical value indicating whether IRWLS iterations for the MM-estimator have converged}
 #' \item{iter}{Number of IRWLS iterations for the MM-estimator}
 #' \item{rweights}{Robustness weights for the MM-estimator}
@@ -47,7 +47,7 @@
 #' \item{x}{if requested, the model matrix used}
 #' \item{y}{if requested, the response vector used}
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
-#' 
+#'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
@@ -57,7 +57,7 @@
 #' m2 <- lmrobdet(Y ~ ., data=coleman)
 #'
 #' @export
-lmrobdet <- function(formula, data, subset, weights, na.action, 
+lmrobdet <- function(formula, data, subset, weights, na.action,
                    model = TRUE, x = !control$compute.rd, y = FALSE,
                    singular.ok = TRUE, contrasts = NULL, offset = NULL,
                    control = lmrobdet.control())
@@ -72,7 +72,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-  
+
   mt <- attr(mf, "terms") # allow model.frame to update it
   y <- model.response(mf, "numeric")
   w <- as.vector(model.weights(mf))
@@ -82,7 +82,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
   if(!is.null(offset) && length(offset) != NROW(y))
     stop(gettextf("number of offsets is %d, should equal %d (number of observations)",
                   length(offset), NROW(y)), domain = NA)
-  
+
   if (is.empty.model(mt)) {
     x <- NULL
     singular.fit <- FALSE ## to avoid problems below
@@ -145,7 +145,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       piv <- z0$qr$pivot
     }
     rankQR <- z0$rank
-    
+
     singular.fit <- rankQR < p
     if (rankQR > 0) {
       if (singular.fit) {
@@ -177,6 +177,14 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       # LS is already computed in z0
       z2 <- DCML(x=x, y=y, z=z, z0=z0, control=control)
       z$MM <- z
+      # if (model)
+      #   z$MM$model <- mf
+      # if (ret.x)
+      #   z$MM$x <- if (singular.fit || (!is.null(w) && zero.weights))
+      #     model.matrix(mt, mf, contrasts) else x
+      # if (ret.y)
+      #   z$MM$y <- if (!is.null(w)) model.response(mf, "numeric") else y
+      # z$MM$call <- cl
       z$coefficients <- z2$coefficients
       z$scale <- z2$scale
       z$residuals <- z2$residuals
@@ -245,7 +253,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
   }
   if(!is.null(offset))
     z$fitted.values <- z$fitted.values + offset
-  
+
   z$na.action <- attr(mf, "na.action")
   z$offset <- offset
   z$contrasts <- contrasts
@@ -271,15 +279,15 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
 #'
 #' This function sets tuning parameters for the MM-based Distance Constrained
 #' Maximum Likelihood regression estimators computed by \code{lmrobdet}.
-#' 
+#'
 #' There are 2 sets of tuning parameters: those related to the MM-estimator,
-#' and those controlling the initial Pen~a-Yohai estimator. 
+#' and those controlling the initial Pen~a-Yohai estimator.
 #'
 #' @rdname lmrobdet.control
 #' @param seed \code{NULL}
 #' @param tuning.chi tuning constant for the function used to compute the M-scale
-#' for the S-estimator. For the estimator to be consistent it needs to 
-#' be matched with the value of \code{bb} below. It defaults to 1.5477, which 
+#' for the S-estimator. For the estimator to be consistent it needs to
+#' be matched with the value of \code{bb} below. It defaults to 1.5477, which
 #' together with \code{bb = 0.5} yields an estimator with maximum breakdown point.
 #' @param bb tuning constant (between 0 and 1) for the M-scale used to compute the initial S-estimator. It
 #' determines the robusness (breakdown point) of the resulting MM-estimator, which is
@@ -292,35 +300,35 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
 #' @param rel.tol relative covergence tolerance for the IRWLS iterations for the MM-estimator
 #' @param refine.PY number of refinement steps for the Pen~a-Yohai candidates
 #' @param solve.tol relative tolerance for inversion
-#' @param trace.lev positive values (increasingly) provide details on the progress of the MM-algorithm 
-#' @param mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function 
-#' that performs M-iterations (lmrob..M..fit), so set here. 
-#' @param compute.rd logical value indicating whether robust leverage distances need to be computed. 
+#' @param trace.lev positive values (increasingly) provide details on the progress of the MM-algorithm
+#' @param mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
+#' that performs M-iterations (lmrob..M..fit), so set here.
+#' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
 #' @param psi string specifying the type of loss function to be used.
-#' @param corr.b logical value indicating whether a finite-sample correction should be applied 
+#' @param corr.b logical value indicating whether a finite-sample correction should be applied
 #' to the M-scale parameter \code{bb}
-#' @param split.type determines how categorical and continuous variables are split. See 
-#' \code{\link[robustbase]{splitFrame}}. 
+#' @param split.type determines how categorical and continuous variables are split. See
+#' \code{\link[robustbase]{splitFrame}}.
 #' @param initial string specifying the initial value for the M-step of the MM-estimator. Valid
-#' options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is 
+#' options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is
 #' appropriate when there are categorical explanatory variables in the model.
 #' @param prosac For \code{pyinit}, proportion of observations to remove based on PSCs. See \code{\link{pyinit}}.
-#' @param clean.method For \code{pyinit}, how to clean the data based on large residuals. If 
-#' \code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will 
-#' be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will 
+#' @param clean.method For \code{pyinit}, how to clean the data based on large residuals. If
+#' \code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will
+#' be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will
 #' be removed. See \code{\link{pyinit}}.
 #' @param C.res See parameter \code{clean.method} above. See \code{\link{pyinit}}.
 #' @param prop See parameter \code{clean.method} above. See \code{\link{pyinit}}.
 #' @param py.nit Maximum number of iterations. See \code{\link{pyinit}}.
 #' @param en.tol Relative tolerance for convergence.  See \code{\link{pyinit}}.
-#' @param mscale.maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}. 
+#' @param mscale.maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}.
 #' @param mscale.tol Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.
 #' @param mscale.rho.fun String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.
 #'
-#' @return A list with the necessary tuning parameters. 
-#' 
+#' @return A list with the necessary tuning parameters.
+#'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' 
+#'
 #' @seealso \code{\link{pyinit}}
 #'
 #' @examples
@@ -337,19 +345,19 @@ lmrobdet.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% 
                             corr.b = TRUE, # for MMPY and SMPY
                             split.type = "f", # help(splitFrame, package='robustbase')
                             initial='S', #'S' or 'MS'
-                            prosac = 0.5, clean.method = 'threshold', 
-                            C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5, 
-                            mscale.maxit = 50, mscale.tol = 1e-06, 
+                            prosac = 0.5, clean.method = 'threshold',
+                            C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5,
+                            mscale.maxit = 50, mscale.tol = 1e-06,
                             mscale.rho.fun = 'bisquare') {
   return(list(seed = as.integer(seed), psi=psi,
               tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
               max.it=max.it,
               refine.tol=refine.tol,
-              corr.b = corr.b, refine.PY = refine.PY, 
+              corr.b = corr.b, refine.PY = refine.PY,
               rel.tol=rel.tol,
               solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
-              compute.rd=compute.rd, 
-              split.type=split.type, 
+              compute.rd=compute.rd,
+              split.type=split.type,
               initial=initial, # method=method, subsampling=subsampling,
               prosac=prosac, clean.method=clean.method, C.res=C.res,
               prop=prop, py.nit=py.nit, en.tol=en.tol, mscale.maxit=mscale.maxit,
@@ -400,7 +408,7 @@ summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, 
     se <- sqrt(if(length(object$cov) == 1L) object$cov else diag(object$cov))
     est <- object$coefficients[object$qr$pivot[p1]]
     tval <- est/se
-    ans <- object[c("call", "terms", "residuals", "scale", 
+    ans <- object[c("call", "terms", "residuals", "scale",
                     "converged", "iter", "control")]
     ## 'df' vector, modeled after summary.lm() : ans$df <- c(p, rdf, NCOL(Qr$qr))
     ## where  p <- z$rank ; rdf <- z$df.residual ; Qr <- qr.lm(object)
@@ -484,7 +492,7 @@ print.summary.lmrobdet <- function (x, digits = max(3, getOption("digits") - 3),
         coefs <- matrix(NA, length(aliased), 4, dimnames=list(cn, colnames(coefs)))
         coefs[!aliased, ] <- x$coefficients
       }
-      
+
       printCoefmat(coefs, digits = digits, signif.stars = signif.stars,
                    na.print="NA", ...)
       cat("\nRobust residual standard error:",
@@ -513,7 +521,7 @@ print.summary.lmrobdet <- function (x, digits = max(3, getOption("digits") - 3),
       cat("Convergence in", x$iter, "IRWLS iterations\n")
     }
     cat("\n")
-    
+
     # if (!is.null(rw <- x$rweights)) {
     #   if (any(zero.w <- x$weights == 0))
     #     rw <- rw[!zero.w]
@@ -521,67 +529,67 @@ print.summary.lmrobdet <- function (x, digits = max(3, getOption("digits") - 3),
     #     EO(nobs(x)) else EO
     #   summarizeRobWeights(rw, digits = digits, eps = eps.outlier, ...)
     # }
-    
+
   } else cat("\nNo Coefficients\n")
   invisible(x)
 }
 
 
-#' IRWLS iterations for S- or M-estimators 
+#' IRWLS iterations for S- or M-estimators
 #'
-#' This function performs iterative improvements for S- or 
-#' M-estimators. 
-#' 
-#' This function performs iterative improvements for S- or 
+#' This function performs iterative improvements for S- or
+#' M-estimators.
+#'
+#' This function performs iterative improvements for S- or
 #' M-estimators, both iterations are formally the same, the
 #' only difference is that for M-iterations the residual
 #' scale estimate remains fixed, while for S-iterations
 #' it is updated at each step. In this case, we follow
-#' the Fast-S algorithm of Salibian-Barrera and Yohai 
-#' an use one step update for the M-scale, as opposed 
-#' to a full computation. 
+#' the Fast-S algorithm of Salibian-Barrera and Yohai
+#' an use one step update for the M-scale, as opposed
+#' to a full computation.
 #'
 #' @param x design matrix
 #' @param y vector of responses
-#' @param initial.beta vector of initial regression estimates 
+#' @param initial.beta vector of initial regression estimates
 #' @param initial.scale initial residual scale estimate. If missing the (scaled) median of
-#' the absolute residuals is used. 
+#' the absolute residuals is used.
 #' @param k maximum number of refining steps to be performed
 #' @param conv an integer indicating whether to check for convergence (1) at each step,
 #' or to force running k steps (0)
 #' @param b tuning constant for the M-scale estimator, used if iterations are for an S-estimator.
-#' @param cc tuning constant for the rho function. 
-#' @param step a string indicating whether the iterations are to compute an S-estiamator 
+#' @param cc tuning constant for the rho function.
+#' @param step a string indicating whether the iterations are to compute an S-estiamator
 #' ('S') or an M-estimator ('M')
 #' @return A list with the following components:
 #' \item{beta.rw}{The updated vector of regression coefficients}
 #' \item{scale.rw}{The corresponding estimated residual scale}
 #' \item{converged}{A logical value indicating whether the algorithm
 #' converged}
-#' 
+#'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}.
-refine.sm <- function(x, y, initial.beta, initial.scale, k=50, 
+refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
                       conv=1, b, cc, step='M') {
-  
+
   n <- dim(x)[1]
   # p <- dim(x)[2]
-  
+
   res <- as.vector( y - x %*% initial.beta )
-  
+
   if( missing( initial.scale ) ) {
     initial.scale <- scale <- median(abs(res))/.6745
   } else {
     scale <- initial.scale
   }
-  
+
   beta <- initial.beta
-  
-  
+
+
   converged <- FALSE
-  
+
   # lower.bound <- median(abs(res))/cc
-  
-  
+
+
   for(i in 1:k) {
     # do one step of the iterations to solve for the scale
     scale.super.old <- scale
@@ -596,7 +604,7 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
     xw <- x * sqrt(weights) # sqrt(W)
     yw <- y *   sqrt(weights)
     beta.1 <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
-    if(any(is.na(beta.1))) { 
+    if(any(is.na(beta.1))) {
       beta.1 <- initial.beta
       scale <- initial.scale
       break
@@ -613,11 +621,11 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
     # print(as.vector(t(x) %*% rhoprime(res/scale, cc))/n)
     # print(scale)
   }
-  
+
   # res <- as.vector( y - x %*% beta )
   # get the residuals from the last beta
   return(list(beta.rw = beta.1, scale.rw = scale, converged=converged))
-  
+
 }
 
 norm.sm <- function(x) sqrt(sum(x^2))
@@ -647,22 +655,22 @@ f.w <- function(u, cc) {
 ### The first part of lmrob()  much cut'n'paste from lm() - on purpose!
 
 
-# R CMD INSTALL --preclean --clean robustbroli 
+# R CMD INSTALL --preclean --clean robustbroli
 
 
 ## lmrobdet: back to basics!
-## For continuous explanatory variables: 
-## the estimator is an S-initial estimator computed with 
+## For continuous explanatory variables:
+## the estimator is an S-initial estimator computed with
 ## Pena-Yohai candidates (default) or SubSampling candidates
 ## (we use the Fast-S algorithm), then we iterate an
-## M estimator, and finally report the Distance Constrained 
+## M estimator, and finally report the Distance Constrained
 ## Maximum Likelihood one (DCML)
-## 
+##
 ## For continuous-categorical explanatory variables:
-## the estimator is an MS-estimator computed with 
+## the estimator is an MS-estimator computed with
 ## Pena-Yohai candidates (default) or SubSampling candidates
 ## (we use the Fast-S algorithm), then we iterate an
-## M estimator, and finally report the Distance Constrained 
+## M estimator, and finally report the Distance Constrained
 ## Maximum Likelihood one (DCML)
-## 
+##
 ## We also made the default convergence settings for the S less strict
