@@ -14,7 +14,7 @@
 #' @seealso \code{\link{lmrobdet}}
 #'
 #' @export
-lmrob.RFPE <- function (object, scale = NULL)
+lmrobdet.RFPE <- function (object, scale = NULL)
 {
   if (!object$converged)
     warning("The algorithm did not converge, inference is not recommended.")
@@ -44,7 +44,7 @@ lmrob.RFPE <- function (object, scale = NULL)
   (a + b/d)*6 / tun^2
 }
 
-drop1.lmrob <- function (object, scope, scale, keep)
+drop1.lmrobdet <- function (object, scope, scale, keep)
 {
   # if ( (casefold(object$control$method) != "sm") ) # & (casefold(object$control$method) != "m-sm") )
   #   stop("drop1 is only available for MM-estimates.")
@@ -90,7 +90,7 @@ drop1.lmrob <- function (object, scope, scale, keep)
   for (i in 1:k) {
       curfrm <- as.formula(paste(".~.-", scope[[i]]))
       curobj <- update(object, curfrm)
-      rfpe[i] <- lmrob.RFPE(curobj, scale)
+      rfpe[i] <- lmrobdet.RFPE(curobj, scale)
       if (length(keep)) {
         value[i, 1] <- list(curobj$coefficients)
         value[i, 2] <- list(curobj$fitted)
@@ -99,7 +99,7 @@ drop1.lmrob <- function (object, scope, scale, keep)
     }
   scope <- c("<none>", scope)
   dfs <- c(0, dfs)
-  rfpe <- c(lmrob.RFPE(object, scale), rfpe)
+  rfpe <- c(lmrobdet.RFPE(object, scale), rfpe)
   dfs[1] <- NA
   aod <- data.frame(Df = dfs, RFPE = rfpe, row.names = scope,
                     check.names = FALSE)
@@ -138,14 +138,14 @@ drop1.lmrob <- function (object, scope, scale, keep)
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @export
-step.lmrob <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
+step.lmrobdet <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
                         keep = NULL, steps = 1000, whole.path=FALSE)
 {
   if (missing(direction))
     direction <- "backward"
   else direction <- match.arg(direction)
   if (direction != "backward")
-    stop("Presently step.lmrob only supports backward model selection.")
+    stop("Presently step.lmrobdet only supports backward model selection.")
   if(whole.path) keep <- function(a, b) a
   re.arrange <- function(keep) {
     namr <- names(k1 <- keep[[1]])
@@ -229,7 +229,7 @@ step.lmrob <- function (object, scope, direction = c("both", "backward", "forwar
   n <- length(object$fitted)
   scale <- object$scale
   fit <- object
-  bRFPE <- lmrob.RFPE(fit)
+  bRFPE <- lmrobdet.RFPE(fit)
   nm <- 1
   Terms <- fit$terms
   if (trace)
@@ -249,13 +249,13 @@ step.lmrob <- function (object, scope, direction = c("both", "backward", "forwar
     aod <- NULL
     change <- NULL
     if (backward && (ndrop <- length(scope$drop))) {
-      aod <- drop1.lmrob(fit, scope$drop, scale)
+      aod <- drop1.lmrobdet(fit, scope$drop, scale)
       if (trace)
         print(aod)
       change <- rep("-", ndrop + 1)
     }
     if (forward && (nadd <- length(scope$add))) {
-      aodf <- add1.lmrob(fit, scope$add, scale, x = x)
+      aodf <- add1.lmrobdet(fit, scope$add, scale, x = x)
       if (trace)
         print(aodf)
       change <- c(change, rep("+", nadd + 1))
@@ -280,7 +280,7 @@ step.lmrob <- function (object, scope, direction = c("both", "backward", "forwar
     Terms <- terms(update(formula(fit), eval(parse(text = paste("~ .", change)))))
     attr(Terms, "formula") <- new.formula <- formula(Terms)
     control$method <- 'MM'
-    newfit <- lmrob(new.formula, data = m, control = control, init=object$init$control$method) 
+    newfit <- lmrobdet(new.formula, data = m, control = control, init=object$init$control$method) 
     bRFPE <- aod[, "RFPE"][o]
     if (trace)
       cat("\nStep:  RFPE =", format(round(bRFPE, 4)), "\n",
