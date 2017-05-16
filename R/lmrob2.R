@@ -177,14 +177,24 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       # LS is already computed in z0
       z2 <- DCML(x=x, y=y, z=z, z0=z0, control=control)
       z$MM <- z
-      # if (model)
-      #   z$MM$model <- mf
-      # if (ret.x)
-      #   z$MM$x <- if (singular.fit || (!is.null(w) && zero.weights))
-      #     model.matrix(mt, mf, contrasts) else x
-      # if (ret.y)
-      #   z$MM$y <- if (!is.null(w)) model.response(mf, "numeric") else y
-      # z$MM$call <- cl
+      # complete the MM object
+      z$MM$na.action <- attr(mf, "na.action")
+      z$MM$offset <- offset
+      z$MM$contrasts <- contrasts
+      z$MM$xlevels <- .getXlevels(mt, mf)
+      z$MM$call <- cl
+      z$MM$terms <- mt
+      z$MM$assign <- assign
+      if(control$compute.rd && !is.null(x))
+        z$MM$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
+      if(model)
+        z$MM$model <- mf
+      if(ret.x)
+        z$MM$x <- if (singular.fit || (!is.null(w) && zero.weights))
+          model.matrix(mt, mf, contrasts) else x
+      if (ret.y)
+        z$MM$y <- if (!is.null(w)) model.response(mf, "numeric") else y
+
       z$coefficients <- z2$coefficients
       z$scale <- z2$scale
       z$residuals <- z2$residuals

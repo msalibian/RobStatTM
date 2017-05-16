@@ -21,9 +21,10 @@ d <- data.frame(x1=x1, x2=x2, x3=x3, x4=x4, x5=x5, x6=x6, x7=x7, x8=x8, y = y)
 a <- lmrob(y ~ ., data=d, control=lmrob.control(k.max=200, refine.tol=1e-3)) # , init='M-S')
 
 a <- lmrobdet(y ~ ., data=d, control=lmrobdet.control(refine.tol=1e-3))
+# u <- step.lmrobdet(a$MM, whole.path=TRUE, trace=FALSE)
+u2 <- step.lmrobdet(a)
 
-u <- step.lmrobdet(a$MM, whole.path=TRUE, trace=FALSE)
-u2 <- step.lmrobdet(a$MM)
+lmrobdet.RFPE(lmrobdet(y~x1+x2+x4+x5+x7+x8, data=d, control=lmrobdet.control(refine.tol=1e-3))$MM, scale=a$MM$scale)
 
 # keep x4 in all models
 my.scope <- list(lower = . ~ x4, upper = . ~ .)

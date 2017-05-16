@@ -141,6 +141,8 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 step.lmrobdet <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
                         keep = NULL, steps = 1000, whole.path=FALSE)
 {
+  object.original <- object
+  object <- object$MM
   if (missing(direction))
     direction <- "backward"
   else direction <- match.arg(direction)
@@ -206,7 +208,7 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     Terms <- terms(new.form)
     fc$formula <- Terms
     fobject <- list(call = fc)
-    oldClass(fobject) <- oldClass(object)
+    oldClass(fobject) <- oldClass(object.original)
     m <- model.frame(fobject)
     x <- model.matrix(Terms, m, contrasts = obconts)
   }
@@ -279,8 +281,8 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     change <- paste(change[o], dimnames(aod)[[1]][o])
     Terms <- terms(update(formula(fit), eval(parse(text = paste("~ .", change)))))
     attr(Terms, "formula") <- new.formula <- formula(Terms)
-    control$method <- 'MM'
-    newfit <- lmrobdet(new.formula, data = m, control = control, init=object$init$control$method)
+    # control$method <- 'MM'
+    newfit <- lmrobdet(new.formula, data = m, control = control)$MM #, init=object$init$control$method)
     bRFPE <- aod[, "RFPE"][o]
     if (trace)
       cat("\nStep:  RFPE =", format(round(bRFPE, 4)), "\n",
@@ -294,7 +296,7 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     oc <- objectcall
     oc$formula <- as.vector(fit$formula)
     fit$call <- oc
-    oldClass(fit) <- oldClass(object)
+    oldClass(fit) <- oldClass(object.original)
     if (!is.null(keep))
       keep.list[[nm]] <- keep(fit, bRFPE)
     if(whole.path) RFPE <- bRFPE + 1
