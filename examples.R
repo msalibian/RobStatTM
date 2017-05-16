@@ -1,8 +1,8 @@
 # test script
 
-# R CMD INSTALL --preclean --clean robustbroli 
+# R CMD INSTALL --preclean --clean robustbroli
 
-library(robustbroli)
+library(RobustStatistics)
 data(coleman)
 m2 <- lmrobdet(Y ~ ., data=coleman)
 m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))

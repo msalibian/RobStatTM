@@ -2,12 +2,12 @@
 #'
 #' This function computes the RFPE for a model fit using \code{\link{lmrobdet}}.
 #'
-#' @param object a robust fit as returned by \code{\link{lmrobdet}}. 
+#' @param object a robust fit as returned by \code{\link{lmrobdet}}.
 #' @param scale an optional residual scale estimator. If \code{NULL} the residual
 #' scale estimator that corresponds to the model in \code{object} is used.
-#' 
-#' @return the RFPE corresponding to the fit model. 
-#' 
+#'
+#' @return the RFPE corresponding to the fit model.
+#'
 #' @rdname lmrob.RFPE
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
@@ -18,7 +18,7 @@ lmrobdet.RFPE <- function (object, scale = NULL)
 {
   if (!object$converged)
     warning("The algorithm did not converge, inference is not recommended.")
-  ocm <- casefold(object$control$method)
+  ocm <- tolower(object$control$method)
   nocm <- nchar(ocm)
   if(substr(ocm, nocm, nocm) != "m")
     stop("RFPE is only available for MM-estimates.")
@@ -48,7 +48,7 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 {
   # if ( (casefold(object$control$method) != "sm") ) # & (casefold(object$control$method) != "m-sm") )
   #   stop("drop1 is only available for MM-estimates.")
-  ocm <- casefold(object$control$method)
+  ocm <- tolower(object$control$method)
   nocm <- nchar(ocm)
   if(substr(ocm, nocm, nocm) != "m")
     stop("RFPE is only available for MM-estimates.")
@@ -119,19 +119,19 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 #' Robust stepwise using RFPE
 #'
 #' This function performs stepwise variable selection using the RFPE
-#' criterion and the robust regression estimators computed with 
-#' \code{\link{lmrobdet}}. 
-#' 
+#' criterion and the robust regression estimators computed with
+#' \code{\link{lmrobdet}}.
+#'
 #' @param object a robust fit as returned by \code{\link{lmrobdet}}
 #' @param scope defines the range of models to be examined. This should be either a single formula, or a list containing components upper and lower, both formulae. See the details below.
 #' @param direction the direction of stepwise search. Currenly only \code{backward} is implemented.
 #' @param trace if \code{TRUE} information about each step is printed on the screen.
 #' @param keep a filter function whose input is a fitted model object and the associated AIC statistic, and whose output is arbitrary. Typically keep will select a subset of the components of the object and return them. The default is not to keep anything.
-#' @param steps maximum number of steps to be performed. Defaults to 1000, which should mean as many as needed. 
-#' @param whole.path if \code{FALSE} (default) variables are dropped until the RFPE fails to improve. If \code{TRUE} the best variable to be dropped is removed, even if this does not improve the RFPE. 
+#' @param steps maximum number of steps to be performed. Defaults to 1000, which should mean as many as needed.
+#' @param whole.path if \code{FALSE} (default) variables are dropped until the RFPE fails to improve. If \code{TRUE} the best variable to be dropped is removed, even if this does not improve the RFPE.
 #'
 #' @return either a robust fit as obtained by \code{lmrobdet} using the final model, or a list of fits one for each step in the process.
-#' 
+#'
 #' @rdname step.lmrob
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
@@ -280,7 +280,7 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     Terms <- terms(update(formula(fit), eval(parse(text = paste("~ .", change)))))
     attr(Terms, "formula") <- new.formula <- formula(Terms)
     control$method <- 'MM'
-    newfit <- lmrobdet(new.formula, data = m, control = control, init=object$init$control$method) 
+    newfit <- lmrobdet(new.formula, data = m, control = control, init=object$init$control$method)
     bRFPE <- aod[, "RFPE"][o]
     if (trace)
       cat("\nStep:  RFPE =", format(round(bRFPE, 4)), "\n",
