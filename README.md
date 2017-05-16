@@ -1,5 +1,5 @@
 # RobustStatistics
 
-Working space for the code of the 2nd edition of "the book". Nothing to see here.
+Code for the 2nd edition of "the book". Nothing to see here (yet). 
 
 
