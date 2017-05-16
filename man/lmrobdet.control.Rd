@@ -17,8 +17,8 @@ lmrobdet.control(seed = NULL, tuning.chi = 1.5477, bb = 0.5,
 \item{seed}{\code{NULL}}
 
 \item{tuning.chi}{tuning constant for the function used to compute the M-scale
-for the S-estimator. For the estimator to be consistent it needs to 
-be matched with the value of \code{bb} below. It defaults to 1.5477, which 
+for the S-estimator. For the estimator to be consistent it needs to
+be matched with the value of \code{bb} below. It defaults to 1.5477, which
 together with \code{bb = 0.5} yields an estimator with maximum breakdown point.}
 
 \item{bb}{tuning constant (between 0 and 1) for the M-scale used to compute the initial S-estimator. It
@@ -41,28 +41,28 @@ have a normal distribution}
 
 \item{trace.lev}{positive values (increasingly) provide details on the progress of the MM-algorithm}
 
-\item{mts}{maximum number of subsamples. Un-used, but passed (unnecessarily) to the function 
+\item{mts}{maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
 that performs M-iterations (lmrob..M..fit), so set here.}
 
 \item{compute.rd}{logical value indicating whether robust leverage distances need to be computed.}
 
 \item{psi}{string specifying the type of loss function to be used.}
 
-\item{corr.b}{logical value indicating whether a finite-sample correction should be applied 
+\item{corr.b}{logical value indicating whether a finite-sample correction should be applied
 to the M-scale parameter \code{bb}}
 
-\item{split.type}{determines how categorical and continuous variables are split. See 
+\item{split.type}{determines how categorical and continuous variables are split. See
 \code{\link[robustbase]{splitFrame}}.}
 
 \item{initial}{string specifying the initial value for the M-step of the MM-estimator. Valid
-options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is 
+options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is
 appropriate when there are categorical explanatory variables in the model.}
 
 \item{prosac}{For \code{pyinit}, proportion of observations to remove based on PSCs. See \code{\link{pyinit}}.}
 
-\item{clean.method}{For \code{pyinit}, how to clean the data based on large residuals. If 
-\code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will 
-be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will 
+\item{clean.method}{For \code{pyinit}, how to clean the data based on large residuals. If
+\code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will
+be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will
 be removed. See \code{\link{pyinit}}.}
 
 \item{C.res}{See parameter \code{clean.method} above. See \code{\link{pyinit}}.}

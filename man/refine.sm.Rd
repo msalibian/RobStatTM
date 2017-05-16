@@ -26,7 +26,7 @@ or to force running k steps (0)}
 
 \item{cc}{tuning constant for the rho function.}
 
-\item{step}{a string indicating whether the iterations are to compute an S-estiamator 
+\item{step}{a string indicating whether the iterations are to compute an S-estiamator
 ('S') or an M-estimator ('M')}
 }
 \value{
@@ -37,17 +37,17 @@ A list with the following components:
 converged}
 }
 \description{
-This function performs iterative improvements for S- or 
+This function performs iterative improvements for S- or
 M-estimators.
 }
 \details{
-This function performs iterative improvements for S- or 
+This function performs iterative improvements for S- or
 M-estimators, both iterations are formally the same, the
 only difference is that for M-iterations the residual
 scale estimate remains fixed, while for S-iterations
 it is updated at each step. In this case, we follow
-the Fast-S algorithm of Salibian-Barrera and Yohai 
-an use one step update for the M-scale, as opposed 
+the Fast-S algorithm of Salibian-Barrera and Yohai
+an use one step update for the M-scale, as opposed
 to a full computation.
 }
 \author{

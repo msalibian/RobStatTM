@@ -20,8 +20,8 @@ root environment of the current R session.}
 
 \item{weights}{an optional vector of weights to be used in the fitting process.}
 
-\item{na.action}{a function to indicates what should happen when the data contain NAs. 
-The default is set by the \link{na.action} setting of \code{\link[base]{options}}, and is 
+\item{na.action}{a function to indicates what should happen when the data contain NAs.
+The default is set by the \link{na.action} setting of \code{\link[base]{options}}, and is
 \code{na.fail} if that is unset.}
 
 \item{model}{logical value indicating whether to return the model frame}
@@ -34,18 +34,18 @@ The default is set by the \link{na.action} setting of \code{\link[base]{options}
 
 \item{contrasts}{an optional list. See the \code{contrasts.arg} of \link{model.matrix.default}.}
 
-\item{offset}{this can be used to specify an a priori known component to be included 
-in the linear predictor during fitting. An offset term can be included in the formula 
+\item{offset}{this can be used to specify an a priori known component to be included
+in the linear predictor during fitting. An offset term can be included in the formula
 instead or as well, and if both are specified their sum is used.}
 
-\item{control}{a list specifying control parameters as returned by the function 
+\item{control}{a list specifying control parameters as returned by the function
 \link{lmrobdet.control}.}
 }
 \value{
 A list with the following components:
-\item{coefficients}{The estimated vector of regression coefficients} 
+\item{coefficients}{The estimated vector of regression coefficients}
 \item{scale}{The estimated scale of the residuals}
-\item{residuals}{The vector of residuals associated with the DCML fit} 
+\item{residuals}{The vector of residuals associated with the DCML fit}
 \item{converged}{Logical value indicating whether IRWLS iterations for the MM-estimator have converged}
 \item{iter}{Number of IRWLS iterations for the MM-estimator}
 \item{rweights}{Robustness weights for the MM-estimator}
