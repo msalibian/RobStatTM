@@ -295,7 +295,7 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     oc <- objectcall
     oc$formula <- as.vector(fit$formula)
     fit$call <- oc
-    oldClass(fit) <- oldClass(object.original)
+    oldClass(fit) <- oldClass(object)
     if (!is.null(keep))
       keep.list[[nm]] <- keep(fit, bRFPE)
     if(whole.path) RFPE <- bRFPE + 1
