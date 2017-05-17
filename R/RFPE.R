@@ -48,15 +48,15 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 {
   # if ( (casefold(object$control$method) != "sm") ) # & (casefold(object$control$method) != "m-sm") )
   #   stop("drop1 is only available for MM-estimates.")
-  ocm <- tolower(object$control$method)
+  ocm <- tolower(object$MM$control$method)
   nocm <- nchar(ocm)
   if(substr(ocm, nocm, nocm) != "m")
     stop("RFPE is only available for MM-estimates.")
-  if (!object$converged)
+  if (!object$MM$converged)
     stop("The algorithm did not converge, inference is not recommended.")
-  x <- model.matrix(object)
+  x <- model.matrix(object$MM)
   asgn <- attr(x, "assign")
-  term.labels <- attr(object$terms, "term.labels")
+  term.labels <- attr(object$MM$terms, "term.labels")
   dfs <- table(asgn[asgn > 0])
   names(dfs) <- term.labels
   # psif <- object$control$psi # psif <- object$robust.control$weight
@@ -72,7 +72,7 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
   dfs <- dfs[scope]
   k <- length(scope)
   if (missing(scale))
-    scale <- object$scale
+    scale <- object$MM$scale
   if (!missing(keep)) {
     max.keep <- c("coefficients", "fitted", "residuals")
     if (is.logical(keep) && keep)
@@ -90,20 +90,20 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
   for (i in 1:k) {
       curfrm <- as.formula(paste(".~.-", scope[[i]]))
       curobj <- update(object, curfrm)
-      rfpe[i] <- lmrobdet.RFPE(curobj, scale)
+      rfpe[i] <- lmrobdet.RFPE(curobj$MM, scale)
       if (length(keep)) {
-        value[i, 1] <- list(curobj$coefficients)
-        value[i, 2] <- list(curobj$fitted)
-        value[i, 3] <- list(curobj$residuals)
+        value[i, 1] <- list(curobj$MM$coefficients)
+        value[i, 2] <- list(curobj$MM$fitted)
+        value[i, 3] <- list(curobj$MM$residuals)
       }
     }
   scope <- c("<none>", scope)
   dfs <- c(0, dfs)
-  rfpe <- c(lmrobdet.RFPE(object, scale), rfpe)
+  rfpe <- c(lmrobdet.RFPE(object$MM, scale), rfpe)
   dfs[1] <- NA
   aod <- data.frame(Df = dfs, RFPE = rfpe, row.names = scope,
                     check.names = FALSE)
-  head <- c("\nSingle term deletions", "\nModel:", deparse(as.vector(formula(object))))
+  head <- c("\nSingle term deletions", "\nModel:", deparse(as.vector(formula(object$MM))))
   if (!missing(scale))
     head <- c(head, paste("\nscale: ", format(scale), "\n"))
   oldClass(aod) <- c("anova", "data.frame")
@@ -141,8 +141,7 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 step.lmrobdet <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
                         keep = NULL, steps = 1000, whole.path=FALSE)
 {
-  object.original <- object
-  object <- object$MM
+  object.MM <- object$MM
   if (missing(direction))
     direction <- "backward"
   else direction <- match.arg(direction)
@@ -196,26 +195,26 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     backward <- TRUE
     forward <- FALSE
   }
-  m <- model.frame(object)
-  obconts <- object$contrasts
-  objectcall <- object$call
-  control <- object$control
-  if (forward) {
-    add.rhs <- paste(dimnames(fadd)[[2]], collapse = "+")
-    add.rhs <- eval(parse(text = paste("~ . +", add.rhs)))
-    new.form <- update.formula(object, add.rhs, evaluate = FALSE)
-    fc <- objectcall
-    Terms <- terms(new.form)
-    fc$formula <- Terms
-    fobject <- list(call = fc)
-    oldClass(fobject) <- oldClass(object.original)
-    m <- model.frame(fobject)
-    x <- model.matrix(Terms, m, contrasts = obconts)
-  }
-  else {
+  m <- model.frame(object$MM)
+  obconts <- object$MM$contrasts
+  objectcall <- object$MM$call
+  control <- object$MM$control
+  # if (forward) {
+  #   add.rhs <- paste(dimnames(fadd)[[2]], collapse = "+")
+  #   add.rhs <- eval(parse(text = paste("~ . +", add.rhs)))
+  #   new.form <- update.formula(object, add.rhs, evaluate = FALSE)
+  #   fc <- objectcall
+  #   Terms <- terms(new.form)
+  #   fc$formula <- Terms
+  #   fobject <- list(call = fc)
+  #   oldClass(fobject) <- oldClass(object)
+  #   m <- model.frame(fobject)
+  #   x <- model.matrix(Terms, m, contrasts = obconts)
+  # }
+  # else {
     Terms <- object$terms
     x <- model.matrix(Terms, m, contrasts = obconts)
-  }
+  # }
   Asgn <- attr(x, "assign")
   term.labels <- attr(Terms, "term.labels")
   a <- attributes(m)
@@ -228,10 +227,10 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     keep.list <- vector("list", steps)
     nv <- 1
   }
-  n <- length(object$fitted)
-  scale <- object$scale
+  n <- length(object$MM$fitted)
+  scale <- object$MM$scale
   fit <- object
-  bRFPE <- lmrobdet.RFPE(fit)
+  bRFPE <- lmrobdet.RFPE(fit$MM)
   nm <- 1
   Terms <- fit$terms
   if (trace)
@@ -256,18 +255,18 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
         print(aod)
       change <- rep("-", ndrop + 1)
     }
-    if (forward && (nadd <- length(scope$add))) {
-      aodf <- add1.lmrobdet(fit, scope$add, scale, x = x)
-      if (trace)
-        print(aodf)
-      change <- c(change, rep("+", nadd + 1))
-      if (is.null(aod))
-        aod <- aodf
-      else {
-        ncaod <- dim(aod)[1]
-        aod[seq(ncaod + 1, ncaod + nadd + 1), ] <- aodf
-      }
-    }
+    # if (forward && (nadd <- length(scope$add))) {
+    #   aodf <- add1.lmrobdet(fit, scope$add, scale, x = x)
+    #   if (trace)
+    #     print(aodf)
+    #   change <- c(change, rep("+", nadd + 1))
+    #   if (is.null(aod))
+    #     aod <- aodf
+    #   else {
+    #     ncaod <- dim(aod)[1]
+    #     aod[seq(ncaod + 1, ncaod + nadd + 1), ] <- aodf
+    #   }
+    # }
     if (is.null(aod))
       break
     o <- (oo <- order(aod[, "RFPE"]))[1]
@@ -282,7 +281,7 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     Terms <- terms(update(formula(fit), eval(parse(text = paste("~ .", change)))))
     attr(Terms, "formula") <- new.formula <- formula(Terms)
     # control$method <- 'MM'
-    newfit <- lmrobdet(new.formula, data = m, control = control)$MM #, init=object$init$control$method)
+    newfit <- lmrobdet(new.formula, data = m, control = control) #, init=object$init$control$method)
     bRFPE <- aod[, "RFPE"][o]
     if (trace)
       cat("\nStep:  RFPE =", format(round(bRFPE, 4)), "\n",
