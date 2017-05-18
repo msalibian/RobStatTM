@@ -22,14 +22,15 @@ a <- lmrob(y ~ ., data=d, control=lmrob.control(k.max=200, refine.tol=1e-3)) # ,
 
 a <- lmrobdet(y ~ ., data=d, control=lmrobdet.control(refine.tol=1e-3))
 # pyinit bombs!
-a <- lmrobdet(y ~ 1, data=d, control=lmrobdet.control(refine.tol=1e-3, prosac=.01))
+a <- lmrobdet(y ~ 1, data=d, control=lmrobdet.control(refine.tol=1e-3))
 b <- lmrob(y ~ 1, data=d, control=lmrob.control(refine.tol=1e-3))
 
 
 u <- step.lmrobdet(a, whole.path=TRUE, trace=FALSE)
+# is not using MM estimates!
 u2 <- step.lmrobdet(a)
 
-lmrobdet.RFPE(lmrobdet(y~x1+x2+x5+x7+x8, data=d, control=lmrobdet.control(refine.tol=1e-3))$MM, scale=a$MM$scale)
+lmrobdet.RFPE(lmrobdet(y~1, data=d, control=lmrobdet.control(refine.tol=1e-3))$MM, scale=a$MM$scale)
 
 # keep x4 in all models
 my.scope <- list(lower = . ~ x4, upper = . ~ .)
