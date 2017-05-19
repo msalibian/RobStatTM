@@ -141,7 +141,7 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 step.lmrobdet <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
                         keep = NULL, steps = 1000, whole.path=FALSE)
 {
-  object.MM <- object$MM
+  # object.MM <- object$MM
   if (missing(direction))
     direction <- "backward"
   else direction <- match.arg(direction)
