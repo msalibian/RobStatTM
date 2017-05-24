@@ -30,7 +30,12 @@ u <- step.lmrobdet(a, whole.path=TRUE, trace=FALSE)
 # is not using MM estimates!
 u2 <- step.lmrobdet(a)
 
-lmrobdet.RFPE(lmrobdet(y~1, data=d, control=lmrobdet.control(refine.tol=1e-3))$MM, scale=a$MM$scale)
+lmrobdet.RFPE(lmrobdet(y~x1+x2+x7+x8, data=d, control=lmrobdet.control(refine.tol=1e-3))$MM, scale=a$MM$scale)
+lmrobdet.RFPE(lmrobdet(y~x1+x8, data=d, control=lmrobdet.control(refine.tol=1e-3))$MM, scale=a$MM$scale)
+
+fo <- as.formula(names(u[4]))
+lmrobdet.RFPE(lmrobdet(formula=fo, data=d, control=lmrobdet.control(refine.tol=1e-3))$MM, scale=a$MM$scale)
+
 
 # keep x4 in all models
 my.scope <- list(lower = . ~ x4, upper = . ~ .)
