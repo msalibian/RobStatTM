@@ -1,14 +1,14 @@
-#' RFPE of a lmrobdet object
+#' RFPE of a model fit with \code{\link{lmrobdet}}
 #'
-#' This function computes the RFPE for a model fit using \code{\link{lmrobdet}}.
+#' This function computes the RFPE for the MM-estimator obtained using \code{\link{lmrobdet}}.
 #'
-#' @param object a robust fit as returned by \code{\link{lmrobdet}}.
+#' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdet}}.
 #' @param scale an optional residual scale estimator. If \code{NULL} the residual
 #' scale estimator that corresponds to the model in \code{object} is used.
 #'
 #' @return the RFPE corresponding to the fit model.
 #'
-#' @rdname lmrob.RFPE
+#' @rdname lmrobdet.RFPE
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{lmrobdet}}
@@ -44,6 +44,33 @@ lmrobdet.RFPE <- function (object, scale = NULL)
   (a + b/d)*6 / tun^2
 }
 
+
+
+#' RFPE of submodels of an \code{\link{lmrobdet}} fit
+#'
+#' This function computes the RFPE for the MM-estimators obtained with \code{\link{lmrobdet}} by dropping each single variable in the model.
+#'
+#' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdet}}.
+#' @param scope a formula giving the terms to be considered for dropping.
+#' @param scale an optional residual scale estimator. If \code{NULL} the residual
+#' scale estimator that corresponds to the model in \code{object} is used.
+#' @param keep a character vector of names of components that should be saved for each subset model. 
+#' Only names from the set \code{"coefficients"}, \code{"fitted"} and \code{"residuals"}
+#' are allowed. If \code{keep == TRUE}, the complete set is saved. The default behavior is 
+#' not to keep anything.
+#'
+#' @return An anova object consisting of the term labels, the degrees of freedom, and Robust Final 
+#' Prediction Errors (RFPE) for each subset model. If \code{keep} is missing, the anova object is 
+#' returned. If \code{keep} is present, a list with components \code{"anova"} and \code{"keep"} is returned. 
+#' In this case, the \code{"keep"} component is a matrix of mode \code{"list"}, with a column for each 
+#' subset model, and a row for each component kept.
+#'
+#' @rdname drop1.lmrobdet
+#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#' @references \url{http://thebook}
+#' @seealso \code{\link{lmrobdet}}
+#'
+#' @export
 drop1.lmrobdet <- function (object, scope, scale, keep)
 {
   # if ( (casefold(object$control$method) != "sm") ) # & (casefold(object$control$method) != "m-sm") )
