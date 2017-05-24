@@ -6,7 +6,8 @@
 #' This function computes the
 #' DCML estimators combining the least squares estimator and a
 #' robust MM-estimator, the latter computed using Pen~a-Yohai
-#' candidates (instead of subsampling ones).
+#' candidates (instead of subsampling ones). Both are included
+#' in the returned object. 
 #'
 #' @param formula a symbolic description of the model to be fit.
 #' @param data an optional data frame, list or environment containing
@@ -47,7 +48,8 @@
 #' \item{x}{if requested, the model matrix used}
 #' \item{y}{if requested, the response vector used}
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
-#'
+#' \item{MM}{The MM-estimator computed using the Pena-Yohai candidates. This is an object of class \code{\link{lmrob}}.}
+#' 
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
@@ -665,7 +667,7 @@ f.w <- function(u, cc) {
 ### The first part of lmrob()  much cut'n'paste from lm() - on purpose!
 
 
-# R CMD INSTALL --preclean --clean robustbroli
+# R CMD INSTALL --preclean --clean package-name-here
 
 
 ## lmrobdet: back to basics!
