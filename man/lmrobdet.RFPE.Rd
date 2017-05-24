@@ -2,12 +2,12 @@
 % Please edit documentation in R/RFPE.R
 \name{lmrobdet.RFPE}
 \alias{lmrobdet.RFPE}
-\title{RFPE of a lmrobdet object}
+\title{RFPE of a model fit with \code{\link{lmrobdet}}}
 \usage{
 lmrobdet.RFPE(object, scale = NULL)
 }
 \arguments{
-\item{object}{a robust fit as returned by \code{\link{lmrobdet}}.}
+\item{object}{the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdet}}.}
 
 \item{scale}{an optional residual scale estimator. If \code{NULL} the residual
 scale estimator that corresponds to the model in \code{object} is used.}
@@ -16,7 +16,7 @@ scale estimator that corresponds to the model in \code{object} is used.}
 the RFPE corresponding to the fit model.
 }
 \description{
-This function computes the RFPE for a model fit using \code{\link{lmrobdet}}.
+This function computes the RFPE for the MM-estimator obtained using \code{\link{lmrobdet}}.
 }
 \references{
 \url{http://thebook}
