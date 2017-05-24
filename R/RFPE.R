@@ -180,8 +180,9 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 #' @param steps maximum number of steps to be performed. Defaults to 1000, which should mean as many as needed.
 #' @param whole.path if \code{FALSE} (default) variables are dropped until the RFPE fails to improve. If \code{TRUE} the best variable to be dropped is removed, even if this does not improve the RFPE.
 #'
-#' @return either a robust fit as obtained by \code{lmrobdet} using the final model (if \code{whole.path == FALSE}), 
-#' or a list of fits, one for each step in the process (if \code{whole.path == TRUE}).
+#' @return If \code{whole.path == FALSE} the function returns the robust fit as obtained by \code{lmrobdet} using the final model. 
+#' If \code{whole.path == TRUE} a list is returned containing the RFPE of each model on the sequence
+#' of submodels. The names of the components of this list are the formulas that correspods to each model. 
 #'
 #' @rdname step.lmrobdet
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
