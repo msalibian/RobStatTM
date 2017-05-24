@@ -29,8 +29,9 @@ searches are implemented.}
 \item{whole.path}{if \code{FALSE} (default) variables are dropped until the RFPE fails to improve. If \code{TRUE} the best variable to be dropped is removed, even if this does not improve the RFPE.}
 }
 \value{
-either a robust fit as obtained by \code{lmrobdet} using the final model (if \code{whole.path == FALSE}), 
-or a list of fits, one for each step in the process (if \code{whole.path == TRUE}).
+If \code{whole.path == FALSE} the function returns the robust fit as obtained by \code{lmrobdet} using the final model. 
+If \code{whole.path == TRUE} a list is returned containing the RFPE of each model on the sequence
+of submodels. The names of the components of this list are the formulas that correspods to each model.
 }
 \description{
 This function performs stepwise model selection on a robustly fitted
