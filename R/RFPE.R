@@ -1,12 +1,13 @@
-#' RFPE of a model fit with \code{\link{lmrobdet}}
+#' Robust Final Prediction Error
 #'
-#' This function computes the RFPE for the MM-estimator obtained using \code{\link{lmrobdet}}.
+#' This function computes the robust Final Prediction Errors (RFPE) for a robust regression fit using M-estimates.
 #'
 #' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdet}}.
-#' @param scale an optional residual scale estimator. If \code{NULL} the residual
-#' scale estimator that corresponds to the model in \code{object} is used.
+#' @param scale a numeric value specifying the scale estimate used to compute the RFPE. Usually this 
+#' should be the scale estimate from an encompassing model. If \code{NULL}, the scale estimate in 
+#' \code{object} is used.
 #'
-#' @return the RFPE corresponding to the fit model.
+#' @return the robust final prediction error (numeric).
 #'
 #' @rdname lmrobdet.RFPE
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
@@ -48,12 +49,16 @@ lmrobdet.RFPE <- function (object, scale = NULL)
 
 #' RFPE of submodels of an \code{\link{lmrobdet}} fit
 #'
-#' This function computes the RFPE for the MM-estimators obtained with \code{\link{lmrobdet}} by dropping each single variable in the model.
+#' This function computes the RFPE for the MM-estimators obtained with \code{\link{lmrobdet}} by
+#' recomputing it, successively removing each of a number of specified terms.
 #'
 #' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdet}}.
-#' @param scope a formula giving the terms to be considered for dropping.
-#' @param scale an optional residual scale estimator. If \code{NULL} the residual
-#' scale estimator that corresponds to the model in \code{object} is used.
+#' @param scope an optional \code{formula} giving the terms to be considered for dropping. Typically 
+#' this argument is omitted, in which case all possible terms are dropped (without breaking hierarchy 
+#' rules). The \code{scope} can also be a character vector of term labels. If the argument is supplied as a 
+#' formula, any \code{.} is interpreted relative to the formula implied by the \code{object} argument.
+#' @param scale an optional residual scale estimator. If missing the residual
+#' scale estimator in \code{object} is used.
 #' @param keep a character vector of names of components that should be saved for each subset model. 
 #' Only names from the set \code{"coefficients"}, \code{"fitted"} and \code{"residuals"}
 #' are allowed. If \code{keep == TRUE}, the complete set is saved. The default behavior is 
@@ -145,21 +150,40 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 
 #' Robust stepwise using RFPE
 #'
-#' This function performs stepwise variable selection using the RFPE
+#' This function performs stepwise model selection on a robustly fitted
+#' linear model using the RFPE
 #' criterion and the robust regression estimators computed with
-#' \code{\link{lmrobdet}}.
+#' \code{\link{lmrobdet}}. Only backwards stepwise is currently implemented.
+#'
+#' Presently only backward stepwise selection is supported. During each step the 
+#' Robust Final Prediction Error (as computed by the function \code{lmrobdet.RFPE}) is 
+#' calculated for the current model and for each sub-model achievable by deleting a 
+#' single term. If the argument \code{whole.path} is \code{FALSE}, the function steps 
+#' to the sub-model with the lowest 
+#' Robust Final Prediction Error or, if the current model has the lowest Robust Final 
+#' Prediction Error, terminates. If the argument \code{whole.path} is \code{TRUE}, the 
+#' function steps through all smaller submodels removing, at each step, the variable 
+#' that most reduces the Robust Final Prediction Error. The scale estimate from \code{object} 
+#' is used to compute the Robust Final Prediction Error throughout the procedure.
 #'
 #' @param object a robust fit as returned by \code{\link{lmrobdet}}
-#' @param scope defines the range of models to be examined. This should be either a single formula, or a list containing components upper and lower, both formulae. See the details below.
-#' @param direction the direction of stepwise search. Currenly only \code{backward} is implemented.
-#' @param trace if \code{TRUE} information about each step is printed on the screen.
+#' @param scope either a formula or a list with elements \code{lower} and \code{upper} each of 
+#' which is a formula. The terms in the right-hand-side of \code{lower} are always included 
+#' in the model and the additional terms in the right-hand-side of \code{upper} are the
+#' candidates for inclusion/exclusion from the model. If a single formula is given, it is 
+#' taken to be \code{upper}, and \code{lower} is set to the empty model. The \code{.} operator 
+#' is interpreted in the context of the formula in \code{object}.
+#' @param direction the direction of stepwise search. Currenly only \code{backward} stepwise 
+#' searches are implemented.
+#' @param trace logical. If \code{TRUE} information about each step is printed on the screen.
 #' @param keep a filter function whose input is a fitted model object and the associated AIC statistic, and whose output is arbitrary. Typically keep will select a subset of the components of the object and return them. The default is not to keep anything.
 #' @param steps maximum number of steps to be performed. Defaults to 1000, which should mean as many as needed.
 #' @param whole.path if \code{FALSE} (default) variables are dropped until the RFPE fails to improve. If \code{TRUE} the best variable to be dropped is removed, even if this does not improve the RFPE.
 #'
-#' @return either a robust fit as obtained by \code{lmrobdet} using the final model, or a list of fits one for each step in the process.
+#' @return either a robust fit as obtained by \code{lmrobdet} using the final model (if \code{whole.path == FALSE}), 
+#' or a list of fits, one for each step in the process (if \code{whole.path == TRUE}).
 #'
-#' @rdname step.lmrob
+#' @rdname step.lmrobdet
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
