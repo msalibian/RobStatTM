@@ -2,21 +2,22 @@
 % Please edit documentation in R/RFPE.R
 \name{lmrobdet.RFPE}
 \alias{lmrobdet.RFPE}
-\title{RFPE of a model fit with \code{\link{lmrobdet}}}
+\title{Robust Final Prediction Error}
 \usage{
 lmrobdet.RFPE(object, scale = NULL)
 }
 \arguments{
 \item{object}{the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdet}}.}
 
-\item{scale}{an optional residual scale estimator. If \code{NULL} the residual
-scale estimator that corresponds to the model in \code{object} is used.}
+\item{scale}{a numeric value specifying the scale estimate used to compute the RFPE. Usually this 
+should be the scale estimate from an encompassing model. If \code{NULL}, the scale estimate in 
+\code{object} is used.}
 }
 \value{
-the RFPE corresponding to the fit model.
+the robust final prediction error (numeric).
 }
 \description{
-This function computes the RFPE for the MM-estimator obtained using \code{\link{lmrobdet}}.
+This function computes the robust Final Prediction Errors (RFPE) for a robust regression fit using M-estimates.
 }
 \references{
 \url{http://thebook}

@@ -9,10 +9,13 @@
 \arguments{
 \item{object}{the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdet}}.}
 
-\item{scope}{a formula giving the terms to be considered for dropping.}
+\item{scope}{an optional \code{formula} giving the terms to be considered for dropping. Typically 
+this argument is omitted, in which case all possible terms are dropped (without breaking hierarchy 
+rules). The \code{scope} can also be a character vector of term labels. If the argument is supplied as a 
+formula, any \code{.} is interpreted relative to the formula implied by the \code{object} argument.}
 
-\item{scale}{an optional residual scale estimator. If \code{NULL} the residual
-scale estimator that corresponds to the model in \code{object} is used.}
+\item{scale}{an optional residual scale estimator. If missing the residual
+scale estimator in \code{object} is used.}
 
 \item{keep}{a character vector of names of components that should be saved for each subset model. 
 Only names from the set \code{"coefficients"}, \code{"fitted"} and \code{"residuals"}
@@ -27,7 +30,8 @@ In this case, the \code{"keep"} component is a matrix of mode \code{"list"}, wit
 subset model, and a row for each component kept.
 }
 \description{
-This function computes the RFPE for the MM-estimators obtained with \code{\link{lmrobdet}} by dropping each single variable in the model.
+This function computes the RFPE for the MM-estimators obtained with \code{\link{lmrobdet}} by
+recomputing it, successively removing each of a number of specified terms.
 }
 \references{
 \url{http://thebook}
