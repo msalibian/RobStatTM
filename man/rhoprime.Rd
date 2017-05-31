@@ -7,12 +7,12 @@
 rhoprime(r, cc)
 }
 \arguments{
-\item{r}{point or vector at which the derivative of rho is to be evaluated}
+\item{r}{scalar or vector at which the derivative of rho is to be evaluated}
 
 \item{cc}{tuning parameter}
 }
 \value{
-The value of the first derivative \code{rho_cc} at \code{r}
+The value of the first derivative \code{rho_cc} evaluated at \code{r}
 }
 \description{
 The first derivative of Tukeys bisquare rho function

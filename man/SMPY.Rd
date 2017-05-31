@@ -17,15 +17,15 @@ SMPY(mf, y, control, split)
 dummy components of the design matrix}
 }
 \value{
-an \code{\link{lmrob}} object witht the M-estimator 
-obtained starting from the MS-estimator computed with the 
+an \code{\link{lmrob}} object witht the M-estimator
+obtained starting from the MS-estimator computed with the
 Pen~a-Yohai initial candidates. The properties of the final
 estimator (efficiency, etc.) are determined by the tuning constants in
 the argument \code{control}.
 }
 \description{
 This function computes a robust regression estimator when there
-are categorical / dummy explanatory variables. It uses Pen~a-Yohai 
+are categorical / dummy explanatory variables. It uses Pen~a-Yohai
 candidates for the S-estimator. This function is used
 internally by \code{\link{lmrobdet}}, and not meant to be used
 directly.

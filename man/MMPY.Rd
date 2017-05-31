@@ -16,14 +16,14 @@ MMPY(X, y, control, mf)
 \item{mf}{model frame}
 }
 \value{
-an \code{\link{lmrob}} object witht the M-estimator 
-obtained starting from the S-estimator computed with the 
+an \code{\link{lmrob}} object witht the M-estimator
+obtained starting from the S-estimator computed with the
 Pen~a-Yohai initial candidates. The properties of the final
 estimator (efficiency, etc.) are determined by the tuning constants in
 the argument \code{control}.
 }
 \description{
-This function computes MM-regression estimator using Pen~a-Yohai 
+This function computes MM-regression estimator using Pen~a-Yohai
 candidates for the initial S-estimator. This function is used
 internally by \code{\link{lmrobdet}}, and not meant to be used
 directly.

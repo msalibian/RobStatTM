@@ -22,25 +22,25 @@ The scale estimate value at the last iteration or at convergence.
 }
 \description{
 This function computes an M-scale, which is a robust
-scale (spread) estimator. 
-M-estimators of scale are a robust alternative to 
+scale (spread) estimator.
+M-estimators of scale are a robust alternative to
 the sample standard deviation. Given a vector of
-residuals \code{r}, the M-scale estimator \code{s} 
+residuals \code{r}, the M-scale estimator \code{s}
 solves the non-linear equation \code{mean(rho(r/s, cc))=b},
 where \code{b} and \code{cc} are user-chosen tuning constants.
-In this package the function \code{rho} is one of 
-Tukey's bisquare family. 
+In this package the function \code{rho} is one of
+Tukey's bisquare family.
 The breakdown point of the estimator is \code{min(b, 1-b)},
-so the optimal choice for \code{b} is 0.5. To obtain a 
-consisten estimator the constant 
+so the optimal choice for \code{b} is 0.5. To obtain a
+consisten estimator the constant
 \code{cc} should be chosen such that E(rho(Z, cc)) = b, where
 Z is a standard normal random variable.
 }
 \details{
 The iterative algorithm starts from the scaled median of
-the absolute values of the input vector, and then 
-cycles through the equation s^2 = s^2 * mean(rho(r/s, cc)) / b. 
-In this package the function \code{rho} is one of 
+the absolute values of the input vector, and then
+cycles through the equation s^2 = s^2 * mean(rho(r/s, cc)) / b.
+In this package the function \code{rho} is one of
 Tukey's bisquare family.
 }
 \examples{
