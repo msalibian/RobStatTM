@@ -285,7 +285,9 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
   tmp <- z
   tmp$MM <- NULL
   z2 <- list(DCML=tmp, MM=z$MM)
-  class(z2$DCML) <- c("lmrobdet", "lmrob")
+  class(z2$DCML) <- c("DCML", "lmrob")
+  class(z2$MM) <- 'lmrob'
+  class(z2) <- 'lmrobdet'
   z2
 }
 
@@ -384,6 +386,7 @@ lmrobdet.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% 
 
 print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
+  x <- x$DCML
   cat("\nCall:\n", cl <- deparse(x$call, width.cutoff=72), "\n", sep = "")
   control <- x$control
   if(length((cf <- coef(x)))) {
@@ -410,6 +413,7 @@ print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 
 summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
 {
+  object <- object$DCML
   if (is.null(object$terms))
     stop("invalid 'lmrobdet' object:  no terms component")
   p <- object$rank
