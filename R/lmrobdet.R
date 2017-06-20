@@ -7,7 +7,7 @@
 #' DCML estimators combining the least squares estimator and a
 #' robust MM-estimator, the latter computed using Pen~a-Yohai
 #' candidates (instead of subsampling ones). Both are included
-#' in the returned object. 
+#' in the returned object.
 #'
 #' @param formula a symbolic description of the model to be fit.
 #' @param data an optional data frame, list or environment containing
@@ -49,7 +49,7 @@
 #' \item{y}{if requested, the response vector used}
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 #' \item{MM}{The MM-estimator computed using the Pena-Yohai candidates. This is an object of class \code{\link{lmrob}}.}
-#' 
+#'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
@@ -282,8 +282,11 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       model.matrix(mt, mf, contrasts) else x
   if (ret.y)
     z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
-  class(z) <- c("lmrobdet", "lmrob")
-  z
+  tmp <- z
+  tmp$MM <- NULL
+  z2 <- list(DCML=tmp, MM=z$MM)
+  class(z2) <- c("lmrobdet", "lmrob")
+  z2
 }
 
 
