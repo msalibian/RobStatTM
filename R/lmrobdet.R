@@ -285,7 +285,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
   tmp <- z
   tmp$MM <- NULL
   z2 <- list(DCML=tmp, MM=z$MM)
-  class(z2) <- c("lmrobdet", "lmrob")
+  class(z2$DCML) <- c("lmrobdet", "lmrob")
   z2
 }
 
