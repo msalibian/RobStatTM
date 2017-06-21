@@ -286,8 +286,8 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
   tmp$MM <- NULL
   z2 <- list(DCML=tmp, MM=z$MM)
   class(z2$DCML) <- c("DCML", "lmrob")
-  class(z2$MM) <- 'lmrob'
-  class(z2) <- 'lmrobdet'
+  class(z2$MM) <- "lmrob"
+  class(z2) <- "lmrobdet"
   z2
 }
 
@@ -386,6 +386,7 @@ lmrobdet.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% 
 
 print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
+  cat("\nHere\n")
   x <- x$DCML
   cat("\nCall:\n", cl <- deparse(x$call, width.cutoff=72), "\n", sep = "")
   control <- x$control
