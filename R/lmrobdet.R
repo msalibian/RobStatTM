@@ -388,7 +388,6 @@ lmrobdet.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% 
 #' @export
 print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
-  cat("\nHere\n")
   x <- x$DCML
   cat("\nCall:\n", cl <- deparse(x$call, width.cutoff=72), "\n", sep = "")
   control <- x$control
