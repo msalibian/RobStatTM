@@ -385,7 +385,7 @@ lmrobdet.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% 
 
 
 
-
+#' @export
 print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
   cat("\nHere\n")
@@ -414,6 +414,7 @@ print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 }
 
 
+#' @export
 summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
 {
   object <- object$DCML
@@ -462,7 +463,7 @@ summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, 
 }
 
 
-
+#' @export
 print.summary.lmrobdet <- function (x, digits = max(3, getOption("digits") - 3),
                                   symbolic.cor = x$symbolic.cor,
                                   signif.stars = getOption("show.signif.stars"), ...)
