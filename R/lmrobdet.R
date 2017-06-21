@@ -282,6 +282,8 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       model.matrix(mt, mf, contrasts) else x
   if (ret.y)
     z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
+  # class(z) <- c("lmrobdet", "lmrob")
+  # z
   tmp <- z
   tmp$MM <- NULL
   z2 <- list(DCML=tmp, MM=z$MM)
