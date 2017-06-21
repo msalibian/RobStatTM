@@ -1,4 +1,4 @@
-print.f <- function(x, digits = max(3, getOption("digits") - 3), ...)
+print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
   cat("\nClass: ", class(x), "\n", sep='')
   x <- x$DCML
@@ -25,7 +25,7 @@ print.f <- function(x, digits = max(3, getOption("digits") - 3), ...)
   invisible(x)
 }
 
-summary.f <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
+summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
 {
   cat("\nIn summary.f\n")
   object <- object$DCML
@@ -70,12 +70,12 @@ summary.f <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
   }
   ans$aliased <- aliased # used in print method
   ans$sigma <- sigma # 'sigma': in summary.lm() & 'fit.models' pkg
-  structure(ans, class = "summary.f")
+  structure(ans, class = "summary.lmrobdet")
 }
 
 
 
-print.summary.f <- function (x, digits = max(3, getOption("digits") - 3),
+print.summary.lmrobdet <- function (x, digits = max(3, getOption("digits") - 3),
                                     symbolic.cor = x$symbolic.cor,
                                     signif.stars = getOption("show.signif.stars"), ...)
 {
@@ -127,7 +127,7 @@ print.summary.f <- function (x, digits = max(3, getOption("digits") - 3),
         coefs <- matrix(NA, length(aliased), 4, dimnames=list(cn, colnames(coefs)))
         coefs[!aliased, ] <- x$coefficients
       }
-      
+
       printCoefmat(coefs, digits = digits, signif.stars = signif.stars,
                    na.print="NA", ...)
       cat("\nRobust residual standard error:",
@@ -156,7 +156,7 @@ print.summary.f <- function (x, digits = max(3, getOption("digits") - 3),
       cat("Convergence in", x$iter, "IRWLS iterations\n")
     }
     cat("\n")
-    
+
     # if (!is.null(rw <- x$rweights)) {
     #   if (any(zero.w <- x$weights == 0))
     #     rw <- rw[!zero.w]
@@ -164,7 +164,7 @@ print.summary.f <- function (x, digits = max(3, getOption("digits") - 3),
     #     EO(nobs(x)) else EO
     #   summarizeRobWeights(rw, digits = digits, eps = eps.outlier, ...)
     # }
-    
+
   } else cat("\nNo Coefficients\n")
   invisible(x)
 }
