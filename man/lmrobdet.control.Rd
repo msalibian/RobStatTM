@@ -58,7 +58,8 @@ to the M-scale parameter \code{bb}}
 options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is
 appropriate when there are categorical explanatory variables in the model.}
 
-\item{prosac}{For \code{pyinit}, proportion of observations to remove based on PSCs. See \code{\link{pyinit}}.}
+\item{prosac}{For \code{pyinit}, proportion of observations to remove based on PSCs. The effective proportion of removed
+observations is adjusted according to the sample size to be \code{prosac*(1-p/n)}. See \code{\link{pyinit}}.}
 
 \item{clean.method}{For \code{pyinit}, how to clean the data based on large residuals. If
 \code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will
