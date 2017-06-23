@@ -204,7 +204,7 @@ MMPY <- function(X, y, control, mf) {
    if(control$corr.b) dee <- dee * (1-(p/n))
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee,
                cc.scale=control$tuning.chi,
-               prosac=control$prosac, clean.method=control$clean.method,
+               prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
                C.res = control$C.res, prop=control$prop,
                py.nit = control$py.nit, en.tol=control$en.tol,
                mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
@@ -332,7 +332,7 @@ SMPY <- function(mf, y, control, split) {
   if(control$corr.b) dee <- dee*(1-p/n)
   initial <- pyinit(intercept=FALSE, X=X1, y=y1,
                     deltaesc=dee, cc.scale=control$tuning.chi,
-                    prosac=control$prosac, clean.method=control$clean.method,
+                    prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
                     C.res = control$C.res, prop=control$prop,
                     py.nit = control$py.nit, en.tol=control$en.tol,
                     mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
