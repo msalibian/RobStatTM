@@ -9,6 +9,8 @@ library(pense)
 # devtools::install_github('esmucler/mmlasso')
 library(mmlasso)
 
+library(glmnet)
+
 n <- 50
 p <- 20
 set.seed(123)
@@ -20,6 +22,10 @@ a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
 b <- pense(X=x, y=y, alpha=0, lambda=0, nlambda=1, standardize=TRUE, 
            control=pense.control(mscale.delta = 0.3))
 
-d <- pense(X=x, y=y, alpha=0, nlambda=50, standardize=TRUE, 
+b <- pense(X=x, y=y, alpha=0, lambda=seq(0, 5, length=20), standardize=TRUE, 
            control=pense.control(mscale.delta = 0.3))
+
+
+d <- cv.glmnet(x=x, y=y, lambda=seq(0, 5, length=20), family='gaussian', 
+               intercept=TRUE, alpha=0) # , nlambda=50)
 
