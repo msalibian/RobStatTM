@@ -20,22 +20,24 @@ find.tuning.chi <- function(delta, low=.5, upp=10) {
 # devtools::install_github('esmucler/mmlasso')
 library(mmlasso)
 
+# data
 n <- 50 # 500
 p <- 20 # 10
 set.seed(123)
 x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(2, 5), rep(0, p-5))) + rnorm(n, sd=.5)
 
+# compute S-ridge
 a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
             denormout=0, alone=1, ncores=4)
 
 # sanity check
-
-
+# find tuning constant for adjusted delta
 cc <- find.tuning.chi(a$delta)
-mean(rho(rnorm(1e6), cc=cc))
+# get residuals
 re2 <- as.vector(y - x %*% a$coef[-1] - a$coef[1])
-sum(rho(re2/a$scale, cc=cc))/(n - a$edf)
+# check the M-scale equation
 mean(rho(re2/a$scale, cc=cc))
 a$delta
+sum(rho(re2/a$scale, cc=cc))/(n - a$edf)
 
