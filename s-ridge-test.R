@@ -28,5 +28,5 @@ re2 <- as.vector(y - x %*% a$coef[-1] - a$coef[1])
 # check the M-scale equation
 mean(rho(re2/a$scale))
 a$delta
-sum(rho(re2/a$scale, cc=cc))/(n - a$edf)
+sum(rho(re2/a$scale))/(n - a$edf)
 
