@@ -26,7 +26,9 @@ a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
 # get residuals
 re2 <- as.vector(y - x %*% a$coef[-1] - a$coef[1])
 # check the M-scale equation
+# should this be equal to a$delta?
 mean(rho(re2/a$scale))
 a$delta
+# should this be equal to 1/2?
 sum(rho(re2/a$scale))/(n - a$edf)
 
