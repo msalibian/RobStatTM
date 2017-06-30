@@ -20,7 +20,7 @@ y <- as.vector( x %*% c(rep(2, 5), rep(0, p-5))) + rnorm(n, sd=.5)
 a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
             denormout=0, alone=1, ncores=4)
 
-b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=1e-9) #,
+b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=1e-9, initial='cold') #,
 #           control=pense.control(mscale.delta = 0.49))
 
 d <- elnet(X=x, y=y, alpha=0, lambda=1e-9, addLeading1s=TRUE)
