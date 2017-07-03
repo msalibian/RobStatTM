@@ -63,15 +63,13 @@ A list with the following components:
 \item{MM}{The MM-estimator computed using the Pena-Yohai candidates. This is an object of class \code{\link{lmrob}}.}
 }
 \description{
-This function computes MM-based Distance Constrained
-Maximum Likelihood regression estimators for linear models.
+This function computes an MM-regression estimators for linear models
+using deterministic starting points.
 }
 \details{
-This function computes the
-DCML estimators combining the least squares estimator and a
-robust MM-estimator, the latter computed using Pen~a-Yohai
-candidates (instead of subsampling ones). Both are included
-in the returned object.
+This function computes MM-regression estimators
+computed using Pen~a-Yohai
+candidates (instead of subsampling ones).
 }
 \examples{
 data(coleman)

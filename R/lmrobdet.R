@@ -290,6 +290,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
   # class(z2) <- "lmrobdet"
   # z2
   class(z) <- c('lmrobdet', 'lmrob')
+  z
 }
 
 
