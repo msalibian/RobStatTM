@@ -1,4 +1,4 @@
-lmrobM=function (formula, tuning.psi=3.44)
+lmrobM.bak=function (formula, tuning.psi=3.44)
 {
  outL=rq(formula, tau=.5)
 resL=sort(abs(outL$resid))

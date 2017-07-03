@@ -965,7 +965,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   z
 }
 
-
+#' @export
 lmrobM <- function(formula, data, subset, weights, na.action,
                    model = TRUE, x = FALSE, y = FALSE,
                    singular.ok = TRUE, contrasts = NULL, offset = NULL,
@@ -1069,11 +1069,14 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     }
     outL <- lmrob.lar(x=x, y=y, control = control, mf = NULL)
     resL <- sort(abs(outL$resid))
-    p <- length(outL$coeff)
+    p <- length(outL$coef)
     n <- length(outL$resid)
-    sscale <- resL[(n+p)/2]/.6745
-    initial <- list(coefficients=outL$coef, scale=scale)
-    z <- lmrob(formula, control=control, init=initial) #tuning.psi=tuning.psi ,init=initial)
+    L1scale <- resL[(n+p)/2]/.6745
+    initial <- list(coefficients=outL$coef, scale=L1scale)
+    tmp <- as.call(control)
+    tmp[[1]] <- quote(lmrob.control)
+    my.control <- eval(tmp)
+    z <- lmrob(formula, control=my.control, init=initial) #tuning.psi=tuning.psi ,init=initial) lmrob.control(tuning.psi=lmrobdet.control()$tuning.psi),
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
               else rep.int(as.numeric(NA), p),

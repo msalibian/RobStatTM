@@ -17,6 +17,15 @@ summary(m2)
 summary(m1)
 summary(m0)
 
+# fixed designs
+set.seed(123)
+n <- 50
+x1 <- factor(letters[rbinom(n, size=2, prob=.3)+1])
+x2 <- factor(c('L1', 'L2', 'L3')[3-rbinom(n, size=2, prob=.3)])
+y <- rnorm(n, sd=.7) + 2*(as.numeric(x1)-1) - 3*(as.numeric(x2)-1)
+tmp <- lmrobM(y ~ x1 + x2)
+
+
 ## Default for a very long time:
 m2 <- lmrobdet(Y ~ . - 1 , data=coleman) # MMPY
 m0 <- lmrob(Y ~ . - 1 , data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
