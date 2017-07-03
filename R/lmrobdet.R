@@ -1119,7 +1119,11 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     tmp <- as.call(control)
     tmp[[1]] <- quote(lmrob.control)
     my.control <- eval(tmp) # there are no environments to worry about here
-    z <- lmrob(formula, control=my.control, init=initial) #tuning.psi=tuning.psi ,init=initial) lmrob.control(tuning.psi=lmrobdet.control()$tuning.psi),
+    # build the call to lmrob, adding the lmrob control paramaters
+    tmp2 <- cl
+    tmp2$control <- my.control
+    tmp2[[1]] <- quote(lmrob)
+    z <- eval(expr=tmp2, envir=parent.frame()) # lmrob(formula, control=my.control, init=initial) #tuning.psi=tuning.psi ,init=initial) lmrob.control(tuning.psi=lmrobdet.control()$tuning.psi),
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
               else rep.int(as.numeric(NA), p),
@@ -1131,6 +1135,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     else names(z$coefficients) <- colnames(x)
     if(!is.null(offset)) z$residuals <- y - offset
   }
+  z$call <- cl
   class(z) <- 'lmrob'
   z
 }

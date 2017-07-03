@@ -23,7 +23,8 @@ n <- 50
 x1 <- factor(letters[rbinom(n, size=2, prob=.3)+1])
 x2 <- factor(c('L1', 'L2', 'L3')[3-rbinom(n, size=2, prob=.3)])
 y <- rnorm(n, sd=.7) + 2*(as.numeric(x1)-1) - 3*(as.numeric(x2)-1)
-tmp <- lmrobM(y ~ x1 + x2)
+das <- data.frame(x1=x1, x2=x2, y=y)
+tmp <- lmrobM(y ~ . , data=das)
 
 
 ## Default for a very long time:
