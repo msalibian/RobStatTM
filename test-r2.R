@@ -1,5 +1,7 @@
 
+
 n <- 50
+set.seed(123)
 x1 <- rnorm(n)
 y <- rnorm(n, sd=.1) + x1
 
