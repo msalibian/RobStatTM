@@ -5,9 +5,18 @@
 library(RobustStatistics)
 data(coleman)
 m2 <- lmrobdet(Y ~ ., data=coleman)
+m1 <- lmrobdetDCML(Y ~ ., data=coleman)
+summary(m1)
+
 m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
 
+coef(m2)
+coef(m1)
+coef(m0)
+coef(lm(Y~., data=coleman))
+
 summary(m2)
+summary(m1)
 summary(m0)
 
 ## Default for a very long time:
