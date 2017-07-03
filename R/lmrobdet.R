@@ -1,4 +1,4 @@
-#' Robust DCML linear regression estimators
+#' Robust linear regression estimators
 #'
 #' This function computes an MM-regression estimators for linear models
 #' using deterministic starting points.
@@ -31,11 +31,11 @@
 #' @return A list with the following components:
 #' \item{coefficients}{The estimated vector of regression coefficients}
 #' \item{scale}{The estimated scale of the residuals}
-#' \item{residuals}{The vector of residuals associated with the DCML fit}
+#' \item{residuals}{The vector of residuals associated with the robust fit}
 #' \item{converged}{Logical value indicating whether IRWLS iterations for the MM-estimator have converged}
 #' \item{iter}{Number of IRWLS iterations for the MM-estimator}
 #' \item{rweights}{Robustness weights for the MM-estimator}
-#' \item{fitted.values}{Fitted values associated with the DCML fit}
+#' \item{fitted.values}{Fitted values associated with the robust fit}
 #' \item{rank}{Numeric rank of the fitted linear model}
 #' \item{cov}{The estimated covariance matrix of the regression estimates}
 #' \item{df.residual}{The residual degrees of freedom}
@@ -389,7 +389,7 @@ lmrobdet.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% 
 #' @export
 print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
-  x <- x$DCML
+  # x <- x$DCML
   cat("\nCall:\n", cl <- deparse(x$call, width.cutoff=72), "\n", sep = "")
   control <- x$control
   if(length((cf <- coef(x)))) {
@@ -417,7 +417,7 @@ print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 #' @export
 summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
 {
-  object <- object$DCML
+  # object <- object$DCML
   if (is.null(object$terms))
     stop("invalid 'lmrobdet' object:  no terms component")
   p <- object$rank
