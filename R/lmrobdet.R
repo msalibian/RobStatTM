@@ -1123,6 +1123,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     tmp2 <- cl
     tmp2$control <- my.control
     tmp2[[1]] <- quote(lmrob)
+    tmp2$init <- initial
     z <- eval(expr=tmp2, envir=parent.frame()) # lmrob(formula, control=my.control, init=initial) #tuning.psi=tuning.psi ,init=initial) lmrob.control(tuning.psi=lmrobdet.control()$tuning.psi),
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
