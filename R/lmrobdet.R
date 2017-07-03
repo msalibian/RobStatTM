@@ -965,6 +965,62 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   z
 }
 
+
+#' Robust estimators for linear regression with fixed designs
+#'
+#' This function computes a robust regression
+#' estimator for a linear models with fixed designs.
+#'
+#' This function computes robust regression estimators for linear
+#' models with fixed designs. It computes an L1 estimator,
+#' and uses it as a starting point to find a minimum of a
+#' re-descending M estimator. The scale is set to a quantile of the
+#' absolute residuals from the L1 estimator.
+#'
+#'
+#' @param formula a symbolic description of the model to be fit.
+#' @param data an optional data frame, list or environment containing
+#' the variables in the model. If not found in \code{data}, model variables
+#' are taken from \code{environment(formula)}, which usually is the
+#' root environment of the current R session.
+#' @param subset an optional vector specifying a subset of observations to be used.
+#' @param weights an optional vector of weights to be used in the fitting process.
+#' @param na.action a function to indicates what should happen when the data contain NAs.
+#' The default is set by the \link{na.action} setting of \code{\link[base]{options}}, and is
+#' \code{na.fail} if that is unset.
+#' @param model logical value indicating whether to return the model frame
+#' @param x logical value indicating whether to return the model matrix
+#' @param y logical value indicating whether to return the vector of responses
+#' @param singular.ok logical value. If \code{FALSE} a singular fit produces an error.
+#' @param contrasts an optional list. See the \code{contrasts.arg} of \link{model.matrix.default}.
+#' @param offset this can be used to specify an a priori known component to be included
+#' in the linear predictor during fitting. An offset term can be included in the formula
+#' instead or as well, and if both are specified their sum is used.
+#' @param control a list specifying control parameters as returned by the function
+#' \link{lmrobdet.control}.
+#'
+#' @return A list with the following components:
+#' \item{coefficients}{The estimated vector of regression coefficients}
+#' \item{scale}{The estimated scale of the residuals}
+#' \item{residuals}{The vector of residuals associated with the robust fit}
+#' \item{converged}{Logical value indicating whether IRWLS iterations for the MM-estimator have converged}
+#' \item{iter}{Number of IRWLS iterations for the MM-estimator}
+#' \item{rweights}{Robustness weights for the MM-estimator}
+#' \item{fitted.values}{Fitted values associated with the robust fit}
+#' \item{rank}{Numeric rank of the fitted linear model}
+#' \item{cov}{The estimated covariance matrix of the regression estimates}
+#' \item{df.residual}{The residual degrees of freedom}
+#' \item{contrasts}{(only where relevant) the contrasts used}
+#' \item{xlevels}{(only where relevant) a record of the levels of the factors used in fitting}
+#' \item{call}{the matched call}
+#' \item{model}{if requested, the model frame used}
+#' \item{x}{if requested, the model matrix used}
+#' \item{y}{if requested, the response vector used}
+#' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @references \url{http://thebook}
+#'
 #' @export
 lmrobM <- function(formula, data, subset, weights, na.action,
                    model = TRUE, x = FALSE, y = FALSE,
@@ -989,21 +1045,6 @@ lmrobM <- function(formula, data, subset, weights, na.action,
   if(!is.null(offset) && length(offset) != NROW(y))
     stop(gettextf("number of offsets is %d, should equal %d (number of observations)",
                   length(offset), NROW(y)), domain = NA)
-  #
-  #   if (is.empty.model(mt)) {
-  #     x <- NULL
-  #     singular.fit <- FALSE ## to avoid problems below
-  #     z <- list(coefficients = if (is.matrix(y)) matrix(,0,3) else numeric(0),
-  #               residuals = y, scale = NA, fitted.values = 0 * y,
-  #               cov = matrix(,0,0), weights = w, rank = 0,
-  #               df.residual = NROW(y), converged = TRUE, iter = 0)
-  #     if(!is.null(offset)) {
-  #       z$fitted.values <- offset
-  #       z$residuals <- y - offset
-  #       z$offset <- offset
-  #     }
-  #   }
-  #   else {
   x <- model.matrix(mt, mf, contrasts)
   contrasts <- attr(x, "contrasts")
   assign <- attr(x, "assign")
@@ -1073,9 +1114,11 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     n <- length(outL$resid)
     L1scale <- resL[(n+p)/2]/.6745
     initial <- list(coefficients=outL$coef, scale=L1scale)
+    # create a call to lmrob.control() using the
+    # values of the common arguments with the user's call to lmrobdet.control()
     tmp <- as.call(control)
     tmp[[1]] <- quote(lmrob.control)
-    my.control <- eval(tmp)
+    my.control <- eval(tmp) # there are no environments to worry about here
     z <- lmrob(formula, control=my.control, init=initial) #tuning.psi=tuning.psi ,init=initial) lmrob.control(tuning.psi=lmrobdet.control()$tuning.psi),
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
