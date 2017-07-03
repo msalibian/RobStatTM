@@ -46,7 +46,6 @@
 #' \item{x}{if requested, the model matrix used}
 #' \item{y}{if requested, the response vector used}
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
-#' \item{MM}{The MM-estimator computed using the Pena-Yohai candidates. This is an object of class \code{\link{lmrob}}.}
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
 #' @references \url{http://thebook}
@@ -669,6 +668,302 @@ f.w <- function(u, cc) {
   tmp <- (1 - (u/cc)^2)^2
   tmp[abs(u/cc) > 1] <- 0
   return(tmp)
+}
+
+
+
+#' Robust Distance Constrained Maximum Likelihood estimators for linear regression
+#'
+#' This function computes robust Distance Constrained Maximum Likelihood
+#' estimators for linear models.
+#'
+#' This function computes Distance Constrained Maximum Likelihood regression estimators
+#' computed using an MM-regression estimator based on Pen~a-Yohai
+#' candidates (instead of subsampling ones).
+#'
+#' @param formula a symbolic description of the model to be fit.
+#' @param data an optional data frame, list or environment containing
+#' the variables in the model. If not found in \code{data}, model variables
+#' are taken from \code{environment(formula)}, which usually is the
+#' root environment of the current R session.
+#' @param subset an optional vector specifying a subset of observations to be used.
+#' @param weights an optional vector of weights to be used in the fitting process.
+#' @param na.action a function to indicates what should happen when the data contain NAs.
+#' The default is set by the \link{na.action} setting of \code{\link[base]{options}}, and is
+#' \code{na.fail} if that is unset.
+#' @param model logical value indicating whether to return the model frame
+#' @param x logical value indicating whether to return the model matrix
+#' @param y logical value indicating whether to return the vector of responses
+#' @param singular.ok logical value. If \code{FALSE} a singular fit produces an error.
+#' @param contrasts an optional list. See the \code{contrasts.arg} of \link{model.matrix.default}.
+#' @param offset this can be used to specify an a priori known component to be included
+#' in the linear predictor during fitting. An offset term can be included in the formula
+#' instead or as well, and if both are specified their sum is used.
+#' @param control a list specifying control parameters as returned by the function
+#' \link{lmrobdet.control}.
+#'
+#' @return A list with the following components:
+#' \item{coefficients}{The estimated vector of regression coefficients}
+#' \item{scale}{The estimated scale of the residuals}
+#' \item{residuals}{The vector of residuals associated with the robust fit}
+#' \item{converged}{Logical value indicating whether IRWLS iterations for the MM-estimator have converged}
+#' \item{iter}{Number of IRWLS iterations for the MM-estimator}
+#' \item{rweights}{Robustness weights for the MM-estimator}
+#' \item{fitted.values}{Fitted values associated with the robust fit}
+#' \item{rank}{Numeric rank of the fitted linear model}
+#' \item{cov}{The estimated covariance matrix of the regression estimates}
+#' \item{df.residual}{The residual degrees of freedom}
+#' \item{contrasts}{(only where relevant) the contrasts used}
+#' \item{xlevels}{(only where relevant) a record of the levels of the factors used in fitting}
+#' \item{call}{the matched call}
+#' \item{model}{if requested, the model frame used}
+#' \item{x}{if requested, the model matrix used}
+#' \item{y}{if requested, the response vector used}
+#' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @references \url{http://thebook}
+#' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
+#'
+#' @examples
+#' data(coleman)
+#' m1 <- lmrobdetDCML(Y ~ ., data=coleman)
+#'
+#' @export
+lmrobdetDCML <- function(formula, data, subset, weights, na.action,
+                     model = TRUE, x = !control$compute.rd, y = FALSE,
+                     singular.ok = TRUE, contrasts = NULL, offset = NULL,
+                     control = lmrobdet.control())
+{
+  ret.x <- x
+  ret.y <- y
+  cl <- match.call()
+  mf <- match.call(expand.dots = FALSE)
+  m <- match(c("formula", "data", "subset", "weights", "na.action", "offset"),
+             names(mf), 0)
+  mf <- mf[c(1, m)]
+  mf$drop.unused.levels <- TRUE
+  mf[[1]] <- as.name("model.frame")
+  mf <- eval(mf, parent.frame())
+
+  mt <- attr(mf, "terms") # allow model.frame to update it
+  y <- model.response(mf, "numeric")
+  w <- as.vector(model.weights(mf))
+  if(!is.null(w) && !is.numeric(w))
+    stop("'weights' must be a numeric vector")
+  offset <- as.vector(model.offset(mf))
+  if(!is.null(offset) && length(offset) != NROW(y))
+    stop(gettextf("number of offsets is %d, should equal %d (number of observations)",
+                  length(offset), NROW(y)), domain = NA)
+
+  if (is.empty.model(mt)) {
+    x <- NULL
+    singular.fit <- FALSE ## to avoid problems below
+    z <- list(coefficients = if (is.matrix(y)) matrix(,0,3) else numeric(0),
+              residuals = y, scale = NA, fitted.values = 0 * y,
+              cov = matrix(,0,0), weights = w, rank = 0,
+              df.residual = NROW(y), converged = TRUE, iter = 0)
+    if(!is.null(offset)) {
+      z$fitted.values <- offset
+      z$residuals <- y - offset
+      z$offset <- offset
+    }
+  }
+  else {
+    x <- model.matrix(mt, mf, contrasts)
+    contrasts <- attr(x, "contrasts")
+    assign <- attr(x, "assign")
+    p <- ncol(x)
+    if(!is.null(offset))
+      y <- y - offset
+    if (!is.null(w)) {
+      ## checks and code copied/modified from lm.wfit
+      ny <- NCOL(y)
+      n <- nrow(x)
+      if (NROW(y) != n | length(w) != n)
+        stop("incompatible dimensions")
+      if (any(w < 0 | is.na(w)))
+        stop("missing or negative weights not allowed")
+      zero.weights <- any(w == 0)
+      if (zero.weights) {
+        save.r <- y
+        save.w <- w
+        save.f <- y
+        ok <- w != 0
+        nok <- !ok
+        w <- w[ok]
+        x0 <- x[nok, , drop = FALSE]
+        x  <- x[ ok, , drop = FALSE]
+        n <- nrow(x)
+        y0 <- if (ny > 1L) y[nok, , drop = FALSE] else y[nok]
+        y  <- if (ny > 1L) y[ ok, , drop = FALSE] else y[ok]
+        ## add this information to model.frame as well
+        ## need it in outlierStats()
+        ## ?? could also add this to na.action, then
+        ##    naresid() would pad these as well.
+        attr(mf, "zero.weights") <- which(nok)
+      }
+      wts <- sqrt(w)
+      save.y <- y
+      x <- wts * x
+      y <- wts * y
+    }
+    ## check for singular fit
+
+    if(getRversion() >= "3.1.0") {
+      z0 <- .lm.fit(x, y, tol = control$solve.tol)
+      piv <- z0$pivot
+    } else {
+      z0 <- lm.fit(x, y, tol = control$solve.tol)
+      piv <- z0$qr$pivot
+    }
+    rankQR <- z0$rank
+
+    singular.fit <- rankQR < p
+    if (rankQR > 0) {
+      if (singular.fit) {
+        if (!singular.ok) stop("singular fit encountered")
+        pivot <- piv
+        p1 <- pivot[seq_len(rankQR)]
+        p2 <- pivot[(rankQR+1):p]
+        ## to avoid problems in the internal fitting methods,
+        ## split into singular and non-singular matrices,
+        ## can still re-add singular part later
+        dn <- dimnames(x)
+        x <- x[,p1]
+        attr(x, "assign") <- assign[p1] ## needed for splitFrame to work
+      }
+      # Check if there are factors
+      if( control$initial=="SM" ) {
+        split <- splitFrame(mf, x, control$split.type)
+        if (ncol(split$x1) == 0) {
+          control$initial <- 'S'
+          warning("No categorical variables found in model. Reverting to an MM-estimator.")
+        }
+      }
+      if( control$initial=="SM" ) {
+        z <- SMPY(mf=mf, y=y, control=control, split=split)
+      } else if( control$initial == "S" ) {
+        z <- MMPY(X=x, y=y, control=control, mf=mf)
+      } else stop('Unknown value for lmrobdet.control()$initial')
+      # DCML
+      # LS is already computed in z0
+      z <- DCML(x=x, y=y, z=z, z0=z0, control=control)
+      # z$MM <- z
+      # # complete the MM object
+      # z$MM$na.action <- attr(mf, "na.action")
+      # z$MM$offset <- offset
+      # z$MM$contrasts <- contrasts
+      # z$MM$xlevels <- .getXlevels(mt, mf)
+      # z$MM$call <- cl
+      # z$MM$terms <- mt
+      # z$MM$assign <- assign
+      if(control$compute.rd && !is.null(x))
+        z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
+      if(model)
+        z$model <- mf
+      if(ret.x)
+        z$x <- if (singular.fit || (!is.null(w) && zero.weights))
+          model.matrix(mt, mf, contrasts) else x
+      if (ret.y)
+        z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
+      #
+      #       z$coefficients <- z2$coefficients
+      #       z$scale <- z2$scale
+      #       z$residuals <- z2$residuals
+      #       z$cov <- z2$cov
+      #       z$fitted.values <- y - z2$residuals
+      #       z$rweights <- z$loss <- NULL
+
+      # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
+      if (singular.fit) {
+        coef <- numeric(p)
+        coef[p2] <- NA
+        coef[p1] <- z$coefficients
+        names(coef) <- dn[[2L]]
+        z$coefficients <- coef
+        ## Update QR decomposition (z$qr)
+        ## pad qr and qraux with zeroes (columns that were pivoted to the right in z0)
+        d.p <- p-rankQR
+        n <- NROW(y)
+        z$qr[c("qr","qraux","pivot")] <-
+          list(matrix(c(z$qr$qr, rep.int(0, d.p*n)), n, p,
+                      dimnames = list(dn[[1L]], dn[[2L]][piv])),
+               ## qraux:
+               c(z$qr$qraux, rep.int(0, d.p)),
+               ## pivot:
+               piv)
+      }
+    } else { ## rank 0
+      z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
+                else rep.int(as.numeric(NA), p),
+                residuals = y, scale = NA, fitted.values = 0 * y,
+                cov = matrix(,0,0), rweights = rep.int(as.numeric(NA), NROW(y)),
+                weights = w, rank = 0, df.residual = NROW(y),
+                converged = TRUE, iter = 0, control=control)
+      if (is.matrix(y)) colnames(z$coefficients) <- colnames(x)
+      else names(z$coefficients) <- colnames(x)
+      if(!is.null(offset)) z$residuals <- y - offset
+    }
+    if (!is.null(w)) {
+      z$residuals <- z$residuals/wts
+      z$fitted.values <- save.y - z$residuals
+      z$weights <- w
+      if (zero.weights) {
+        coef <- z$coefficients
+        coef[is.na(coef)] <- 0
+        f0 <- x0 %*% coef
+        if (ny > 1) {
+          save.r[ok, ] <- z$residuals
+          save.r[nok, ] <- y0 - f0
+          save.f[ok, ] <- z$fitted.values
+          save.f[nok, ] <- f0
+        }
+        else {
+          save.r[ok] <- z$residuals
+          save.r[nok] <- y0 - f0
+          save.f[ok] <- z$fitted.values
+          save.f[nok] <- f0
+        }
+        z$residuals <- save.r
+        z$fitted.values <- save.f
+        z$weights <- save.w
+        rw <- z$rweights
+        z$rweights <- rep.int(0, length(save.w))
+        z$rweights[ok] <- rw
+      }
+    }
+  }
+  if(!is.null(offset))
+    z$fitted.values <- z$fitted.values + offset
+
+  z$na.action <- attr(mf, "na.action")
+  z$offset <- offset
+  z$contrasts <- contrasts
+  z$xlevels <- .getXlevels(mt, mf)
+  z$call <- cl
+  z$terms <- mt
+  z$assign <- assign
+  if(control$compute.rd && !is.null(x))
+    z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
+  if (model)
+    z$model <- mf
+  if (ret.x)
+    z$x <- if (singular.fit || (!is.null(w) && zero.weights))
+      model.matrix(mt, mf, contrasts) else x
+  if (ret.y)
+    z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
+  # class(z) <- c("lmrobdet", "lmrob")
+  # z
+  # tmp <- z
+  # tmp$MM <- NULL
+  # z2 <- list(DCML=tmp, MM=z$MM)
+  # class(z2$DCML) <- c("DCML", "lmrob")
+  # class(z2$MM) <- "lmrob"
+  # class(z2) <- "lmrobdet"
+  # z2
+  class(z) <- c('lmrobdetDMCL', 'lmrobdet', 'lmrob')
+  z
 }
 
 
