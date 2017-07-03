@@ -441,7 +441,56 @@ summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, 
     else
       cbind(est, if(sigma <= 0) 0 else NA, NA, NA)
     dimnames(ans$coefficients) <- list(names(est), cf.nms)
-    ans$r.squared <- ans$adj.r.squared <- NULL
+    # # ans$r.squared <- ans$adj.r.squared <- NULL
+    # if (p != attr(ans$terms, "intercept")) {
+    #   df.int <- if (attr(ans$terms, "intercept"))
+    #     1L
+    #   else 0L
+    #   resid <- object$residuals
+    #   pred <- object$fitted.values
+    #   resp <- if (is.null(object[["y"]]))
+    #     pred + resid
+    #   else object$y
+    #   wgt <- object$rweights
+    #   ctrl <- object$control
+    #   c.psi <- ctrl$tuning.psi
+    #   psi <- ctrl$psi
+    # #   correc <- if (psi == "ggw") {
+    # #     if (isTRUE(all.equal(c.psi, c(-0.5, 1, 0.95,
+    # #                                   NA))))
+    # #       1.121708
+    # #     else if (isTRUE(all.equal(c.psi, c(-0.5, 1.5,
+    # #                                        0.95, NA))))
+    # #       1.163192
+    # #     else if (isTRUE(all.equal(c.psi, c(-0.5, 1, 0.85,
+    # #                                        NA))))
+    # #       1.33517
+    # #     else if (isTRUE(all.equal(c.psi, c(-0.5, 1.5,
+    # #                                        0.85, NA))))
+    # #       1.395828
+    # #     else lmrob.E(wgt(r), ctrl)/lmrob.E(r * psi(r),
+    # #                                        ctrl)
+    # #   }
+    # #   else if (any(psi == .Mpsi.R.names) && isTRUE(all.equal(c.psi,
+    # #                                                          .Mpsi.tuning.default(psi)))) {
+    # #     switch(psi, bisquare = 1.207617, welsh = 1.224617,
+    # #            optimal = 1.068939, hampel = 1.166891, lqq = 1.159232,
+    # #            stop("unsupported psi function -- should not happen"))
+    # #   }
+    # #   else lmrob.E(wgt(r), ctrl)/lmrob.E(r * psi(r), ctrl)
+    #   # resp.mean <- if (df.int == 1L)
+    #   #   sum(wgt * resp)/sum(wgt)
+    #   # else 0
+    # #   yMy <- sum(wgt * (resp - resp.mean)^2)
+    # #   rMr <- sum(wgt * resid^2)
+    # #   ans$r.squared <- r2correc <- (yMy - rMr)/(yMy + rMr *
+    # #                                               (correc - 1))
+    # #   ans$adj.r.squared <- 1 - (1 - r2correc) * ((n - df.int)/df)
+    # # }
+    # # else ans$r.squared <- ans$adj.r.squared <- 0
+    # #
+    # #
+    #
     ans$cov <- object$cov
     if(length(object$cov) > 1L)
       dimnames(ans$cov) <- dimnames(ans$coefficients)[c(1,1)]
