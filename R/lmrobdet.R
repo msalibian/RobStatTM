@@ -966,6 +966,129 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 }
 
 
+lmrobM <- function(formula, data, subset, weights, na.action,
+                   model = TRUE, x = FALSE, y = FALSE,
+                   singular.ok = TRUE, contrasts = NULL, offset = NULL,
+                   control = lmrobdet.control()) {
+  # tuning.psi = 3.4434 # 85% efficiency
+  cl <- match.call()
+  mf <- match.call(expand.dots = FALSE)
+  m <- match(c("formula", "data", "subset", "weights", "na.action", "offset"),
+             names(mf), 0)
+  mf <- mf[c(1, m)]
+  mf$drop.unused.levels <- TRUE
+  mf[[1]] <- as.name("model.frame")
+  mf <- eval(mf, parent.frame())
+
+  mt <- attr(mf, "terms") # allow model.frame to update it
+  y <- model.response(mf, "numeric")
+  w <- as.vector(model.weights(mf))
+  if(!is.null(w) && !is.numeric(w))
+    stop("'weights' must be a numeric vector")
+  offset <- as.vector(model.offset(mf))
+  if(!is.null(offset) && length(offset) != NROW(y))
+    stop(gettextf("number of offsets is %d, should equal %d (number of observations)",
+                  length(offset), NROW(y)), domain = NA)
+  #
+  #   if (is.empty.model(mt)) {
+  #     x <- NULL
+  #     singular.fit <- FALSE ## to avoid problems below
+  #     z <- list(coefficients = if (is.matrix(y)) matrix(,0,3) else numeric(0),
+  #               residuals = y, scale = NA, fitted.values = 0 * y,
+  #               cov = matrix(,0,0), weights = w, rank = 0,
+  #               df.residual = NROW(y), converged = TRUE, iter = 0)
+  #     if(!is.null(offset)) {
+  #       z$fitted.values <- offset
+  #       z$residuals <- y - offset
+  #       z$offset <- offset
+  #     }
+  #   }
+  #   else {
+  x <- model.matrix(mt, mf, contrasts)
+  contrasts <- attr(x, "contrasts")
+  assign <- attr(x, "assign")
+  p <- ncol(x)
+  if(!is.null(offset))
+    y <- y - offset
+  if (!is.null(w)) {
+    ## checks and code copied/modified from lm.wfit
+    ny <- NCOL(y)
+    n <- nrow(x)
+    if (NROW(y) != n | length(w) != n)
+      stop("incompatible dimensions")
+    if (any(w < 0 | is.na(w)))
+      stop("missing or negative weights not allowed")
+    zero.weights <- any(w == 0)
+    if (zero.weights) {
+      save.r <- y
+      save.w <- w
+      save.f <- y
+      ok <- w != 0
+      nok <- !ok
+      w <- w[ok]
+      x0 <- x[nok, , drop = FALSE]
+      x  <- x[ ok, , drop = FALSE]
+      n <- nrow(x)
+      y0 <- if (ny > 1L) y[nok, , drop = FALSE] else y[nok]
+      y  <- if (ny > 1L) y[ ok, , drop = FALSE] else y[ok]
+      ## add this information to model.frame as well
+      ## need it in outlierStats()
+      ## ?? could also add this to na.action, then
+      ##    naresid() would pad these as well.
+      attr(mf, "zero.weights") <- which(nok)
+    }
+    wts <- sqrt(w)
+    save.y <- y
+    x <- wts * x
+    y <- wts * y
+  }
+  ## check for singular fit
+
+  if(getRversion() >= "3.1.0") {
+    z0 <- .lm.fit(x, y, tol = control$solve.tol)
+    piv <- z0$pivot
+  } else {
+    z0 <- lm.fit(x, y, tol = control$solve.tol)
+    piv <- z0$qr$pivot
+  }
+  rankQR <- z0$rank
+
+  singular.fit <- rankQR < p
+  if (rankQR > 0) {
+    if (singular.fit) {
+      if (!singular.ok) stop("singular fit encountered")
+      pivot <- piv
+      p1 <- pivot[seq_len(rankQR)]
+      p2 <- pivot[(rankQR+1):p]
+      ## to avoid problems in the internal fitting methods,
+      ## split into singular and non-singular matrices,
+      ## can still re-add singular part later
+      dn <- dimnames(x)
+      x <- x[,p1]
+      attr(x, "assign") <- assign[p1] ## needed for splitFrame to work
+    }
+    outL <- lmrob.lar(x=x, y=y, control = control, mf = NULL)
+    resL <- sort(abs(outL$resid))
+    p <- length(outL$coeff)
+    n <- length(outL$resid)
+    sscale <- resL[(n+p)/2]/.6745
+    initial <- list(coefficients=outL$coef, scale=scale)
+    z <- lmrob(formula, control=control, init=initial) #tuning.psi=tuning.psi ,init=initial)
+  } else { ## rank 0
+    z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
+              else rep.int(as.numeric(NA), p),
+              residuals = y, scale = NA, fitted.values = 0 * y,
+              cov = matrix(,0,0), rweights = rep.int(as.numeric(NA), NROW(y)),
+              weights = w, rank = 0, df.residual = NROW(y),
+              converged = TRUE, iter = 0, control=control)
+    if (is.matrix(y)) colnames(z$coefficients) <- colnames(x)
+    else names(z$coefficients) <- colnames(x)
+    if(!is.null(offset)) z$residuals <- y - offset
+  }
+  class(z) <- 'lmrob'
+  z
+}
+
 
 
 
