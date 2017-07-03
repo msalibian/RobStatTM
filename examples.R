@@ -6,8 +6,6 @@ library(RobustStatistics)
 data(coleman)
 m2 <- lmrobdet(Y ~ ., data=coleman)
 m1 <- lmrobdetDCML(Y ~ ., data=coleman)
-summary(m1)
-
 m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
 
 coef(m2)
