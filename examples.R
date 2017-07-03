@@ -26,6 +26,10 @@ y <- rnorm(n, sd=.7) + 2*(as.numeric(x1)-1) - 3*(as.numeric(x2)-1)
 das <- data.frame(x1=x1, x2=x2, y=y)
 tmp <- lmrobM(y ~ . , data=das)
 
+# library(quantreg)
+# tmp2 <- lmrobM.bak(y~x1 + x2)
+# coef(tmp)
+# coef(tmp2)
 
 ## Default for a very long time:
 m2 <- lmrobdet(Y ~ . - 1 , data=coleman) # MMPY
