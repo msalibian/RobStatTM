@@ -17,6 +17,11 @@ summary(m2)
 summary(m1)
 summary(m0)
 
+m2.null <- lmrobdet(Y ~ . - sstatus -fatherWc, data=coleman)
+rob.linear.test(m2, m2.null)
+
+
+
 # fixed designs
 set.seed(123)
 n <- 50

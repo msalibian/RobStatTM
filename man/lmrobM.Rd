@@ -76,5 +76,5 @@ absolute residuals from the L1 estimator.
 \url{http://thebook}
 }
 \author{
-Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+Victor Yohai, \email{vyohai@gmail.com}, based on \code{lmrob}
 }

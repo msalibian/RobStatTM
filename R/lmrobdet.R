@@ -1018,7 +1018,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 #' \item{y}{if requested, the response vector used}
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 #'
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @author Victor Yohai, \email{vyohai@gmail.com}, based on \code{lmrob}
 #' @references \url{http://thebook}
 #'
 #' @export
@@ -1141,7 +1141,50 @@ lmrobM <- function(formula, data, subset, weights, na.action,
   z
 }
 
-
+#' Robust likelihood ratio test for linear hypotheses
+#'
+#' This function computes a robust likelihood ratio test for linear hypotheses.
+#'
+#' @param object1 an \code{lmrob} object with the fit corresponding to the complete model
+#' @param object2 an \code{lmrob} object with the fit corresponding to the model
+#' restricted under the null linear hypothesis.
+#'
+#' @return A list with the following components: c("test","chisq.pvalue","f.pvalue","df")
+#' \item{test}{The value of the F-statistic}
+#' \item{f.pvalue}{p-value based on the F distribution}
+#' \item{chisq.pvalue}{p-value based on the chi-squared distribution}
+#' \item{df}{degrees of freedom}
+#'
+#' @author Victor Yohai, \email{vyohai@gmail.com}
+#' @references \url{http://thebook}
+#'
+#' @export
+rob.linear.test <- function(object1, object2)
+{
+  p <- length(object1$coeff)
+  q <- length(object1$coeff) - length(object2$coeff)
+  n <- length(object1$resid)
+  con <- object1$control
+  cc <- con$tuning.psi
+  s <- object1$scale
+  a <- sum(Mchi(object2$resid/s, cc,  psi="bisquare" ))
+  b <- sum(Mchi(object1$resid/s, cc, psi="bisquare"))
+  c <- sum(Mchi(object1$resid/s, cc, psi="bisquare",2))
+  d <- sum(Mchi(object1$resid/s, cc, psi="bisquare",1)^2)
+  test <- (2 * (a - b) * c)/d
+  # Sanity check: passed
+  # a2 <- sum(rho(object2$resid/s, cc=cc))
+  # b2 <- sum(rho(object1$resid/s, cc=cc))
+  # c2 <- sum(rhoprime2(object1$resid/s, cc=cc))*6/cc
+  # d2 <- sum((rhoprime(object1$resid/s, cc=cc)*6/cc)^2)
+  # test2 <- (2 * (a2 - b2) * c2)/d2
+  # print(c(test, test2))
+  chisq.pvalue <- 1- pchisq(test, q)
+  F.pvalue <- 1-pf(test/q, q, n - p)
+  df <- c(q,n-p)
+  output <- list(test=test, chisq.pvalue=chisq.pvalue, F.pvalue=F.pvalue, df=df)
+  output
+}
 
 
 ### The first part of lmrob()  much cut'n'paste from lm() - on purpose!
