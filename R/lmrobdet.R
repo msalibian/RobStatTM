@@ -1,13 +1,11 @@
 #' Robust DCML linear regression estimators
 #'
-#' This function computes MM-based Distance Constrained
-#' Maximum Likelihood regression estimators for linear models.
+#' This function computes an MM-regression estimators for linear models
+#' using deterministic starting points.
 #'
-#' This function computes the
-#' DCML estimators combining the least squares estimator and a
-#' robust MM-estimator, the latter computed using Pen~a-Yohai
-#' candidates (instead of subsampling ones). Both are included
-#' in the returned object.
+#' This function computes MM-regression estimators
+#' computed using Pen~a-Yohai
+#' candidates (instead of subsampling ones).
 #'
 #' @param formula a symbolic description of the model to be fit.
 #' @param data an optional data frame, list or environment containing
@@ -177,32 +175,32 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       } else stop('Unknown value for lmrobdet.control()$initial')
       # DCML
       # LS is already computed in z0
-      z2 <- DCML(x=x, y=y, z=z, z0=z0, control=control)
-      z$MM <- z
-      # complete the MM object
-      z$MM$na.action <- attr(mf, "na.action")
-      z$MM$offset <- offset
-      z$MM$contrasts <- contrasts
-      z$MM$xlevels <- .getXlevels(mt, mf)
-      z$MM$call <- cl
-      z$MM$terms <- mt
-      z$MM$assign <- assign
+      # z2 <- DCML(x=x, y=y, z=z, z0=z0, control=control)
+      # z$MM <- z
+      # # complete the MM object
+      # z$MM$na.action <- attr(mf, "na.action")
+      # z$MM$offset <- offset
+      # z$MM$contrasts <- contrasts
+      # z$MM$xlevels <- .getXlevels(mt, mf)
+      # z$MM$call <- cl
+      # z$MM$terms <- mt
+      # z$MM$assign <- assign
       if(control$compute.rd && !is.null(x))
-        z$MM$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
+        z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
       if(model)
-        z$MM$model <- mf
+        z$model <- mf
       if(ret.x)
-        z$MM$x <- if (singular.fit || (!is.null(w) && zero.weights))
+        z$x <- if (singular.fit || (!is.null(w) && zero.weights))
           model.matrix(mt, mf, contrasts) else x
       if (ret.y)
-        z$MM$y <- if (!is.null(w)) model.response(mf, "numeric") else y
-
-      z$coefficients <- z2$coefficients
-      z$scale <- z2$scale
-      z$residuals <- z2$residuals
-      z$cov <- z2$cov
-      z$fitted.values <- y - z2$residuals
-      z$rweights <- z$loss <- NULL
+        z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
+#
+#       z$coefficients <- z2$coefficients
+#       z$scale <- z2$scale
+#       z$residuals <- z2$residuals
+#       z$cov <- z2$cov
+#       z$fitted.values <- y - z2$residuals
+#       z$rweights <- z$loss <- NULL
 
       # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
       if (singular.fit) {
@@ -284,13 +282,14 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
     z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
   # class(z) <- c("lmrobdet", "lmrob")
   # z
-  tmp <- z
-  tmp$MM <- NULL
-  z2 <- list(DCML=tmp, MM=z$MM)
-  class(z2$DCML) <- c("DCML", "lmrob")
-  class(z2$MM) <- "lmrob"
-  class(z2) <- "lmrobdet"
-  z2
+  # tmp <- z
+  # tmp$MM <- NULL
+  # z2 <- list(DCML=tmp, MM=z$MM)
+  # class(z2$DCML) <- c("DCML", "lmrob")
+  # class(z2$MM) <- "lmrob"
+  # class(z2) <- "lmrobdet"
+  # z2
+  class(z) <- c('lmrobdet', 'lmrob')
 }
 
 
