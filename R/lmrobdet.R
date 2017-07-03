@@ -174,8 +174,8 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       } else stop('Unknown value for lmrobdet.control()$initial')
       # compute robust R^2
       s2 <- sum(rho(z$resid/z$scale, cc=z$control$tuning.psi))
-      if( p != attr(m2$terms, "intercept") ) {
-        df.int <- if (attr(m2$terms, "intercept"))
+      if( p != attr(mt, "intercept") ) {
+        df.int <- if (attr(mt, "intercept"))
           1L
         else 0L
         if(df.int == 1L) {
