@@ -846,18 +846,17 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       } else if( control$initial == "S" ) {
         z <- MMPY(X=x, y=y, control=control, mf=mf)
       } else stop('Unknown value for lmrobdet.control()$initial')
+      # save to complete the DCML object just below
+      z.tmp <- list(rank=z$rank, converged=z$converged, qr=z$qr,
+                    df.residual=z$df.residual, iter=z$iter)
       # DCML
       # LS is already computed in z0
       z <- DCML(x=x, y=y, z=z, z0=z0, control=control)
-      # z$MM <- z
-      # # complete the MM object
-      # z$MM$na.action <- attr(mf, "na.action")
-      # z$MM$offset <- offset
-      # z$MM$contrasts <- contrasts
-      # z$MM$xlevels <- .getXlevels(mt, mf)
-      # z$MM$call <- cl
-      # z$MM$terms <- mt
-      # z$MM$assign <- assign
+      z$rank <- z.tmp$rank
+      z$converged <- z.tmp$converged
+      z$qr <- z.tmp$qr
+      z$df.residual <- z.tmp$df.residual
+      z$iter <- z.tmp$iter
       if(control$compute.rd && !is.null(x))
         z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
       if(model)
