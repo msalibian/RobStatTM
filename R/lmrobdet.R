@@ -175,19 +175,19 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       # compute robust R^2
       s2 <- sum(rho(z$resid/z$scale, cc=z$control$tuning.psi))
       if( p != attr(m2$terms, "intercept") ) {
-        df.int <- if (attr(ans$terms, "intercept"))
+        df.int <- if (attr(m2$terms, "intercept"))
           1L
         else 0L
         if(df.int == 1L) {
           tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
-                           initial.scale=z$scale, k=50,
+                           initial.scale=z$scale, k=500,
                            conv=1, cc=z$control$tuning.psi, step='M')$beta.rw)
           s02 <- sum(rho((y-tmp)/z$scale, cc=z$control$tuning.psi))
         } else {
           s02 <- sum(rho(y/z$scale, cc=z$control$tuning.psi))
         }
         r.squared <- (s02 - s2)/s02
-        adj.r.squared <- ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-p))
+        adj.r.squared <- ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
       }
       else r.squared <- adj.r.squared <- 0
       z$r.squared <- r.squared

@@ -104,6 +104,7 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 #' @rdname rho
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
+#' @export
 rho <- function(u, cc=1.5477) {
   w <- as.numeric( abs(u) <= cc )
   v <- (u^2/(2)*(1-(u^2/(cc^2))+(u^4/(3*cc^4))))*w +(1-w)*(cc^2/6)

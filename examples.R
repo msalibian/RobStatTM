@@ -13,6 +13,9 @@ coef(m1)
 coef(m0)
 coef(lm(Y~., data=coleman))
 
+summary(lm(Y~., data=coleman))
+
+
 summary(m2)
 summary(m1)
 summary(m0)
@@ -20,6 +23,13 @@ summary(m0)
 m2.null <- lmrobdet(Y ~ . - sstatus -fatherWc, data=coleman)
 rob.linear.test(m2, m2.null)
 
+x1 <- rnorm(50)
+x2 <- rnorm(50)
+y <- rnorm(50, sd=.1) + x1 - 2*x2
+das <- data.frame(x1=x1, x2=x2, y=y)
+tmp <- lmrobdet(y ~ . , data=das)
+summary(tmp)
+summary(lm(y~., data=das))
 
 
 # fixed designs
