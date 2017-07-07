@@ -172,6 +172,10 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       } else if( control$initial == "S" ) {
         z <- MMPY(X=x, y=y, control=control, mf=mf)
       } else stop('Unknown value for lmrobdet.control()$initial')
+      # update residual scale estimator
+      # re.dcml <- as.vector(y - x %*% beta.dcml)
+      # si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+      z$scale <- mscale(u=z$resid, tol = control$mscale.tol, delta=control$bb*(1-p/n), tuning.chi=control$tuning.chi)
       # compute robust R^2
       s2 <- sum(rho(z$resid/z$scale, cc=z$control$tuning.psi))
       if( p != attr(mt, "intercept") ) {
