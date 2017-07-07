@@ -186,7 +186,8 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
         } else {
           s02 <- sum(rho(y/z$scale, cc=z$control$tuning.psi))
         }
-        r.squared <- (s02 - s2)/s02
+        # INVTR2(tmp2$r.squared, tmp2$control$tuning.psi)
+        r.squared <- INVTR2( (s02 - s2)/s02, control$tuning.psi)
         adj.r.squared <- ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
       }
       else r.squared <- adj.r.squared <- 0
