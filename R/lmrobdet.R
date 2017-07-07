@@ -193,7 +193,8 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
         }
         # INVTR2(tmp2$r.squared, tmp2$control$tuning.psi)
         r.squared <- INVTR2( (s02 - s2)/s02, control$tuning.psi)
-        adj.r.squared <- ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
+        # ((n-1)/(n-p))R^2 -((p-1)/(n-p))
+        adj.r.squared <- ((n-1)/(n-p))*r.squared -(p-1)/(n-p) # ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
       }
       else r.squared <- adj.r.squared <- 0
       z$r.squared <- r.squared
