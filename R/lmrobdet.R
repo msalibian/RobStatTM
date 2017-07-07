@@ -175,7 +175,9 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       # update residual scale estimator
       # re.dcml <- as.vector(y - x %*% beta.dcml)
       # si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
-      z$scale <- mscale(u=z$resid, tol = control$mscale.tol, delta=control$bb*(1-p/n), tuning.chi=control$tuning.chi)
+      print(p)  
+      n <- length(z$resid)
+      z$scale <- mscale(u=z$resid, tol = control$mscale.tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi)
       # compute robust R^2
       s2 <- sum(rho(z$resid/z$scale, cc=z$control$tuning.psi))
       if( p != attr(mt, "intercept") ) {
