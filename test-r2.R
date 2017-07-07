@@ -5,11 +5,16 @@ library(RobustStatistics)
 n <- 50
 set.seed(123)
 x1 <- rnorm(n)
-y <- rnorm(n, sd=.5) + 3*x1
+x2 <- rnorm(n, sd=1.5)
+y <- rnorm(n, sd=.5) + 3*x1 + 5*x2
 
 # adjusted r^2 seems too low
-tmp2 <- lmrobdet(y~x1)
+tmp2 <- lmrobdet(y~x1 + x2)
 tmp2$r.squared
+INVTR2(tmp2$r.squared, tmp2$control$tuning.psi)
+summary(lm(y~x1+x2))$r.squared
+
+
 
 # Compute it by hand:
 
