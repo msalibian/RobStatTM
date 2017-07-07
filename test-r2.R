@@ -13,9 +13,19 @@ rm(n, y, x1, x2)
 # adjusted r^2 seems too low
 tmp2 <- lmrobdet(y~x1 + x2, data=d)
 tmp2$r.squared
+tmp2$adj.r.squared
 # INVTR2(tmp2$r.squared, tmp2$control$tuning.psi)
 summary(lm(y~x1+x2, data=d))$r.squared
+summary(lm(y~x1+x2, data=d))$adj.r.squared
 
+data(toxicity)
+tmp <- lmrobdet(toxicity ~ ., data=toxicity)
+tmp$r.squared
+tmp$adj.r.squared
+# INVTR2(tmp2$r.squared, tmp2$control$tuning.psi)
+tmp0 <- lm(toxicity ~ .,  data=toxicity)
+summary(tmp0)$r.squared
+summary(tmp0)$adj.r.squared
 
 
 # Compute it by hand:
