@@ -1,12 +1,4 @@
-
-# given de clasic R^2 (R2) compute the robust (RR2)
-#cc is the tuning constant
-
-# given de robust R^2 (RR2) compute the classic (R2)
-#as the inverse of TR2 
-#cc is the tuning constant
-
-INVTR2 <- function(RR2,cc) {
+INVTR2 <- function(RR2, cc) {
 
   TR2 <- function(R2, cc) {
     a <- Erhobic(cc)
