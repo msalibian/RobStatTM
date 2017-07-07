@@ -2,17 +2,19 @@
 # Generate data
 # X1 is very important
 library(RobustStatistics)
-n <- 500
+n <- 70
 set.seed(123)
 x1 <- rnorm(n)
 x2 <- rnorm(n, sd=1.5)
 y <- rnorm(n, sd=2.5) + 3*x1 + 5*x2
+d <- data.frame(y=y, x1=x1, x2=x2)
+rm(n, y, x1, x2)
 
 # adjusted r^2 seems too low
-tmp2 <- lmrobdet(y~x1 + x2)
+tmp2 <- lmrobdet(y~x1 + x2, data=d)
 tmp2$r.squared
-INVTR2(tmp2$r.squared, tmp2$control$tuning.psi)
-summary(lm(y~x1+x2))$r.squared
+# INVTR2(tmp2$r.squared, tmp2$control$tuning.psi)
+summary(lm(y~x1+x2, data=d))$r.squared
 
 
 
