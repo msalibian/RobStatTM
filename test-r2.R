@@ -2,11 +2,11 @@
 # Generate data
 # X1 is very important
 library(RobustStatistics)
-n <- 50
+n <- 500
 set.seed(123)
 x1 <- rnorm(n)
 x2 <- rnorm(n, sd=1.5)
-y <- rnorm(n, sd=.5) + 3*x1 + 5*x2
+y <- rnorm(n, sd=2.5) + 3*x1 + 5*x2
 
 # adjusted r^2 seems too low
 tmp2 <- lmrobdet(y~x1 + x2)
