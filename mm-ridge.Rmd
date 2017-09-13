@@ -1,0 +1,72 @@
+---
+title: "MM-Ridge-test"
+author: "Matias Salibian"
+date: "September 13, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## MM-Ridge
+
+Below is a comparison (aka "sanity check") between the implementations
+of the S-ridge estimators in packages `mmlasso` and `pense`. In addition,
+I also look at the output of the MM-ridge estimator computed with `pense::mstep` 
+setting `alpha = 0`. 
+
+We first load the libraries and generate the data:
+```{r packages}
+library(pense)
+library(mmlasso)
+# simple synthetic example
+n <- 50 # 500
+p <- 20 # 10
+set.seed(123)
+x <- matrix(rnorm(n*p), n, p)
+y <- as.vector( x %*% c(rep(2, 5), rep(0, p-5))) + rnorm(n, sd=.5)
+```
+We now use `mmlasso::sridge` and `pense::pense` (the latter with `alpha= 0`) to 
+compute an S-ridge estimator.
+```{r sridge}
+# mmlasso S-ridge
+a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
+            denormout=0, alone=1, ncores=4)
+# pense S-ridge 
+b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=1e-9, initial='cold',
+           options=pense_options(delta=a$delta))
+```
+Note that the optimal value of the penalization found by `mmlasso::sridge` is
+`r a$lamda` but `pense::pense()` does not accept `lambda=0` as an argument, so 
+I used `lambda = 1e-9` above. 
+
+Also note that I did set `options=pense_options(delta=a$delta)` above to make sure
+`pense::pense()` was optimizing the same M-scale as `mmlasso::sridge()`. This value
+is adjusted internally, and for this example it was equal to `r a$delta`.
+
+Although the estimated residual scales are somewhat different
+(`r c(a$scale, b0$scale)`, for `sridge` and `pense`, respectively), the
+regression estimators are similar:
+```{r regr}
+cbind(a$coef, as.vector(b0$coef[,1]))
+```
+
+We can now use `pense::mstep()` to do the M-step starting from the S-ridge
+estimator as computed by `pense::pense()`:
+```{r mmridge}
+g <- mstep(b0, complete_grid=TRUE)
+cbind(a$coef, as.vector(b0$coef[,1]), g$coefficients[,1])
+```
+This looks reasonable, however the scale estimators can be a bit different:
+```{r sigmas}
+c(a$scale, b0$scale, g$scale)
+```
+Just for the record, the optimal value of the penalization found in this M-step
+was
+```{r optlam}
+g$lambda
+```
+
+
+
