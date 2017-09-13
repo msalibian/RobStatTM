@@ -27,25 +27,38 @@ library(pense)
 # devtools::install_github('esmucler/mmlasso')
 library(mmlasso)
 
-library(glmnet)
+# library(glmnet)
 
 n <- 50 # 500
 p <- 20 # 10
 set.seed(123)
 x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(2, 5), rep(0, p-5))) + rnorm(n, sd=.5)
+# mmlasso
 a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
             denormout=0, alone=1, ncores=4)
+# Optimal lambda
+a$lamda
+# right-hand side of the M-scale used?
+a$delta
 
-b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=1e-9, initial='cold') #,
-#           control=pense.control(mscale.delta = 0.49))
+# pense ridge? 
+b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=1e-9, initial='cold',
+           options=pense_options(delta=a$delta))
 
-d <- pense::elnet(X=x, y=y, alpha=0, lambda=1e-9, addLeading1s=TRUE)
-
-a$coef
-as.vector(b0$coef[,1])
-as.vector(d$coef[,1])
+cbind(a$coef, as.vector(b0$coef[,1]))
 c(a$scale, b0$scale)
+      
+## MM-ridge?
+
+g <- mstep(b0, complete_grid=TRUE)
+cbind(a$coef, as.vector(b0$coef[,1]), g$coefficients[,1])
+
+c(a$scale, b0$scale, g$scale)
+
+# d <- pense::elnet(X=x, y=y, alpha=0, lambda=1e-9, addLeading1s=TRUE)
+
+# as.vector(d$coef[,1])
 
 re <- as.vector(y - x %*% (b0$coef[,1])[-1] - b0$coef[1,1])
 mean(rho(re/b0$scale))
