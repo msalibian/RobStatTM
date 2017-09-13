@@ -1,6 +1,23 @@
 
 # Check MM-ridge regression
 
+
+rho <- function(u, cc=1.5477) {
+  w <- as.numeric( abs(u) <= cc )
+  v <- (u^2/(2)*(1-(u^2/(cc^2))+(u^4/(3*cc^4))))*w +(1-w)*(cc^2/6)
+  v <- v*6/cc^2
+  return(v)
+}
+
+
+rhoint <- function(e)
+  return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
+
+
+find.tuning.chi <- function(delta, low=.5, upp=10) {
+  return( uniroot( function(e) (rhoint(e)-delta), lower=low, upper=upp)$root )
+}
+
 # devtools::install_github('gcohenfr/PENSE-package', ref='develop', auth_token='d49f60185d9de80d37dacef7f93b14df907e6af7')
 library(pense)
 
@@ -23,7 +40,7 @@ a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
 b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=1e-9, initial='cold') #,
 #           control=pense.control(mscale.delta = 0.49))
 
-d <- elnet(X=x, y=y, alpha=0, lambda=1e-9, addLeading1s=TRUE)
+d <- pense::elnet(X=x, y=y, alpha=0, lambda=1e-9, addLeading1s=TRUE)
 
 a$coef
 as.vector(b0$coef[,1])
@@ -47,18 +64,3 @@ a$delta
 # d <- cv.glmnet(x=x, y=y, lambda=seq(0, 5, length=20), family='gaussian',
 #                intercept=TRUE, alpha=0) # , nlambda=50)
 
-rho <- function(u, cc=1.5477) {
-  w <- as.numeric( abs(u) <= cc )
-  v <- (u^2/(2)*(1-(u^2/(cc^2))+(u^4/(3*cc^4))))*w +(1-w)*(cc^2/6)
-  v <- v*6/cc^2
-  return(v)
-}
-
-
-rhoint <- function(e)
-  return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
-
-
-find.tuning.chi <- function(delta, low=.5, upp=10) {
-  return( uniroot( function(e) (rhoint(e)-delta), lower=low, upper=upp)$root )
-}
