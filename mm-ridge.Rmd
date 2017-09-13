@@ -1,28 +1,42 @@
 ---
 title: "MM-Ridge-test"
-author: "Matias Salibian"
+author: "Matias Salibian-Barrera"
 date: "September 13, 2017"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## MM-Ridge
+# Comparing S and MM-Ridge implementations
 
-Below is a comparison (aka "sanity check") between the implementations
-of the S-ridge estimators in packages `mmlasso` and `pense`. In addition,
-I also look at the output of the MM-ridge estimator computed with `pense::mstep` 
-setting `alpha = 0`. 
+Below I compare the implementations of the S-ridge estimator
+that are present in the packages `mmlasso` and `pense`. In addition
+I also look at the output of the MM-ridge estimator computed with 
+the function `pense::mstep()` setting `alpha = 0`. 
 
-We first load the libraries and generate the data:
-```{r packages}
+### TL;DR
+The main conclusions seem to be that
+
+- `mmlasso::sridge()` and `pense::pense()` behave similarly enough (at least when `alpha = 0`), but are not identical, and can be rather different (see the repetition of the example below but with `n = 50` instead, for example);
+- the residual scale returned by `mmlasso::sridge()` can be rather different from the one in `pense::pense()` (**Can this have an effect on the resulting PENSE-M we use in our simulations?**); and
+- the function `pense::mstep()` returns yet another residual scale estimate, this doesn't seem to be documented.
+
+## S-ridge in packages mmlasso and pense
+
+<!-- Below is a comparison (aka "sanity check") between the implementations -->
+<!-- of the S-ridge estimators in packages `mmlasso` and `pense`. In addition, -->
+<!-- I also look at the output of the MM-ridge estimator computed with  -->
+<!-- the function `pense::mstep()` setting `alpha = 0`.  -->
+
+We first load the libraries and generate a simple synthetic data set:
+```{r packages, message=FALSE, warning=FALSE}
 library(pense)
 library(mmlasso)
 # simple synthetic example
-n <- 50 # 500
-p <- 20 # 10
+n <- 100
+p <- 20
 set.seed(123)
 x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(2, 5), rep(0, p-5))) + rnorm(n, sd=.5)
@@ -68,5 +82,35 @@ was
 g$lambda
 ```
 
+## Nevertheless, things can be rather different sometimes
+
+If we repeat the same experiment as above, but with `n = 50` instead of `n = 100`
+we see that the two implementations of S-ridge can be rather different:
+```{r round2, message=FALSE, warning=FALSE}
+# another simple synthetic example
+n <- 50
+p <- 20
+set.seed(123)
+x <- matrix(rnorm(n*p), n, p)
+y <- as.vector( x %*% c(rep(2, 5), rep(0, p-5))) + rnorm(n, sd=.5)
+# mmlasso S-ridge
+a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
+            denormout=0, alone=1, ncores=4)
+# pense S-ridge 
+b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=1e-9, initial='cold',
+           options=pense_options(delta=a$delta))
+```
+The optimal penalization from `sridge` is still `r a$lamda`. 
+The scales and regression coefficients:
+```{r scales2}
+c(a$scale, b0$scale)
+cbind(a$coef, as.vector(b0$coef[,1]))
+```
+Not surprisingly, the difference carries over to the M-step:
+```{r mmridge2}
+g <- mstep(b0, complete_grid=TRUE)
+c(a$scale, b0$scale, g$scale)
+cbind(a$coef, as.vector(b0$coef[,1]), g$coefficients[,1])
+```
 
 
