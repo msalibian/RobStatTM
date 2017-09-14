@@ -82,6 +82,57 @@ was
 g$lambda
 ```
 
+## An example where the penalization level is not zero
+
+
+```{r ex4}
+# simple synthetic example
+n <- 100
+p <- 70
+set.seed(123)
+x <- matrix(rnorm(n*p), n, p)
+y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
+```
+
+We now use `mmlasso::sridge` and `pense::pense` (the latter with `alpha= 0`) to 
+compute an S-ridge estimator.
+```{r sridge4}
+# mmlasso S-ridge
+a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
+            denormout=0, alone=1, ncores=4)
+(a$lamba)
+```
+And the `pense` version
+```{r penseridge4}
+# pense S-ridge 
+b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=a$lamba, initial='cold',
+           options=pense_options(delta=a$delta))
+```
+Note that the optimal value of the penalization found by `mmlasso::sridge` is
+`r a$lamda`. Also note that I did set `options=pense_options(delta=a$delta)`, 
+which has the value `r a$delta`, 
+to make sure `pense::pense()` was optimizing the same M-scale as `mmlasso::sridge()`. 
+
+The estimated residual scales are 
+`r c(a$scale, b0$scale)`, for `sridge` and `pense`, respectively, and the
+regression estimators are:
+```{r regr4}
+cbind(a$coef, as.vector(b0$coef[,1]))
+```
+
+We can now use `pense::mstep()` to do the M-step starting from the S-ridge
+estimator as computed by `pense::pense()`:
+```{r mmridge4}
+g <- mstep(b0, complete_grid=TRUE)
+cbind(a$coef, as.vector(b0$coef[,1]), g$coefficients[,1])
+```
+The scale estimators are `r c(a$scale, b0$scale, g$scale)`, and
+the optimal value of the penalization found in this M-step
+was `r g$lambda`.
+
+
+
+
 ## Nevertheless, things can be rather different sometimes
 
 If we repeat the same experiment as above, but with `n = 50` instead of `n = 100`
