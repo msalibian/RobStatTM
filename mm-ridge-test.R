@@ -1,4 +1,20 @@
 
+## This example bombs in my linux machine
+##
+
+library(pense)
+library(mmlasso)
+n <- 80
+p <- 50
+set.seed(123)
+x <- matrix(rnorm(n*p), n, p)
+y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
+a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
+            denormout=0, alone=1, ncores=4)
+
+
+
+
 # Check MM-ridge regression
 
 
@@ -42,13 +58,13 @@ a$lamda
 # right-hand side of the M-scale used?
 a$delta
 
-# pense ridge? 
+# pense ridge?
 b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=1e-9, initial='cold',
            options=pense_options(delta=a$delta))
 
 cbind(a$coef, as.vector(b0$coef[,1]))
 c(a$scale, b0$scale)
-      
+
 ## MM-ridge?
 
 g <- mstep(b0, complete_grid=TRUE)
@@ -72,8 +88,8 @@ a$delta
 
 # b1 <- pense(X=x, y=y, alpha=0, lambda=seq(0, 5, length=20), standardize=TRUE,
 #            control=pense.control(mscale.delta = 0.49))
-# 
-# 
+#
+#
 # d <- cv.glmnet(x=x, y=y, lambda=seq(0, 5, length=20), family='gaussian',
 #                intercept=TRUE, alpha=0) # , nlambda=50)
 
