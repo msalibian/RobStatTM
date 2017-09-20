@@ -22,6 +22,10 @@ The main conclusions seem to be that
 - `mmlasso::sridge()` and `pense::pense()` behave similarly enough (at least when `alpha = 0`), but are not identical, and can be rather different (see the repetition of the example below but with `n = 500` instead, for example). This difference does not seem to dissappear with larger samples.
 - the residual scale returned by `mmlasso::sridge()` can be rather different from the one in `pense::pense()` (**Can this have an effect on the resulting PENSE-M we use in our simulations?**); and
 - the function `pense::mstep()` returns yet another residual scale estimate, this doesn't seem to be documented. Furthermore, for `n = 500` this difference seems to dissappear. 
+- the consensus seems to be that it is better to use `pense::pense()` to compute the S- and MM-ridge
+estimators.
+- furthermore, we should use `pense::pense(alpha=0)` and `pense::mstep(alpha=1)` to compute the MMLASSO
+estimator. 
 
 ## S-ridge in packages mmlasso and pense
 
@@ -41,8 +45,8 @@ set.seed(123)
 x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(2, 5), rep(0, p-5))) + rnorm(n, sd=.5)
 ```
-We now use `mmlasso::sridge` and `pense::pense` (the latter with `alpha= 0`) to 
-compute an S-ridge estimator.
+We now use `mmlasso::sridge()` and `pense::pense(alpha=0)` to 
+compute to "versions" of an S-ridge estimator:
 ```{r sridge}
 # mmlasso S-ridge
 a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
@@ -87,8 +91,8 @@ g$lambda
 
 ```{r ex4}
 # simple synthetic example
-n <- 100
-p <- 70
+n <- 80
+p <- 50
 set.seed(123)
 x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
@@ -129,8 +133,6 @@ cbind(a$coef, as.vector(b0$coef[,1]), g$coefficients[,1])
 The scale estimators are `r c(a$scale, b0$scale, g$scale)`, and
 the optimal value of the penalization found in this M-step
 was `r g$lambda`.
-
-
 
 
 ## Nevertheless, things can be rather different sometimes
