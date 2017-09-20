@@ -104,12 +104,12 @@ compute an S-ridge estimator.
 # mmlasso S-ridge
 a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
             denormout=0, alone=1, ncores=4)
-(a$lamba)
+(a$lamda)
 ```
 And the `pense` version
 ```{r penseridge4}
 # pense S-ridge 
-b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=a$lamba, initial='cold',
+b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=a$lamda, initial='cold',
            options=pense_options(delta=a$delta))
 ```
 Note that the optimal value of the penalization found by `mmlasso::sridge` is
