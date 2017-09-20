@@ -11,6 +11,7 @@ x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
 a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
             denormout=0, alone=1, ncores=4)
+a <- list(delta=0.2584052, lamda=11.42803)
 b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=a$lamda, initial='cold',
             options=pense_options(delta=a$delta))
 # bad results, warnings
