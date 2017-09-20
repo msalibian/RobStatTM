@@ -11,8 +11,14 @@ x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
 a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
             denormout=0, alone=1, ncores=4)
-
-
+b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=a$lamda, initial='cold',
+            options=pense_options(delta=a$delta))
+# bad results, warnings
+as.vector(b0$coeff)
+# the next ones do not work
+b1 <- pense(X=x, y=y, alpha=0, standardize=TRUE, # lambda=a$lamda, initial='cold',
+            options=pense_options(delta=a$delta))
+b1 <- pense(X=x, y=y, alpha=0)
 
 
 # Check MM-ridge regression
