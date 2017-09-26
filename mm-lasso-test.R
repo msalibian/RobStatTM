@@ -9,10 +9,30 @@ y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
 a <- mmlasso(x=x, y=y, ncores=2)
 b1 <- pense(X=x, y=y, alpha=0, nlambda=30, ncores=2)
 b2 <- pensem(b1, alpha=1, nlambda=30, ncores=2)
+b3 <- pensem(b1, alpha=0, nlambda=30, ncores=2)
+# Error in checkForRemoteErrors(val) : 
+#   one node produced an error: BLAS/LAPACK routine 'DLASCL' gave error code -4
+b4 <- pensem(x=x, y=y, alpha=0, nlambda=30, ncores=2)
+# Error in checkForRemoteErrors(val) : 
+#   one node produced an error: BLAS/LAPACK routine 'DLASCL' gave error code -4
+# In addition: There were 50 or more warnings (use warnings() to see the first 50)
+# 48: In pen_s_reg(std_data$xs, std_data$yc, alpha = alpha,  ... :
+# PENSE did not converge for lambda = 7.845403
+# 49: In pen_s_reg(std_data$xs, std_data$yc, alpha = alpha,  ... :
+# PENSE did not converge for lambda = 4.872128
+                                  
+
+as.vector(b4$coefficients[, b4$lambda==b4$lambda_opt])
+
+
 
 a$coef.MMLasso
 as.vector(b2$coefficients[, b2$lambda==b2$lambda_opt])
 b2$lambda
+as.vector(b3$coefficients[, b3$lambda==b3$lambda_opt])
+as.vector(b4$coefficients[, b4$lambda==b4$lambda_opt])
+
+
 
 # > a$coef.MMLasso
 # [1] -0.034880450  7.029282568  6.944518729  6.826255640  6.865985596  6.980971447  0.000000000  0.000000000
