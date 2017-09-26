@@ -1,3 +1,7 @@
+library(devtools)
+install_github("dakep/pense-rpkg", ref = "develop")
+
+
 library(pense)
 library(mmlasso)
 n <- 80
@@ -9,6 +13,13 @@ y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
 a <- mmlasso(x=x, y=y, ncores=2)
 b1 <- pense(X=x, y=y, alpha=0, nlambda=30, ncores=2)
 b2 <- pensem(b1, alpha=1, nlambda=30, ncores=2)
+b3 <- pensem(b1, alpha=0, nlambda=30, ncores=2)
+a$coef.MMLasso
+as.vector(b1$coefficients[, b1$lambda==b1$lambda_opt])
+as.vector(b2$coefficients[, b2$lambda==b2$lambda_opt])
+b2$lambda
+as.vector(b3$coefficients[, b3$lambda==b3$lambda_opt])
+
 b3 <- pensem(b1, alpha=0, nlambda=30, ncores=2)
 # Error in checkForRemoteErrors(val) : 
 #   one node produced an error: BLAS/LAPACK routine 'DLASCL' gave error code -4
