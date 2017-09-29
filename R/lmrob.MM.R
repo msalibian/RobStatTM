@@ -1,3 +1,6 @@
+#' @useDynLib RobustStatistics
+
+
 ## The "regularized" psi-function names:
 ## .R: the redescending ones:
 .Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'optimal', 'hampel', 'ggw', 'modified.optimal')
