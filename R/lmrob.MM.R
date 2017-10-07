@@ -1,4 +1,4 @@
-#' @useDynLib RobustStatistics
+#' @useDynLib RobustStatistics, .registration = TRUE
 
 
 ## The "regularized" psi-function names:
