@@ -94,6 +94,9 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 }
 
 
+#FAMILIES <- c("bisquare", "ggw", "hampel", "huber", "lqq", "modified.optimal", "optimal", "welsh")
+FAMILIES <- c("bisquare", "modified.optimal", "optimal")
+
 #' Tukey bisquare rho function
 #'
 #' @param u point or vector at which rho is to be evaluated
@@ -105,11 +108,14 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
 #' @export
-rho <- function(u, cc=1.5477) {
-  w <- as.numeric( abs(u) <= cc )
-  v <- (u^2/(2)*(1-(u^2/(cc^2))+(u^4/(3*cc^4))))*w +(1-w)*(cc^2/6)
-  v <- v*6/cc^2
-  return(v)
+rho <- function(u, cc = 1.5477, family = "bisquare", normalize = TRUE)
+{
+  family <- match.arg(family, choices = FAMILIES)
+
+  if(normalize)
+    Mchi(u, cc, psi = family, deriv = 0)
+  else
+    Mpsi(u, cc, psi = family, deriv = -1)
 }
 
 rhoint <- function(e)
@@ -131,11 +137,11 @@ find.tuning.chi <- function(delta, low=.5, upp=10) {
 #' @rdname rhoprime
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
-rhoprime <- function(r, cc) {
-  # bisquare rho' = psi function
-  r <- r / cc
-  gg <- r*(1-r^2)^2*as.numeric(abs(r)<=1)
-  return(gg)
+#' @export
+rhoprime <- function(u, cc = 1.5477, family = "bisquare")
+{
+  family <- match.arg(family, choices = FAMILIES)
+  Mpsi(u, cc = cc, psi = family, deriv = 0)
 }
 
 
@@ -149,12 +155,13 @@ rhoprime <- function(r, cc) {
 #' @rdname rhoprime2
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
-rhoprime2 <- function(r, cc) {
-  #Derivative of the bisquare psi function
-  r <- r/cc
-  gg <- (1-r^2)*(1-5*r^2)*as.numeric(abs(r)<=1)/cc
-  return(gg)
+#' @export
+rhoprime2 <- function(u, cc = 1.5477, family = "bisquare")
+{
+  family <- match.arg(family, choices = FAMILIES)
+  Mpsi(u, cc = cc, psi = family, deriv = 1)
 }
+
 
 # effi <- function(e) {
 #   a <- integrate(function(a, cc) (rhoprime(a, cc)^2)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value
