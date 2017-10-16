@@ -1,6 +1,10 @@
 
 # Install pense
-devtools::install_github("dakep/pense-rpkg", ref = "develop", force=TRUE)
+# devtools::install_github("dakep/pense-rpkg", ref = "develop", force=TRUE)
+
+# Install pyinit
+# devtools::install_github("dakep/pyinit", ref = "master") # , force=TRUE)
+
 
 ## This example bombs in my linux machine
 ##
