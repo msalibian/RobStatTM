@@ -1,4 +1,7 @@
 
+# Install pense
+# devtools::install_github("dakep/pense-rpkg", ref = "develop")
+
 ## This example bombs in my linux machine
 ##
 
@@ -6,13 +9,23 @@ detach(package:glmnet)
 library(pense)
 library(mmlasso)
 
+
+
+
+
 n <- 80
 p <- 50
 set.seed(123)
 x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
-a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
+system.time(
+  a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
             denormout=0, alone=1, ncores=4)
+)
+
+
+
+
 # > a$coef
 # [1]  0.56393725  4.93835073  4.52520916  4.81057373  4.02522828  3.38954222 -0.24710486 -0.76467020
 # [9]  0.18671219  0.82159307  0.87416926  1.01648880  1.45493286 -0.05151432  1.48146142 -0.66388817
@@ -28,8 +41,26 @@ system.time(
 b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=a$lamda/nrow(x), initial='cold',
             options=pense_options(delta=a$delta),
             en_options = en_options_dal(),
-            init_options = initest_options(psc_method = "exact"))
+            init_options = initest_options(psc_method = "exact", 
+            maxit = 1, # nr. of refinement steps in ENPY
+            maxit_pense_refinement = 1 # nr. of PENSE refinements on all initial estimates before we pick the best 5 candidates
+    ))
 )
+
+
+# try to reproduce srdige results:
+system.time(
+  b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, initial='cold',
+              options=pense_options(delta=a$delta),
+              en_options = en_options_dal(),
+              init_options = initest_options(psc_method = "exact", 
+                                             maxit = 1, # nr. of refinement steps in ENPY
+                                             maxit_pense_refinement = 1 # nr. of PENSE refinements on all initial estimates before we pick the best 5 candidates
+              ))
+)
+
+
+
 summary(b0$lambda)
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 # 0.1429  0.1429  0.1429  0.1429  0.1429  0.1429
@@ -56,6 +87,17 @@ b1 <- pense(X=x, y=y, alpha=0, standardize=TRUE, # lambda=a$lamda, initial='cold
             init_options = initest_options(psc_method = "exact")) #,
             #lambda_min_ratio = 1e-14)
 )
+
+system.time(
+b1 <- pense(X=x, y=y, alpha=0, standardize=TRUE, # lambda=a$lamda, initial='cold',
+            options=pense_options(delta=a$delta),
+            init_options = initest_options(maxit=1, maxit_pense_refinement=1)) #,
+#lambda_min_ratio = 1e-14)
+)
+a$coef
+as.vector(b1$coeff[, b1$lambda == b1$lambda_opt])
+
+
 summary(b1$lambda)
 b1$lambda_opt
 as.vector(b1$coeff[, b1$lambda == b1$lambda_opt])
