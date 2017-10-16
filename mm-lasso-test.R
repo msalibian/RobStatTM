@@ -1,5 +1,5 @@
 library(devtools)
-install_github("dakep/pense-rpkg", ref = "develop")
+install_github("dakep/pense-rpkg", ref = "develop", force=TRUE)
 
 
 library(pense)
