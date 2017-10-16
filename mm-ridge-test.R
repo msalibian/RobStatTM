@@ -1,11 +1,11 @@
 
 # Install pense
-# devtools::install_github("dakep/pense-rpkg", ref = "develop")
+devtools::install_github("dakep/pense-rpkg", ref = "develop", force=TRUE)
 
 ## This example bombs in my linux machine
 ##
 
-detach(package:glmnet)
+# detach(package:glmnet)
 library(pense)
 library(mmlasso)
 
@@ -19,64 +19,64 @@ set.seed(123)
 x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
 system.time(
-  a <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
+  a.s <- sridge(x=x, y=y, cualcv.S=5, numlam.S=30, niter.S=50, normin=0,
             denormout=0, alone=1, ncores=4)
 )
 
+# try to reproduce srdige results, pick optimal lambda
 
-
-
-# > a$coef
-# [1]  0.56393725  4.93835073  4.52520916  4.81057373  4.02522828  3.38954222 -0.24710486 -0.76467020
-# [9]  0.18671219  0.82159307  0.87416926  1.01648880  1.45493286 -0.05151432  1.48146142 -0.66388817
-# [17] -0.60210763  0.27785843  0.30947435  0.26140655 -0.84834424 -0.82912644  0.71738652 -0.37778783
-# [25]  0.17111429 -0.25918776 -0.73510224  0.33117573 -0.65798889 -0.29323547 -0.01326912  0.96685920
-# [33] -0.45921634 -0.49199308  1.14162844  0.29633986  0.97414776 -0.67190607  1.74029930 -0.71029622
-# [41]  0.80130134  0.33768376 -0.29952025  0.58196743 -0.29347014 -0.11529802  2.05014463 -1.43114321
-# [49]  0.91086385  1.00114588 -0.04155250
-a <- list(delta=0.2584052, lamda=11.42803)
-
-# try to reproduce srdige results:
 system.time(
-b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, lambda=a$lamda/nrow(x), initial='cold',
-            options=pense_options(delta=a$delta),
-            en_options = en_options_dal(),
-            init_options = initest_options(psc_method = "exact", 
-            maxit = 1, # nr. of refinement steps in ENPY
-            maxit_pense_refinement = 1 # nr. of PENSE refinements on all initial estimates before we pick the best 5 candidates
-    ))
-)
-
-
-# try to reproduce srdige results:
-system.time(
-  b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, initial='cold',
-              options=pense_options(delta=a$delta),
-              en_options = en_options_dal(),
-              init_options = initest_options(psc_method = "exact", 
-                                             maxit = 1, # nr. of refinement steps in ENPY
-                                             maxit_pense_refinement = 1 # nr. of PENSE refinements on all initial estimates before we pick the best 5 candidates
+  b0 <- pense(X=x, y=y, alpha=0, standardize=TRUE, initial='cold', # lambda=a$lamda/nrow(x), 
+              options=pense_options(delta=a.s$delta), ncores=4, 
+              init_options = initest_options( # psc_method = "exact", 
+                maxit = 1, # nr. of refinement steps in ENPY
+                maxit_pense_refinement = 1 # nr. of PENSE refinements on all initial estimates before we pick the best 5 candidates
               ))
 )
 
+# more expensive, better S-ridge
+system.time(
+  b0.1 <- pense(X=x, y=y, alpha=0, standardize=TRUE, # initial='cold', # lambda=a$lamda/nrow(x), 
+              options=pense_options(delta=a.s$delta), ncores=4,
+              # init_options = initest_options( # psc_method = "exact", 
+              #   maxit = 1, # nr. of refinement steps in ENPY
+              #   maxit_pense_refinement = 1 # nr. of PENSE refinements on all initial estimates before we pick the best 5 candidates
+              # )
+              )
+)
 
 
-summary(b0$lambda)
-# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-# 0.1429  0.1429  0.1429  0.1429  0.1429  0.1429
-as.vector(b0$coeff)
-# [1] -0.56188256  5.35716464  4.45576453  3.83223186  2.57619773  3.27338500
-# [7]  0.59675519  0.62648567  0.30245205  0.52771038  0.20992737  0.20518861
-# [13]  0.18054032  0.10602851  0.33677310  0.35973216 -1.07022291 -0.65389808
-# [19] -0.15588146  1.11045653  0.76979123  0.11396488  0.47741425  0.69250752
-# [25] -0.14571474  0.74995238 -2.53510696 -1.29878442 -0.63056945 -0.41223131
-# [31]  0.50595632  1.98362399  0.01130509 -0.66930877  0.77941751 -0.22201319
-# [37]  0.39108893  0.34179955  2.48496102 -0.51311224 -0.82466886 -0.72035204
-# [43] -0.53518098 -0.27894737 -0.32652570  0.64891310  0.02405424 -1.43743238
-# [49] -0.31805878  0.88437940  1.01986135
-b0$scale
-# scale
-# 2.869959
+cbind(as.vector(a.s$coef), coef(b0), coef(b0.1))
+
+
+## MM-LASSO
+
+a <- mmlasso(x=x, y=y, ncores=4)
+# b1 <- pense(X=x, y=y, alpha=0, nlambda=30, ncores=2) 
+b2 <- pensem(b0.1, alpha=1, nlambda=30, ncores=4)
+
+cbind(as.vector(a$coef.MMLasso), coef(b2))
+
+
+
+
+# Another example
+n <- 200
+p <- 100
+set.seed(123)
+x <- matrix(rnorm(n*p), n, p)
+y <- as.vector( x %*% c(rep(7, 25), rep(0, p-25))) + rnorm(n, sd=1.5)
+
+a <- mmlasso(x=x, y=y, ncores=4)
+b1 <- pense(X=x, y=y, alpha=0, nlambda=30, ncores=4)
+b2 <- pensem(b1, alpha=1, nlambda=30, ncores=4)
+cbind(as.vector(a$coef.MMLasso), coef(b2))
+
+
+
+
+
+
 
 
 # a better S-ridge?
