@@ -2,9 +2,9 @@
 
 # ## Only run once
 # # Install pense package
-# library(devtools)
-# install_github("dakep/pense-rpkg", ref = "develop", force=TRUE)
-# 
+library(devtools)
+install_github("dakep/pense-rpkg", ref = "develop", force=TRUE)
+#
 # # Install pyinit package
 # library(devtools)
 # install_github("dakep/pyinit", ref = "master", force=TRUE)
@@ -23,7 +23,7 @@ y <- as.vector( x %*% c(rep(7, 5), rep(0, p-5))) + rnorm(n, sd=.5)
 b0 <- pense(X=x, y=y, alpha=0, ncores=4, nlambda=30)
 
 # Compute MM-LASSO starting from the S-ridge (and the assoc. scale)
-b2 <- pensem(b0, alpha=1, nlambda=30, ncores=4, nlambda=30)
+b2 <- pensem(b0, alpha=1, nlambda=30, ncores=4)
 
 # Compare with Ezequiel's MM-LASSO
 library(mmlasso)
