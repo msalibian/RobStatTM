@@ -29,7 +29,7 @@ b2 <- pensem(b0, alpha=1, nlambda=30, ncores=4)
 library(mmlasso)
 a <- mmlasso(x=x, y=y, ncores=4)
 
-cbind(as.vector(a$coef.MMLasso), coef(b2))
+round(cbind(as.vector(a$coef.MMLasso), coef(b2)), 3)
 
 # Again with different values of n & p
 
@@ -42,7 +42,7 @@ y <- as.vector( x %*% c(rep(7, 25), rep(0, p-25))) + rnorm(n, sd=.5)
 a <- mmlasso(x=x, y=y, ncores=2)
 b1 <- pense(X=x, y=y, alpha=0, nlambda=30, ncores=2) #init_options = initest_options(maxit=1, maxit_pense_refinement=1))
 b2 <- pensem(b1, alpha=1, nlambda=30, ncores=2)
-cbind(as.vector(a$coef.MMLasso), coef(b2))
+round(cbind(as.vector(a$coef.MMLasso), coef(b2)), 3)
 
 
 
