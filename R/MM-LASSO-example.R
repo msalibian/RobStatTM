@@ -35,7 +35,7 @@ cbind(as.vector(a$coef.MMLasso), coef(b2))
 
 n <- 50
 p <- 100
-set.seed(123)
+set.seed(123456)
 x <- matrix(rnorm(n*p), n, p)
 y <- as.vector( x %*% c(rep(7, 25), rep(0, p-25))) + rnorm(n, sd=1.5)
 
