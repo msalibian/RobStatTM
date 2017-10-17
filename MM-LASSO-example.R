@@ -33,7 +33,7 @@ cbind(as.vector(a$coef.MMLasso), coef(b2))
 
 # Again with different values of n & p
 
-n <- 50
+n <- 75
 p <- 100
 set.seed(123)
 x <- matrix(rnorm(n*p), n, p)
