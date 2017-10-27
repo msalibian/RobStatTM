@@ -71,4 +71,4 @@ resu=list(eigvec=B, fit=fit, repre=repre, propex=propex,propSPC=propSPC,mu=mu)
 return(resu)
 }
 
-Wf<-function(r){ return((1-r)^2*(r<=1))}    #Bisquare weights for r=resid^2
+Wf <- function(r){ return((1-r)^2*(r<=1)) }    #Bisquare weights for r=resid^2
