@@ -4,10 +4,10 @@
 \alias{rhoprime}
 \title{The first derivative of Tukeys bisquare rho function}
 \usage{
-rhoprime(r, cc)
+rhoprime(u, cc = 1.5477, family = "bisquare")
 }
 \arguments{
-\item{r}{scalar or vector at which the derivative of rho is to be evaluated}
+\item{u}{scalar or vector at which the derivative of rho is to be evaluated}
 
 \item{cc}{tuning parameter}
 }

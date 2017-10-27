@@ -4,7 +4,7 @@
 \alias{mscale}
 \title{M-scale estimator}
 \usage{
-mscale(u, tol, delta = 0.5, max.it = 100, tuning.chi = 1.5477)
+mscale(u, tol = 1e-06, delta = 0.5, max.it = 100, tuning.chi = 1.5477)
 }
 \arguments{
 \item{u}{vector of residuals}

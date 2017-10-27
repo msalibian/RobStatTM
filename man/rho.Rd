@@ -4,7 +4,7 @@
 \alias{rho}
 \title{Tukey bisquare rho function}
 \usage{
-rho(u, cc = 1.5477)
+rho(u, cc = 1.5477, family = "bisquare", normalize = TRUE)
 }
 \arguments{
 \item{u}{point or vector at which rho is to be evaluated}

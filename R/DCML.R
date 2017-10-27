@@ -81,13 +81,13 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
   ##Computation of the asymptotic covariance matrix of the DCML estimator
   t0 <- 1-t0
   rr <- res.R/sig.R
-  tpr <- rhoprime(r=rr, cc=control$tuning.psi)
+  tpr <- rhoprime(u=rr, cc=control$tuning.psi)
   c0 <- mean( tpr * res.LS )
   a1 <- mean( tpr^2 )
-  b0 <- mean(rhoprime2(r=rr, cc=control$tuning.psi))
+  b0 <- mean(rhoprime2(u=rr, cc=control$tuning.psi))
   dee <- control$bb
   if(control$corr.b) dee <- dee * (1 - p/n)
-  a2 <- mscale(u=res.LS, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  a2 <- mscale(u=res.LS, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
   tt <- t0^2*sig.R^2*a1/b0^2 + a2^2*(1-t0)^2 +2*t0*(1-t0)*sig.R*c0/b0
   V <- tt*solve(CC)
   return(V)
@@ -129,7 +129,7 @@ find.tuning.chi <- function(delta, low=.5, upp=10) {
 
 #' The first derivative of Tukeys bisquare rho function
 #'
-#' @param r scalar or vector at which the derivative of rho is to be evaluated
+#' @param u scalar or vector at which the derivative of rho is to be evaluated
 #' @param cc tuning parameter
 #'
 #' @return The value of the first derivative \code{rho_cc} evaluated at \code{r}
@@ -210,7 +210,7 @@ MMPY <- function(X, y, control, mf) {
    p <- ncol(X)
    dee <- control$bb
    if(control$corr.b) dee <- dee * (1-(p/n))
-   a <- pyinit(X=X, y=y, intercept=FALSE, delta=dee,
+   a <- pyinit(x=X, y=y, intercept=FALSE, delta=dee,
                cc=control$tuning.chi,
                psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
                resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
@@ -274,7 +274,7 @@ DCML <- function(x, y, z, z0, control) {
   n <- length(z$residuals)
   dee <- control$bb
   if(control$corr.b) dee <- dee*(1-p/n)
-  si.dcml <- mscale(u=z$residuals, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  si.dcml <- mscale(u=z$residuals, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
   deltas <- .3*p/n
   CC <- t(x * z$rweights) %*% x / sum(z$rweights)
   # print(all.equal(CC, t(x) %*% diag(z$rweights) %*% x / sum(z$rweights)))
@@ -284,7 +284,7 @@ DCML <- function(x, y, z, z0, control) {
   V.dcml <- cov.dcml(res.LS=z0$residuals, res.R=z$residuals, CC=CC,
                      sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
   re.dcml <- as.vector(y - x %*% beta.dcml)
-  si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  si.dcml.final <- mscale(u=re.dcml, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
   return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, scale=si.dcml.final, t0=t0))
 }
 
@@ -319,7 +319,7 @@ SMPY <- function(mf, y, control, split) {
     control <- lmrobdet.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
   # int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
   if(missing(split)) {
-    split <- splitFrame(mf, type=control$split.type)
+    split <- robustbase::splitFrame(mf, type=control$split.type)
   }
   # step 1 - build design matrices, x1 = factors, x2 = continuous, intercept is in x1
   Z <- split$x1
@@ -331,14 +331,14 @@ SMPY <- function(mf, y, control, split) {
   dee <- control$bb
   gamma <- matrix(NA, q, p)
   # Eliminate Z from ea. column of X with L1 regression, result goes in X1
-  for( i in 1:p) gamma[,i] <- coef( lmrob.lar(x=Z, y=X[,i], control = control, mf = NULL) ) # coef(rq(X[,i]~Z-1))
+  for( i in 1:p) gamma[,i] <- coef( robustbase::lmrob.lar(x=Z, y=X[,i], control = control, mf = NULL) ) # coef(rq(X[,i]~Z-1))
   X1 <- X - Z %*% gamma
   # Eliminate Z from y, L1 regression, result goes in y1
-  tmp0 <- lmrob.lar(x=Z, y=y, control = control, mf = NULL)
+  tmp0 <- robustbase::lmrob.lar(x=Z, y=y, control = control, mf = NULL)
   y1 <- as.vector(tmp0$residuals)
   # Now regress y1 on X1, find PY candidates
   if(control$corr.b) dee <- dee*(1-p/n)
-  initial <- pyinit(intercept=FALSE, X=X1, y=y1,
+  initial <- pyinit(intercept=FALSE, x=X1, y=y1,
                     delta=dee, cc=control$tuning.chi,
                     psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
                     resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
@@ -353,12 +353,12 @@ SMPY <- function(mf, y, control, split) {
   # do the first, then iterate over the rest looking for a better one
   betapy <- initial$coefficients[,1]
   r <- as.vector(y1 - X1 %*% betapy)
-  best.tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-  sspy <- mscale(u=best.tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  best.tmp <- robustbase::lmrob.lar(x=Z, y=r, control = control, mf = NULL)
+  sspy <- mscale(u=best.tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
   for(i in 2:kk) {
     r <- as.vector(y1 - X1 %*% initial$coefficients[,i])
-    tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-    s.cand <- mscale(u=tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+    tmp <- robustbase::lmrob.lar(x=Z, y=r, control = control, mf = NULL)
+    s.cand <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
     if( s.cand < sspy ) {
       sspy <- s.cand
       betapy <- initial$coefficients[,i]
@@ -379,8 +379,8 @@ SMPY <- function(mf, y, control, split) {
     yw <- y * sqrt(weights)
     beta <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
     r1 <- as.vector(y - X %*% beta)
-    tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
-    sih <- mscale(u=tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+    tmp <- robustbase::lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
+    sih <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
     if(sih < sspy) {
       sspy <- sih
       betapy <- beta

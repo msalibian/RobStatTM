@@ -161,7 +161,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       }
       # Check if there are factors
       if( control$initial=="SM" ) {
-        split <- splitFrame(mf, x, control$split.type)
+        split <- robustbase::splitFrame(mf, x, control$split.type)
         if (ncol(split$x1) == 0) {
           control$initial <- 'S'
           warning("No categorical variables found in model. Reverting to an MM-estimator.")
@@ -176,7 +176,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       # re.dcml <- as.vector(y - x %*% beta.dcml)
       # si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
       n <- length(z$resid)
-      z$scale <- mscale(u=z$resid, tol = control$mscale.tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi)
+      z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi)
       # compute robust R^2
       s2 <- sum(rho(z$resid/z$scale, cc=z$control$tuning.psi))
       if( p != attr(mt, "intercept") ) {
@@ -1137,7 +1137,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
       x <- x[,p1]
       attr(x, "assign") <- assign[p1] ## needed for splitFrame to work
     }
-    outL <- lmrob.lar(x=x, y=y, control = control, mf = NULL)
+    outL <- robustbase::lmrob.lar(x=x, y=y, control = control, mf = NULL)
     resL <- sort(abs(outL$resid))
     p <- length(outL$coef)
     n <- length(outL$resid)

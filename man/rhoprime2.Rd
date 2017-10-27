@@ -4,12 +4,12 @@
 \alias{rhoprime2}
 \title{The second derivative of Tukey bisquare rho function}
 \usage{
-rhoprime2(r, cc)
+rhoprime2(u, cc = 1.5477, family = "bisquare")
 }
 \arguments{
-\item{r}{scalar or vector at which the second derivative of rho is to be evaluated}
-
 \item{cc}{tuning parameter}
+
+\item{r}{scalar or vector at which the second derivative of rho is to be evaluated}
 }
 \value{
 The value of the second derivative of \code{rho_cc} evaluated at \code{r}
