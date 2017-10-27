@@ -1,16 +1,26 @@
-source("KurtSDNew.R")
-
-# Functions for robust multivariate location and scatter
-
+#' Robust multivariate location and scatter estimators
+#'
+#' This function computes robust estimators for multivariate location and scatter.
+#'
+#' This function computes robust estimators for multivariate location and scatter.
+#'
+#' @param X a data matrix with observations in rows.
+#' @param type a string indicating which estimator to compute. Valid options
+#' are "Rocke" for Rocke's S-estimator, "MM" for an MM-estimator with a 
+#' SHR rho function, or "auto" (default) which selects "Rocke" if the number 
+#' of variables is less than 10, and "MM" otherwise.  
+#'
+#' @return A list with the following components:
+#' \item{mu}{The location estimator}
+#' \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
+#' \item{dist}{Robust Mahalanobis distances}
+#' 
+#' @author Ricardo Maronna, \email{rmaronna@retina.ar}
+#'
+#' @references \url{http://thebook}
+#'
+#' @export
 MultiRobu<-function(X,type="auto")  {
-  #Main function
-#Inputs: X= data matrix
-  #type="Rocke" for Rocke's S-estimator,  or "MM"for MM estimator with SHR rho
-  #If type="auto" (default) selects Rocke if p<=10 and MM otherwise
-#Outputs  
-  #mu=location vector, V=scatter matrix scaled for consistency at the normal
-  #dist= robust Mahalanobis distanes
-  
 if (type=="auto") {
   p=dim(X)[2]
   if (p<15) {type="MM"

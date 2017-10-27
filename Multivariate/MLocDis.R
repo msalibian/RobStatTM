@@ -4,12 +4,6 @@
 #'
 #' This function computes M-estimators for multivariate location and scatter.
 #'
-#M-estimators of location and dispersion
-#psi= "Bis" (quare) (default) of "Hub" (er)
-#eff=desired asymptotic efficiency. Options: 0.9 (default), 0.85 or 0.95
-#Output: mu=location estimator, std.mu= estimated standard deviation of mu,
-# disper= M-dispersion estimator
-
 #' @param x a data matrix with observations in rows.
 #' @param psi a string indicating which score function to use. Valid options are "Bis" for
 #' bi-square and "Hub" for a Huber-type.
