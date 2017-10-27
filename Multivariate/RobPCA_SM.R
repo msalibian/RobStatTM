@@ -1,7 +1,7 @@
 #' Robust principal components
 #'
 #' This function computes robust principal components based on the minimization of
-#' the "residual" M-scale
+#' the "residual" M-scale.
 #'
 #' @param X a data matrix with observations in rows.
 #' @param ncomp desired (maximum) number of components
