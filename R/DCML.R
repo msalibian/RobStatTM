@@ -210,19 +210,19 @@ MMPY <- function(X, y, control, mf) {
    p <- ncol(X)
    dee <- control$bb
    if(control$corr.b) dee <- dee * (1-(p/n))
-   a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee,
-               cc.scale=control$tuning.chi,
-               prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
-               C.res = control$C.res, prop=control$prop,
-               py.nit = control$py.nit, en.tol=control$en.tol,
-               mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
-               mscale.rho.fun=control$mscale.rho.fun)
+   a <- pyinit(X=X, y=y, intercept=FALSE, delta=dee,
+               cc=control$tuning.chi,
+               psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
+               resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
+               maxit = control$py_maxit, eps=control$py_eps,
+               mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
+               mscale_rho_fun=control$mscale_rho_fun)
    # refine the PY candidates to get something closer to an S-estimator for y ~ X1
-   kk <- dim(a$initCoef)[2]
+   kk <- dim(a$coefficients)[2]
    best.ss <- +Inf
    for(i in 1:kk) {
-     tmp <- refine.sm(x=X, y=y, initial.beta=a$initCoef[,i],
-                      initial.scale=a$objF[i],
+     tmp <- refine.sm(x=X, y=y, initial.beta=a$coefficients[,i],
+                      initial.scale=a$objective[i],
                       k=control$refine.PY, conv=1, b=dee, cc=control$tuning.chi, step='S')
      if(tmp$scale.rw < best.ss) {
        best.ss <- tmp$scale.rw # initial$objF[1]
@@ -339,29 +339,29 @@ SMPY <- function(mf, y, control, split) {
   # Now regress y1 on X1, find PY candidates
   if(control$corr.b) dee <- dee*(1-p/n)
   initial <- pyinit(intercept=FALSE, X=X1, y=y1,
-                    deltaesc=dee, cc.scale=control$tuning.chi,
-                    prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
-                    C.res = control$C.res, prop=control$prop,
-                    py.nit = control$py.nit, en.tol=control$en.tol,
-                    mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
-                    mscale.rho.fun=control$mscale.rho.fun)
+                    delta=dee, cc=control$tuning.chi,
+                    psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
+                    resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
+                    maxit = control$py_maxit, eps=control$py_eps,
+                    mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
+                    mscale_rho_fun=control$mscale_rho_fun)
   # choose best candidates including factors into consideration!
   # recompute scales adjusting for Z
   dee <- control$bb
   if(control$corr.b) dee <- dee*(1-(ncol(X1)+ncol(Z))/n)
-  kk <- dim(initial$initCoef)[2]
+  kk <- dim(initial$coefficients)[2]
   # do the first, then iterate over the rest looking for a better one
-  betapy <- initial$initCoef[,1]
+  betapy <- initial$coefficients[,1]
   r <- as.vector(y1 - X1 %*% betapy)
   best.tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
   sspy <- mscale(u=best.tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
   for(i in 2:kk) {
-    r <- as.vector(y1 - X1 %*% initial$initCoef[,i])
+    r <- as.vector(y1 - X1 %*% initial$coefficients[,i])
     tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
     s.cand <- mscale(u=tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
     if( s.cand < sspy ) {
       sspy <- s.cand
-      betapy <- initial$initCoef[,i]
+      betapy <- initial$coefficients[,i]
       best.tmp <- tmp
     }
   }

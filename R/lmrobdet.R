@@ -357,19 +357,19 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
 #' @param initial string specifying the initial value for the M-step of the MM-estimator. Valid
 #' options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is
 #' appropriate when there are categorical explanatory variables in the model.
-#' @param prosac For \code{pyinit}, proportion of observations to remove based on PSCs. The effective proportion of removed
+#' @param psc_keep For \code{pyinit}, proportion of observations to remove based on PSCs. The effective proportion of removed
 #' observations is adjusted according to the sample size to be \code{prosac*(1-p/n)}. See \code{\link{pyinit}}.
-#' @param clean.method For \code{pyinit}, how to clean the data based on large residuals. If
+#' @param resid_keep_method For \code{pyinit}, how to clean the data based on large residuals. If
 #' \code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will
 #' be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will
 #' be removed. See \code{\link{pyinit}}.
-#' @param C.res See parameter \code{clean.method} above. See \code{\link{pyinit}}.
-#' @param prop See parameter \code{clean.method} above. See \code{\link{pyinit}}.
-#' @param py.nit Maximum number of iterations. See \code{\link{pyinit}}.
-#' @param en.tol Relative tolerance for convergence.  See \code{\link{pyinit}}.
-#' @param mscale.maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}.
-#' @param mscale.tol Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.
-#' @param mscale.rho.fun String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.
+#' @param resid_keep_thresh See parameter \code{clean.method} above. See \code{\link{pyinit}}.
+#' @param resid_keep_prop See parameter \code{clean.method} above. See \code{\link{pyinit}}.
+#' @param py_maxit Maximum number of iterations. See \code{\link{pyinit}}.
+#' @param py_eps Relative tolerance for convergence.  See \code{\link{pyinit}}.
+#' @param mscale_maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}.
+#' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.
+#' @param mscale_rho_fun String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.
 #'
 #' @return A list with the necessary tuning parameters.
 #'
@@ -391,10 +391,10 @@ lmrobdet.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% 
                             corr.b = TRUE, # for MMPY and SMPY
                             split.type = "f", # help(splitFrame, package='robustbase')
                             initial='S', #'S' or 'MS'
-                            prosac = 0.5, clean.method = 'threshold',
-                            C.res = 2, prop = .2, py.nit = 20, en.tol = 1e-5,
-                            mscale.maxit = 50, mscale.tol = 1e-06,
-                            mscale.rho.fun = 'bisquare') {
+                            psc_keep = 0.5, resid_keep_method = 'threshold',
+                            resid_keep_thresh = 2, resid_keep_prop = .2, py_maxit = 20, py_eps = 1e-5,
+                            mscale_maxit = 50, mscale_tol = 1e-06,
+                            mscale_rho_fun = 'bisquare') {
   return(list(seed = as.integer(seed), psi=psi,
               tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
               max.it=max.it,
@@ -405,9 +405,9 @@ lmrobdet.control <-  function(seed = NULL, tuning.chi = 1.5477, bb = 0.5, # 50% 
               compute.rd=compute.rd,
               split.type=split.type,
               initial=initial, # method=method, subsampling=subsampling,
-              prosac=prosac, clean.method=clean.method, C.res=C.res,
-              prop=prop, py.nit=py.nit, en.tol=en.tol, mscale.maxit=mscale.maxit,
-              mscale.tol=mscale.tol, mscale.rho.fun='bisquare'))
+              psc_keep=psc_keep, resid_keep_method=resid_keep_method, resid_keep_thresh=resid_keep_thresh,
+              resid_keep_prop=resid_keep_prop, py_maxit=py_maxit, py_eps=py_eps, mscale_maxit=mscale_maxit,
+              mscale_tol=mscale_tol, mscale_rho_fun='bisquare'))
 }
 
 
