@@ -40,7 +40,7 @@
 #' sd(r)
 #'
 #' @export
-mscale <- function(u, tol=1e-6, delta=.5, max.it=100, tuning.chi=1.5477) {
+mscale <- function(u, tol=1e-6, delta=.5, max.it=100, tuning.chi) {
   # M-scale of a sample u
   # tol: accuracy
   # delta: breakdown point (right side)
@@ -50,7 +50,7 @@ mscale <- function(u, tol=1e-6, delta=.5, max.it=100, tuning.chi=1.5477) {
   it <- 0
   while( (err > tol) & ( it < max.it) ) {
     it <- it+1
-    s1 <- sqrt( s0^2 * mean(rho((u/s0), tuning.chi)) / delta )
+    s1 <- sqrt( s0^2 * mean(rho((u/s0), family = tuning.chi)) / delta )
     err <- abs(s1-s0)/s0
     s0 <- s1
   }
@@ -81,10 +81,12 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
   ##Computation of the asymptotic covariance matrix of the DCML estimator
   t0 <- 1-t0
   rr <- res.R/sig.R
-  tpr <- rhoprime(r=rr, cc=control$tuning.psi)
+  #tpr <- rhoprime(r=rr, cc=control$tuning.psi)
+  tpr <- rhoprime(rr, family = control$tuning.psi)
   c0 <- mean( tpr * res.LS )
   a1 <- mean( tpr^2 )
-  b0 <- mean(rhoprime2(r=rr, cc=control$tuning.psi))
+  #b0 <- mean(rhoprime2(r=rr, cc=control$tuning.psi))
+  b0 <- mean(rhoprime2(rr, family = control$tuning.psi))
   dee <- control$bb
   if(control$corr.b) dee <- dee * (1 - p/n)
   a2 <- mscale(u=res.LS, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
@@ -94,73 +96,16 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 }
 
 
-#FAMILIES <- c("bisquare", "ggw", "hampel", "huber", "lqq", "modified.optimal", "optimal", "welsh")
-FAMILIES <- c("bisquare", "modified.optimal", "optimal")
 
-#' Tukey bisquare rho function
-#'
-#' @param u point or vector at which rho is to be evaluated
-#' @param cc tuning parameter
-#'
-#' @return The value of \code{rho_cc} at \code{u}
-#'
-#' @rdname rho
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#'
-#' @export
-rho <- function(u, cc = 1.5477, family = "bisquare", normalize = TRUE)
-{
-  family <- match.arg(family, choices = FAMILIES)
+#rhoint <- function(e)
+#  return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
 
-  if(normalize)
-    Mchi(u, cc, psi = family, deriv = 0)
-  else
-    Mpsi(u, cc, psi = family, deriv = -1)
-}
-
-rhoint <- function(e)
-  return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
+  # won't work with new family structure
+#find.tuning.chi <- function(delta, low=.5, upp=10) {
+#  return( uniroot( function(e) (rhoint(e)-delta), lower=low, upper=upp)$root )
+#}
 
 
-find.tuning.chi <- function(delta, low=.5, upp=10) {
-  return( uniroot( function(e) (rhoint(e)-delta), lower=low, upper=upp)$root )
-}
-
-
-#' The first derivative of Tukeys bisquare rho function
-#'
-#' @param r scalar or vector at which the derivative of rho is to be evaluated
-#' @param cc tuning parameter
-#'
-#' @return The value of the first derivative \code{rho_cc} evaluated at \code{r}
-#'
-#' @rdname rhoprime
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#'
-#' @export
-rhoprime <- function(u, cc = 1.5477, family = "bisquare")
-{
-  family <- match.arg(family, choices = FAMILIES)
-  Mpsi(u, cc = cc, psi = family, deriv = 0)
-}
-
-
-#' The second derivative of Tukey bisquare rho function
-#'
-#' @param r scalar or vector at which the second derivative of rho is to be evaluated
-#' @param cc tuning parameter
-#'
-#' @return The value of the second derivative of \code{rho_cc} evaluated at \code{r}
-#'
-#' @rdname rhoprime2
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#'
-#' @export
-rhoprime2 <- function(u, cc = 1.5477, family = "bisquare")
-{
-  family <- match.arg(family, choices = FAMILIES)
-  Mpsi(u, cc = cc, psi = family, deriv = 1)
-}
 
 
 # effi <- function(e) {
@@ -210,31 +155,53 @@ MMPY <- function(X, y, control, mf) {
    p <- ncol(X)
    dee <- control$bb
    if(control$corr.b) dee <- dee * (1-(p/n))
+
+#   a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee,
+#               cc.scale=control$tuning.chi,
+#               prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
+#               C.res = control$C.res, prop=control$prop,
+#               py.nit = control$py.nit, en.tol=control$en.tol,
+#               mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
+#               mscale.rho.fun=control$mscale.rho.fun)
+
+# Matias, I hard coded the parameters for pyinit because I wasn't sure how to handle changing
+# the rho function. We had discussed always using bisquare in pyinit.
+
    a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee,
-               cc.scale=control$tuning.chi,
-               prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
-               C.res = control$C.res, prop=control$prop,
-               py.nit = control$py.nit, en.tol=control$en.tol,
-               mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
-               mscale.rho.fun=control$mscale.rho.fun)
+               cc.scale=3.44369,
+               prosac=0.5*(1-(p/n)), clean.method="threshold",
+               C.res = 2, prop=0.2,
+               py.nit = 20, en.tol=1e-05,
+               mscale.maxit = 50, mscale.tol = 1e-06,
+               mscale.rho.fun="bisquare")
+
+
    # refine the PY candidates to get something closer to an S-estimator for y ~ X1
    kk <- dim(a$initCoef)[2]
    best.ss <- +Inf
    for(i in 1:kk) {
      tmp <- refine.sm(x=X, y=y, initial.beta=a$initCoef[,i],
                       initial.scale=a$objF[i],
-                      k=control$refine.PY, conv=1, b=dee, cc=control$tuning.chi, step='S')
+                      k=control$refine.PY, conv=1, b=dee, family=control$tuning.chi, step='S')
      if(tmp$scale.rw < best.ss) {
        best.ss <- tmp$scale.rw # initial$objF[1]
        betapy <- tmp$beta.rw # initial$initCoef[,1]
      }
    }
    S.init <- list(coef=betapy, scale=best.ss)
+
+   orig.control <- control
+
+   control$psi <- control$tuning.psi$name
+   control$tuning.psi <- control$tuning.psi$cc
+
    control$method <- 'M'
    control$cov <- ".vcov.w"
    control$subsampling <- 'simple'
+
    # # lmrob() does the above when is.list(init)==TRUE, in particular:
    outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
+   outMM$control <- orig.control
    return(outMM)
 }
 
@@ -338,13 +305,26 @@ SMPY <- function(mf, y, control, split) {
   y1 <- as.vector(tmp0$residuals)
   # Now regress y1 on X1, find PY candidates
   if(control$corr.b) dee <- dee*(1-p/n)
+
+#  initial <- pyinit(intercept=FALSE, X=X1, y=y1,
+#                    deltaesc=dee, cc.scale=control$tuning.chi,
+#                    prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
+#                    C.res = control$C.res, prop=control$prop,
+#                    py.nit = control$py.nit, en.tol=control$en.tol,
+#                    mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
+#                    mscale.rho.fun=control$mscale.rho.fun)
+
+# Matias, I hard coded the parameters for pyinit because I wasn't sure how to handle changing
+# the rho function. We had discussed always using bisquare in pyinit.
+
   initial <- pyinit(intercept=FALSE, X=X1, y=y1,
-                    deltaesc=dee, cc.scale=control$tuning.chi,
-                    prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
-                    C.res = control$C.res, prop=control$prop,
-                    py.nit = control$py.nit, en.tol=control$en.tol,
-                    mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
-                    mscale.rho.fun=control$mscale.rho.fun)
+                    deltaesc=dee, cc.scale=3.44369,
+                    prosac=0.5*(1-(p/n)), clean.method="threshold",
+                    C.res = 2, prop=0.2,
+                    py.nit = 20, en.tol=1e-05,
+                    mscale.maxit = 50, mscale.tol = 1e-06,
+                    mscale.rho.fun="bisquare")
+
   # choose best candidates including factors into consideration!
   # recompute scales adjusting for Z
   dee <- control$bb
@@ -374,7 +354,7 @@ SMPY <- function(mf, y, control, split) {
   # Run a few IRWLS iterations, adjusting with Z
   max.it <- control$refine.PY
   for(i in 1:max.it) {
-    weights <- f.w( tmp$residuals/sih, cc=control$tuning.chi)
+    weights <- f.w( tmp$residuals/sih, family=control$tuning.chi)
     xw <- X * sqrt(weights)
     yw <- y * sqrt(weights)
     beta <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )

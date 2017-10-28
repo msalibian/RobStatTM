@@ -2,6 +2,7 @@
 
 #include <R.h>
 #include <Rinternals.h>
+#include <complex.h>
 
 /* For internationalized messages */
 #ifdef ENABLE_NLS
@@ -12,6 +13,9 @@
 #define dngettext(pkg, String, StringP, N) (N > 1 ? StringP : String)
 #endif
 
+double complex erfz(double complex z);
+double complex erfi(double complex z);
+SEXP R_erfi(SEXP x);
 
 SEXP R_rho_inf(SEXP cc, SEXP ipsi);
 

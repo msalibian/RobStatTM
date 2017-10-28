@@ -1,8 +1,17 @@
+#include "Rinternals.h"
 #include "Rmath.h"
 #include <complex.h>
+#include "RobustStatistics.h"
 
-double complex erfz(double complex z);
-double complex erfi(double complex z);
+SEXP R_erfi(SEXP x)
+{
+  SEXP ret = R_NilValue;
+  PROTECT(ret = allocVector(REALSXP, 1));
+  x = PROTECT(coerceVector(x, REALSXP));
+  REAL(ret)[0] = (double) erfi((double complex) REAL(x)[0]);
+  UNPROTECT(2);
+  return(ret);
+}
 
 
 double complex erfz(double complex z)
@@ -41,11 +50,11 @@ double complex erfz(double complex z)
 {
   double a0 = 0.0;
   double complex c0 = 0.0 + 0.0*I,
-                 cer = 0.0 + 0.0*I,
-                 cl = 0.0 + 0.0*I,
-                 cr = 0.0 + 0.0*I,
-                 cs = 0.0 + 0.0*I,
-                 z1 = 0.0 + 0.0*I;
+           cer = 0.0 + 0.0*I,
+           cl = 0.0 + 0.0*I,
+           cr = 0.0 + 0.0*I,
+           cs = 0.0 + 0.0*I,
+           z1 = 0.0 + 0.0*I;
   int k = -1;
 
   a0 = cabs(z);

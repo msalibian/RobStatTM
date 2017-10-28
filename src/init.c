@@ -69,12 +69,13 @@ static R_CallMethodDef CallEntries[] = {
     CALLDEF(R_psifun, 4),
     CALLDEF(R_chifun, 4),
     CALLDEF(R_wgtfun, 3),
+    CALLDEF(R_erfi, 1),
     {NULL, NULL, 0}
 };
 
 
 static R_FortranMethodDef FortEntries[] = {
-    {"rllarsbi",  (DL_FUNC) &F77_SUB(rllarsbi), 18},
+    {"rslarsbi",  (DL_FUNC) &F77_SUB(rllarsbi), 18},
     {NULL, NULL, 0}
 };
 
