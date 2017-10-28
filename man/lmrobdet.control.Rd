@@ -8,10 +8,10 @@ lmrobdet.control(seed = NULL, tuning.chi = 1.5477, bb = 0.5,
   tuning.psi = 3.4434, max.it = 100, refine.tol = 1e-07,
   rel.tol = 1e-07, refine.PY = 10, solve.tol = 1e-07, trace.lev = 0,
   mts = 1000, compute.rd = FALSE, psi = "bisquare", corr.b = TRUE,
-  split.type = "f", initial = "S", prosac = 0.5,
-  clean.method = "threshold", C.res = 2, prop = 0.2, py.nit = 20,
-  en.tol = 1e-05, mscale.maxit = 50, mscale.tol = 1e-06,
-  mscale.rho.fun = "bisquare")
+  split.type = "f", initial = "S", psc_keep = 0.5,
+  resid_keep_method = "threshold", resid_keep_thresh = 2,
+  resid_keep_prop = 0.2, py_maxit = 20, py_eps = 1e-05,
+  mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = "bisquare")
 }
 \arguments{
 \item{seed}{\code{NULL}}
@@ -58,27 +58,27 @@ to the M-scale parameter \code{bb}}
 options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is
 appropriate when there are categorical explanatory variables in the model.}
 
-\item{prosac}{For \code{pyinit}, proportion of observations to remove based on PSCs. The effective proportion of removed
+\item{psc_keep}{For \code{pyinit}, proportion of observations to remove based on PSCs. The effective proportion of removed
 observations is adjusted according to the sample size to be \code{prosac*(1-p/n)}. See \code{\link{pyinit}}.}
 
-\item{clean.method}{For \code{pyinit}, how to clean the data based on large residuals. If
+\item{resid_keep_method}{For \code{pyinit}, how to clean the data based on large residuals. If
 \code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will
 be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will
 be removed. See \code{\link{pyinit}}.}
 
-\item{C.res}{See parameter \code{clean.method} above. See \code{\link{pyinit}}.}
+\item{resid_keep_thresh}{See parameter \code{clean.method} above. See \code{\link{pyinit}}.}
 
-\item{prop}{See parameter \code{clean.method} above. See \code{\link{pyinit}}.}
+\item{resid_keep_prop}{See parameter \code{clean.method} above. See \code{\link{pyinit}}.}
 
-\item{py.nit}{Maximum number of iterations. See \code{\link{pyinit}}.}
+\item{py_maxit}{Maximum number of iterations. See \code{\link{pyinit}}.}
 
-\item{en.tol}{Relative tolerance for convergence.  See \code{\link{pyinit}}.}
+\item{py_eps}{Relative tolerance for convergence.  See \code{\link{pyinit}}.}
 
-\item{mscale.maxit}{Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}.}
+\item{mscale_maxit}{Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}.}
 
-\item{mscale.tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.}
+\item{mscale_tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.}
 
-\item{mscale.rho.fun}{String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.}
+\item{mscale_rho_fun}{String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.}
 }
 \value{
 A list with the necessary tuning parameters.

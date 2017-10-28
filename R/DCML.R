@@ -89,7 +89,7 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
   b0 <- mean(rhoprime2(rr, family = control$tuning.psi))
   dee <- control$bb
   if(control$corr.b) dee <- dee * (1 - p/n)
-  a2 <- mscale(u=res.LS, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  a2 <- mscale(u=res.LS, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
   tt <- t0^2*sig.R^2*a1/b0^2 + a2^2*(1-t0)^2 +2*t0*(1-t0)*sig.R*c0/b0
   V <- tt*solve(CC)
   return(V)
@@ -100,9 +100,28 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 #rhoint <- function(e)
 #  return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
 
+
   # won't work with new family structure
 #find.tuning.chi <- function(delta, low=.5, upp=10) {
 #  return( uniroot( function(e) (rhoint(e)-delta), lower=low, upper=upp)$root )
+#}
+
+
+#' The first derivative of Tukeys bisquare rho function
+#'
+#' @param u scalar or vector at which the derivative of rho is to be evaluated
+#' @param cc tuning parameter
+#'
+#' @return The value of the first derivative \code{rho_cc} evaluated at \code{r}
+#'
+#' @rdname rhoprime
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#'
+#' @export
+#rhoprime <- function(u, cc = 1.5477, family = "bisquare")
+#{
+#  family <- match.arg(family, choices = FAMILIES)
+#  Mpsi(u, cc = cc, psi = family, deriv = 0)
 #}
 
 
@@ -167,17 +186,16 @@ MMPY <- function(X, y, control, mf) {
 # Matias, I hard coded the parameters for pyinit because I wasn't sure how to handle changing
 # the rho function. We had discussed always using bisquare in pyinit.
 
-   a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee,
-               cc.scale=3.44369,
-               prosac=0.5*(1-(p/n)), clean.method="threshold",
-               C.res = 2, prop=0.2,
-               py.nit = 20, en.tol=1e-05,
-               mscale.maxit = 50, mscale.tol = 1e-06,
-               mscale.rho.fun="bisquare")
 
-
+   a <- pyinit(x=X, y=y, intercept=FALSE, delta=dee,
+               cc=control$tuning.chi,
+               psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
+               resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
+               maxit = control$py_maxit, eps=control$py_eps,
+               mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
+               mscale_rho_fun=control$mscale_rho_fun)
    # refine the PY candidates to get something closer to an S-estimator for y ~ X1
-   kk <- dim(a$initCoef)[2]
+   kk <- dim(a$coefficients)[2]
    best.ss <- +Inf
    for(i in 1:kk) {
      tmp <- refine.sm(x=X, y=y, initial.beta=a$initCoef[,i],
@@ -241,7 +259,7 @@ DCML <- function(x, y, z, z0, control) {
   n <- length(z$residuals)
   dee <- control$bb
   if(control$corr.b) dee <- dee*(1-p/n)
-  si.dcml <- mscale(u=z$residuals, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  si.dcml <- mscale(u=z$residuals, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
   deltas <- .3*p/n
   CC <- t(x * z$rweights) %*% x / sum(z$rweights)
   # print(all.equal(CC, t(x) %*% diag(z$rweights) %*% x / sum(z$rweights)))
@@ -251,7 +269,7 @@ DCML <- function(x, y, z, z0, control) {
   V.dcml <- cov.dcml(res.LS=z0$residuals, res.R=z$residuals, CC=CC,
                      sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
   re.dcml <- as.vector(y - x %*% beta.dcml)
-  si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  si.dcml.final <- mscale(u=re.dcml, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
   return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, scale=si.dcml.final, t0=t0))
 }
 
@@ -286,7 +304,7 @@ SMPY <- function(mf, y, control, split) {
     control <- lmrobdet.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
   # int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
   if(missing(split)) {
-    split <- splitFrame(mf, type=control$split.type)
+    split <- robustbase::splitFrame(mf, type=control$split.type)
   }
   # step 1 - build design matrices, x1 = factors, x2 = continuous, intercept is in x1
   Z <- split$x1
@@ -298,10 +316,10 @@ SMPY <- function(mf, y, control, split) {
   dee <- control$bb
   gamma <- matrix(NA, q, p)
   # Eliminate Z from ea. column of X with L1 regression, result goes in X1
-  for( i in 1:p) gamma[,i] <- coef( lmrob.lar(x=Z, y=X[,i], control = control, mf = NULL) ) # coef(rq(X[,i]~Z-1))
+  for( i in 1:p) gamma[,i] <- coef( robustbase::lmrob.lar(x=Z, y=X[,i], control = control, mf = NULL) ) # coef(rq(X[,i]~Z-1))
   X1 <- X - Z %*% gamma
   # Eliminate Z from y, L1 regression, result goes in y1
-  tmp0 <- lmrob.lar(x=Z, y=y, control = control, mf = NULL)
+  tmp0 <- robustbase::lmrob.lar(x=Z, y=y, control = control, mf = NULL)
   y1 <- as.vector(tmp0$residuals)
   # Now regress y1 on X1, find PY candidates
   if(control$corr.b) dee <- dee*(1-p/n)
@@ -317,31 +335,30 @@ SMPY <- function(mf, y, control, split) {
 # Matias, I hard coded the parameters for pyinit because I wasn't sure how to handle changing
 # the rho function. We had discussed always using bisquare in pyinit.
 
-  initial <- pyinit(intercept=FALSE, X=X1, y=y1,
-                    deltaesc=dee, cc.scale=3.44369,
-                    prosac=0.5*(1-(p/n)), clean.method="threshold",
-                    C.res = 2, prop=0.2,
-                    py.nit = 20, en.tol=1e-05,
-                    mscale.maxit = 50, mscale.tol = 1e-06,
-                    mscale.rho.fun="bisquare")
-
+  initial <- pyinit(intercept=FALSE, x=X1, y=y1,
+                    delta=dee, cc=control$tuning.chi,
+                    psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
+                    resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
+                    maxit = control$py_maxit, eps=control$py_eps,
+                    mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
+                    mscale_rho_fun=control$mscale_rho_fun)
   # choose best candidates including factors into consideration!
   # recompute scales adjusting for Z
   dee <- control$bb
   if(control$corr.b) dee <- dee*(1-(ncol(X1)+ncol(Z))/n)
-  kk <- dim(initial$initCoef)[2]
+  kk <- dim(initial$coefficients)[2]
   # do the first, then iterate over the rest looking for a better one
-  betapy <- initial$initCoef[,1]
+  betapy <- initial$coefficients[,1]
   r <- as.vector(y1 - X1 %*% betapy)
-  best.tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-  sspy <- mscale(u=best.tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+  best.tmp <- robustbase::lmrob.lar(x=Z, y=r, control = control, mf = NULL)
+  sspy <- mscale(u=best.tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
   for(i in 2:kk) {
-    r <- as.vector(y1 - X1 %*% initial$initCoef[,i])
-    tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-    s.cand <- mscale(u=tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+    r <- as.vector(y1 - X1 %*% initial$coefficients[,i])
+    tmp <- robustbase::lmrob.lar(x=Z, y=r, control = control, mf = NULL)
+    s.cand <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
     if( s.cand < sspy ) {
       sspy <- s.cand
-      betapy <- initial$initCoef[,i]
+      betapy <- initial$coefficients[,i]
       best.tmp <- tmp
     }
   }
@@ -359,8 +376,8 @@ SMPY <- function(mf, y, control, split) {
     yw <- y * sqrt(weights)
     beta <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
     r1 <- as.vector(y - X %*% beta)
-    tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
-    sih <- mscale(u=tmp$residuals, tol=control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
+    tmp <- robustbase::lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
+    sih <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
     if(sih < sspy) {
       sspy <- sih
       betapy <- beta
