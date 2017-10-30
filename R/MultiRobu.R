@@ -8,7 +8,7 @@
 #' @param type a string indicating which estimator to compute. Valid options
 #' are "Rocke" for Rocke's S-estimator, "MM" for an MM-estimator with a 
 #' SHR rho function, or "auto" (default) which selects "Rocke" if the number 
-#' of variables is less than 10, and "MM" otherwise.  
+#' of variables is greater than or equal to 10, and "MM" otherwise.  
 #'
 #' @return A list with the following components:
 #' \item{mu}{The location estimator}
@@ -23,8 +23,8 @@
 MultiRobu<-function(X,type="auto")  {
 if (type=="auto") {
   p=dim(X)[2]
-  if (p<15) {type="MM"
-  } else {type="MM"}
+  if (p<10) {type="MM"
+  } else {type="Rocke"}
 }  
   
  if (type=="Rocke") {
