@@ -12,7 +12,7 @@ MultiRobu(X, type = "auto")
 \item{type}{a string indicating which estimator to compute. Valid options
 are "Rocke" for Rocke's S-estimator, "MM" for an MM-estimator with a 
 SHR rho function, or "auto" (default) which selects "Rocke" if the number 
-of variables is less than 10, and "MM" otherwise.}
+of variables is greater than or equal to 10, and "MM" otherwise.}
 }
 \value{
 A list with the following components:
