@@ -161,7 +161,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       }
       # Check if there are factors
       if( control$initial=="SM" ) {
-        split <- robustbase::splitFrame(mf, x, control$split.type)
+        split <- splitFrame(mf, x, control$split.type)
         if (ncol(split$x1) == 0) {
           control$initial <- 'S'
           warning("No categorical variables found in model. Reverting to an MM-estimator.")
@@ -179,7 +179,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi)
       # compute robust R^2
       #s2 <- sum(rho(z$resid/z$scale, cc=z$control$tuning.psi))
-      s2 <- sum(rho(z$resid/z$scale, family = z$control$tuning.psi))
+      s2 <- sum(rho(z$resid/z$scale, family = control$tuning.psi))
       if( p != attr(mt, "intercept") ) {
         df.int <- if (attr(mt, "intercept"))
           1L
@@ -190,12 +190,12 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
 #                           conv=1, cc=z$control$tuning.psi, step='M')$beta.rw)
           tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
                            initial.scale=z$scale, k=500,
-                           conv=1, family = z$control$tuning.psi, step='M')$beta.rw)
+                           conv=1, family = control$tuning.psi, step='M')$beta.rw)
           #s02 <- sum(rho((y-tmp)/z$scale, cc=z$control$tuning.psi))
-          s02 <- sum(rho((y-tmp)/z$scale, family = z$control$tuning.psi))
+          s02 <- sum(rho((y-tmp)/z$scale, family = control$tuning.psi))
         } else {
           #s02 <- sum(rho(y/z$scale, cc=z$control$tuning.psi))
-          s02 <- sum(rho(y/z$scale, family = z$control$tuning.psi))
+          s02 <- sum(rho(y/z$scale, family = control$tuning.psi))
         }
         # INVTR2(tmp2$r.squared, tmp2$control$tuning.psi)
         r.squared <- NA #INVTR2( (s02 - s2)/s02, control$tuning.psi)
@@ -1152,7 +1152,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
       x <- x[,p1]
       attr(x, "assign") <- assign[p1] ## needed for splitFrame to work
     }
-    outL <- robustbase::lmrob.lar(x=x, y=y, control = control, mf = NULL)
+    outL <- lmrob.lar(x=x, y=y, control = control, mf = NULL)
     resL <- sort(abs(outL$resid))
     p <- length(outL$coef)
     n <- length(outL$resid)
@@ -1172,6 +1172,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
 
     rb.ctl <- lmrob.control(psi = control$tuning.psi$name,
                             tuning.psi = control$tuning.psi$cc,
+                            method = "M",
                             cov = ".vcov.w")
     z <- lmrob.fit(x, y, rb.ctl, initial, mf)
   } else { ## rank 0

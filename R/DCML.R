@@ -48,7 +48,7 @@ mscale <- function(u, tol=1e-6, delta=.5, max.it=100, tuning.chi) {
   s0 <- median(abs(u))/.6745
   err <- tol + 1
   it <- 0
-  while( (err > tol) & ( it < max.it) ) {
+  while( (err > tol) && ( it < max.it) ) {
     it <- it+1
     s1 <- sqrt( s0^2 * mean(rho((u/s0), family = tuning.chi)) / delta )
     err <- abs(s1-s0)/s0
@@ -188,18 +188,19 @@ MMPY <- function(X, y, control, mf) {
 
 
    a <- pyinit(x=X, y=y, intercept=FALSE, delta=dee,
-               cc=control$tuning.chi,
+               cc=1.54764,
                psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
                resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
                maxit = control$py_maxit, eps=control$py_eps,
                mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
-               mscale_rho_fun=control$mscale_rho_fun)
+               mscale_rho_fun="bisquare")
    # refine the PY candidates to get something closer to an S-estimator for y ~ X1
    kk <- dim(a$coefficients)[2]
    best.ss <- +Inf
+
    for(i in 1:kk) {
-     tmp <- refine.sm(x=X, y=y, initial.beta=a$initCoef[,i],
-                      initial.scale=a$objF[i],
+     tmp <- refine.sm(x=X, y=y, initial.beta=a$coefficients[,i],
+                      initial.scale=a$objective[i],
                       k=control$refine.PY, conv=1, b=dee, family=control$tuning.chi, step='S')
      if(tmp$scale.rw < best.ss) {
        best.ss <- tmp$scale.rw # initial$objF[1]
@@ -304,7 +305,7 @@ SMPY <- function(mf, y, control, split) {
     control <- lmrobdet.control(tuning.chi = 1.5477, bb = 0.5, tuning.psi = 3.4434)
   # int.present <- (attr(attr(mf, 'terms'), 'intercept') == 1)
   if(missing(split)) {
-    split <- robustbase::splitFrame(mf, type=control$split.type)
+    split <- splitFrame(mf, type=control$split.type)
   }
   # step 1 - build design matrices, x1 = factors, x2 = continuous, intercept is in x1
   Z <- split$x1
@@ -316,10 +317,10 @@ SMPY <- function(mf, y, control, split) {
   dee <- control$bb
   gamma <- matrix(NA, q, p)
   # Eliminate Z from ea. column of X with L1 regression, result goes in X1
-  for( i in 1:p) gamma[,i] <- coef( robustbase::lmrob.lar(x=Z, y=X[,i], control = control, mf = NULL) ) # coef(rq(X[,i]~Z-1))
+  for( i in 1:p) gamma[,i] <- coef( lmrob.lar(x=Z, y=X[,i], control = control, mf = NULL) ) # coef(rq(X[,i]~Z-1))
   X1 <- X - Z %*% gamma
   # Eliminate Z from y, L1 regression, result goes in y1
-  tmp0 <- robustbase::lmrob.lar(x=Z, y=y, control = control, mf = NULL)
+  tmp0 <- lmrob.lar(x=Z, y=y, control = control, mf = NULL)
   y1 <- as.vector(tmp0$residuals)
   # Now regress y1 on X1, find PY candidates
   if(control$corr.b) dee <- dee*(1-p/n)
@@ -336,12 +337,12 @@ SMPY <- function(mf, y, control, split) {
 # the rho function. We had discussed always using bisquare in pyinit.
 
   initial <- pyinit(intercept=FALSE, x=X1, y=y1,
-                    delta=dee, cc=control$tuning.chi,
+                    delta=dee, cc=1.54764,
                     psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
                     resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
                     maxit = control$py_maxit, eps=control$py_eps,
                     mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
-                    mscale_rho_fun=control$mscale_rho_fun)
+                    mscale_rho_fun="bisquare")
   # choose best candidates including factors into consideration!
   # recompute scales adjusting for Z
   dee <- control$bb
@@ -350,11 +351,11 @@ SMPY <- function(mf, y, control, split) {
   # do the first, then iterate over the rest looking for a better one
   betapy <- initial$coefficients[,1]
   r <- as.vector(y1 - X1 %*% betapy)
-  best.tmp <- robustbase::lmrob.lar(x=Z, y=r, control = control, mf = NULL)
+  best.tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
   sspy <- mscale(u=best.tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
   for(i in 2:kk) {
     r <- as.vector(y1 - X1 %*% initial$coefficients[,i])
-    tmp <- robustbase::lmrob.lar(x=Z, y=r, control = control, mf = NULL)
+    tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
     s.cand <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
     if( s.cand < sspy ) {
       sspy <- s.cand
@@ -376,7 +377,7 @@ SMPY <- function(mf, y, control, split) {
     yw <- y * sqrt(weights)
     beta <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
     r1 <- as.vector(y - X %*% beta)
-    tmp <- robustbase::lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
+    tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
     sih <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
     if(sih < sspy) {
       sspy <- sih
@@ -397,6 +398,8 @@ SMPY <- function(mf, y, control, split) {
   control$cov <- ".vcov.w"
   control$subsampling <- 'simple'
   # lmrob() sets the above when is.list(init)==TRUE
+  control$psi <- control$tuning.psi$name
+  control$tuning.psi <- control$tuning.psi$cc
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
   return(outlmrob) #, init.SMPY=uu))
 }
