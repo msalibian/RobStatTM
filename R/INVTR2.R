@@ -1,7 +1,24 @@
+#' Robust R^2 coefficient of determination
+#'
+#' This function computes a robust version of the R^2 coefficient of determination. 
+#'
+#' This function computes a robust version of the R^2 coefficient. It currently only
+#' works for MM regression estimators computed with a rho function in Tukey's 
+#' bisquare family. 
+#'
+#' @param RR2 the robust R^2
+#' @param cc the tuning constant for the rho function 
+#'
+#' @return The robust R^2 coefficient of determination.
+#' 
+#' @rdname INVTR2
+#' @author Victor Yohai
+#' @references \url{http://thebook}
+#'
+#' @export
 INVTR2 <- function(RR2, cc) {
-  # given de robust R^2 (RR2) compute the classic (R2) as the inverse of TR2 
-  # cc is the tuning constant of the loss rho function
-  TR2 <- function(R2, cc) {
+
+    TR2 <- function(R2, cc) {
     a <- Erhobic(cc)
     b <- Erhobic( cc*sqrt(1-R2))
     return( (b-a)/ (b*(1-a)) )
