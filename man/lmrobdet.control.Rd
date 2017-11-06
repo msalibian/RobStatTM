@@ -4,8 +4,8 @@
 \alias{lmrobdet.control}
 \title{Tuning parameters for lmrobdet}
 \usage{
-lmrobdet.control(seed = NULL, tuning.chi = 1.5477, bb = 0.5,
-  tuning.psi = 3.4434, max.it = 100, refine.tol = 1e-07,
+lmrobdet.control(seed = NULL, bb = 0.5, efficiency = 0.85,
+  tuning.psi = bisquare(efficiency), max.it = 100, refine.tol = 1e-07,
   rel.tol = 1e-07, refine.PY = 10, solve.tol = 1e-07, trace.lev = 0,
   mts = 1000, compute.rd = FALSE, psi = "bisquare", corr.b = TRUE,
   split.type = "f", initial = "S", psc_keep = 0.5,
@@ -15,11 +15,6 @@ lmrobdet.control(seed = NULL, tuning.chi = 1.5477, bb = 0.5,
 }
 \arguments{
 \item{seed}{\code{NULL}}
-
-\item{tuning.chi}{tuning constant for the function used to compute the M-scale
-for the S-estimator. For the estimator to be consistent it needs to
-be matched with the value of \code{bb} below. It defaults to 1.5477, which
-together with \code{bb = 0.5} yields an estimator with maximum breakdown point.}
 
 \item{bb}{tuning constant (between 0 and 1) for the M-scale used to compute the initial S-estimator. It
 determines the robusness (breakdown point) of the resulting MM-estimator, which is
@@ -79,6 +74,11 @@ be removed. See \code{\link{pyinit}}.}
 \item{mscale_tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.}
 
 \item{mscale_rho_fun}{String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.}
+
+\item{tuning.chi}{tuning constant for the function used to compute the M-scale
+for the S-estimator. For the estimator to be consistent it needs to
+be matched with the value of \code{bb} below. It defaults to 1.5477, which
+together with \code{bb = 0.5} yields an estimator with maximum breakdown point.}
 }
 \value{
 A list with the necessary tuning parameters.
