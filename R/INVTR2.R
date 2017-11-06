@@ -1,9 +1,10 @@
 INVTR2 <- function(RR2, cc) {
-
+  # given de robust R^2 (RR2) compute the classic (R2) as the inverse of TR2 
+  # cc is the tuning constant of the loss rho function
   TR2 <- function(R2, cc) {
     a <- Erhobic(cc)
     b <- Erhobic( cc*sqrt(1-R2))
-    return(RR2 <- (b-a)/b )
+    return( (b-a)/ (b*(1-a)) )
   }
   
   # compute E(rho(u,cc)), rho is the bisquare function
@@ -13,7 +14,7 @@ INVTR2 <- function(RR2, cc) {
     a4 <- (-2)*(cc^3)*dnorm(cc)+3*a2
     a6 <- (-2)*(cc^5)*dnorm(cc)+5*a4
     dd <- (a6/cc^6)+(3*a2/cc^2)-(3*a4/cc^4)+1-a0
-    dd
+    return( dd )
   }
   
   
@@ -22,15 +23,15 @@ INVTR2 <- function(RR2, cc) {
   
   aa <- TR2(.99999999, cc)
   bb <- TR2(.00000001, cc)
-  if(RR2>aa) R2 <- 1
-  if (RR2<bb) R2 <- 0 
-  if( (RR2<=aa) & (RR2>=bb) ) 
-    R2 <- uniroot(ff,c( .000000001,.999999999),y=RR2,cc=cc)$root
+  if( RR2 > .99999999 ) R2 <- 1
+  if ( RR2 < bb ) R2 <- 0 
+  if( (RR2 <= .99999999) & (RR2 >= bb) ) 
+    R2 <- uniroot(ff, c(bb/2, aa+((1-aa)/2)), y=RR2, cc=cc)$root #R2 <- uniroot(ff,c( .000000001,.999999999),y=RR2,cc=cc)$root
   return(R2)
 }
 
 
-INVTR2(0.7367034,3.44)
+# INVTR2(0.7367034,3.44)
 
  
 
