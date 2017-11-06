@@ -6,10 +6,10 @@
 #' works for MM regression estimators computed with a rho function in Tukey's 
 #' bisquare family. 
 #'
-#' @param RR2 the robust R^2
+#' @param RR2 the proportional difference in loss functions (a naive robust R^2 coefficient). 
 #' @param cc the tuning constant for the rho function 
 #'
-#' @return The robust R^2 coefficient of determination.
+#' @return An unbiased version of the robust R^2 coefficient of determination.
 #' 
 #' @rdname INVTR2
 #' @author Victor Yohai
