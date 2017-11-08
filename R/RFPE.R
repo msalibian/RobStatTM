@@ -15,34 +15,38 @@
 #' @seealso \code{\link{lmrobdet}}
 #'
 #' @export
-lmrobdet.RFPE <- function (object, scale = NULL)
+lmrobdet.RFPE <- function(object, scale = NULL)
 {
   if (!object$converged)
     warning("The algorithm did not converge, inference is not recommended.")
-  ocm <- tolower(object$control$method)
-  nocm <- nchar(ocm)
-  if(substr(ocm, nocm, nocm) != "m")
-    stop("RFPE is only available for MM-estimates.")
+  # ocm <- tolower(object$control$method)
+  # nocm <- nchar(ocm)
+  # if(substr(ocm, nocm, nocm) != "m")
+  #   stop("RFPE is only available for MM-estimates.")
   # if ( (casefold(object$control$method) != "sm") ) { # & (casefold(object$control$method) != "m-sm") )
   #   stop("RFPE is only available for MM-estimates.")
   p <- length(object$coef)
   if (is.null(scale))
     scale <- object$scale
   res <- residuals(object)/scale
-  psif <- object$control$psi
-  tun <- object$control$tuning.psi
+  # psif <- object$control$psi
+  # tun <- object$control$tuning.psi
   # efficiency <- object$robust.control$efficiency
   # if (casefold(psif[2]) == "optimal")
   #   ipsi <- 1
   # else ipsi <- 2
   # yc <- object$yc
   # wf <- .Mwgt.psi1(psi=psif, cc=tun)
-  a <- sum(Mpsi(x=res, cc=tun, psi=psif, deriv=-1))
-  b <- p * sum(Mpsi(x=res, cc=tun, psi=psif, deriv=0)^2)
-  d <- sum(Mpsi(x=res, cc=tun, psi=psif, deriv=1))
+  # a <- sum(Mpsi(x=res, cc=tun, psi=psif, deriv=-1))
+  # b <- p * sum(Mpsi(x=res, cc=tun, psi=psif, deriv=0)^2)
+  # d <- sum(Mpsi(x=res, cc=tun, psi=psif, deriv=1))
+  a <- sum(rho(u=res, family=object$control$tuning.psi))
+  b <- p * sum(rhoprime(u=res, family=object$control$tuning.psi)^2)
+  d <- sum(rhoprime2(u=res, family=object$control$tuning.psi))
+  tun <- object$control$tuning.psi$cc
   if (d <= 0)
     return(NA)
-  (a + b/d)*6 / tun^2
+  return( (a + b/d)*6 / tun^2 )
 }
 
 
@@ -80,15 +84,15 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 {
   # if ( (casefold(object$control$method) != "sm") ) # & (casefold(object$control$method) != "m-sm") )
   #   stop("drop1 is only available for MM-estimates.")
-  ocm <- tolower(object$MM$control$method)
-  nocm <- nchar(ocm)
-  if(substr(ocm, nocm, nocm) != "m")
-    stop("RFPE is only available for MM-estimates.")
-  if (!object$MM$converged)
+  # ocm <- tolower(object$control$method) #MM$control$method)
+  # nocm <- nchar(ocm)
+  # if(substr(ocm, nocm, nocm) != "m")
+  #   stop("RFPE is only available for MM-estimates.")
+  if (!object$converged) #MM$converged)
     stop("The algorithm did not converge, inference is not recommended.")
-  x <- model.matrix(object$MM)
+  x <- model.matrix(object) #$MM)
   asgn <- attr(x, "assign")
-  term.labels <- attr(object$MM$terms, "term.labels")
+  term.labels <- attr(object$terms, "term.labels") #MM$terms
   dfs <- table(asgn[asgn > 0])
   names(dfs) <- term.labels
   # psif <- object$control$psi # psif <- object$robust.control$weight
@@ -104,7 +108,7 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
   dfs <- dfs[scope]
   k <- length(scope)
   if (missing(scale))
-    scale <- object$MM$scale
+    scale <- object$scale #MM$scale
   if (!missing(keep)) {
     max.keep <- c("coefficients", "fitted", "residuals")
     if (is.logical(keep) && keep)
@@ -122,20 +126,20 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
   for (i in 1:k) {
       curfrm <- as.formula(paste(".~.-", scope[[i]]))
       curobj <- update(object, curfrm)
-      rfpe[i] <- lmrobdet.RFPE(curobj$MM, scale)
+      rfpe[i] <- lmrobdet.RFPE(curobj, scale) #$MM, scale)
       if (length(keep)) {
-        value[i, 1] <- list(curobj$MM$coefficients)
-        value[i, 2] <- list(curobj$MM$fitted)
-        value[i, 3] <- list(curobj$MM$residuals)
+        value[i, 1] <- list(curobj$coefficients) #MM$coefficients)
+        value[i, 2] <- list(curobj$fitted) #MM$fitted)
+        value[i, 3] <- list(curobj$residuals) #MM$residuals)
       }
     }
   scope <- c("<none>", scope)
   dfs <- c(0, dfs)
-  rfpe <- c(lmrobdet.RFPE(object$MM, scale), rfpe)
+  rfpe <- c(lmrobdet.RFPE(object, scale), rfpe) #MM, scale), rfpe)
   dfs[1] <- NA
   aod <- data.frame(Df = dfs, RFPE = rfpe, row.names = scope,
                     check.names = FALSE)
-  head <- c("\nSingle term deletions", "\nModel:", deparse(as.vector(formula(object$MM))))
+  head <- c("\nSingle term deletions", "\nModel:", deparse(as.vector(formula(object)))) #$MM))))
   if (!missing(scale))
     head <- c(head, paste("\nscale: ", format(scale), "\n"))
   oldClass(aod) <- c("anova", "data.frame")
@@ -247,10 +251,10 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     backward <- TRUE
     forward <- FALSE
   }
-  m <- model.frame(object$MM)
-  obconts <- object$MM$contrasts
-  objectcall <- object$MM$call
-  control <- object$MM$control
+  m <- model.frame(object) #object$MM)
+  obconts <- object$contrasts #$MM$contrasts
+  objectcall <- object$call #MM$call
+  control <- object$control #MM$control
   # if (forward) {
   #   add.rhs <- paste(dimnames(fadd)[[2]], collapse = "+")
   #   add.rhs <- eval(parse(text = paste("~ . +", add.rhs)))
@@ -279,10 +283,10 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     keep.list <- vector("list", steps)
     nv <- 1
   }
-  n <- length(object$MM$fitted)
-  scale <- object$MM$scale
+  n <- length(object$fitted) #MM$fitted)
+  scale <- object$scale #MM$scale
   fit <- object
-  bRFPE <- lmrobdet.RFPE(fit$MM)
+  bRFPE <- lmrobdet.RFPE(fit) #$MM)
   nm <- 1
   Terms <- fit$terms
   if (trace)
