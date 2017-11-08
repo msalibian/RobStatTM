@@ -403,3 +403,45 @@ SMPY <- function(mf, y, control, split) {
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
   return(outlmrob) #, init.SMPY=uu))
 }
+
+
+# splitFrame <- function (mf, x = model.matrix(mt, mf), type = c("f", "fi", "fii")) 
+# {
+#   mt <- attr(mf, "terms")
+#   type <- match.arg(type)
+#   x <- as.matrix(x)
+#   p <- ncol(x)
+#   factors <- attr(mt, "factors")
+#   factor.idx <- attr(mt, "dataClasses") == "factor"
+#   if (!any(factor.idx)) 
+#     return(list(x1.idx = rep.int(FALSE, p), x1 = matrix(, 
+#                                                         nrow(x), 0L), x2 = x))
+#   switch(type, fi = {
+#     factor.asgn <- which(factor.idx %*% factors > 0)
+#   }, fii = {
+#     factor.asgn <- numeric(0)
+#     factors.cat <- factors
+#     factors.cat[factors.cat > 0] <- 1L
+#     factors.cat[, factor.idx %*% factors == 0] <- 0L
+#     for (i in 1:ncol(factors)) {
+#       comp <- factors[, i] > 0
+#       if (any(factor.idx[comp])) {
+#         factor.asgn <- c(factor.asgn, i)
+#       } else {
+#         tmp <- colSums(factors.cat[comp, , drop = FALSE]) >= 
+#           sum(comp)
+#         if (any(tmp)) {
+#           if (!all(colSums(factors[!factor.idx & !comp, 
+#                                    tmp, drop = FALSE]) > 0)) factor.asgn <- c(factor.asgn, 
+#                                                                               i)
+#         }
+#       }
+#     }
+#   }, f = {
+#     factor.asgn <- which(factor.idx %*% factors & !(!factor.idx) %*% 
+#                            factors)
+#   }, stop("unknown split type"))
+#   x1.idx <- attr(x, "assign") %in% c(0, factor.asgn)
+#   names(x1.idx) <- colnames(x)
+#   list(x1 = x[, x1.idx, drop = FALSE], x1.idx = x1.idx, x2 = x[, !x1.idx, drop = FALSE])
+# }
