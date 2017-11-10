@@ -337,15 +337,16 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
 #' @rdname lmrobdet.control
 #' @param seed \code{NULL}
 #' @param tuning.chi tuning constant for the function used to compute the M-scale
-#' for the S-estimator. For the estimator to be consistent it needs to
-#' be matched with the value of \code{bb} below. It defaults to 1.5477, which
-#' together with \code{bb = 0.5} yields an estimator with maximum breakdown point.
-#' @param bb tuning constant (between 0 and 1) for the M-scale used to compute the initial S-estimator. It
+#' for the S-estimator. It is currently computed inside \code{lmrobdet.control} to match
+#' the value of \code{bb} below according to the family of rho functions used to specify \code{tuning.psi}. 
+#' @param bb tuning constant (between 0 and 1/2) for the M-scale used to compute the initial S-estimator. It
 #' determines the robusness (breakdown point) of the resulting MM-estimator, which is
-#' \code{min(bb, 1-bb)}. Defaults to 0.5
-#' @param tuning.psi tuning constant for the re-descending M-estimator. Its default
-#' value (3.4434) returns an estimator with an asymptoti efficiency of 85% when errors
-#' have a normal distribution
+#' \code{bb}. Defaults to 0.5.
+#' @param tuning.psi tuning parameters for the re-descending M-estimator as computed by 
+#' a rho family function. Currently the following are implemented
+#' \code\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
+#' It defaults to \code{bisquare(0.85)} which corresponds to an estimator with 85% 
+#' efficiency when errors have a normal distribution.
 #' @param max.it maximum number of IRWLS iterations for the MM-estimator
 #' @param refine.tol relative covergence tolerance for the S-estimator
 #' @param rel.tol relative covergence tolerance for the IRWLS iterations for the MM-estimator

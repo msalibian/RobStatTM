@@ -4,6 +4,19 @@
 FAMILY.NAMES <- c("bisquare", "modified.optimal", "optimal")
 
 
+#' Tukey bisquare rho object
+#'
+#' @param efficiency the desired efficiency of the corresponding regression 
+#' estimator for Gaussian errors
+#' @param breakdown.point the desired breakdown of the associated regression 
+#' estimator
+#'
+#' @return A list with elements \code{name} (the string 'bisquare') and the corresponding tuning
+#' constant \code{cc}
+#'
+#' @rdname rho
+#' @author Kjell Konis
+#'
 #' @export
 bisquare <- function(efficiency, breakdown.point)
 {
@@ -15,6 +28,17 @@ bisquare <- function(efficiency, breakdown.point)
   list(name = "bisquare", cc = cc)
 }
 
+#' Optimal rho function object
+#'
+#' @param e the desired efficiency of the corresponding regression 
+#' estimator for Gaussian errors
+#'
+#' @return A list with elements \code{name} (the string 'optimal') and the corresponding tuning
+#' constant \code{cc}
+#'
+#' @rdname rho
+#' @author Kjell Konis
+#'
 #' @export
 optimal <- function(e)
 {
@@ -27,6 +51,17 @@ optimal <- function(e)
 }
 
 
+#' Modified optimal rho function object
+#'
+#' @param e the desired efficiency of the corresponding regression 
+#' estimator for Gaussian errors
+#'
+#' @return A list with elements \code{name} (the string 'modified.optimal') and the corresponding tuning
+#' constant \code{cc}
+#'
+#' @rdname rho
+#' @author Kjell Konis
+#'
 #' @export
 modified.optimal <- function(e)
 {
@@ -43,9 +78,11 @@ modified.optimal <- function(e)
 #' Tukey bisquare rho function
 #'
 #' @param u point or vector at which rho is to be evaluated
-#' @param cc tuning parameter
+#' @param family tuning parameters as computed by 
+#' a rho family function. Currently the following are implemented
+#' \code\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
 #'
-#' @return The value of \code{rho_cc} at \code{u}
+#' @return The value of \code{rho} at \code{u}
 #'
 #' @rdname rho
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
@@ -64,10 +101,12 @@ rho <- function(u, family, standardize = TRUE)
 
 #' The first derivative of Tukeys bisquare rho function
 #'
-#' @param r scalar or vector at which the derivative of rho is to be evaluated
-#' @param cc tuning parameter
+#' @param u scalar or vector at which the derivative of rho is to be evaluated
+#' @param family tuning parameters as computed by 
+#' a rho family function. Currently the following are implemented
+#' \code\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
 #'
-#' @return The value of the first derivative \code{rho_cc} evaluated at \code{r}
+#' @return The value of the first derivative \code{rho} evaluated at \code{u}
 #'
 #' @rdname rhoprime
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
@@ -86,10 +125,12 @@ rhoprime <- function(u, family, standardize = FALSE)
 
 #' The second derivative of Tukey bisquare rho function
 #'
-#' @param r scalar or vector at which the second derivative of rho is to be evaluated
-#' @param cc tuning parameter
+#' @param u scalar or vector at which the second derivative of rho is to be evaluated
+#' @param family tuning parameters as computed by 
+#' a rho family function. Currently the following are implemented
+#' \code\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
 #'
-#' @return The value of the second derivative of \code{rho_cc} evaluated at \code{r}
+#' @return The value of the second derivative of \code{rho} evaluated at \code{u}
 #'
 #' @rdname rhoprime2
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
