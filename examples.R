@@ -20,6 +20,23 @@ step.lmrobdet(m2)
 step.lmrobdet(m2.ls)
 step(lm(Y~., data=coleman), direction='backward') #, scale=2.074296) 
 
+## The rho functions and their scaling
+tt <- seq(-6, 6, length=500)
+uu <- rho(u=tt, family=bisquare(.9))
+plot(tt, uu, type='l')
+
+tt <- seq(-6, 6, length=500)
+uu <- rhoprime(u=tt, family=bisquare(.9))
+plot(tt, uu, type='l')
+
+rhoprime(u=1.5, family=bisquare(.9), standardize=TRUE)
+ep <- 1e-4
+(rho(u=1.5+ep, family=bisquare(.9)) -
+    rho(u=1.5-ep, family=bisquare(.9)) ) / (2*ep) 
+
+
+
+
 coef(m2)
 coef(m1)
 coef(m0)
