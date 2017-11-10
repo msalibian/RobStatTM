@@ -25,7 +25,11 @@
 #' @param tol relative tolerance for convergence
 #' @param max.it maximum number of iterations allowed
 #' @param delta the right hand side of the M-scale equation
-#' @param tuning.chi the tuning constant for the rho function
+#' @param tuning.chi the tuning object for the rho function as returned
+#' by \code{\link{lmrobdet.control}}. By default it returns the parameters
+#' that yield a consistent estimator for Gaussian observations with
+#' breakdown point equal to \code{delta}. 
+#' 
 #'
 #' @return The scale estimate value at the last iteration or at convergence.
 #'
@@ -40,7 +44,7 @@
 #' sd(r)
 #'
 #' @export
-mscale <- function(u, tol=1e-6, delta=.5, max.it=100, tuning.chi) {
+mscale <- function(u, tol=1e-6, delta=.5, max.it=100, tuning.chi=lmrobdet.control(bb=delta)$tuning.chi) {
   # M-scale of a sample u
   # tol: accuracy
   # delta: breakdown point (right side)
