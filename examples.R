@@ -36,13 +36,13 @@ p <- length(object$coef)
 scale <- object$scale
 res <- residuals(object)/scale
 a <- mean(rho(u=res, family=object$control$tuning.psi))
-b <- p * mean(rhoprime(u=res, family=object$control$tuning.psi, standardize=TRUE)^2)
-d <- mean(rhoprime2(u=res, family=object$control$tuning.psi, standardize=TRUE))
+b <- p * mean(rhoprime(u=res, family=object$control$tuning.psi)^2) #, standardize=TRUE)^2)
+d <- mean(rhoprime2(u=res, family=object$control$tuning.psi)) #, standardize=TRUE))
 tun <- object$control$tuning.psi$cc
 a2 <- mean(rho(u=res, family=object$control$tuning.psi, standardize=TRUE))
 b2 <- p * mean(rhoprime(u=res, family=object$control$tuning.psi, standardize=TRUE)^2)
 d2 <- mean(rhoprime2(u=res, family=object$control$tuning.psi, standardize=TRUE))
-((a+b/d))
+((a+b/d*6/tun^2))
 ((a2+b2/d2))
 
 
@@ -50,7 +50,7 @@ d2 <- mean(rhoprime2(u=res, family=object$control$tuning.psi, standardize=TRUE))
 
 ## The rho functions and their scaling
 tt <- seq(-6, 6, length=500)
-uu <- rho(u=tt, family=bisquare(.9))
+uu <- rho(u=tt, family=bisquare(.9), standardize=TRUE)
 plot(tt, uu, type='l')
 
 tt <- seq(-6, 6, length=500)
