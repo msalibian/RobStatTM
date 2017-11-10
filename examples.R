@@ -13,6 +13,12 @@ m3 <- lmrobdet(Y~sstatus, data=coleman)
 step.lmrobdet(m3)
 m4 <- lmrobdet(Y ~ 1, data=coleman)
 
+m2 <- lmrobdet(Y ~ ., data=coleman)
+m2.ls <- lmrobdet(Y ~ ., data=coleman, control=lmrobdet.control(tuning.psi=bisquare(.999), 
+                  bb=.02))
+step.lmrobdet(m2)
+step.lmrobdet(m2.ls)
+step(lm(Y~., data=coleman), direction='backward') #, scale=2.074296) 
 
 coef(m2)
 coef(m1)
