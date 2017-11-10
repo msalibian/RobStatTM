@@ -95,47 +95,6 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
   return(V)
 }
 
-
-
-#rhoint <- function(e)
-#  return(integrate(function(a, cc) rho(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value)
-
-
-  # won't work with new family structure
-#find.tuning.chi <- function(delta, low=.5, upp=10) {
-#  return( uniroot( function(e) (rhoint(e)-delta), lower=low, upper=upp)$root )
-#}
-
-
-#' The first derivative of Tukeys bisquare rho function
-#'
-#' @param u scalar or vector at which the derivative of rho is to be evaluated
-#' @param cc tuning parameter
-#'
-#' @return The value of the first derivative \code{rho_cc} evaluated at \code{r}
-#'
-#' @rdname rhoprime
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#'
-#' @export
-#rhoprime <- function(u, cc = 1.5477, family = "bisquare")
-#{
-#  family <- match.arg(family, choices = FAMILIES)
-#  Mpsi(u, cc = cc, psi = family, deriv = 0)
-#}
-
-
-
-
-# effi <- function(e) {
-#   a <- integrate(function(a, cc) (rhoprime(a, cc)^2)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value
-#   b <- integrate(function(a, cc) rhoprime2(a, cc)*dnorm(a), cc=e, lower=-Inf, upper=+Inf)$value
-#   return( 1/(a/b^2) ) # efficiency!
-# }
-#
-# uniroot( function(e) (effi(e)-.85), lower=3, upper=4)$root
-
-
 #' MM regression estimator using Pen~a-Yohai candidates
 #'
 #' This function computes MM-regression estimator using Pen~a-Yohai
