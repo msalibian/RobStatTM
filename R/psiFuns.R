@@ -80,7 +80,7 @@ modified.optimal <- function(e)
 #' @param u point or vector at which rho is to be evaluated
 #' @param family tuning parameters as computed by 
 #' a rho family function. Currently the following are implemented
-#' \code\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
+#' \code{\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
 #'
 #' @return The value of \code{rho} at \code{u}
 #'
@@ -104,7 +104,7 @@ rho <- function(u, family, standardize = TRUE)
 #' @param u scalar or vector at which the derivative of rho is to be evaluated
 #' @param family tuning parameters as computed by 
 #' a rho family function. Currently the following are implemented
-#' \code\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
+#' \code{\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
 #'
 #' @return The value of the first derivative \code{rho} evaluated at \code{u}
 #'
@@ -128,7 +128,7 @@ rhoprime <- function(u, family, standardize = FALSE)
 #' @param u scalar or vector at which the second derivative of rho is to be evaluated
 #' @param family tuning parameters as computed by 
 #' a rho family function. Currently the following are implemented
-#' \code\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
+#' \code{\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
 #'
 #' @return The value of the second derivative of \code{rho} evaluated at \code{u}
 #'

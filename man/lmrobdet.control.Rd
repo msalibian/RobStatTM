@@ -16,13 +16,14 @@ lmrobdet.control(seed = NULL, bb = 0.5, efficiency = 0.85,
 \arguments{
 \item{seed}{\code{NULL}}
 
-\item{bb}{tuning constant (between 0 and 1) for the M-scale used to compute the initial S-estimator. It
+\item{bb}{tuning constant (between 0 and 1/2) for the M-scale used to compute the initial S-estimator. It
 determines the robusness (breakdown point) of the resulting MM-estimator, which is
-\code{min(bb, 1-bb)}. Defaults to 0.5}
+\code{bb}. Defaults to 0.5.}
 
-\item{tuning.psi}{tuning constant for the re-descending M-estimator. Its default
-value (3.4434) returns an estimator with an asymptoti efficiency of 85% when errors
-have a normal distribution}
+\item{tuning.psi}{tuning parameters for the re-descending M-estimator as computed by a rho family function. Currently the following are implemented
+\link{bisquare}, \link{optimal}, and \link{modified.optimal}. 
+It defaults to \code{bisquare(0.85)} which corresponds to an estimator with 85% 
+efficiency when errors have a normal distribution.}
 
 \item{max.it}{maximum number of IRWLS iterations for the MM-estimator}
 
@@ -76,9 +77,8 @@ be removed. See \code{\link{pyinit}}.}
 \item{mscale_rho_fun}{String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.}
 
 \item{tuning.chi}{tuning constant for the function used to compute the M-scale
-for the S-estimator. For the estimator to be consistent it needs to
-be matched with the value of \code{bb} below. It defaults to 1.5477, which
-together with \code{bb = 0.5} yields an estimator with maximum breakdown point.}
+for the S-estimator. It is currently computed inside \code{lmrobdet.control} to match
+the value of \code{bb} below according to the family of rho functions used to specify \code{tuning.psi}.}
 }
 \value{
 A list with the necessary tuning parameters.

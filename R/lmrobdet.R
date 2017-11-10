@@ -49,7 +49,7 @@
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
 #' @references \url{http://thebook}
-#' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
+#' @seealso \link{DCML}, \link{MMPY}, \link{SMPY}
 #'
 #' @examples
 #' data(coleman)
@@ -342,9 +342,8 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
 #' @param bb tuning constant (between 0 and 1/2) for the M-scale used to compute the initial S-estimator. It
 #' determines the robusness (breakdown point) of the resulting MM-estimator, which is
 #' \code{bb}. Defaults to 0.5.
-#' @param tuning.psi tuning parameters for the re-descending M-estimator as computed by 
-#' a rho family function. Currently the following are implemented
-#' \code\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}. 
+#' @param tuning.psi tuning parameters for the re-descending M-estimator as computed by a rho family function. Currently the following are implemented
+#' \link{bisquare}, \link{optimal}, and \link{modified.optimal}. 
 #' It defaults to \code{bisquare(0.85)} which corresponds to an estimator with 85% 
 #' efficiency when errors have a normal distribution.
 #' @param max.it maximum number of IRWLS iterations for the MM-estimator

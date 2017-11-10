@@ -7,12 +7,14 @@
 rhoprime2(u, family, standardize = FALSE)
 }
 \arguments{
-\item{r}{scalar or vector at which the second derivative of rho is to be evaluated}
+\item{u}{scalar or vector at which the second derivative of rho is to be evaluated}
 
-\item{cc}{tuning parameter}
+\item{family}{tuning parameters as computed by 
+a rho family function. Currently the following are implemented
+\code{\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}.}
 }
 \value{
-The value of the second derivative of \code{rho_cc} evaluated at \code{r}
+The value of the second derivative of \code{rho} evaluated at \code{u}
 }
 \description{
 The second derivative of Tukey bisquare rho function

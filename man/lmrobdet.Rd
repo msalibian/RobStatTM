@@ -79,7 +79,7 @@ m2 <- lmrobdet(Y ~ ., data=coleman)
 \url{http://thebook}
 }
 \seealso{
-\code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
+\link{DCML}, \link{MMPY}, \link{SMPY}
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
