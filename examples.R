@@ -20,6 +20,26 @@ step.lmrobdet(m2)
 step.lmrobdet(m2.ls)
 step(lm(Y~., data=coleman), direction='backward') #, scale=2.074296) 
 
+data(coleman, package='robustbase')
+m2 <- lmrobdet(Y ~ ., data=coleman)
+# lmrobdet.RFPE(m2)
+object <- m2
+p <- length(object$coef)
+scale <- object$scale
+res <- residuals(object)/scale
+a <- mean(rho(u=res, family=object$control$tuning.psi))
+b <- p * mean(rhoprime(u=res, family=object$control$tuning.psi, standardize=TRUE)^2)
+d <- mean(rhoprime2(u=res, family=object$control$tuning.psi, standardize=TRUE))
+tun <- object$control$tuning.psi$cc
+a2 <- mean(rho(u=res, family=object$control$tuning.psi, standardize=TRUE))
+b2 <- p * mean(rhoprime(u=res, family=object$control$tuning.psi, standardize=TRUE)^2)
+d2 <- mean(rhoprime2(u=res, family=object$control$tuning.psi, standardize=TRUE))
+((a+b/d))
+((a2+b2/d2))
+
+
+
+
 ## The rho functions and their scaling
 tt <- seq(-6, 6, length=500)
 uu <- rho(u=tt, family=bisquare(.9))
@@ -29,10 +49,18 @@ tt <- seq(-6, 6, length=500)
 uu <- rhoprime(u=tt, family=bisquare(.9))
 plot(tt, uu, type='l')
 
-rhoprime(u=1.5, family=bisquare(.9), standardize=TRUE)
+x0 <- .7
+eff <- .85
+rhoprime(u=x0, family=bisquare(eff), standardize=TRUE)
 ep <- 1e-4
-(rho(u=1.5+ep, family=bisquare(.9)) -
-    rho(u=1.5-ep, family=bisquare(.9)) ) / (2*ep) 
+(rho(u=x0+ep, family=bisquare(eff), standardize=TRUE) -
+    rho(u=x0-ep, family=bisquare(eff), standardize=TRUE) ) / (2*ep) 
+
+
+rhoprime2(u=x0, family=bisquare(eff), standardize=TRUE)
+ep <- 1e-4
+(rhoprime(u=x0+ep, family=bisquare(eff), standardize=TRUE) -
+    rhoprime(u=x0-ep, family=bisquare(eff), standardize=TRUE) ) / (2*ep) 
 
 
 

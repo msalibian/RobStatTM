@@ -40,13 +40,17 @@ lmrobdet.RFPE <- function(object, scale = NULL)
   # a <- sum(Mpsi(x=res, cc=tun, psi=psif, deriv=-1))
   # b <- p * sum(Mpsi(x=res, cc=tun, psi=psif, deriv=0)^2)
   # d <- sum(Mpsi(x=res, cc=tun, psi=psif, deriv=1))
-  a <- sum(rho(u=res, family=object$control$tuning.psi))
-  b <- p * sum(rhoprime(u=res, family=object$control$tuning.psi)^2)
-  d <- sum(rhoprime2(u=res, family=object$control$tuning.psi))
-  tun <- object$control$tuning.psi$cc
+  # a <- mean(rho(u=res, family=object$control$tuning.psi))
+  # b <- p * mean(rhoprime(u=res, family=object$control$tuning.psi)^2)
+  # d <- mean(rhoprime2(u=res, family=object$control$tuning.psi))
+  # tun <- object$control$tuning.psi$cc
+  a2 <- mean(rho(u=res, family=object$control$tuning.psi, standardize=TRUE))
+  b2 <- p * mean(rhoprime(u=res, family=object$control$tuning.psi, standardize=TRUE)^2)
+  d2 <- mean(rhoprime2(u=res, family=object$control$tuning.psi, standardize=TRUE))
+  print(c(a+b/d)*6/tun^2, (a2+b2/d2))
   if (d <= 0)
     return(NA)
-  return( (a + b/d)*6 / tun^2 )
+  return( (a2 + b2/d2) ) # (a + b/d)*6 / tun^2 )
 }
 
 
