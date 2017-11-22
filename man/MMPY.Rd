@@ -25,7 +25,7 @@ the argument \code{control}.
 \description{
 This function computes MM-regression estimator using Pen~a-Yohai
 candidates for the initial S-estimator. This function is used
-internally by \code{\link{lmrobdet}}, and not meant to be used
+internally by \code{\link{lmrobdetMM}}, and not meant to be used
 directly.
 }
 \references{

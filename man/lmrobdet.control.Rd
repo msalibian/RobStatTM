@@ -2,7 +2,7 @@
 % Please edit documentation in R/lmrobdet.R
 \name{lmrobdet.control}
 \alias{lmrobdet.control}
-\title{Tuning parameters for lmrobdet}
+\title{Tuning parameters for lmrobdetMM and lmrobdetDCML}
 \usage{
 lmrobdet.control(seed = NULL, bb = 0.5, efficiency = 0.85,
   tuning.psi = bisquare(efficiency), max.it = 100, refine.tol = 1e-07,

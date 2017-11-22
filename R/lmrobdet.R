@@ -52,11 +52,11 @@
 #' @seealso \link{DCML}, \link{MMPY}, \link{SMPY}
 #'
 #' @examples
-#' data(coleman)
-#' m2 <- lmrobdet(Y ~ ., data=coleman)
+#' data(coleman, package='robustbase')
+#' m2 <- lmrobdetMM(Y ~ ., data=coleman)
 #'
 #' @export
-lmrobdet <- function(formula, data, subset, weights, na.action,
+lmrobdetMM <- function(formula, data, subset, weights, na.action,
                    model = TRUE, x = !control$compute.rd, y = FALSE,
                    singular.ok = TRUE, contrasts = NULL, offset = NULL,
                    control = lmrobdet.control())
@@ -176,6 +176,7 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
       # re.dcml <- as.vector(y - x %*% beta.dcml)
       # si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
       n <- length(z$resid)
+      z$scale.S <- z$scale
       z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi)
       # compute robust R^2
       #s2 <- sum(rho(z$resid/z$scale, cc=z$control$tuning.psi))
@@ -321,12 +322,12 @@ lmrobdet <- function(formula, data, subset, weights, na.action,
   # class(z2$MM) <- "lmrob"
   # class(z2) <- "lmrobdet"
   # z2
-  class(z) <- c('lmrobdet', 'lmrob')
+  class(z) <- c('lmrobdetMM', 'lmrob')
   z
 }
 
 
-#' Tuning parameters for lmrobdet
+#' Tuning parameters for lmrobdetMM and lmrobdetDCML
 #'
 #' This function sets tuning parameters for the MM-based Distance Constrained
 #' Maximum Likelihood regression estimators computed by \code{lmrobdet}.
@@ -424,7 +425,7 @@ lmrobdet.control <- function(seed = NULL,
 
 
 #' @export
-print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
+print.lmrobdetMM <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
   # x <- x$DCML
   cat("\nCall:\n", cl <- deparse(x$call, width.cutoff=72), "\n", sep = "")
@@ -452,11 +453,11 @@ print.lmrobdet <- function(x, digits = max(3, getOption("digits") - 3), ...)
 
 
 #' @export
-summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
+summary.lmrobdetMM <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
 {
   # object <- object$DCML
   if (is.null(object$terms))
-    stop("invalid 'lmrobdet' object:  no terms component")
+    stop("invalid 'lmrobdetMM' object:  no terms component")
   p <- object$rank
   df <- object$df.residual #was $degree.freedom
   sigma <- object[["scale"]]
@@ -497,12 +498,12 @@ summary.lmrobdet <- function(object, correlation = FALSE, symbolic.cor = FALSE, 
   ans$sigma <- sigma # 'sigma': in summary.lm() & 'fit.models' pkg
   ans$r.squared <- object$r.squared
   ans$adj.r.squared <- object$adj.r.squared
-  structure(ans, class = "summary.lmrobdet")
+  structure(ans, class = "summary.lmrobdetMM")
 }
 
 
 #' @export
-print.summary.lmrobdet <- function (x, digits = max(3, getOption("digits") - 3),
+print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3),
                                   symbolic.cor = x$symbolic.cor,
                                   signif.stars = getOption("show.signif.stars"), ...)
 {
@@ -1005,7 +1006,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   # class(z2$MM) <- "lmrob"
   # class(z2) <- "lmrobdet"
   # z2
-  class(z) <- c('lmrobdetDMCL', 'lmrobdet', 'lmrob')
+  class(z) <- c('lmrobdetDMCL', 'lmrobdetMM', 'lmrob')
   z
 }
 

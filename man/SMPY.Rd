@@ -27,7 +27,7 @@ the argument \code{control}.
 This function computes a robust regression estimator when there
 are categorical / dummy explanatory variables. It uses Pen~a-Yohai
 candidates for the S-estimator. This function is used
-internally by \code{\link{lmrobdet}}, and not meant to be used
+internally by \code{\link{lmrobdetMM}}, and not meant to be used
 directly.
 }
 \references{

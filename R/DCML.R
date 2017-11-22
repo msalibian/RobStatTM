@@ -103,7 +103,7 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 #'
 #' This function computes MM-regression estimator using Pen~a-Yohai
 #' candidates for the initial S-estimator. This function is used
-#' internally by \code{\link{lmrobdet}}, and not meant to be used
+#' internally by \code{\link{lmrobdetMM}}, and not meant to be used
 #' directly.
 #'
 #' @param X design matrix
@@ -191,7 +191,7 @@ MMPY <- function(X, y, control, mf) {
 #' DCML regression estimator
 #'
 #' This function computes the DCML regression estimator. This function is used
-#' internally by \code{\link{lmrobdet}}, and not meant to be used
+#' internally by \code{\link{lmrobdetDCML}}, and not meant to be used
 #' directly.
 #'
 #' @param x design matrix
@@ -242,7 +242,7 @@ DCML <- function(x, y, z, z0, control) {
 #' This function computes a robust regression estimator when there
 #' are categorical / dummy explanatory variables. It uses Pen~a-Yohai
 #' candidates for the S-estimator. This function is used
-#' internally by \code{\link{lmrobdet}}, and not meant to be used
+#' internally by \code{\link{lmrobdetMM}}, and not meant to be used
 #' directly.
 #'
 #' @param mf model frame

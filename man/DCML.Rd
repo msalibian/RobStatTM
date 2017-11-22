@@ -27,7 +27,7 @@ a list with the following components
 }
 \description{
 This function computes the DCML regression estimator. This function is used
-internally by \code{\link{lmrobdet}}, and not meant to be used
+internally by \code{\link{lmrobdetDCML}}, and not meant to be used
 directly.
 }
 \references{

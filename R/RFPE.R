@@ -2,20 +2,20 @@
 #'
 #' This function computes the robust Final Prediction Errors (RFPE) for a robust regression fit using M-estimates.
 #'
-#' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdet}}.
+#' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdetMM}}.
 #' @param scale a numeric value specifying the scale estimate used to compute the RFPE. Usually this 
 #' should be the scale estimate from an encompassing model. If \code{NULL}, the scale estimate in 
 #' \code{object} is used.
 #'
 #' @return the robust final prediction error (numeric).
 #'
-#' @rdname lmrobdet.RFPE
+#' @rdname lmrobdetMM.RFPE
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
-#' @seealso \code{\link{lmrobdet}}
+#' @seealso \code{\link{lmrobdetMM}}
 #'
 #' @export
-lmrobdet.RFPE <- function(object, scale = NULL)
+lmrobdetMM.RFPE <- function(object, scale = NULL)
 {
   if (!object$converged)
     warning("The algorithm did not converge, inference is not recommended.")
@@ -54,12 +54,12 @@ lmrobdet.RFPE <- function(object, scale = NULL)
 
 
 
-#' RFPE of submodels of an \code{\link{lmrobdet}} fit
+#' RFPE of submodels of an \code{\link{lmrobdetMM}} fit
 #'
-#' This function computes the RFPE for the MM-estimators obtained with \code{\link{lmrobdet}} by
+#' This function computes the RFPE for the MM-estimators obtained with \code{\link{lmrobdetMM}} by
 #' recomputing it, successively removing each of a number of specified terms.
 #'
-#' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdet}}.
+#' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdetMM}}.
 #' @param scope an optional \code{formula} giving the terms to be considered for dropping. Typically 
 #' this argument is omitted, in which case all possible terms are dropped (without breaking hierarchy 
 #' rules). The \code{scope} can also be a character vector of term labels. If the argument is supplied as a 
@@ -77,13 +77,13 @@ lmrobdet.RFPE <- function(object, scale = NULL)
 #' In this case, the \code{"keep"} component is a matrix of mode \code{"list"}, with a column for each 
 #' subset model, and a row for each component kept.
 #'
-#' @rdname drop1.lmrobdet
+#' @rdname drop1.lmrobdetMM
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{lmrobdet}}
 #'
 #' @export
-drop1.lmrobdet <- function (object, scope, scale, keep)
+drop1.lmrobdetMM <- function (object, scope, scale, keep)
 {
   # if ( (casefold(object$control$method) != "sm") ) # & (casefold(object$control$method) != "m-sm") )
   #   stop("drop1 is only available for MM-estimates.")
@@ -129,7 +129,7 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
   for (i in 1:k) {
       curfrm <- as.formula(paste(".~.-", scope[[i]]))
       curobj <- update(object, curfrm)
-      rfpe[i] <- lmrobdet.RFPE(curobj, scale) #$MM, scale)
+      rfpe[i] <- lmrobdetMM.RFPE(curobj, scale) #$MM, scale)
       if (length(keep)) {
         value[i, 1] <- list(curobj$coefficients) #MM$coefficients)
         value[i, 2] <- list(curobj$fitted) #MM$fitted)
@@ -138,7 +138,7 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
     }
   scope <- c("<none>", scope)
   dfs <- c(0, dfs)
-  rfpe <- c(lmrobdet.RFPE(object, scale), rfpe) #MM, scale), rfpe)
+  rfpe <- c(lmrobdetMM.RFPE(object, scale), rfpe) #MM, scale), rfpe)
   dfs[1] <- NA
   aod <- data.frame(Df = dfs, RFPE = rfpe, row.names = scope,
                     check.names = FALSE)
@@ -160,10 +160,10 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 #' This function performs stepwise model selection on a robustly fitted
 #' linear model using the RFPE
 #' criterion and the robust regression estimators computed with
-#' \code{\link{lmrobdet}}. Only backwards stepwise is currently implemented.
+#' \code{\link{lmrobdetMM}}. Only backwards stepwise is currently implemented.
 #'
 #' Presently only backward stepwise selection is supported. During each step the 
-#' Robust Final Prediction Error (as computed by the function \code{lmrobdet.RFPE}) is 
+#' Robust Final Prediction Error (as computed by the function \code{lmrobdetMM.RFPE}) is 
 #' calculated for the current model and for each sub-model achievable by deleting a 
 #' single term. If the argument \code{whole.path} is \code{FALSE}, the function steps 
 #' to the sub-model with the lowest 
@@ -173,7 +173,7 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 #' that most reduces the Robust Final Prediction Error. The scale estimate from \code{object} 
 #' is used to compute the Robust Final Prediction Error throughout the procedure.
 #'
-#' @param object a robust fit as returned by \code{\link{lmrobdet}}
+#' @param object a robust fit as returned by \code{\link{lmrobdetMM}}
 #' @param scope either a formula or a list with elements \code{lower} and \code{upper} each of 
 #' which is a formula. The terms in the right-hand-side of \code{lower} are always included 
 #' in the model and the additional terms in the right-hand-side of \code{upper} are the
@@ -187,17 +187,17 @@ drop1.lmrobdet <- function (object, scope, scale, keep)
 #' @param steps maximum number of steps to be performed. Defaults to 1000, which should mean as many as needed.
 #' @param whole.path if \code{FALSE} (default) variables are dropped until the RFPE fails to improve. If \code{TRUE} the best variable to be dropped is removed, even if this does not improve the RFPE.
 #'
-#' @return If \code{whole.path == FALSE} the function returns the robust fit as obtained by \code{lmrobdet} using the final model. 
+#' @return If \code{whole.path == FALSE} the function returns the robust fit as obtained by \code{lmrobdetMM} using the final model. 
 #' If \code{whole.path == TRUE} a list is returned containing the RFPE of each model on the sequence
 #' of submodels. The names of the components of this list are the formulas that correspods to each model. 
 #'
-#' @rdname step.lmrobdet
+#' @rdname step.lmrobdetMM
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @export
-step.lmrobdet <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
+step.lmrobdetMM <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
                         keep = NULL, steps = 1000, whole.path=FALSE)
 {
   # object.MM <- object$MM
@@ -205,7 +205,7 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     direction <- "backward"
   else direction <- match.arg(direction)
   if (direction != "backward")
-    stop("Presently step.lmrobdet only supports backward model selection.")
+    stop("Presently step.lmrobdetMM only supports backward model selection.")
   if(whole.path) keep <- function(a, b) a
   re.arrange <- function(keep) {
     namr <- names(k1 <- keep[[1]])
@@ -289,7 +289,7 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
   n <- length(object$fitted) #MM$fitted)
   scale <- object$scale #MM$scale
   fit <- object
-  bRFPE <- lmrobdet.RFPE(fit) #$MM)
+  bRFPE <- lmrobdetMM.RFPE(fit) #$MM)
   nm <- 1
   Terms <- fit$terms
   if (trace)
@@ -309,7 +309,7 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     aod <- NULL
     change <- NULL
     if (backward && (ndrop <- length(scope$drop))) {
-      aod <- drop1.lmrobdet(fit, scope$drop, scale)
+      aod <- drop1.lmrobdetMM(fit, scope$drop, scale)
       if (trace)
         print(aod)
       change <- rep("-", ndrop + 1)
@@ -340,7 +340,7 @@ step.lmrobdet <- function (object, scope, direction = c("both", "backward", "for
     Terms <- terms(update(formula(fit), eval(parse(text = paste("~ .", change)))))
     attr(Terms, "formula") <- new.formula <- formula(Terms)
     # control$method <- 'MM'
-    newfit <- lmrobdet(new.formula, data = m, control = control) #, init=object$init$control$method)
+    newfit <- lmrobdetMM(new.formula, data = m, control = control) #, init=object$init$control$method)
     bRFPE <- aod[, "RFPE"][o]
     if (trace)
       cat("\nStep:  RFPE =", format(round(bRFPE, 4)), "\n",
