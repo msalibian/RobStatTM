@@ -4,7 +4,7 @@
 
 library(RobustStatistics)
 data(coleman, package='robustbase')
-m2 <- lmrobdet(Y ~ ., data=coleman)
+m2 <- lmrobdetMM(Y ~ ., data=coleman)
 m1 <- lmrobdetDCML(Y ~ ., data=coleman)
 m3 <- lmrobdetDCML(Y ~ ., data=coleman, control=lmrobdet.control(tuning.psi=bisquare(.999), bb=.02))
 m0 <- lm(Y ~ ., data=coleman)
@@ -15,21 +15,22 @@ coef(m2)
 coef(m1)
 
 # m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
-step.lmrobdet(m2)
-step.lmrobdet(m2, whole.path=TRUE)
-m3 <- lmrobdet(Y~sstatus, data=coleman)
-step.lmrobdet(m3)
-m4 <- lmrobdet(Y ~ 1, data=coleman)
+step.lmrobdetMM(m2)
+step.lmrobdetMM(m2, whole.path=TRUE)
+m3 <- lmrobdetMM(Y~sstatus, data=coleman)
+step.lmrobdetMM(m3)
+m4 <- lmrobdetMM(Y ~ 1, data=coleman)
 
-m2 <- lmrobdet(Y ~ ., data=coleman)
-m2.ls <- lmrobdet(Y ~ ., data=coleman, control=lmrobdet.control(tuning.psi=bisquare(.999), 
+m2 <- lmrobdetMM(Y ~ ., data=coleman)
+m2.ls <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(tuning.psi=bisquare(.999), 
                   bb=.02))
-step.lmrobdet(m2)
-step.lmrobdet(m2.ls)
+step.lmrobdetMM(m2)
+step.lmrobdetMM(m2.ls)
 step(lm(Y~., data=coleman), direction='backward') #, scale=2.074296) 
 
 data(coleman, package='robustbase')
-m2 <- lmrobdet(Y ~ ., data=coleman)
+m2 <- lmrobdetMM(Y ~ ., data=coleman)
+
 # lmrobdet.RFPE(m2)
 object <- m2
 p <- length(object$coef)
