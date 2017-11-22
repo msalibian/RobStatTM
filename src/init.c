@@ -1,5 +1,5 @@
 #include <R_ext/Rdynload.h>
-#include "RobustStatistics.h"
+#include "RobStatTM.h"
 
 #define CDEF(name)  {#name, (DL_FUNC) &name, sizeof(name ## _t)/sizeof(name ## _t[0]), name ##_t}
 #define CALLDEF(name, n)  {#name, (DL_FUNC) &name, n}
@@ -80,7 +80,7 @@ static R_FortranMethodDef FortEntries[] = {
 };
 
 
-void R_init_RobustStatistics(DllInfo *dll)
+void R_init_RobStatTM(DllInfo *dll)
 {
     R_registerRoutines(dll, CEntries, CallEntries, FortEntries, NULL);
     R_useDynamicSymbols(dll, FALSE);

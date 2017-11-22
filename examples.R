@@ -2,7 +2,7 @@
 
 # R CMD INSTALL --preclean --clean robustbroli
 
-library(RobustStatistics)
+library(RobStatTM)
 data(coleman, package='robustbase')
 m2 <- lmrobdetMM(Y ~ ., data=coleman)
 m1 <- lmrobdetDCML(Y ~ ., data=coleman)

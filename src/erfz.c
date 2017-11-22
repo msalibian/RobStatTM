@@ -1,7 +1,7 @@
 #include "Rinternals.h"
 #include "Rmath.h"
 #include <complex.h>
-#include "RobustStatistics.h"
+#include "RobStatTM.h"
 
 SEXP R_erfi(SEXP x)
 {

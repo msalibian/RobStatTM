@@ -53,7 +53,7 @@
 #include <R_ext/Applic.h>
 #include <R_ext/Lapack.h>
 
-#include "RobustStatistics.h"
+#include "RobStatTM.h"
 //-> <R.h>, <Rinternals.h>  -> XLENGTH, R_xlen_t
 
 
