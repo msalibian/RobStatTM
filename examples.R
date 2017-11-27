@@ -25,7 +25,7 @@ m2 <- lmrobdetMM(Y ~ ., data=coleman)
 m2.ls <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(efficiency = .999))
 step.lmrobdetMM(m2)
 step.lmrobdetMM(m2.ls)
-step(lm(Y~., data=coleman), direction='backward') #, scale=2.074296) 
+step(lm(Y~., data=coleman), direction='backward') #, scale=2.074296)
 
 data(coleman, package='robustbase')
 m2 <- lmrobdetMM(Y ~ ., data=coleman)
@@ -62,13 +62,13 @@ eff <- .85
 rhoprime(u=x0, family=bisquare(eff), standardize=TRUE)
 ep <- 1e-4
 (rho(u=x0+ep, family=bisquare(eff), standardize=TRUE) -
-    rho(u=x0-ep, family=bisquare(eff), standardize=TRUE) ) / (2*ep) 
+    rho(u=x0-ep, family=bisquare(eff), standardize=TRUE) ) / (2*ep)
 
 
 rhoprime2(u=x0, family=bisquare(eff), standardize=TRUE)
 ep <- 1e-4
 (rhoprime(u=x0+ep, family=bisquare(eff), standardize=TRUE) -
-    rhoprime(u=x0-ep, family=bisquare(eff), standardize=TRUE) ) / (2*ep) 
+    rhoprime(u=x0-ep, family=bisquare(eff), standardize=TRUE) ) / (2*ep)
 
 
 
@@ -204,4 +204,19 @@ c(m0$scale, m2$scale)
 coef(m2)
 coef(m0)
 coef(lm(Y~.-1, data=co2))
+
+
+
+
+library(RobStatTM)
+xx <- seq(-3, 3, length=500)
+par(mfrow=c(2,2))
+plot(xx, rho(u=xx, family='bisquare', cc=1.547, standardize=TRUE), type='l', main='Rho - Standarize: TRUE', xlab='', ylab='')
+
+plot(xx, rho(u=xx, family='bisquare', cc=1.547, standardize=FALSE), type='l', main='Rho - Standarize: FALSE', xlab='', ylab='')
+
+plot(xx, rhoprime(u=xx, family='bisquare', cc=1.547, standardize=TRUE), type='l', main='Rhoprime - Standarize: TRUE', xlab='', ylab='')
+
+plot(xx, rhoprime(u=xx, family='bisquare', cc=1.547, standardize=FALSE), type='l', main='Rhoprime - Standarize: FALSE', xlab='', ylab='')
+
 
