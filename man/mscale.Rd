@@ -4,22 +4,21 @@
 \alias{mscale}
 \title{M-scale estimator}
 \usage{
-mscale(u, tol = 1e-06, delta = 0.5, max.it = 100,
-  tuning.chi = lmrobdet.control(bb = delta)$tuning.chi)
+mscale(u, delta, tuning.chi, family, max.it = 100, tol = 1e-06)
 }
 \arguments{
 \item{u}{vector of residuals}
 
-\item{tol}{relative tolerance for convergence}
-
 \item{delta}{the right hand side of the M-scale equation}
-
-\item{max.it}{maximum number of iterations allowed}
 
 \item{tuning.chi}{the tuning object for the rho function as returned
 by \code{\link{lmrobdet.control}}. By default it returns the parameters
 that yield a consistent estimator for Gaussian observations with
 breakdown point equal to \code{delta}.}
+
+\item{max.it}{maximum number of iterations allowed}
+
+\item{tol}{relative tolerance for convergence}
 }
 \value{
 The scale estimate value at the last iteration or at convergence.

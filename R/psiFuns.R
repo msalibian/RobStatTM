@@ -88,14 +88,14 @@ modified.optimal <- function(e)
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
 #' @export
-rho <- function(u, family, standardize = TRUE)
+rho <- function(u, family, cc, standardize = TRUE)
 {
-  family.name <- match.arg(family$name, choices = FAMILY.NAMES)
+  family.name <- match.arg(family, choices = FAMILY.NAMES)
 
   if(standardize)
-    Mchi(u, cc = family$cc, psi = family.name, deriv = 0)
+    Mchi(u, cc = cc, psi = family.name, deriv = 0)
   else
-    Mpsi(u, cc = family$cc, psi = family.name, deriv = -1)
+    Mpsi(u, cc = cc, psi = family.name, deriv = -1)
 }
 
 
@@ -112,14 +112,14 @@ rho <- function(u, family, standardize = TRUE)
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
 #' @export
-rhoprime <- function(u, family, standardize = FALSE)
+rhoprime <- function(u, family, cc, standardize = FALSE)
 {
-  family.name <- match.arg(family$name, choices = FAMILY.NAMES)
+  family.name <- match.arg(family, choices = FAMILY.NAMES)
 
   if(standardize)
-    Mchi(u, cc = family$cc, psi = family.name, deriv = 1)
+    Mchi(u, cc = cc, psi = family.name, deriv = 1)
   else
-    Mpsi(u, cc = family$cc, psi = family.name, deriv = 0)
+    Mpsi(u, cc = cc, psi = family.name, deriv = 0)
 }
 
 
@@ -136,14 +136,14 @@ rhoprime <- function(u, family, standardize = FALSE)
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
 #' @export
-rhoprime2 <- function(u, family, standardize = FALSE)
+rhoprime2 <- function(u, family, cc, standardize = FALSE)
 {
-  family.name <- match.arg(family$name, choices = FAMILY.NAMES)
+  family.name <- match.arg(family, choices = FAMILY.NAMES)
 
   if(standardize)
-    Mchi(u, cc = family$cc, psi = family.name, deriv = 2)
+    Mchi(u, cc = cc, psi = family.name, deriv = 2)
   else
-    Mpsi(u, cc = family$cc, psi = family.name, deriv = 1)
+    Mpsi(u, cc = cc, psi = family.name, deriv = 1)
 }
 
 

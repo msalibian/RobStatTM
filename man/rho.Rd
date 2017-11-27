@@ -13,7 +13,7 @@ optimal(e)
 
 modified.optimal(e)
 
-rho(u, family, standardize = TRUE)
+rho(u, family, cc, standardize = TRUE)
 }
 \arguments{
 \item{efficiency}{the desired efficiency of the corresponding regression 

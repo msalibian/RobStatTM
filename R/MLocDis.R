@@ -51,7 +51,7 @@ if (kpsi>0 & keff>0) {
   a=mean(pp^2); b=mean(psipri(rek, kpsi))
   sigmu=sig0^2 *a/(n*b^2)
   sigmu=sqrt(sigmu)
-  scat=mscale(x-mu)
+  scat=mscale(u=x-mu, delta=.5, tuning.chi=1.56, family='bisquare')
   resu=list(mu=mu, std.mu=sigmu, disper=scat)
   return(resu)
 } # end function

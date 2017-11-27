@@ -6,7 +6,7 @@ library(RobStatTM)
 data(coleman, package='robustbase')
 m2 <- lmrobdetMM(Y ~ ., data=coleman)
 m1 <- lmrobdetDCML(Y ~ ., data=coleman)
-m3 <- lmrobdetDCML(Y ~ ., data=coleman, control=lmrobdet.control(tuning.psi=bisquare(.999), bb=.02))
+m3 <- lmrobdetDCML(Y ~ ., data=coleman, control=lmrobdet.control(efficiency=.999))
 m0 <- lm(Y ~ ., data=coleman)
 
 coef(m0)
@@ -22,8 +22,7 @@ step.lmrobdetMM(m3)
 m4 <- lmrobdetMM(Y ~ 1, data=coleman)
 
 m2 <- lmrobdetMM(Y ~ ., data=coleman)
-m2.ls <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(tuning.psi=bisquare(.999), 
-                  bb=.02))
+m2.ls <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(efficiency = .999))
 step.lmrobdetMM(m2)
 step.lmrobdetMM(m2.ls)
 step(lm(Y~., data=coleman), direction='backward') #, scale=2.074296) 

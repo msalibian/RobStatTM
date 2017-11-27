@@ -5,10 +5,10 @@
 \title{Tuning parameters for lmrobdetMM and lmrobdetDCML}
 \usage{
 lmrobdet.control(seed = NULL, bb = 0.5, efficiency = 0.85,
-  tuning.psi = bisquare(efficiency), max.it = 100, refine.tol = 1e-07,
-  rel.tol = 1e-07, refine.PY = 10, solve.tol = 1e-07, trace.lev = 0,
-  mts = 1000, compute.rd = FALSE, psi = "bisquare", corr.b = TRUE,
-  split.type = "f", initial = "S", psc_keep = 0.5,
+  family = "bisquare", tuning.psi, tuning.chi, max.it = 100,
+  refine.tol = 1e-07, rel.tol = 1e-07, refine.PY = 10,
+  solve.tol = 1e-07, trace.lev = 0, mts = 1000, compute.rd = FALSE,
+  corr.b = TRUE, split.type = "f", initial = "S", psc_keep = 0.5,
   resid_keep_method = "threshold", resid_keep_thresh = 2,
   resid_keep_prop = 0.2, py_maxit = 20, py_eps = 1e-05,
   mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = "bisquare")
@@ -24,6 +24,10 @@ determines the robusness (breakdown point) of the resulting MM-estimator, which 
 \link{bisquare}, \link{optimal}, and \link{modified.optimal}. 
 It defaults to \code{bisquare(0.85)} which corresponds to an estimator with 85% 
 efficiency when errors have a normal distribution.}
+
+\item{tuning.chi}{tuning constant for the function used to compute the M-scale
+for the S-estimator. It is currently computed inside \code{lmrobdet.control} to match
+the value of \code{bb} below according to the family of rho functions used to specify \code{tuning.psi}.}
 
 \item{max.it}{maximum number of IRWLS iterations for the MM-estimator}
 
@@ -41,8 +45,6 @@ efficiency when errors have a normal distribution.}
 that performs M-iterations (lmrob..M..fit), so set here.}
 
 \item{compute.rd}{logical value indicating whether robust leverage distances need to be computed.}
-
-\item{psi}{string specifying the type of loss function to be used.}
 
 \item{corr.b}{logical value indicating whether a finite-sample correction should be applied
 to the M-scale parameter \code{bb}}
@@ -76,9 +78,7 @@ be removed. See \code{\link{pyinit}}.}
 
 \item{mscale_rho_fun}{String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.}
 
-\item{tuning.chi}{tuning constant for the function used to compute the M-scale
-for the S-estimator. It is currently computed inside \code{lmrobdet.control} to match
-the value of \code{bb} below according to the family of rho functions used to specify \code{tuning.psi}.}
+\item{psi}{string specifying the type of loss function to be used.}
 }
 \value{
 A list with the necessary tuning parameters.

@@ -4,8 +4,8 @@
 \alias{refine.sm}
 \title{IRWLS iterations for S- or M-estimators}
 \usage{
-refine.sm(x, y, initial.beta, initial.scale, k = 50, conv = 1, b, family,
-  step = "M")
+refine.sm(x, y, initial.beta, initial.scale, k = 50, conv = 1, b, cc,
+  family, step = "M")
 }
 \arguments{
 \item{x}{design matrix}
@@ -24,10 +24,10 @@ or to force running k steps (0)}
 
 \item{b}{tuning constant for the M-scale estimator, used if iterations are for an S-estimator.}
 
+\item{cc}{tuning constant for the rho function.}
+
 \item{step}{a string indicating whether the iterations are to compute an S-estiamator
 ('S') or an M-estimator ('M')}
-
-\item{cc}{tuning constant for the rho function.}
 }
 \value{
 A list with the following components:

@@ -38,10 +38,10 @@ QL=sp@loadings[,1:q]; Xcen=scale(X, center=mu0, scale=FALSE)
 fitL=scale(Xcen%*%QL%*%t(QL), center=-mu0,scale=FALSE)
 #sigini es para prop. de var. explicada
 rr=colSums(t(Xcen)^2);
-sigini=mscale(sqrt(rr),delta=deltasca,  tuning.chi = 1)^2
+sigini=mscale(sqrt(rr), delta=deltasca,  tuning.chi = 1, family='bisquare')^2
 #escala inicial
 rr=colSums(t(X-fitL)^2);
-sig0=mscale(sqrt(rr),delta=deltasca,  tuning.chi = 1)^2
+sig0=mscale(sqrt(rr), delta=deltasca,  tuning.chi = 1, family='bisquare')^2
  ww=Wf(rr/sig0);  B0=QL
 
  iter=0; del=100;
@@ -56,7 +56,7 @@ while (iter<maxit & abs(del)>tol) {
 	fit=Xcen%*%B%*%t(B)
 	res=Xcen-fit   #residuals
 	rr=colSums(t(res)^2)
-	sig=mscale(sqrt(rr),delta=deltasca,  tuning.chi = 1) ^2
+	sig=mscale(sqrt(rr),delta=deltasca,  tuning.chi = 1, family='bisquare') ^2
 	del1=1-sig/sig0;  #print(c(iter,del1))
 	U=diag(q)-abs(t(B)%*%B0)
 	del2=mean(abs(U)); del=max(c(del1,del2))

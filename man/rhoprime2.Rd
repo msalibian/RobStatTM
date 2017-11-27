@@ -4,7 +4,7 @@
 \alias{rhoprime2}
 \title{The second derivative of Tukey bisquare rho function}
 \usage{
-rhoprime2(u, family, standardize = FALSE)
+rhoprime2(u, family, cc, standardize = FALSE)
 }
 \arguments{
 \item{u}{scalar or vector at which the second derivative of rho is to be evaluated}

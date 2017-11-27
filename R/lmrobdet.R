@@ -177,10 +177,10 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       # si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
       n <- length(z$resid)
       z$scale.S <- z$scale
-      z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi)
+      z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family)
       # compute robust R^2
       #s2 <- sum(rho(z$resid/z$scale, cc=z$control$tuning.psi))
-      s2 <- sum(rho(z$resid/z$scale, family = control$tuning.psi))
+      s2 <- sum(rho(z$resid/z$scale, family = control$family, cc=control$tuning.psi))
       if( p != attr(mt, "intercept") ) {
         df.int <- if (attr(mt, "intercept"))
           1L
@@ -191,12 +191,12 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #                           conv=1, cc=z$control$tuning.psi, step='M')$beta.rw)
           tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
                            initial.scale=z$scale, k=500,
-                           conv=1, family = control$tuning.psi, step='M')$beta.rw)
+                           conv=1, family = control$family, cc = control$tuning.psi, step='M')$beta.rw)
           #s02 <- sum(rho((y-tmp)/z$scale, cc=z$control$tuning.psi))
-          s02 <- sum(rho((y-tmp)/z$scale, family = control$tuning.psi))
+          s02 <- sum(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
         } else {
           #s02 <- sum(rho(y/z$scale, cc=z$control$tuning.psi))
-          s02 <- sum(rho(y/z$scale, family = control$tuning.psi))
+          s02 <- sum(rho(y/z$scale, family = control$family, cc=control$tuning.psi))
         }
         # INVTR2(tmp2$r.squared, tmp2$control$tuning.psi)
         r.squared <- NA #INVTR2( (s02 - s2)/s02, control$tuning.psi)
@@ -392,11 +392,13 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 lmrobdet.control <- function(seed = NULL,
                              bb = 0.5, # 50% Breakdown point
                              efficiency = 0.85, # 85% efficiency
-                             tuning.psi = bisquare(efficiency),
+                             family = 'bisquare',
+                             tuning.psi, # = findTuningConstFromEfficiency(efficiency, family),
+                             tuning.chi, # = findTuningConstFromBDP(bb, family),
                              max.it = 100, refine.tol = 1e-7, rel.tol = 1e-7,
                              refine.PY = 10, # no. of steps to refine PY candidates
                              solve.tol = 1e-7, trace.lev = 0, mts = 1000,
-                             compute.rd = FALSE, psi = 'bisquare',
+                             compute.rd = FALSE, # psi = 'bisquare',
                              corr.b = TRUE, # for MMPY and SMPY
                              split.type = "f", # help(splitFrame, package='robustbase')
                              initial='S', #'S' or 'MS'
@@ -405,9 +407,20 @@ lmrobdet.control <- function(seed = NULL,
                              mscale_maxit = 50, mscale_tol = 1e-06,
                              mscale_rho_fun = 'bisquare')
 {
-  tuning.chi <- adjustTuningVectorForBreakdownPoint(tuning.psi, breakdown.point = bb)
+  if(family == 'bisquare') {
+    if(missing(tuning.psi))
+      tuning.psi <- findTuningConstFromEfficiencyBisquare(efficiency)
+    if(missing(tuning.chi)) 
+      tuning.chi <- findTuningConstFromBDPBisquare(bb)
+  }
   
-  return(list(seed = as.integer(seed), psi=tuning.psi$name,
+  # does not run
+  if(family != 'bisquare') {
+    family <- match.arg(family, choices = FAMILY.NAMES)
+    tuning.chi <- adjustTuningVectorForBreakdownPoint(do.call(family, args=list(e=efficiency)), breakdown.point = bb)
+  }  
+  
+  return(list(seed = as.integer(seed), family=family, # psi=psi,
               tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
               max.it=max.it,
               refine.tol=refine.tol,
@@ -632,11 +645,21 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}.
 #' @export
 refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
-                      conv=1, b, family, step='M') {
+                      conv=1, b, cc, family, step='M') {
  
 #refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
 #                     conv=1, b, cc, step='M') {
 
+  ## Weight function   # weight function = psi(u)/u
+  #f.w <- function(u, cc) {
+  #  tmp <- (1 - (u/cc)^2)^2
+  #  tmp[abs(u/cc) > 1] <- 0
+  #  return(tmp)
+  #}
+  f.w <- function(u, family, cc)
+    Mwgt(x = u, cc = cc, psi = family)
+  
+  
   n <- dim(x)[1]
   # p <- dim(x)[2]
 
@@ -661,11 +684,11 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
     scale.super.old <- scale
     #lower.bound <- median(abs(res))/1.56
     if(step=='S') {
-      scale <- sqrt( scale^2 * mean( rho( res / scale, family = family ) ) / b     )
+      scale <- sqrt( scale^2 * mean( rho( res / scale, family = family, cc = cc ) ) / b     )
       # scale <- mscale(res, tol=1e-7, delta=b, max.it=500, tuning.chi=cc)
     }
     # now do one step of IRWLS with the "improved scale"
-    weights <- f.w( res/scale, family = family )
+    weights <- f.w( res/scale, family = family, cc = cc )
     # W <- matrix(weights, n, p)
     xw <- x * sqrt(weights) # sqrt(W)
     yw <- y *   sqrt(weights)
@@ -706,15 +729,6 @@ our.solve <- function(a,b) {
   else qr.coef(a, b)
 }
 
-
-## Weight function   # weight function = psi(u)/u
-#f.w <- function(u, cc) {
-#  tmp <- (1 - (u/cc)^2)^2
-#  tmp[abs(u/cc) > 1] <- 0
-#  return(tmp)
-#}
-f.w <- function(u, family)
-  Mwgt(x = u, cc = family$cc, psi = family$name)
 
 
 #' Robust Distance Constrained Maximum Likelihood estimators for linear regression
@@ -1216,20 +1230,22 @@ rob.linear.test <- function(object1, object2)
   q <- length(object1$coeff) - length(object2$coeff)
   n <- length(object1$resid)
   
-  family1 <- object1$control$tuning.psi
-  family2 <- object2$control$tuning.psi
+  family1 <- object1$control$family
+  family2 <- object2$control$family
+  cc1 <- object1$control$tuning.psi
+  cc2 <- object2$control$tuning.psi
 
-  same.name <- (family1$name == family2$name)
-  same.cc <- isTRUE(all.equal(family1$cc, family2$cc))
+  same.name <- (family1 == family2)
+  same.cc <- isTRUE(all.equal(cc1, cc2))
   
   if(!(same.name && same.cc))
     stop("object1 and object2 do not have the same rho family")
 
   s <- object1$scale
-  a <- sum(rho(object2$resid/s, family1, standardize = TRUE))
-  b <- sum(rho(object1$resid/s, family1, standardize = TRUE))
-  c <- sum(rhoprime2(object1$resid/s, family1, standardize = TRUE))
-  d <- sum(rhoprime(object1$resid/s, family1, standardize = TRUE)^2)
+  a <- sum(rho(object2$resid/s, family=family1, cc=cc1, standardize = TRUE))
+  b <- sum(rho(object1$resid/s, family=family1, cc=cc1, standardize = TRUE))
+  c <- sum(rhoprime2(object1$resid/s, family=family1, cc=cc1, standardize = TRUE))
+  d <- sum(rhoprime(object1$resid/s, family=family1, cc=cc1, standardize = TRUE)^2)
   test <- (2 * (a - b) * c)/d
   # Sanity check: passed
   # a2 <- sum(rho(object2$resid/s, cc=cc))

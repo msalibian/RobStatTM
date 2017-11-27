@@ -44,7 +44,7 @@
 #' sd(r)
 #'
 #' @export
-mscale <- function(u, tol=1e-6, delta=.5, max.it=100, tuning.chi=lmrobdet.control(bb=delta)$tuning.chi) {
+mscale <- function(u, delta, tuning.chi, family, max.it=100, tol=1e-6) {
   # M-scale of a sample u
   # tol: accuracy
   # delta: breakdown point (right side)
@@ -54,7 +54,7 @@ mscale <- function(u, tol=1e-6, delta=.5, max.it=100, tuning.chi=lmrobdet.contro
   it <- 0
   while( (err > tol) && ( it < max.it) ) {
     it <- it+1
-    s1 <- sqrt( s0^2 * mean(rho((u/s0), family = tuning.chi)) / delta )
+    s1 <- sqrt( s0^2 * mean(rho(u/s0, family = family, cc = tuning.chi)) / delta )
     err <- abs(s1-s0)/s0
     s0 <- s1
   }
@@ -86,14 +86,14 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
   t0 <- 1-t0
   rr <- res.R/sig.R
   #tpr <- rhoprime(r=rr, cc=control$tuning.psi)
-  tpr <- rhoprime(rr, family = control$tuning.psi)
+  tpr <- rhoprime(rr, family = control$family, cc = control$tuning.psi)
   c0 <- mean( tpr * res.LS )
   a1 <- mean( tpr^2 )
   #b0 <- mean(rhoprime2(r=rr, cc=control$tuning.psi))
-  b0 <- mean(rhoprime2(rr, family = control$tuning.psi))
+  b0 <- mean(rhoprime2(rr, family = control$family, cc = control$tuning.psi))
   dee <- control$bb
   if(control$corr.b) dee <- dee * (1 - p/n)
-  a2 <- mscale(u=res.LS, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
+  a2 <- mscale(u=res.LS, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
   tt <- t0^2*sig.R^2*a1/b0^2 + a2^2*(1-t0)^2 +2*t0*(1-t0)*sig.R*c0/b0
   V <- tt*solve(CC)
   return(V)
@@ -162,9 +162,8 @@ MMPY <- function(X, y, control, mf) {
    best.ss <- +Inf
 
    for(i in 1:kk) {
-     tmp <- refine.sm(x=X, y=y, initial.beta=a$coefficients[,i],
-                      initial.scale=a$objective[i],
-                      k=control$refine.PY, conv=1, b=dee, family=control$tuning.chi, step='S')
+     tmp <- refine.sm(x=X, y=y, initial.beta=a$coefficients[,i], initial.scale=a$objective[i],
+                      k=control$refine.PY, conv=1, b=dee, family=control$family, cc=control$tuning.chi, step='S')
      if(tmp$scale.rw < best.ss) {
        best.ss <- tmp$scale.rw # initial$objF[1]
        betapy <- tmp$beta.rw # initial$initCoef[,1]
@@ -174,8 +173,8 @@ MMPY <- function(X, y, control, mf) {
 
    orig.control <- control
 
-   control$psi <- control$tuning.psi$name
-   control$tuning.psi <- control$tuning.psi$cc
+   control$psi <- control$family # tuning.psi$name
+   # control$tuning.psi <- control$tuning.psi # $cc
 
    control$method <- 'M'
    control$cov <- ".vcov.w"
@@ -223,7 +222,7 @@ DCML <- function(x, y, z, z0, control) {
   n <- length(z$residuals)
   dee <- control$bb
   if(control$corr.b) dee <- dee*(1-p/n)
-  si.dcml <- mscale(u=z$residuals, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
+  si.dcml <- mscale(u=z$residuals, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
   deltas <- .3*p/n
   CC <- t(x * z$rweights) %*% x / sum(z$rweights)
   # print(all.equal(CC, t(x) %*% diag(z$rweights) %*% x / sum(z$rweights)))
@@ -233,7 +232,7 @@ DCML <- function(x, y, z, z0, control) {
   V.dcml <- cov.dcml(res.LS=z0$residuals, res.R=z$residuals, CC=CC,
                      sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
   re.dcml <- as.vector(y - x %*% beta.dcml)
-  si.dcml.final <- mscale(u=re.dcml, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
+  si.dcml.final <- mscale(u=re.dcml, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
   return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, scale=si.dcml.final, t0=t0))
 }
 
@@ -315,11 +314,11 @@ SMPY <- function(mf, y, control, split) {
   betapy <- initial$coefficients[,1]
   r <- as.vector(y1 - X1 %*% betapy)
   best.tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-  sspy <- mscale(u=best.tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
+  sspy <- mscale(u=best.tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
   for(i in 2:kk) {
     r <- as.vector(y1 - X1 %*% initial$coefficients[,i])
     tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-    s.cand <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
+    s.cand <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
     if( s.cand < sspy ) {
       sspy <- s.cand
       betapy <- initial$coefficients[,i]
@@ -341,7 +340,7 @@ SMPY <- function(mf, y, control, split) {
     beta <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
     r1 <- as.vector(y - X %*% beta)
     tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
-    sih <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi)
+    sih <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
     if(sih < sspy) {
       sspy <- sih
       betapy <- beta
