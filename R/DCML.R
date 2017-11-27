@@ -28,8 +28,8 @@
 #' @param tuning.chi the tuning object for the rho function as returned
 #' by \code{\link{lmrobdet.control}}. By default it returns the parameters
 #' that yield a consistent estimator for Gaussian observations with
-#' breakdown point equal to \code{delta}. 
-#' 
+#' breakdown point equal to \code{delta}.
+#'
 #'
 #' @return The scale estimate value at the last iteration or at convergence.
 #'
@@ -44,7 +44,7 @@
 #' sd(r)
 #'
 #' @export
-mscale <- function(u, delta, tuning.chi, family, max.it=100, tol=1e-6) {
+mscale <- function(u, delta=0.5, tuning.chi=1.54764, family ="bisquare", max.it=100, tol=1e-6) {
   # M-scale of a sample u
   # tol: accuracy
   # delta: breakdown point (right side)
@@ -367,7 +367,7 @@ SMPY <- function(mf, y, control, split) {
 }
 
 
-# splitFrame <- function (mf, x = model.matrix(mt, mf), type = c("f", "fi", "fii")) 
+# splitFrame <- function (mf, x = model.matrix(mt, mf), type = c("f", "fi", "fii"))
 # {
 #   mt <- attr(mf, "terms")
 #   type <- match.arg(type)
@@ -375,8 +375,8 @@ SMPY <- function(mf, y, control, split) {
 #   p <- ncol(x)
 #   factors <- attr(mt, "factors")
 #   factor.idx <- attr(mt, "dataClasses") == "factor"
-#   if (!any(factor.idx)) 
-#     return(list(x1.idx = rep.int(FALSE, p), x1 = matrix(, 
+#   if (!any(factor.idx))
+#     return(list(x1.idx = rep.int(FALSE, p), x1 = matrix(,
 #                                                         nrow(x), 0L), x2 = x))
 #   switch(type, fi = {
 #     factor.asgn <- which(factor.idx %*% factors > 0)
@@ -390,17 +390,17 @@ SMPY <- function(mf, y, control, split) {
 #       if (any(factor.idx[comp])) {
 #         factor.asgn <- c(factor.asgn, i)
 #       } else {
-#         tmp <- colSums(factors.cat[comp, , drop = FALSE]) >= 
+#         tmp <- colSums(factors.cat[comp, , drop = FALSE]) >=
 #           sum(comp)
 #         if (any(tmp)) {
-#           if (!all(colSums(factors[!factor.idx & !comp, 
-#                                    tmp, drop = FALSE]) > 0)) factor.asgn <- c(factor.asgn, 
+#           if (!all(colSums(factors[!factor.idx & !comp,
+#                                    tmp, drop = FALSE]) > 0)) factor.asgn <- c(factor.asgn,
 #                                                                               i)
 #         }
 #       }
 #     }
 #   }, f = {
-#     factor.asgn <- which(factor.idx %*% factors & !(!factor.idx) %*% 
+#     factor.asgn <- which(factor.idx %*% factors & !(!factor.idx) %*%
 #                            factors)
 #   }, stop("unknown split type"))
 #   x1.idx <- attr(x, "assign") %in% c(0, factor.asgn)
