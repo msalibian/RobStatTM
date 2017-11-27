@@ -59,17 +59,28 @@ plot(tt, uu, type='l')
 
 x0 <- .7
 eff <- .85
-rhoprime(u=x0, family=bisquare(eff), standardize=TRUE)
+rhoprime(u=x0, family='bisquare', cc=1.54764, standardize=TRUE)
 ep <- 1e-4
-(rho(u=x0+ep, family=bisquare(eff), standardize=TRUE) -
-    rho(u=x0-ep, family=bisquare(eff), standardize=TRUE) ) / (2*ep)
+(rho(u=x0+ep, family='bisquare', cc=1.54764, standardize=TRUE) -
+    rho(u=x0-ep, family='bisquare', cc=1.54764, standardize=TRUE) ) / (2*ep)
 
-
-rhoprime2(u=x0, family=bisquare(eff), standardize=TRUE)
+x0 <- .7
+eff <- .85
+rhoprime(u=x0, family='bisquare', cc=1.54764, standardize=FALSE)
 ep <- 1e-4
-(rhoprime(u=x0+ep, family=bisquare(eff), standardize=TRUE) -
-    rhoprime(u=x0-ep, family=bisquare(eff), standardize=TRUE) ) / (2*ep)
+(rho(u=x0+ep, family='bisquare', cc=1.54764, standardize=FALSE) -
+    rho(u=x0-ep, family='bisquare', cc=1.54764, standardize=FALSE) ) / (2*ep)
 
+
+rhoprime2(u=x0, family='bisquare', cc=1.54764, standardize=TRUE)
+ep <- 1e-4
+(rhoprime(u=x0+ep, family='bisquare', cc=1.54764, standardize=TRUE) -
+    rhoprime(u=x0-ep, family='bisquare', cc=1.54764, standardize=TRUE) ) / (2*ep)
+
+rhoprime2(u=x0, family='bisquare', cc=1.54764, standardize=FALSE)
+ep <- 1e-4
+(rhoprime(u=x0+ep, family='bisquare', cc=1.54764, standardize=FALSE) -
+    rhoprime(u=x0-ep, family='bisquare', cc=1.54764, standardize=FALSE) ) / (2*ep)
 
 
 
