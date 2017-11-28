@@ -338,15 +338,15 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @rdname lmrobdet.control
 #' @param seed \code{NULL}
 #' @param tuning.chi tuning constant for the function used to compute the M-scale
-#' for the S-estimator. It is currently computed inside \code{lmrobdet.control} to match
-#' the value of \code{bb} below according to the family of rho functions used to specify \code{tuning.psi}. 
+#' for the S-estimator. If missing, it is computed inside \code{lmrobdet.control} to match
+#' the value of \code{bb} below according to the family of rho functions specified in \code{family}. 
 #' @param bb tuning constant (between 0 and 1/2) for the M-scale used to compute the initial S-estimator. It
 #' determines the robusness (breakdown point) of the resulting MM-estimator, which is
 #' \code{bb}. Defaults to 0.5.
-#' @param tuning.psi tuning parameters for the re-descending M-estimator as computed by a rho family function. Currently the following are implemented
-#' \link{bisquare}, \link{optimal}, and \link{modified.optimal}. 
-#' It defaults to \code{bisquare(0.85)} which corresponds to an estimator with 85% 
-#' efficiency when errors have a normal distribution.
+#' @param tuning.psi tuning parameters for the regression M-estimator computed with a rho function
+#' as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
+#' the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
+#' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85. 
 #' @param max.it maximum number of IRWLS iterations for the MM-estimator
 #' @param refine.tol relative covergence tolerance for the S-estimator
 #' @param rel.tol relative covergence tolerance for the IRWLS iterations for the MM-estimator
@@ -356,7 +356,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
 #' that performs M-iterations (lmrob..M..fit), so set here.
 #' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
-#' @param psi string specifying the type of loss function to be used.
+#' @param family string specifying the name of the family of loss function to be used (current valid
+#' options are "bisquare", "optimal" and "modified.optimal"). 
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied
 #' to the M-scale parameter \code{bb}
 #' @param split.type determines how categorical and continuous variables are split. See

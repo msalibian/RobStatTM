@@ -78,11 +78,14 @@ modified.optimal <- function(e)
 #' Tukey bisquare rho function
 #'
 #' @param u point or vector at which rho is to be evaluated
-#' @param family tuning parameters as computed by
-#' a rho family function. Currently the following are implemented
-#' \code{\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}.
+#' @param family family string specifying the name of the family of loss function to be used (current valid
+#' options are "bisquare", "optimal" and "modified.optimal"). 
+#' @param cc tuning parameters to be computed according to efficiency and / or breakdown 
+#' considerations. See \link{lmrobdet.control}. 
+#' @param standardize logical value determining whether the rho function is to be
+#' standardized so that its maximum value is 1. See \link{Mpsi}. 
 #'
-#' @return The value of \code{rho} at \code{u}
+#' @return The value(s) of \code{rho} at \code{u}
 #'
 #' @rdname rho
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
@@ -101,10 +104,13 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 
 #' The first derivative of Tukeys bisquare rho function
 #'
-#' @param u scalar or vector at which the derivative of rho is to be evaluated
-#' @param family tuning parameters as computed by
-#' a rho family function. Currently the following are implemented
-#' \code{\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}.
+#' @param u point or vector at which rho is to be evaluated
+#' @param family family string specifying the name of the family of loss function to be used (current valid
+#' options are "bisquare", "optimal" and "modified.optimal"). 
+#' @param cc tuning parameters to be computed according to efficiency and / or breakdown 
+#' considerations. See \link{lmrobdet.control}. 
+#' @param standardize logical value determining whether the rho function is to be
+#' standardized so that its maximum value is 1. See \link{Mpsi}. 
 #'
 #' @return The value of the first derivative \code{rho} evaluated at \code{u}
 #'
@@ -125,10 +131,13 @@ rhoprime <- function(u, family, cc, standardize = FALSE)
 
 #' The second derivative of Tukey bisquare rho function
 #'
-#' @param u scalar or vector at which the second derivative of rho is to be evaluated
-#' @param family tuning parameters as computed by
-#' a rho family function. Currently the following are implemented
-#' \code{\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}.
+#' @param u point or vector at which rho is to be evaluated
+#' @param family family string specifying the name of the family of loss function to be used (current valid
+#' options are "bisquare", "optimal" and "modified.optimal"). 
+#' @param cc tuning parameters to be computed according to efficiency and / or breakdown 
+#' considerations. See \link{lmrobdet.control}. 
+#' @param standardize logical value determining whether the rho function is to be
+#' standardized so that its maximum value is 1. See \link{Mpsi}. 
 #'
 #' @return The value of the second derivative of \code{rho} evaluated at \code{u}
 #'

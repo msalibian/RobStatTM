@@ -22,14 +22,13 @@
 #' Tukey's bisquare family.
 #'
 #' @param u vector of residuals
+#' @param delta the right hand side of the M-scale equation
+#' @param family string specifying the name of the family of loss function to be used (current valid
+#' options are "bisquare", "optimal" and "modified.optimal"). 
+#' @param tuning.chi the tuning object for the rho function as returned
+#' by \code{\link{lmrobdet.control}}. 
 #' @param tol relative tolerance for convergence
 #' @param max.it maximum number of iterations allowed
-#' @param delta the right hand side of the M-scale equation
-#' @param tuning.chi the tuning object for the rho function as returned
-#' by \code{\link{lmrobdet.control}}. By default it returns the parameters
-#' that yield a consistent estimator for Gaussian observations with
-#' breakdown point equal to \code{delta}.
-#'
 #'
 #' @return The scale estimate value at the last iteration or at convergence.
 #'
