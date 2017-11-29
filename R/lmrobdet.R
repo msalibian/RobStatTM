@@ -329,14 +329,14 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 
 #' Tuning parameters for lmrobdetMM and lmrobdetDCML
 #'
-#' This function sets tuning parameters for the MM-based Distance Constrained
-#' Maximum Likelihood regression estimators computed by \code{lmrobdet}.
+#' This function sets tuning parameters for the MM estimator implemented in \code{lmrobdetMM} and  
+#' the Distance Constrained Maximum Likelihood regression estimators 
+#' computed by \code{lmrobdetDCML}.
 #'
 #' There are 2 sets of tuning parameters: those related to the MM-estimator,
 #' and those controlling the initial Pen~a-Yohai estimator.
 #'
 #' @rdname lmrobdet.control
-#' @param seed \code{NULL}
 #' @param tuning.chi tuning constant for the function used to compute the M-scale
 #' for the S-estimator. If missing, it is computed inside \code{lmrobdet.control} to match
 #' the value of \code{bb} below according to the family of rho functions specified in \code{family}. 
@@ -378,6 +378,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param mscale_maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}.
 #' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.
 #' @param mscale_rho_fun String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.
+#' @param seed \code{NULL}
 #'
 #' @return A list with the necessary tuning parameters.
 #'

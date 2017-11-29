@@ -86,8 +86,9 @@ be removed. See \code{\link{pyinit}}.}
 A list with the necessary tuning parameters.
 }
 \description{
-This function sets tuning parameters for the MM-based Distance Constrained
-Maximum Likelihood regression estimators computed by \code{lmrobdet}.
+This function sets tuning parameters for the MM estimator implemented in \code{lmrobdetMM} and  
+the Distance Constrained Maximum Likelihood regression estimators 
+computed by \code{lmrobdetDCML}.
 }
 \details{
 There are 2 sets of tuning parameters: those related to the MM-estimator,
