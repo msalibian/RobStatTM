@@ -67,7 +67,7 @@ while (iter<maxit & abs(del)>tol) {
 } #endo
 propex=1-sig/sigini  #prop. var. expli
 fit=scale(fit, center=-mu, scale=FALSE)
-resu=list(eigvec=B, fit=fit, repre=repre, propex=propex,propSPC=propSPC,mu=mu)
+resu=list(eigvec=B, fit=fit, repre=repre, propex=propex, propSPC=propSPC, mu=mu, q=q)
 return(resu)
 }
 
