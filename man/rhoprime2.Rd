@@ -7,11 +7,16 @@
 rhoprime2(u, family, cc, standardize = FALSE)
 }
 \arguments{
-\item{u}{scalar or vector at which the second derivative of rho is to be evaluated}
+\item{u}{point or vector at which rho is to be evaluated}
 
-\item{family}{tuning parameters as computed by 
-a rho family function. Currently the following are implemented
-\code{\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}.}
+\item{family}{family string specifying the name of the family of loss function to be used (current valid
+options are "bisquare", "optimal" and "modified.optimal").}
+
+\item{cc}{tuning parameters to be computed according to efficiency and / or breakdown 
+considerations. See \link{lmrobdet.control}.}
+
+\item{standardize}{logical value determining whether the rho function is to be
+standardized so that its maximum value is 1. See \link{Mpsi}.}
 }
 \value{
 The value of the second derivative of \code{rho} evaluated at \code{u}

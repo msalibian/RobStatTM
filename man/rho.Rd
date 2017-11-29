@@ -13,25 +13,30 @@ optimal(e)
 
 modified.optimal(e)
 
-rho(u, family, cc, standardize = TRUE)
+rho(u, family = " bisquare", cc, standardize = TRUE)
 }
 \arguments{
-\item{efficiency}{the desired efficiency of the corresponding regression 
+\item{efficiency}{the desired efficiency of the corresponding regression
 estimator for Gaussian errors}
 
-\item{breakdown.point}{the desired breakdown of the associated regression 
+\item{breakdown.point}{the desired breakdown of the associated regression
 estimator}
 
-\item{e}{the desired efficiency of the corresponding regression 
+\item{e}{the desired efficiency of the corresponding regression
 estimator for Gaussian errors}
 
 \item{u}{point or vector at which rho is to be evaluated}
 
-\item{family}{tuning parameters as computed by 
-a rho family function. Currently the following are implemented
-\code{\link{bisquare}}, \code{\link{optimal}}, and \code{\link{modified.optimal}}.}
+\item{family}{family string specifying the name of the family of loss function to be used (current valid
+options are "bisquare", "optimal" and "modified.optimal").}
 
-\item{e}{the desired efficiency of the corresponding regression 
+\item{cc}{tuning parameters to be computed according to efficiency and / or breakdown 
+considerations. See \link{lmrobdet.control}.}
+
+\item{standardize}{logical value determining whether the rho function is to be
+standardized so that its maximum value is 1. See \link{Mpsi}.}
+
+\item{e}{the desired efficiency of the corresponding regression
 estimator for Gaussian errors}
 }
 \value{
@@ -44,7 +49,7 @@ constant \code{cc}
 A list with elements \code{name} (the string 'modified.optimal') and the corresponding tuning
 constant \code{cc}
 
-The value of \code{rho} at \code{u}
+The value(s) of \code{rho} at \code{u}
 }
 \description{
 Tukey bisquare rho object
