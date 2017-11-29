@@ -4,18 +4,16 @@
 \alias{lmrobdet.control}
 \title{Tuning parameters for lmrobdetMM and lmrobdetDCML}
 \usage{
-lmrobdet.control(seed = NULL, bb = 0.5, efficiency = 0.85,
-  family = "bisquare", tuning.psi, tuning.chi, max.it = 100,
-  refine.tol = 1e-07, rel.tol = 1e-07, refine.PY = 10,
-  solve.tol = 1e-07, trace.lev = 0, mts = 1000, compute.rd = FALSE,
-  corr.b = TRUE, split.type = "f", initial = "S", psc_keep = 0.5,
-  resid_keep_method = "threshold", resid_keep_thresh = 2,
+lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare",
+  tuning.psi, tuning.chi, compute.rd = FALSE, corr.b = TRUE,
+  split.type = "f", initial = "S", max.it = 100, refine.tol = 1e-07,
+  rel.tol = 1e-07, refine.PY = 10, solve.tol = 1e-07, trace.lev = 0,
+  psc_keep = 0.5, resid_keep_method = "threshold", resid_keep_thresh = 2,
   resid_keep_prop = 0.2, py_maxit = 20, py_eps = 1e-05,
-  mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = "bisquare")
+  mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = "bisquare",
+  mts = 1000)
 }
 \arguments{
-\item{seed}{\code{NULL}}
-
 \item{bb}{tuning constant (between 0 and 1/2) for the M-scale used to compute the initial S-estimator. It
 determines the robusness (breakdown point) of the resulting MM-estimator, which is
 \code{bb}. Defaults to 0.5.}
@@ -33,21 +31,6 @@ the value of \code{efficiency} according to the family of rho functions specifie
 for the S-estimator. If missing, it is computed inside \code{lmrobdet.control} to match
 the value of \code{bb} below according to the family of rho functions specified in \code{family}.}
 
-\item{max.it}{maximum number of IRWLS iterations for the MM-estimator}
-
-\item{refine.tol}{relative covergence tolerance for the S-estimator}
-
-\item{rel.tol}{relative covergence tolerance for the IRWLS iterations for the MM-estimator}
-
-\item{refine.PY}{number of refinement steps for the Pen~a-Yohai candidates}
-
-\item{solve.tol}{relative tolerance for inversion}
-
-\item{trace.lev}{positive values (increasingly) provide details on the progress of the MM-algorithm}
-
-\item{mts}{maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
-that performs M-iterations (lmrob..M..fit), so set here.}
-
 \item{compute.rd}{logical value indicating whether robust leverage distances need to be computed.}
 
 \item{corr.b}{logical value indicating whether a finite-sample correction should be applied
@@ -60,6 +43,18 @@ to the M-scale parameter \code{bb}}
 options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is
 appropriate when there are categorical explanatory variables in the model.}
 
+\item{max.it}{maximum number of IRWLS iterations for the MM-estimator}
+
+\item{refine.tol}{relative covergence tolerance for the S-estimator}
+
+\item{rel.tol}{relative covergence tolerance for the IRWLS iterations for the MM-estimator}
+
+\item{refine.PY}{number of refinement steps for the Pen~a-Yohai candidates}
+
+\item{solve.tol}{relative tolerance for inversion}
+
+\item{trace.lev}{positive values (increasingly) provide details on the progress of the MM-algorithm}
+
 \item{psc_keep}{For \code{pyinit}, proportion of observations to remove based on PSCs. The effective proportion of removed
 observations is adjusted according to the sample size to be \code{prosac*(1-p/n)}. See \code{\link{pyinit}}.}
 
@@ -68,9 +63,9 @@ observations is adjusted according to the sample size to be \code{prosac*(1-p/n)
 be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will
 be removed. See \code{\link{pyinit}}.}
 
-\item{resid_keep_thresh}{See parameter \code{clean.method} above. See \code{\link{pyinit}}.}
+\item{resid_keep_thresh}{See parameter \code{resid_keep_method} above. See \code{\link{pyinit}}.}
 
-\item{resid_keep_prop}{See parameter \code{clean.method} above. See \code{\link{pyinit}}.}
+\item{resid_keep_prop}{See parameter \code{resid_keep_method} above. See \code{\link{pyinit}}.}
 
 \item{py_maxit}{Maximum number of iterations. See \code{\link{pyinit}}.}
 
@@ -81,13 +76,16 @@ be removed. See \code{\link{pyinit}}.}
 \item{mscale_tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.}
 
 \item{mscale_rho_fun}{String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.}
+
+\item{mts}{maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
+that performs M-iterations (lmrob..M..fit), so set here.}
 }
 \value{
 A list with the necessary tuning parameters.
 }
 \description{
-This function sets tuning parameters for the MM estimator implemented in \code{lmrobdetMM} and  
-the Distance Constrained Maximum Likelihood regression estimators 
+This function sets tuning parameters for the MM estimator implemented in \code{lmrobdetMM} and
+the Distance Constrained Maximum Likelihood regression estimators
 computed by \code{lmrobdetDCML}.
 }
 \details{
