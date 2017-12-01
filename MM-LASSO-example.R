@@ -75,11 +75,35 @@ a2 <- mmlasso(x=x, y=y, ncores=4)
 a2$coef.MMLasso[ a2$coef.MMLasso != 0 ]
 a2$coef.MMLasso.ad[ a2$coef.MMLasso.ad !=0 ]
 which(a2$coef.MMLasso!=0)
+# [1]   1  12  13 215 323 359
 which(a2$coef.MMLasso.ad!=0)
+# [1]   1  13 215 323 359
+
+set.seed(123456)
+a3 <- mmlasso(x=x, y=y, ncores=4)
+a3$coef.MMLasso[ a3$coef.MMLasso != 0 ]
+a3$coef.MMLasso.ad[ a3$coef.MMLasso.ad !=0 ]
+which(a3$coef.MMLasso!=0)
+# [1]   1 359
+which(a3$coef.MMLasso.ad!=0)
+# [1]   1 359
+
 
 library(pense)
 # Compute the S-ridge (EN with alpha = 0)
+set.seed(1)
 b0 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
-# Compute MM-LASSO starting from the S-ridge (and the assoc. scale)
+b2 <- pensem(b0, alpha=1, nlambda=30, ncores=4)
+
+
+
+set.seed(123)
+b0 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
+b2 <- pensem(b0, alpha=1, nlambda=30, ncores=4)
+
+
+
+set.seed(123456)
+b0 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
 b2 <- pensem(b0, alpha=1, nlambda=30, ncores=4)
 
