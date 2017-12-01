@@ -7,11 +7,16 @@ data(coleman, package='robustbase')
 m2 <- lmrobdetMM(Y ~ ., data=coleman)
 m1 <- lmrobdetDCML(Y ~ ., data=coleman)
 m3 <- lmrobdetDCML(Y ~ ., data=coleman, control=lmrobdet.control(efficiency=.999))
+m4 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(family='modi'))
+m6 <- lmrobdetDCML(Y ~ ., data=coleman, control=lmrobdet.control(family='modi'))
+m5 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(family='opti'))
+
 m0 <- lm(Y ~ ., data=coleman)
 
 coef(m0)
 coef(m3)
 coef(m2)
+coef(m4)
 coef(m1)
 
 # m0 <- lmrob(Y ~ ., data=coleman, control=lmrob.control(tuning.psi=3.4434, subsampling='simple'))
