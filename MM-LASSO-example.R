@@ -61,7 +61,21 @@ plot(tmp)
 as.vector( coef(tmp, s='lambda.1se') )
 
 library(mmlasso)
+set.seed(1)
 a <- mmlasso(x=x, y=y, ncores=4)
+a$coef.MMLasso[ a$coef.MMLasso != 0 ]
+a$coef.MMLasso.ad[ a$coef.MMLasso.ad !=0 ]
+which(a$coef.MMLasso!=0)
+# [1]   1  13 130 322 323 357 359 388
+which(a$coef.MMLasso.ad!=0)
+# [1]   1  13 322 359
+
+set.seed(123)
+a2 <- mmlasso(x=x, y=y, ncores=4)
+a2$coef.MMLasso[ a2$coef.MMLasso != 0 ]
+a2$coef.MMLasso.ad[ a2$coef.MMLasso.ad !=0 ]
+which(a2$coef.MMLasso!=0)
+which(a2$coef.MMLasso.ad!=0)
 
 library(pense)
 # Compute the S-ridge (EN with alpha = 0)
