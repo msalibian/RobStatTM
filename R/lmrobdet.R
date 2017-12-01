@@ -420,7 +420,7 @@ lmrobdet.control <- function(bb = 0.5, # 50% Breakdown point
     tuning.chi <- adjustTuningVectorForBreakdownPoint(do.call(family, args=list(e=efficiency)), breakdown.point = bb)
   }
 
-  return(list(seed = as.integer(seed), family=family, # psi=psi,
+  return(list(family=family, # psi=psi,
               tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
               max.it=max.it,
               refine.tol=refine.tol,
