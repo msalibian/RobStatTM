@@ -1,21 +1,29 @@
-
-#This function compute a weighted likelihood estimator for the logistic model, where the weights penalize high leverage observations. In this version the weights are zero or one
-#INPUT
-#x0: covariable pxn matrix, p is the number of covariables, n the number of observations
-#y:dimension n response vector
-#intercept: 1 if the model include intercept, 0 if it does not include intercept
-
-#OUTPUT
-#$xweights n-dimensional  vector of zeros and ones used to compute the weighted maimum likelihood estimator
-#$coefficients:    (p+intercept)- dimensional vector of     regression coefficients
-#$standard.deviation:   vector of  the standard deviations of the regression coefficient estimators
-#$fitted.values: a n dimensional  vector with the probabilities of success 
-#$cov: a (p+intercept)x(p+intercept) covariance matrix of  the regression coefficients
-#$residual.deviances: a n-dimensional  vector with the residual deviances
-
-
-
-  WMLlogreg=function (x0, y, intercept = 1)
+#' Weighted likelihood estimator for the logistic model
+#'
+#' This function computes a weighted likelihood estimator for the logistic model, where 
+#' the weights penalize high leverage observations. In this version the weights are zero or one.
+#' 
+#' @param x0 p x n matrix of explanatory variables, p is the number of explanatory variables, n is the number of observations
+#' @param y response vector
+#' @param intercept 1 or 0 indicating if an intercept is included or or not
+#' 
+#' @return A list with the following components:
+#' \item{coefficients}{vector of regression coefficients}
+#' \item{standard.deviation}{standard deviations of the regression coefficient estimators}
+#' \item{fitted.values}{vector with the probabilities of success}
+#' \item{residual.deviances}{residual deviances}
+#' \item{cov}{covariance matrix of the regression estimates}
+#' \item{objective}{value of the objective function at the minimum}
+#' \item{xweights}{vector of zeros and ones used to compute the weighted maimum likelihood estimator}
+#' 
+#' @author Victor Yohai
+#' @references \url{http://thebook}
+#'
+#' @examples
+#' WMLlogreg(x0,y)
+#'
+#' @export
+WMLlogreg=function (x0, y, intercept = 1)
   {  
   ttx=colnames(x0)  
   if (!is.numeric(y)) 

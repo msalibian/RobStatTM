@@ -1,37 +1,35 @@
-#  Computation of the estimator of Bianco and Yohai (1996) in logistic regression
-#  -------------
-#  Christophe Croux, Gentiane Haesbroeck
-#  Version November 2002
-#  This program computes the weighted M-estimator    of Bianco and Yohai in 
-#  logistic regression. By default, an intercept term is included 
-#  and p parameters are estimated. 
-#  Modified by Yohai (2018)  to take as initial estimator  a   weighted ML estimator  computed with weights derived from the MCD estimator
-#  of the continuous explanatory variables.  The same weights are used to compute the final  weighted M-estimator
-#  For more details we refer to 
-#  Croux, C., and Haesbroeck, G. (2002), ``Implementing the Bianco and Yohai estimator for 
-#  Logistic Regression'' 
-#
-#Inputs:
-#------- 
-# x0: matrix of explanatory variables; 
-# y: vector of binomial response (0 or 1);
-# intercept: 1 or 0 according if an intercept is or not is included
-# const: tuning constant used in the computation of the estimator (default=0.5);
-# kmax:  maximum number of iterations before convergence (default=1000);
-# maxhalf: max number of step-halving (default=10).
-#
-# Example: WBYlogreg(x0,y)
-#
-#Outputs:
-#--------
-# list with
-# $components: T or F if convergence achieved or not
-# $objective: value of the objective function at the minimum
-# $coefficients: estimates for the regression coefficients.
-# $standard.deviation : standard errors of the coefficients 
-# $fitted.values:  fitted values
-# $residual.deviances: residual.deviances
-  
+#' Bianco and Yohai estimator for logistic regression
+#'
+#' This function computes the weighted M-estimator of Bianco and Yohai in logistic regression. 
+#' By default, an intercept term is included and p parameters are estimated. Modified by 
+#' Yohai (2018) to take as initial estimator a weighted ML estimator computed with weights 
+#' derived from the MCD estimator of the continuous explanatory variables. The same weights 
+#' are used to compute the final weighted M-estimator. For more details we refer to 
+#' Croux, C., and Haesbroeck, G. (2002), "Implementing the Bianco and Yohai estimator for 
+#' Logistic Regression" 
+#' 
+#' @param x0 matrix of explanatory variables; 
+#' @param y vector of binomial responses (0 or 1);
+#' @param intercept 1 or 0 indicating if an intercept is included or or not
+#' @param const tuning constant used in the computation of the estimator (default=0.5);
+#' @param kmax maximum number of iterations before convergence (default=1000);
+#' @param maxhalf  max number of step-halving (default=10).
+#' 
+#' @return A list with the following components:
+#' \item{coefficients}{estimates for the regression coefficients}
+#' \item{standard.deviation}{standard errors of the coefficients}
+#' \item{fitted.values}{fitted values}
+#' \item{residual.deviances}{residual deviances}
+#' \item{components}{logical value indicating whether convergence was achieved}
+#' \item{objective}{value of the objective function at the minimum}
+#' 
+#' @author Christophe Croux, Gentiane Haesbroeck, Victor Yohai
+#' @references \url{http://thebook}
+#'
+#' @examples
+#' WBYlogreg(x0,y)
+#'
+#' @export
 WBYlogreg<-function(x0,y, intercept=1, const=0.5,kmax=1000,maxhalf=10)
  { 
   sigmamin=0.0001   
