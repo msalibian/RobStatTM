@@ -17,7 +17,7 @@
 #' 
 #' @return A list with the following components:
 #' \item{coefficients}{estimates for the regression coefficients}
-#' \item{standard.deviation}{standard errors of the coefficients}
+#' \item{standard.deviation}{standard deviations of the coefficients}
 #' \item{fitted.values}{fitted values}
 #' \item{residual.deviances}{residual deviances}
 #' \item{components}{logical value indicating whether convergence was achieved}

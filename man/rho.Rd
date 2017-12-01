@@ -7,7 +7,7 @@
 \alias{rho}
 \title{Tukey bisquare rho object}
 \usage{
-bisquare(efficiency, breakdown.point)
+bisquare(efficiency)
 
 optimal(e)
 
@@ -18,9 +18,6 @@ rho(u, family = " bisquare", cc, standardize = TRUE)
 \arguments{
 \item{efficiency}{the desired efficiency of the corresponding regression
 estimator for Gaussian errors}
-
-\item{breakdown.point}{the desired breakdown of the associated regression
-estimator}
 
 \item{e}{the desired efficiency of the corresponding regression
 estimator for Gaussian errors}
@@ -35,6 +32,9 @@ considerations. See \link{lmrobdet.control}.}
 
 \item{standardize}{logical value determining whether the rho function is to be
 standardized so that its maximum value is 1. See \link{Mpsi}.}
+
+\item{breakdown.point}{the desired breakdown of the associated regression
+estimator}
 
 \item{e}{the desired efficiency of the corresponding regression
 estimator for Gaussian errors}

@@ -407,18 +407,25 @@ lmrobdet.control <- function(bb = 0.5, # 50% Breakdown point
                              mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = 'bisquare',
                              mts = 1000)
 {
-  if(family == 'bisquare') {
-    if(missing(tuning.psi))
-      tuning.psi <- findTuningConstFromEfficiencyBisquare(efficiency)
-    if(missing(tuning.chi))
-      tuning.chi <- findTuningConstFromBDPBisquare(bb)
-  }
-
-  # does not run
-  if(family != 'bisquare') {
-    family <- match.arg(family, choices = FAMILY.NAMES)
-    tuning.chi <- adjustTuningVectorForBreakdownPoint(do.call(family, args=list(e=efficiency)), breakdown.point = bb)
-  }
+  
+  # if(family == 'bisquare') {
+  #   if(missing(tuning.psi))
+  #     tuning.psi <- findTuningConstFromEfficiencyBisquare(efficiency)
+  #   if(missing(tuning.chi))
+  #     tuning.chi <- findTuningConstFromBDPBisquare(bb)
+  # }
+  # 
+  # # does not run
+  # if(family != 'bisquare') {
+  #   family <- match.arg(family, choices = FAMILY.NAMES)
+  #   tuning.chi <- adjustTuningVectorForBreakdownPoint(do.call(family, args=list(e=efficiency)), breakdown.point = bb)
+  # }
+  
+  family  <- match.arg(family, choices = FAMILY.NAMES)
+  if(missing(tuning.psi)) tuning.psi <- do.call(family, args=list(e=efficiency))
+  if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) ) tuning.psi <- c( 'c' = tuning.psi )
+  if(missing(tuning.chi)) tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
+  
 
   return(list(family=family, # psi=psi,
               tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,

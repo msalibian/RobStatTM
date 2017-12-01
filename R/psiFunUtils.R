@@ -12,27 +12,29 @@ psiSupportFromTuningConst <- function(a, family.name)
 }
 
 
-computeNuFromFamily <- function(family, psiSupport = NULL, densFun = dnorm)
+computeNuFromFamily <- function(family, cc, psiSupport = NULL, densFun = dnorm)
 {
   if(is.null(psiSupport))
-    psiSupport <- psiSupportFromTuningConst(family$cc, family$name)
+    psiSupport <- psiSupportFromTuningConst(cc, family)
 
-  integrand.top <- function(x, family, densFun)
-    rhoprime(x, family)^2 * densFun(x)
+  integrand.top <- function(x, family, cc, densFun)
+    rhoprime(x, family, cc)^2 * densFun(x)
   
-  nu.top <- integrate(integrand.top, psiSupport[1], psiSupport[2], family = family, densFun = densFun)$value
+  # nu.top <- integrate(integrand.top, psiSupport[1], psiSupport[2], family = family, cc = cc, densFun = densFun)$value
+  nu.top <- integrate(integrand.top, psiSupport[1], +Inf, family = family, cc = cc, densFun = densFun)$value
   
-  integrand.bottom <- function(x, family, densFun)
-    rhoprime2(x, family) * densFun(x)
+  integrand.bottom <- function(x, family, cc, densFun)
+    rhoprime2(x, family, cc) * densFun(x)
   
-  nu.bottom <- integrate(integrand.bottom, psiSupport[1], psiSupport[2], family = family, densFun = densFun)$value^2
+  # nu.bottom <- integrate(integrand.bottom, psiSupport[1], psiSupport[2], family = family, cc= cc, densFun = densFun)$value^2
+  nu.bottom <- integrate(integrand.bottom, psiSupport[1], +Inf, family = family, cc= cc, densFun = densFun)$value^2
   
   0.5 * nu.top / nu.bottom
 }
 
 
-computeGaussianEfficiencyFromFamily <- function(family, psiSupport = NULL)
-  1.0 / computeNuFromFamily(family, psiSupport = psiSupport)
+computeGaussianEfficiencyFromFamily <- function(family, cc, psiSupport = NULL)
+  1.0 / computeNuFromFamily(family, cc, psiSupport = psiSupport)
 
 
 findTuningConstFromGaussianEfficiency <- function(e, family.name)
@@ -43,12 +45,12 @@ findTuningConstFromGaussianEfficiency <- function(e, family.name)
     optimal = findTuningConstFromGaussianEfficiency_optimal(e),
     modified.optimal = findTuningConstFromGaussianEfficiency_modified.optimal(e),
     {
-      obj <- function(a, e) {
-        fam <- list(name = family.name, cc = a)
-        e - computeGaussianEfficiencyFromFamily(fam)
+      obj <- function(a, family, e) {
+        cc <-  c('c' = a)
+        # names(tuning.psi) <- 'c'
+        e - computeGaussianEfficiencyFromFamily(family, cc)
       }
-      
-      uniroot(obj, interval = c(0.1, 15.0), e = e, check.conv = TRUE, tol = 1e-8)$root
+      c('c' = uniroot(obj, interval = c(1e-2, 1e5), e = e, family=family.name, check.conv = TRUE, tol = 1e-8)$root)
     }
   )
 }
@@ -56,24 +58,26 @@ findTuningConstFromGaussianEfficiency <- function(e, family.name)
 
 ########## bisquare ##########
 
-findBreakdownPoint <- function(family)
+findBreakdownPoint <- function(family, cc)
 {
-  f <- function(x, family)
-    rho(x, family = family) * dnorm(x)
+  f <- function(x, family, cc)
+    rho(x, family, cc) * dnorm(x)
 
-  integrate(f, lower = -Inf, upper = Inf, family = family)$value
+  integrate(f, lower = -Inf, upper = Inf, family = family, cc = cc)$value
 }
 
 
-adjustTuningVectorForBreakdownPoint <- function(family, breakdown.point = 0.5)
+adjustTuningVectorForBreakdownPoint <- function(family, cc, breakdown.point = 0.5)
 {
-  g <- function(v, family, breakdown.point) {
-    family$cc["c"] <- v
-    findBreakdownPoint(family) - breakdown.point
+  g <- function(v, family, cc, breakdown.point) {
+    # family$cc["c"] <- v
+    cc["c"] <- v
+    findBreakdownPoint(family, cc=cc) - breakdown.point
   }
 
-  family$cc["c"] <- uniroot(g, c(0.1, 15.0), family = family, breakdown.point = breakdown.point, tol = 1e-8)$root
-  family
+  # family$cc["c"] <-
+  cc["c"] <- uniroot(g, c(1e-5, 1e5), family = family, cc=cc, breakdown.point = breakdown.point, tol = 1e-8)$root
+  return(cc)
 }
 
 
@@ -81,15 +85,17 @@ adjustTuningVectorForBreakdownPoint <- function(family, breakdown.point = 0.5)
 ########## optimal ##########
 
 Psi_optimal <- function(x, a)
-  0.5 * x^2 - a * pi * .Call(R_erfi, x / sqrt(2))
+  0.5 * x^2 - a * pi * .Call(R_erfi, x / sqrt(2), PACKAGE='RobStatTM')
 
 
 psiSupportFromTuningConst_optimal <- function(a)
 {
   u <- 0.77957 - 0.33349 * log(a)
-  fam <- list(name = "optimal", cc = c(a, 1e-9, Inf, 1.0, NA, NA))
-  lower <- uniroot(f = rhoprime, interval = c(1e-6, u), family = fam, check.conv = TRUE, tol = 1e-8)$root
-  upper <- uniroot(f = rhoprime, interval = c(u, 1.5*u), family = fam, check.conv = TRUE, tol = 1e-8)$root
+  # fam <- list(name = "optimal", cc = c(a, 1e-9, Inf, 1.0, NA, NA))
+  fam <- 'optimal'
+  cc <- c(a, 1e-9, Inf, 1.0, NA, NA)
+  lower <- uniroot(f = rhoprime, interval = c(1e-6, u), family = fam, cc = cc, check.conv = TRUE, tol = 1e-8)$root
+  upper <- uniroot(f = rhoprime, interval = c(u, 1.5*u), family = fam, cc = cc, check.conv = TRUE, tol = 1e-8)$root
   c(lower, upper)
 }
 
@@ -98,8 +104,10 @@ findTuningConstFromGaussianEfficiency_optimal <- function(e, interval = c(1e-6, 
 {
   obj <- function(a, e) {
     sup <- psiSupportFromTuningConst(a, "optimal")
-    fam <- list(name = "optimal", cc = c(a, sup, 1.0, NA, NA))
-    e - computeGaussianEfficiencyFromFamily(fam, psiSupport = sup)
+    # fam <- list(name = "optimal", cc = c(a, sup, 1.0, NA, NA))
+    fam <- 'optimal'
+    cc <- c(a, sup, 1.0, NA, NA)
+    e - computeGaussianEfficiencyFromFamily(fam, cc, psiSupport = sup)
   }
 
   uniroot(obj, interval = interval, e = e, check.conv = TRUE, tol = 1e-8)$root
@@ -111,8 +119,10 @@ findTuningConstFromGaussianEfficiency_optimal <- function(e, interval = c(1e-6, 
 psiSupportFromTuningConst_modified.optimal <- function(a)
 {
   u <- 0.77957 - 0.33349 * log(a)
-  fam <- list(name = "modified.optimal", cc = c(a, 1e-9, Inf, 1.0, 0.0, 0.0))
-  upper <- uniroot(f = rhoprime, interval = c(u, 1.5*u), family = fam, check.conv = TRUE, tol = 1e-8)$root
+  # fam <- list(name = "modified.optimal", cc = c(a, 1e-9, Inf, 1.0, 0.0, 0.0))
+  fam <- 'modified.optimal'
+  cc <- c(a, 1e-9, Inf, 1.0, 0.0, 0.0)
+  upper <- uniroot(f = rhoprime, interval = c(u, 1.5*u), family = fam, cc = cc, check.conv = TRUE, tol = 1e-8)$root
   c(0.0, upper)
 }
 
@@ -121,8 +131,10 @@ findTuningConstFromGaussianEfficiency_modified.optimal <- function(e, interval =
 {
   obj <- function(a, e) {
     sup <- psiSupportFromTuningConst(a, "modified.optimal")
-    fam <- list(name = "modified.optimal", cc = c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA))
-    e - computeGaussianEfficiencyFromFamily(fam, psiSupport = sup)
+    # fam <- list(name = "modified.optimal", cc = c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA))
+    fam <- 'modified.optimal'
+    cc <- c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA)
+    e - computeGaussianEfficiencyFromFamily(fam, cc, psiSupport = sup)
   }
 
   uniroot(obj, interval = interval, e = e, check.conv = TRUE, tol = 1e-8)$root

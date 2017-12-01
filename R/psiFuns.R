@@ -18,14 +18,14 @@ FAMILY.NAMES <- c("bisquare", "modified.optimal", "optimal")
 #' @author Kjell Konis
 #'
 #' @export
-bisquare <- function(efficiency, breakdown.point)
+bisquare <- function(efficiency) #, breakdown.point)
 {
-  if(missing(breakdown.point))
-    cc <- c("c" = findTuningConstFromGaussianEfficiency(efficiency, "bisquare"))
-  else
-    cc <- c("c" = 1.5477)
-
-  list(name = "bisquare", cc = cc)
+  # if(missing(breakdown.point))
+  findTuningConstFromGaussianEfficiency(efficiency, "bisquare")
+  # else
+  #   cc <- c("c" = 1.5477)
+# 
+#   list(name = "bisquare", cc = cc)
 }
 
 #' Optimal rho function object
@@ -47,7 +47,8 @@ optimal <- function(e)
   cc[5] <- Psi_optimal(cc[2], cc[1])
   cc[6] <- Psi_optimal(cc[3], cc[1]) - cc[5]
   names(cc) <- c("a", "lower", "upper", "c", "Psi(lower)", "rho(Inf)")
-  list(name = "optimal", cc = cc)
+  # list(name = "optimal", cc = cc)
+  cc
 }
 
 
@@ -70,7 +71,8 @@ modified.optimal <- function(e)
   cc[5] <- Psi_optimal(1.0, cc[1])
   cc[6] <- (0.5 + cc[2] * (Psi_optimal(cc[3], cc[1]) - cc[5]))
   names(cc) <- c("a", "normConst", "upper", "c", "Psi(1)", "rho(Inf)")
-  list(name = "modified.optimal", cc = cc)
+  # list(name = "modified.optimal", cc = cc)
+  cc
 }
 
 
