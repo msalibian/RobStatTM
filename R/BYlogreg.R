@@ -75,7 +75,7 @@ BYlogreg<-function(x0,y, intercept=1, const=0.5,kmax=1000,maxhalf=10)
    wrd<-(rdx<=qnorm(.9875))}
    if(p1>1)
    { 
-   mcdx<-covMcd(x00,alpha=.75)	
+   mcdx<-robustbase::covMcd(x00,alpha=.75)	
    rdx<-mahalanobis(x00,center=mcdx$center,cov=mcdx$cov)		
    vc<-qchisq(0.975,p)
    wrd<-(rdx<=vc)}
