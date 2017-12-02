@@ -3,17 +3,36 @@
 # R CMD INSTALL --preclean --clean robustbroli
 
 library(RobStatTM)
+set.seed(123)
+x <- rnorm(5000, sd=2)
+mscale(u=x, delta=.5, tuning.chi=1.547645, family='bisquare')
+mscale(u=x, delta=.5, tuning.chi=lmrobdet.control()$tuning.chi, family='bisquare')
+mscale(u=x, delta=.5, tuning.chi=lmrobdet.control(family='modified.optimal')$tuning.chi, family='modified.optimal')
+mscale(u=x, delta=.01, tuning.chi=lmrobdet.control(bb=.01)$tuning.chi, family='bisquare')
+mscale(u=x, delta=.01, tuning.chi=lmrobdet.control(family='modified.optimal', bb=.01)$tuning.chi, family='modified.optimal')
+sd(x)
+t.chi <- lmrobdet.control(bb=.25)$tuning.chi
+tmp <- mscale(u=x, delta=.25, tuning.chi=t.chi, family='bisquare')
+mean( rho(u=x/tmp, family='bisquare', cc=t.chi) )
+
+t.chi <- lmrobdet.control(bb=.25, family='modified.optimal')$tuning.chi
+tmp <- mscale(u=x, delta=.25, tuning.chi=t.chi, family='modified.optimal')
+mean( rho(u=x/tmp, family='modified.optimal', cc=t.chi) )
+
+
+
+library(RobStatTM)
 data(coleman, package='robustbase')
 m2 <- lmrobdetMM(Y ~ ., data=coleman)
+m4 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(family='modified.optimal'))
+m5 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(family='optimal'))
 m1 <- lmrobdetDCML(Y ~ ., data=coleman)
 m3 <- lmrobdetDCML(Y ~ ., data=coleman, control=lmrobdet.control(efficiency=.999))
-m4 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(family='modi'))
-m6 <- lmrobdetDCML(Y ~ ., data=coleman, control=lmrobdet.control(family='modi'))
-m5 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(family='opti'))
-
+m6 <- lmrobdetDCML(Y ~ ., data=coleman, control=lmrobdet.control(family='modified.optimal', efficiency=.999))
 m0 <- lm(Y ~ ., data=coleman)
 
 coef(m0)
+coef(m6)
 coef(m3)
 coef(m2)
 coef(m4)

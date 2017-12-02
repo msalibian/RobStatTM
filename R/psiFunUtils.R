@@ -141,25 +141,25 @@ findTuningConstFromGaussianEfficiency_modified.optimal <- function(e, interval =
 }
 
 
-#' @export
-findTuningConstFromEfficiencyBisquare <- function(efficiency) {
-  family <- 'bisquare'
-  effi <- function(cc, family) {		 
-    a <- integrate(function(a, family, cc) (rhoprime(a, family, cc)^2)*dnorm(a), cc=cc, family=family, lower=-Inf, upper=+Inf)$value
-    b <- integrate(function(a, family, cc) rhoprime2(a, family, cc)*dnorm(a), cc=cc, family=family, lower=-Inf, upper=+Inf)$value
-    return( 1/(a/b^2) ) 
-  }		
-  return( uniroot( function(cc, eff, family) (effi(cc, family)-eff), eff=efficiency, family=family, lower=.1, upper=1e3)$root )
-}
-
-#' @export
-findTuningConstFromBDPBisquare <- function(bdp) {
-  family <- 'bisquare'
-  obj <- function(cc, family) {		 
-    a <- integrate(function(a, family, cc) rho(a, family, cc)*dnorm(a), cc=cc, family=family, lower=-Inf, upper=+Inf)$value
-    return( a ) 		 
-  }		
-  return( uniroot( function(cc, bdp, family) (obj(cc, family)-bdp), bdp=bdp, family=family, lower=.1, upper=1e3)$root )
-}
+#' #' @export
+#' findTuningConstFromEfficiencyBisquare <- function(efficiency) {
+#'   family <- 'bisquare'
+#'   effi <- function(cc, family) {		 
+#'     a <- integrate(function(a, family, cc) (rhoprime(a, family, cc)^2)*dnorm(a), cc=cc, family=family, lower=-Inf, upper=+Inf)$value
+#'     b <- integrate(function(a, family, cc) rhoprime2(a, family, cc)*dnorm(a), cc=cc, family=family, lower=-Inf, upper=+Inf)$value
+#'     return( 1/(a/b^2) ) 
+#'   }		
+#'   return( uniroot( function(cc, eff, family) (effi(cc, family)-eff), eff=efficiency, family=family, lower=.1, upper=1e3)$root )
+#' }
+#' 
+#' #' @export
+#' findTuningConstFromBDPBisquare <- function(bdp) {
+#'   family <- 'bisquare'
+#'   obj <- function(cc, family) {		 
+#'     a <- integrate(function(a, family, cc) rho(a, family, cc)*dnorm(a), cc=cc, family=family, lower=-Inf, upper=+Inf)$value
+#'     return( a ) 		 
+#'   }		
+#'   return( uniroot( function(cc, bdp, family) (obj(cc, family)-bdp), bdp=bdp, family=family, lower=.1, upper=1e3)$root )
+#' }
 
 

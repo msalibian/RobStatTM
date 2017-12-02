@@ -393,7 +393,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 lmrobdet.control <- function(bb = 0.5, # 50% Breakdown point
                              efficiency = 0.85, # 85% efficiency
                              family = 'bisquare',
-                             tuning.psi, # = findTuningConstFromEfficiency(efficiency, family),
+                             tuning.psi = do.call(family, args=list(e=efficiency)), # = findTuningConstFromEfficiency(efficiency, family),
                              tuning.chi, # = findTuningConstFromBDP(bb, family),
                              compute.rd = FALSE, # psi = 'bisquare',
                              corr.b = TRUE, # for MMPY and SMPY
@@ -421,8 +421,8 @@ lmrobdet.control <- function(bb = 0.5, # 50% Breakdown point
   #   tuning.chi <- adjustTuningVectorForBreakdownPoint(do.call(family, args=list(e=efficiency)), breakdown.point = bb)
   # }
   
-  family  <- match.arg(family, choices = FAMILY.NAMES)
-  if(missing(tuning.psi)) tuning.psi <- do.call(family, args=list(e=efficiency))
+  # family  <- match.arg(family, choices = FAMILY.NAMES)
+  # if(missing(tuning.psi)) tuning.psi <- do.call(family, args=list(e=efficiency))
   if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) ) tuning.psi <- c( 'c' = tuning.psi )
   if(missing(tuning.chi)) tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
   
