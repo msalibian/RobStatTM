@@ -94,16 +94,27 @@ library(pense)
 set.seed(1)
 b0 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
 b2 <- pensem(b0, alpha=1, nlambda=30, ncores=4)
+coef(b2)[ coef(b2) != 0 ]
+which( coef(b2) != 0 )
 
 
 
 set.seed(123)
-b0 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
-b2 <- pensem(b0, alpha=1, nlambda=30, ncores=4)
-
+b0.2 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
+b2.2 <- pensem(b0.2, alpha=1, nlambda=30, ncores=4)
+coef(b2.2)[ coef(b2.2) != 0 ]
+which( coef(b2.2) != 0 )
 
 
 set.seed(123456)
-b0 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
-b2 <- pensem(b0, alpha=1, nlambda=30, ncores=4)
+b0.3 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
+b2.3 <- pensem(b0.3, alpha=1, nlambda=30, ncores=4)
+coef(b2.3)[ coef(b2.3) != 0 ]
+which( coef(b2.3) != 0 )
+
+set.seed(17)
+b0.4 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
+b2.4 <- pensem(b0.4, alpha=1, nlambda=30, ncores=4)
+coef(b2.4)[ coef(b2.4) != 0 ]
+which( coef(b2.4) != 0 )
 
