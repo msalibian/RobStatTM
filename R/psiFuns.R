@@ -4,39 +4,42 @@
 FAMILY.NAMES <- c("bisquare", "modified.optimal", "optimal")
 
 
-#' Tukey bisquare rho object
-#'
-#' @param efficiency the desired efficiency of the corresponding regression
-#' estimator for Gaussian errors
-#' @param breakdown.point the desired breakdown of the associated regression
-#' estimator
-#'
-#' @return A list with elements \code{name} (the string 'bisquare') and the corresponding tuning
-#' constant \code{cc}
-#'
-#' @rdname rho
-#' @author Kjell Konis
-#'
-#' @export
-bisquare <- function(efficiency) #, breakdown.point)
-{
-  # if(missing(breakdown.point))
-  findTuningConstFromGaussianEfficiency(efficiency, "bisquare")
-  # else
-  #   cc <- c("c" = 1.5477)
-# 
-#   list(name = "bisquare", cc = cc)
-}
-
-#' Optimal rho function object
+#' Tuning parameter the rho loss functions
+#' 
+#' This function computes the tuning constant that yields an MM-regression
+#' estimator with a desired asymptotic efficiency when computed with a 
+#' rho function in the corresponding family. The output of this
+#' function can be passed to the functions \link{lmrobdet.control}, 
+#' \link{mscale} and \link{rho}. 
 #'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
 #'
-#' @return A list with elements \code{name} (the string 'optimal') and the corresponding tuning
-#' constant \code{cc}
+#' @return A length-1 vector with the corresponding tuning constant. 
 #'
-#' @rdname rho
+#' @rdname bisquare
+#' @author Kjell Konis
+#'
+#' @export
+bisquare <- function(e) #, breakdown.point)
+{
+  findTuningConstFromGaussianEfficiency(e, "bisquare")
+}
+
+#' Tuning parameter for a rho function in the (asymptotic bias-) optimal family
+#' 
+#' This function computes the tuning constant that yields an MM-regression
+#' estimator with a desired asymptotic efficiency when computed with a 
+#' rho function in the corresponding family. The output of this
+#' function can be passed to the functions \link{lmrobdet.control}, 
+#' \link{mscale} and \link{rho}. 
+#' 
+#' @param e the desired efficiency of the corresponding regression
+#' estimator for Gaussian errors
+#'
+#' @return A vector with named elements containing the corresponding tuning
+#' parameters.
+#'
 #' @author Kjell Konis
 #'
 #' @export
@@ -47,20 +50,24 @@ optimal <- function(e)
   cc[5] <- Psi_optimal(cc[2], cc[1])
   cc[6] <- Psi_optimal(cc[3], cc[1]) - cc[5]
   names(cc) <- c("a", "lower", "upper", "c", "Psi(lower)", "rho(Inf)")
-  # list(name = "optimal", cc = cc)
   cc
 }
 
 
-#' Modified optimal rho function object
+#' Tuning parameter for a rho function in the modified (asymptotic bias-) optimal family
 #'
+#' This function computes the tuning constant that yields an MM-regression
+#' estimator with a desired asymptotic efficiency when computed with a 
+#' rho function in the corresponding family. The output of this
+#' function can be passed to the functions \link{lmrobdet.control}, 
+#' \link{mscale} and \link{rho}. 
+#' 
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
 #'
-#' @return A list with elements \code{name} (the string 'modified.optimal') and the corresponding tuning
-#' constant \code{cc}
+#' @return A vector with named elements containing the corresponding tuning
+#' parameters.
 #'
-#' @rdname rho
 #' @author Kjell Konis
 #'
 #' @export
@@ -71,19 +78,24 @@ modified.optimal <- function(e)
   cc[5] <- Psi_optimal(1.0, cc[1])
   cc[6] <- (0.5 + cc[2] * (Psi_optimal(cc[3], cc[1]) - cc[5]))
   names(cc) <- c("a", "normConst", "upper", "c", "Psi(1)", "rho(Inf)")
-  # list(name = "modified.optimal", cc = cc)
   cc
 }
 
 
 
-#' Tukey bisquare rho function
+#' Rho functions
+#' 
+#' This function returns the value of the "rho" loss function used 
+#' to compute either an M-scale estimator or a robust regression
+#' estimator. It currently can be used to compute the bisquare, optimal
+#' and modified optimal loss functions. 
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "optimal" and "modified.optimal"). 
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown 
-#' considerations. See \link{lmrobdet.control}. 
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+#' and \link{optimal}. 
 #' @param standardize logical value determining whether the rho function is to be
 #' standardized so that its maximum value is 1. See \link{Mpsi}. 
 #'
@@ -110,7 +122,8 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 #' @param family family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "optimal" and "modified.optimal"). 
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown 
-#' considerations. See \link{lmrobdet.control}. 
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+#' and \link{optimal}.  
 #' @param standardize logical value determining whether the rho function is to be
 #' standardized so that its maximum value is 1. See \link{Mpsi}. 
 #'
@@ -137,7 +150,8 @@ rhoprime <- function(u, family, cc, standardize = FALSE)
 #' @param family family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "optimal" and "modified.optimal"). 
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown 
-#' considerations. See \link{lmrobdet.control}. 
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+#' and \link{optimal}. 
 #' @param standardize logical value determining whether the rho function is to be
 #' standardized so that its maximum value is 1. See \link{Mpsi}. 
 #'

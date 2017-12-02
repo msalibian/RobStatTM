@@ -13,7 +13,8 @@ rhoprime(u, family, cc, standardize = FALSE)
 options are "bisquare", "optimal" and "modified.optimal").}
 
 \item{cc}{tuning parameters to be computed according to efficiency and / or breakdown 
-considerations. See \link{lmrobdet.control}.}
+considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+and \link{optimal}.}
 
 \item{standardize}{logical value determining whether the rho function is to be
 standardized so that its maximum value is 1. See \link{Mpsi}.}

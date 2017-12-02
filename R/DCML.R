@@ -11,7 +11,7 @@
 #' Tukey's bisquare family.
 #' The breakdown point of the estimator is \code{min(b, 1-b)},
 #' so the optimal choice for \code{b} is 0.5. To obtain a
-#' consisten estimator the constant
+#' consistent estimator the constant
 #' \code{cc} should be chosen such that E(rho(Z, cc)) = b, where
 #' Z is a standard normal random variable.
 #'
@@ -26,7 +26,8 @@
 #' @param family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "optimal" and "modified.optimal"). 
 #' @param tuning.chi the tuning object for the rho function as returned
-#' by \code{\link{lmrobdet.control}}. 
+#' by \code{\link{lmrobdet.control}}, \link{bisquare}, \link{modified.optimal} or \link{optimal}. 
+#' It should correspond to the family of rho functions specified in the argument \code{family}. 
 #' @param tol relative tolerance for convergence
 #' @param max.it maximum number of iterations allowed
 #'

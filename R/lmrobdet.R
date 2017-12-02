@@ -338,14 +338,16 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #'
 #' @rdname lmrobdet.control
 #' @param tuning.chi tuning constant for the function used to compute the M-scale
-#' for the S-estimator. If missing, it is computed inside \code{lmrobdet.control} to match
-#' the value of \code{bb} below according to the family of rho functions specified in \code{family}.
+#' used for the initial S-estimator. If missing, it is computed inside \code{lmrobdet.control} to match
+#' the value of \code{bb} according to the family of rho functions specified in \code{family}.
 #' @param bb tuning constant (between 0 and 1/2) for the M-scale used to compute the initial S-estimator. It
 #' determines the robusness (breakdown point) of the resulting MM-estimator, which is
 #' \code{bb}. Defaults to 0.5.
 #' @param tuning.psi tuning parameters for the regression M-estimator computed with a rho function
 #' as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
 #' the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
+#' Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors 
+#' can be constructed using the functions \link{bisquare}, \link{modified.optimal} and \link{optimal}.   
 #' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.
 #' @param max.it maximum number of IRWLS iterations for the MM-estimator
 #' @param refine.tol relative covergence tolerance for the S-estimator
@@ -359,7 +361,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "optimal" and "modified.optimal").
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied
-#' to the M-scale parameter \code{bb}
+#' to the M-scale parameter \code{bb}.
 #' @param split.type determines how categorical and continuous variables are split. See
 #' \code{\link[robustbase]{splitFrame}}.
 #' @param initial string specifying the initial value for the M-step of the MM-estimator. Valid
@@ -390,17 +392,16 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' m2 <- lmrobdet(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
 #'
 #' @export
-lmrobdet.control <- function(bb = 0.5, # 50% Breakdown point
-                             efficiency = 0.85, # 85% efficiency
+lmrobdet.control <- function(bb = 0.5, 
+                             efficiency = 0.85, 
                              family = 'bisquare',
-                             tuning.psi = do.call(family, args=list(e=efficiency)), # = findTuningConstFromEfficiency(efficiency, family),
-                             tuning.chi, # = findTuningConstFromBDP(bb, family),
-                             compute.rd = FALSE, # psi = 'bisquare',
-                             corr.b = TRUE, # for MMPY and SMPY
-                             split.type = "f", # help(splitFrame, package='robustbase')
-                             initial='S', #'S' or 'MS'
+                             tuning.psi = do.call(family, args=list(e=efficiency)),                             tuning.chi, # = findTuningConstFromBDP(bb, family),
+                             compute.rd = FALSE, 
+                             corr.b = TRUE, 
+                             split.type = "f", 
+                             initial='S',
                              max.it = 100, refine.tol = 1e-7, rel.tol = 1e-7,
-                             refine.PY = 10, # no. of steps to refine PY candidates
+                             refine.PY = 10, 
                              solve.tol = 1e-7, trace.lev = 0,
                              psc_keep = 0.5, resid_keep_method = 'threshold',
                              resid_keep_thresh = 2, resid_keep_prop = .2, py_maxit = 20, py_eps = 1e-5,
@@ -408,23 +409,10 @@ lmrobdet.control <- function(bb = 0.5, # 50% Breakdown point
                              mts = 1000)
 {
   
-  # if(family == 'bisquare') {
-  #   if(missing(tuning.psi))
-  #     tuning.psi <- findTuningConstFromEfficiencyBisquare(efficiency)
-  #   if(missing(tuning.chi))
-  #     tuning.chi <- findTuningConstFromBDPBisquare(bb)
-  # }
-  # 
-  # # does not run
-  # if(family != 'bisquare') {
-  #   family <- match.arg(family, choices = FAMILY.NAMES)
-  #   tuning.chi <- adjustTuningVectorForBreakdownPoint(do.call(family, args=list(e=efficiency)), breakdown.point = bb)
-  # }
-  
-  # family  <- match.arg(family, choices = FAMILY.NAMES)
-  # if(missing(tuning.psi)) tuning.psi <- do.call(family, args=list(e=efficiency))
-  if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) ) tuning.psi <- c( 'c' = tuning.psi )
-  if(missing(tuning.chi)) tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
+  if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) ) 
+    tuning.psi <- c( 'c' = tuning.psi )
+  if(missing(tuning.chi)) 
+    tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
   
 
   return(list(family=family, # psi=psi,

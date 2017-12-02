@@ -26,16 +26,18 @@ options are "bisquare", "optimal" and "modified.optimal").}
 
 \item{tuning.psi}{tuning parameters for the regression M-estimator computed with a rho function
 as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
-the value of \code{efficiency} according to the family of rho functions specified in \code{family}.}
+the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
+Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors 
+can be constructed using the functions \link{bisquare}, \link{modified.optimal} and \link{optimal}.}
 
 \item{tuning.chi}{tuning constant for the function used to compute the M-scale
-for the S-estimator. If missing, it is computed inside \code{lmrobdet.control} to match
-the value of \code{bb} below according to the family of rho functions specified in \code{family}.}
+used for the initial S-estimator. If missing, it is computed inside \code{lmrobdet.control} to match
+the value of \code{bb} according to the family of rho functions specified in \code{family}.}
 
 \item{compute.rd}{logical value indicating whether robust leverage distances need to be computed.}
 
 \item{corr.b}{logical value indicating whether a finite-sample correction should be applied
-to the M-scale parameter \code{bb}}
+to the M-scale parameter \code{bb}.}
 
 \item{split.type}{determines how categorical and continuous variables are split. See
 \code{\link[robustbase]{splitFrame}}.}
