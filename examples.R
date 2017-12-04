@@ -10,6 +10,7 @@ mscale(u=x, delta=.5, tuning.chi=lmrobdet.control()$tuning.chi, family='bisquare
 mscale(u=x, delta=.5, tuning.chi=lmrobdet.control(family='modified.optimal')$tuning.chi, family='modified.optimal')
 mscale(u=x, delta=.01, tuning.chi=lmrobdet.control(bb=.01)$tuning.chi, family='bisquare')
 mscale(u=x, delta=.01, tuning.chi=lmrobdet.control(family='modified.optimal', bb=.01)$tuning.chi, family='modified.optimal')
+mscale(u=x, delta=.01, tuning.chi=lmrobdet.control(family='modified.optimal', efficiency=.95, bb=.01)$tuning.chi, family='modified.optimal')
 sd(x)
 t.chi <- lmrobdet.control(bb=.25)$tuning.chi
 tmp <- mscale(u=x, delta=.25, tuning.chi=t.chi, family='bisquare')
@@ -18,6 +19,14 @@ mean( rho(u=x/tmp, family='bisquare', cc=t.chi) )
 t.chi <- lmrobdet.control(bb=.25, family='modified.optimal')$tuning.chi
 tmp <- mscale(u=x, delta=.25, tuning.chi=t.chi, family='modified.optimal')
 mean( rho(u=x/tmp, family='modified.optimal', cc=t.chi) )
+
+t.chi <- lmrobdet.control(family='modified.optimal')$tuning.chi
+tmp <- mscale(u=x, delta=.5, tuning.chi=t.chi, family='modified.optimal')
+mean( rho(u=x/tmp, family='modified.optimal', cc=t.chi) )
+
+t2.chi <- lmrobdet.control(family='modified.optimal', efficiency=.95)$tuning.chi
+tmp2 <- mscale(u=x, delta=.5, tuning.chi=t2.chi, family='modified.optimal')
+mean( rho(u=x/tmp2, family='modified.optimal', cc=t2.chi) )
 
 
 
