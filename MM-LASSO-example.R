@@ -118,3 +118,22 @@ b2.4 <- pensem(b0.4, alpha=1, nlambda=30, ncores=4)
 coef(b2.4)[ coef(b2.4) != 0 ]
 which( coef(b2.4) != 0 )
 
+
+set.seed(29)
+b0.5 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
+b2.5 <- pensem(b0.5, alpha=1, nlambda=30, ncores=4)
+coef(b2.5)[ coef(b2.5) != 0 ]
+which( coef(b2.5) != 0 )
+
+
+set.seed(654321)
+b0.6 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
+b2.6 <- pensem(b0.6, alpha=1, nlambda=30, ncores=4)
+coef(b2.6)[ coef(b2.6) != 0 ]
+which( coef(b2.6) != 0 )
+
+set.seed(9311)
+b0.7 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
+b2.7 <- pensem(b0.7, alpha=1, nlambda=30, ncores=4)
+coef(b2.7)[ coef(b2.7) != 0 ]
+which( coef(b2.7) != 0 )
