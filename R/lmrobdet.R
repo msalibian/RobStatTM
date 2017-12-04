@@ -1180,8 +1180,8 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     #tmp2$init <- initial
     #z <- eval(expr=tmp2, envir=parent.frame()) # lmrob(formula, control=my.control, init=initial) #tuning.psi=tuning.psi ,init=initial) lmrob.control(tuning.psi=lmrobdet.control()$tuning.psi),
 
-    rb.ctl <- lmrob.control(psi = control$tuning.psi$name,
-                            tuning.psi = control$tuning.psi$cc,
+    rb.ctl <- lmrob.control(psi = control$family, #tuning.psi$name,
+                            tuning.psi = control$tuning.psi, #$cc,
                             method = "M",
                             cov = ".vcov.w")
     z <- lmrob.fit(x, y, rb.ctl, initial, mf)
@@ -1197,9 +1197,11 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     if(!is.null(offset)) z$residuals <- y - offset
   }
   z$call <- cl
-  class(z) <- 'lmrob'
+  class(z) <- c('lmrob', 'lmrobdetMM')
   z
 }
+
+
 
 #' Robust likelihood ratio test for linear hypotheses
 #'
