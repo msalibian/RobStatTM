@@ -4,7 +4,7 @@
 \alias{mscale}
 \title{M-scale estimator}
 \usage{
-mscale(u, delta = 0.5, tuning.chi = 1.54764, family = "bisquare",
+mscale(u, delta = 0.5, tuning.chi = 1.547645, family = "bisquare",
   max.it = 100, tol = 1e-06)
 }
 \arguments{
