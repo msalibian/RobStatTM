@@ -44,7 +44,7 @@
 #' sd(r)
 #'
 #' @export
-mscale <- function(u, delta=0.5, tuning.chi=1.54764, family ="bisquare", max.it=100, tol=1e-6) {
+mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquare", max.it=100, tol=1e-6) {
   # M-scale of a sample u
   # tol: accuracy
   # delta: breakdown point (right side)
