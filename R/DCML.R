@@ -150,7 +150,7 @@ MMPY <- function(X, y, control, mf) {
 # the rho function. We had discussed always using bisquare in pyinit.
 
 
-   a <- pyinit(x=X, y=y, intercept=FALSE, delta=dee,
+   a <- pyinit::pyinit(x=X, y=y, intercept=FALSE, delta=dee,
                cc=1.54764,
                psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
                resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
@@ -298,7 +298,7 @@ SMPY <- function(mf, y, control, split) {
 # Matias, I hard coded the parameters for pyinit because I wasn't sure how to handle changing
 # the rho function. We had discussed always using bisquare in pyinit.
 
-  initial <- pyinit(intercept=FALSE, x=X1, y=y1,
+  initial <- pyinit::pyinit(intercept=FALSE, x=X1, y=y1,
                     delta=dee, cc=1.54764,
                     psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
                     resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
