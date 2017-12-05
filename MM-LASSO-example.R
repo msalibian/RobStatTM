@@ -137,3 +137,33 @@ b0.7 <- pense(x=x, y=y, alpha=0, ncores=4, nlambda=30)
 b2.7 <- pensem(b0.7, alpha=1, nlambda=30, ncores=4)
 coef(b2.7)[ coef(b2.7) != 0 ]
 which( coef(b2.7) != 0 )
+
+las <- b2$cv_lambda_grid$lambda
+cvs <- array(NA, dim=c(length(las), 7))
+cvs[,1]  <- b2$cv_lambda_grid$cvavg
+for(j in 2:7) {
+  tmp <- get(paste('b2.', j, sep=''))
+  cvs[,j] <- tmp$cv_lambda_grid$cvavg
+}
+
+
+matplot(x=las, y=cvs, type='l', lty=1, col='gray', ylog=TRUE)
+plot(x=las, y=rowMeans(cvs), type='l')
+rowMeans(cvs)
+
+
+which(coef(b2, lambda=las[23]) != 0 )
+which(coef(b2.2, lambda=las[23]) != 0 )
+which(coef(b2.3, lambda=las[23]) != 0 )
+which(coef(b2.4, lambda=las[23]) != 0 )
+which(coef(b2.5, lambda=las[23]) != 0 )
+which(coef(b2.6, lambda=las[23]) != 0 )
+which(coef(b2.7, lambda=las[23]) != 0 )
+
+which(coef(b2, lambda=las[24]) != 0 )
+which(coef(b2.2, lambda=las[24]) != 0 )
+which(coef(b2.3, lambda=las[24]) != 0 )
+which(coef(b2.4, lambda=las[24]) != 0 )
+which(coef(b2.5, lambda=las[24]) != 0 )
+which(coef(b2.6, lambda=las[24]) != 0 )
+which(coef(b2.7, lambda=las[24]) != 0 )
