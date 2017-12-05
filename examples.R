@@ -132,11 +132,12 @@ summary(m0)
 m2.null <- lmrobdet(Y ~ . - sstatus -fatherWc, data=coleman)
 rob.linear.test(m2, m2.null)
 
+set.seed(123)
 x1 <- rnorm(50)
 x2 <- rnorm(50)
 y <- rnorm(50, sd=.1) + x1 - 2*x2
 das <- data.frame(x1=x1, x2=x2, y=y)
-tmp <- lmrobdet(y ~ . , data=das)
+tmp <- lmrobdetMM(y ~ . , data=das)
 summary(tmp)
 summary(lm(y~., data=das))
 
