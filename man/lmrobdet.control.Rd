@@ -27,7 +27,7 @@ options are "bisquare", "optimal" and "modified.optimal").}
 \item{tuning.psi}{tuning parameters for the regression M-estimator computed with a rho function
 as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
 the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
-Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors 
+Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
 can be constructed using the functions \link{bisquare}, \link{modified.optimal} and \link{optimal}.}
 
 \item{tuning.chi}{tuning constant for the function used to compute the M-scale
