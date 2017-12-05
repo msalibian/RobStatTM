@@ -200,7 +200,6 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       }
       z$r.squared <- r.squared
       z$adj.r.squared <- adj.r.squared
-      print(c(r.squared, adj.r.squared))
       # DCML
       # LS is already computed in z0
       # z2 <- DCML(x=x, y=y, z=z, z0=z0, control=control)
@@ -341,8 +340,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param tuning.psi tuning parameters for the regression M-estimator computed with a rho function
 #' as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
 #' the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
-#' Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors 
-#' can be constructed using the functions \link{bisquare}, \link{modified.optimal} and \link{optimal}.   
+#' Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
+#' can be constructed using the functions \link{bisquare}, \link{modified.optimal} and \link{optimal}.
 #' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.
 #' @param max.it maximum number of IRWLS iterations for the MM-estimator
 #' @param refine.tol relative covergence tolerance for the S-estimator
@@ -387,30 +386,29 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' m2 <- lmrobdet(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
 #'
 #' @export
-lmrobdet.control <- function(bb = 0.5, 
-                             efficiency = 0.85, 
+lmrobdet.control <- function(bb = 0.5,
+                             efficiency = 0.85,
                              family = 'bisquare',
                              tuning.psi = do.call(family, args=list(e=efficiency)),                             tuning.chi, # = findTuningConstFromBDP(bb, family),
-                             compute.rd = FALSE, 
-                             corr.b = TRUE, 
-                             split.type = "f", 
+                             compute.rd = FALSE,
+                             corr.b = TRUE,
+                             split.type = "f",
                              initial='S',
                              max.it = 100, refine.tol = 1e-7, rel.tol = 1e-7,
-                             refine.PY = 10, 
+                             refine.PY = 10,
                              solve.tol = 1e-7, trace.lev = 0,
                              psc_keep = 0.5, resid_keep_method = 'threshold',
                              resid_keep_thresh = 2, resid_keep_prop = .2, py_maxit = 20, py_eps = 1e-5,
                              mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = 'bisquare',
                              mts = 1000)
 {
-  
+
   family <- match.arg(family, choices = FAMILY.NAMES)
-  
-  if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) ) 
+  if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) )
     tuning.psi <- c( 'c' = tuning.psi )
-  if(missing(tuning.chi)) 
+  if(missing(tuning.chi))
     tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
-  
+
 
   return(list(family=family, # psi=psi,
               tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
