@@ -265,3 +265,42 @@ plot(xx, rhoprime(u=xx, family='bisquare', cc=1.547, standardize=TRUE), type='l'
 plot(xx, rhoprime(u=xx, family='bisquare', cc=1.547, standardize=FALSE), type='l', main='Rhoprime - Standarize: FALSE', xlab='', ylab='')
 
 
+library(RobStatTM)
+effs <- c(.85, .9, .95, .99, .999)
+for(j in 1:length(effs))
+  print(round(c(effs[j], (c(optimal(effs[j])))[1:3]), 8))
+#                    a      lower      upper 
+# 0.85000000 0.04358443 0.10991187 2.50257316 
+#                    a      lower      upper 
+# 0.90000000 0.02789679 0.07009889 2.70366981 
+#                    a      lower      upper 
+# 0.95000000 0.01317785 0.03305002 3.00333205 
+#                    a      lower      upper 
+# 0.99000000 0.00243798 0.00611122 3.56932005  
+#                    a      lower      upper 
+# 0.99900000 0.00024659 0.00061810 4.20099435 
+# 
+
+
+set.seed(123)
+n <- 50
+p <- 2
+x0 <- matrix(rnorm(n * p), n, p)
+y <- rbinom(n, size = 1, prob=.75)
+# library(robustbase)
+# library(RobStatTM)
+tmp <- BYlogreg(x0=x0, y=y)
+#tmp2 <- BYlogreg(x0=x0, y=y)
+tmp.w <-  WBYlogreg(x0=x0, y=y)
+tmp.wml <- WMLlogreg(x0=x0, y=y)
+
+
+data(vaso, package='robustbase')
+x <- model.matrix(Y ~ Volume + Rate, data=vaso)
+tmp <- BYlogreg(x0=x, y=vaso$Y, intercept=FALSE)
+tmp.w <-  WBYlogreg(x0=x, y=vaso$Y, intercept=FALSE)
+tmp.wml <- WMLlogreg(x0=x, y=vaso$Y, intercept=FALSE)
+
+
+
+
