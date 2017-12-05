@@ -34,15 +34,16 @@ INVTR2 <- function(RR2, cc) {
     return( dd )
   }
   
+
   
-  ff <- function(x, y, cc) return( uu <- TR2(x,cc) - y )
+  ff <- function(x, y, cc) return( TR2(x,cc) - y )
   
   
-  aa <- TR2(.99999999, cc)
-  bb <- TR2(.00000001, cc)
-  if( RR2 > .99999999 ) R2 <- 1
+  aa <- TR2(.99999, cc)
+  bb <- TR2(.00001, cc)
+  if( RR2 > .99 ) R2 <- 1
   if ( RR2 < bb ) R2 <- 0 
-  if( (RR2 <= .99999999) & (RR2 >= bb) ) 
+  if( (RR2 <= .99) & (RR2 >= bb) ) 
     R2 <- uniroot(ff, c(bb/2, aa+((1-aa)/2)), y=RR2, cc=cc)$root #R2 <- uniroot(ff,c( .000000001,.999999999),y=RR2,cc=cc)$root
   return(R2)
 }
@@ -50,7 +51,8 @@ INVTR2 <- function(RR2, cc) {
 
 # INVTR2(0.7367034,3.44)
 
- 
+
+
 
 
 
