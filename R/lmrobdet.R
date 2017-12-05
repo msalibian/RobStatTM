@@ -404,6 +404,8 @@ lmrobdet.control <- function(bb = 0.5,
                              mts = 1000)
 {
   
+  family <- match.arg(family, choices = FAMILY.NAMES)
+  
   if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) ) 
     tuning.psi <- c( 'c' = tuning.psi )
   if(missing(tuning.chi)) 
