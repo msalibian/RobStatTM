@@ -20,14 +20,14 @@ computeNuFromFamily <- function(family, cc, psiSupport = NULL, densFun = dnorm)
   integrand.top <- function(x, family, cc, densFun)
     rhoprime(x, family, cc)^2 * densFun(x)
   
-  # nu.top <- integrate(integrand.top, psiSupport[1], psiSupport[2], family = family, cc = cc, densFun = densFun)$value
-  nu.top <- integrate(integrand.top, psiSupport[1], +Inf, family = family, cc = cc, densFun = densFun)$value
+  nu.top <- integrate(integrand.top, psiSupport[1], psiSupport[2], family = family, cc = cc, densFun = densFun)$value
+  # nu.top <- integrate(integrand.top, psiSupport[1], +Inf, family = family, cc = cc, densFun = densFun)$value
   
   integrand.bottom <- function(x, family, cc, densFun)
     rhoprime2(x, family, cc) * densFun(x)
   
-  # nu.bottom <- integrate(integrand.bottom, psiSupport[1], psiSupport[2], family = family, cc= cc, densFun = densFun)$value^2
-  nu.bottom <- integrate(integrand.bottom, psiSupport[1], +Inf, family = family, cc= cc, densFun = densFun)$value^2
+  nu.bottom <- integrate(integrand.bottom, psiSupport[1], psiSupport[2], family = family, cc= cc, densFun = densFun)$value^2
+  # nu.bottom <- integrate(integrand.bottom, psiSupport[1], +Inf, family = family, cc= cc, densFun = densFun)$value^2
   
   0.5 * nu.top / nu.bottom
 }
@@ -50,7 +50,7 @@ findTuningConstFromGaussianEfficiency <- function(e, family.name)
         # names(tuning.psi) <- 'c'
         e - computeGaussianEfficiencyFromFamily(family, cc)
       }
-      c('c' = uniroot(obj, interval = c(1e-2, 1e5), e = e, family=family.name, check.conv = TRUE, tol = 1e-8)$root)
+      c('c' = uniroot(obj, interval = c(1e-2, 1e2), e = e, family=family.name, check.conv = TRUE, tol = 1e-8)$root)
     }
   )
 }
