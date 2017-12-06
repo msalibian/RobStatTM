@@ -12,7 +12,7 @@ rhoprime(u, family, cc, standardize = FALSE)
 \item{family}{family string specifying the name of the family of loss function to be used (current valid
 options are "bisquare", "optimal" and "modified.optimal").}
 
-\item{cc}{tuning parameters to be computed according to efficiency and / or breakdown 
+\item{cc}{tuning parameters to be computed according to efficiency and / or breakdown
 considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
 and \link{optimal}.}
 

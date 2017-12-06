@@ -15,9 +15,9 @@ A length-1 vector with the corresponding tuning constant.
 }
 \description{
 This function computes the tuning constant that yields an MM-regression
-estimator with a desired asymptotic efficiency when computed with a 
+estimator with a desired asymptotic efficiency when computed with a
 rho function in the corresponding family. The output of this
-function can be passed to the functions \link{lmrobdet.control}, 
+function can be passed to the functions \link{lmrobdet.control},
 \link{mscale} and \link{rho}.
 }
 \author{

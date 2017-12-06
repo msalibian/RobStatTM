@@ -5,11 +5,10 @@
 \title{Tuning parameters for lmrobdetMM and lmrobdetDCML}
 \usage{
 lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare",
-  tuning.psi = do.call(family, args = list(e = efficiency)), tuning.chi,
-  compute.rd = FALSE, corr.b = TRUE, split.type = "f", initial = "S",
-  max.it = 100, refine.tol = 1e-07, rel.tol = 1e-07, refine.PY = 10,
-  solve.tol = 1e-07, trace.lev = 0, psc_keep = 0.5,
-  resid_keep_method = "threshold", resid_keep_thresh = 2,
+  tuning.psi, tuning.chi, compute.rd = FALSE, corr.b = TRUE,
+  split.type = "f", initial = "S", max.it = 100, refine.tol = 1e-07,
+  rel.tol = 1e-07, refine.PY = 10, solve.tol = 1e-07, trace.lev = 0,
+  psc_keep = 0.5, resid_keep_method = "threshold", resid_keep_thresh = 2,
   resid_keep_prop = 0.2, py_maxit = 20, py_eps = 1e-05,
   mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = "bisquare",
   mts = 1000)
@@ -22,7 +21,7 @@ determines the robusness (breakdown point) of the resulting MM-estimator, which 
 \item{efficiency}{desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.}
 
 \item{family}{string specifying the name of the family of loss function to be used (current valid
-options are "bisquare", "optimal" and "modified.optimal"). Incomplete entries will be matched to 
+options are "bisquare", "optimal" and "modified.optimal"). Incomplete entries will be matched to
 the current valid options.}
 
 \item{tuning.psi}{tuning parameters for the regression M-estimator computed with a rho function

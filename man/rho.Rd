@@ -12,7 +12,7 @@ rho(u, family = " bisquare", cc, standardize = TRUE)
 \item{family}{family string specifying the name of the family of loss function to be used (current valid
 options are "bisquare", "optimal" and "modified.optimal").}
 
-\item{cc}{tuning parameters to be computed according to efficiency and / or breakdown 
+\item{cc}{tuning parameters to be computed according to efficiency and / or breakdown
 considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
 and \link{optimal}.}
 
@@ -23,7 +23,7 @@ standardized so that its maximum value is 1. See \link{Mpsi}.}
 The value(s) of \code{rho} at \code{u}
 }
 \description{
-This function returns the value of the "rho" loss function used 
+This function returns the value of the "rho" loss function used
 to compute either an M-scale estimator or a robust regression
 estimator. It currently can be used to compute the bisquare, optimal
 and modified optimal loss functions.
