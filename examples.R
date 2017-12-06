@@ -286,10 +286,7 @@ n <- 50
 p <- 2
 x0 <- matrix(rnorm(n * p), n, p)
 y <- rbinom(n, size = 1, prob=.75)
-# library(robustbase)
-# library(RobStatTM)
 tmp <- BYlogreg(x0=x0, y=y)
-#tmp2 <- BYlogreg(x0=x0, y=y)
 tmp.w <-  WBYlogreg(x0=x0, y=y)
 tmp.wml <- WMLlogreg(x0=x0, y=y)
 
