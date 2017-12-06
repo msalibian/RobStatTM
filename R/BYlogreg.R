@@ -146,9 +146,9 @@ BYlogreg<-function(x0,y, intercept=1, const=0.5,kmax=1000,maxhalf=10)
       
       if ((jhalf==maxhalf+1) & (newobj>oldobj))
         
-      {print("Convergence Achieved")}
-      else
-      {jhalf=1
+      { #print("Convergence Achieved")
+      } else
+      { jhalf=1
       xistart=xi1
       oldobj=newobj
       stscores=x%*% xi1
