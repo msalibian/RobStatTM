@@ -353,8 +353,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' that performs M-iterations (lmrob..M..fit), so set here.
 #' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
 #' @param family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modified.optimal"). Incomplete entries will be matched to 
-#' the current valid options. 
+#' options are "bisquare", "optimal" and "modified.optimal"). Incomplete entries will be matched to
+#' the current valid options.
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied
 #' to the M-scale parameter \code{bb}.
 #' @param split.type determines how categorical and continuous variables are split. See
@@ -390,8 +390,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 lmrobdet.control <- function(bb = 0.5,
                              efficiency = 0.85,
                              family = 'bisquare',
-                             tuning.psi = do.call(family, args=list(e=efficiency)), 
-                             tuning.chi, 
+                             tuning.psi,
+                             tuning.chi,
                              compute.rd = FALSE,
                              corr.b = TRUE,
                              split.type = "f",
@@ -406,16 +406,16 @@ lmrobdet.control <- function(bb = 0.5,
 {
 
   family <- match.arg(family, choices = FAMILY.NAMES)
-  if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) )
-    tuning.psi <- c( 'c' = tuning.psi )
   if( (efficiency > .9999 ) & ( (family=='modified.optimal') | (family=='optimal') ) ) {
       efficiency <- .9999
       warning("Current implementation of \'optimal\' or \'modified.optimal\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
+  if(missing(tuning.psi))
+    tuning.psi <- do.call(family, args=list(e=efficiency))
+  if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) )
+    tuning.psi <- c( 'c' = tuning.psi )
   if(missing(tuning.chi))
     tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
-
-
   return(list(family=family, # psi=psi,
               tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
               max.it=max.it,

@@ -5,17 +5,17 @@ FAMILY.NAMES <- c("bisquare", "modified.optimal", "optimal")
 
 
 #' Tuning parameter the rho loss functions
-#' 
+#'
 #' This function computes the tuning constant that yields an MM-regression
-#' estimator with a desired asymptotic efficiency when computed with a 
+#' estimator with a desired asymptotic efficiency when computed with a
 #' rho function in the corresponding family. The output of this
-#' function can be passed to the functions \link{lmrobdet.control}, 
-#' \link{mscale} and \link{rho}. 
+#' function can be passed to the functions \link{lmrobdet.control},
+#' \link{mscale} and \link{rho}.
 #'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
 #'
-#' @return A length-1 vector with the corresponding tuning constant. 
+#' @return A length-1 vector with the corresponding tuning constant.
 #'
 #' @rdname bisquare
 #' @author Kjell Konis
@@ -27,13 +27,13 @@ bisquare <- function(e) #, breakdown.point)
 }
 
 #' Tuning parameter for a rho function in the (asymptotic bias-) optimal family
-#' 
+#'
 #' This function computes the tuning constant that yields an MM-regression
-#' estimator with a desired asymptotic efficiency when computed with a 
+#' estimator with a desired asymptotic efficiency when computed with a
 #' rho function in the corresponding family. The output of this
-#' function can be passed to the functions \link{lmrobdet.control}, 
-#' \link{mscale} and \link{rho}. 
-#' 
+#' function can be passed to the functions \link{lmrobdet.control},
+#' \link{mscale} and \link{rho}.
+#'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
 #'
@@ -45,6 +45,10 @@ bisquare <- function(e) #, breakdown.point)
 #' @export
 optimal <- function(e)
 {
+  if( e > .9999) {
+    e <- .9999
+    warning("Current implementation of \'optimal\' or \'modified.optimal\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+  }
   a <- findTuningConstFromGaussianEfficiency(e, "optimal")
   cc <- c(a, psiSupportFromTuningConst(a, "optimal"), 1.0)
   cc[5] <- Psi_optimal(cc[2], cc[1])
@@ -57,11 +61,11 @@ optimal <- function(e)
 #' Tuning parameter for a rho function in the modified (asymptotic bias-) optimal family
 #'
 #' This function computes the tuning constant that yields an MM-regression
-#' estimator with a desired asymptotic efficiency when computed with a 
+#' estimator with a desired asymptotic efficiency when computed with a
 #' rho function in the corresponding family. The output of this
-#' function can be passed to the functions \link{lmrobdet.control}, 
-#' \link{mscale} and \link{rho}. 
-#' 
+#' function can be passed to the functions \link{lmrobdet.control},
+#' \link{mscale} and \link{rho}.
+#'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
 #'
@@ -73,6 +77,10 @@ optimal <- function(e)
 #' @export
 modified.optimal <- function(e)
 {
+  if( e > .9999) {
+    e <- .9999
+    warning("Current implementation of \'optimal\' or \'modified.optimal\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+  }
   a <- findTuningConstFromGaussianEfficiency(e, "modified.optimal")
   cc <- c(a, DNORM1 / (DNORM1 - a), psiSupportFromTuningConst(a, "modified.optimal")[2], 1.0)
   cc[5] <- Psi_optimal(1.0, cc[1])
@@ -84,20 +92,20 @@ modified.optimal <- function(e)
 
 
 #' Rho functions
-#' 
-#' This function returns the value of the "rho" loss function used 
+#'
+#' This function returns the value of the "rho" loss function used
 #' to compute either an M-scale estimator or a robust regression
 #' estimator. It currently can be used to compute the bisquare, optimal
-#' and modified optimal loss functions. 
+#' and modified optimal loss functions.
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modified.optimal"). 
-#' @param cc tuning parameters to be computed according to efficiency and / or breakdown 
+#' options are "bisquare", "optimal" and "modified.optimal").
+#' @param cc tuning parameters to be computed according to efficiency and / or breakdown
 #' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
-#' and \link{optimal}. 
+#' and \link{optimal}.
 #' @param standardize logical value determining whether the rho function is to be
-#' standardized so that its maximum value is 1. See \link{Mpsi}. 
+#' standardized so that its maximum value is 1. See \link{Mpsi}.
 #'
 #' @return The value(s) of \code{rho} at \code{u}
 #'
@@ -120,12 +128,12 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modified.optimal"). 
-#' @param cc tuning parameters to be computed according to efficiency and / or breakdown 
+#' options are "bisquare", "optimal" and "modified.optimal").
+#' @param cc tuning parameters to be computed according to efficiency and / or breakdown
 #' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
-#' and \link{optimal}.  
+#' and \link{optimal}.
 #' @param standardize logical value determining whether the rho function is to be
-#' standardized so that its maximum value is 1. See \link{Mpsi}. 
+#' standardized so that its maximum value is 1. See \link{Mpsi}.
 #'
 #' @return The value of the first derivative \code{rho} evaluated at \code{u}
 #'
@@ -148,12 +156,12 @@ rhoprime <- function(u, family, cc, standardize = FALSE)
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modified.optimal"). 
-#' @param cc tuning parameters to be computed according to efficiency and / or breakdown 
+#' options are "bisquare", "optimal" and "modified.optimal").
+#' @param cc tuning parameters to be computed according to efficiency and / or breakdown
 #' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
-#' and \link{optimal}. 
+#' and \link{optimal}.
 #' @param standardize logical value determining whether the rho function is to be
-#' standardized so that its maximum value is 1. See \link{Mpsi}. 
+#' standardized so that its maximum value is 1. See \link{Mpsi}.
 #'
 #' @return The value of the second derivative of \code{rho} evaluated at \code{u}
 #'
