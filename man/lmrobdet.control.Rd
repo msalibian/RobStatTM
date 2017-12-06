@@ -22,7 +22,8 @@ determines the robusness (breakdown point) of the resulting MM-estimator, which 
 \item{efficiency}{desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.}
 
 \item{family}{string specifying the name of the family of loss function to be used (current valid
-options are "bisquare", "optimal" and "modified.optimal").}
+options are "bisquare", "optimal" and "modified.optimal"). Incomplete entries will be matched to 
+the current valid options.}
 
 \item{tuning.psi}{tuning parameters for the regression M-estimator computed with a rho function
 as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
