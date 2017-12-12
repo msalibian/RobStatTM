@@ -9,8 +9,13 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "R.h"
-#include "R_ext/Linpack.h"
+// #include "R.h"
+// #include "R_ext/Linpack.h"
+#include <R.h>
+#include <R_ext/Lapack.h>
+#include <R_ext/Linpack.h>
+#include <R_ext/Applic.h>
+
 
 // #include "RobStatTM.h"
 
