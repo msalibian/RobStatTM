@@ -53,7 +53,14 @@ static R_NativePrimitiveArgType R_subsample_t[] = {
 };
 
 
+static R_NativePrimitiveArgType r_fast_mve_t[] = {
+  REALSXP, INTSXP, INTSXP, INTSXP, 
+  INTSXP, REALSXP, REALSXP, REALSXP, 
+  INTSXP, INTSXP, INTSXP
+};
+
 static const R_CMethodDef CEntries[]  = {
+    CDEF(r_fast_mve),
     CDEF(R_lmrob_S),
     CDEF(R_lmrob_MM),
     CDEF(R_find_D_scale),
@@ -76,6 +83,7 @@ static R_CallMethodDef CallEntries[] = {
 
 static R_FortranMethodDef FortEntries[] = {
     {"rslarsbi",  (DL_FUNC) &F77_SUB(rllarsbi), 18},
+    {"dqrdc2", (DL_FUNC) &F77_SUB(dqrdc2), 9},
     {NULL, NULL, 0}
 };
 

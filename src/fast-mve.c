@@ -12,6 +12,8 @@
 #include "R.h"
 #include "R_ext/Linpack.h"
 
+// #include "RobStatTM.h"
+
 #define INFI 1e+20
 
 void r_fast_mve(double *xx, int *nn, int *pp, int *nnsamp,
@@ -232,3 +234,5 @@ void sample_noreplace(int *x, int n, int k, int *ind)
 	ind[j] = ind[--nn];
     }
 }
+
+
