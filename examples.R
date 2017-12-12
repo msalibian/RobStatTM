@@ -298,30 +298,30 @@ tmp.w <-  WBYlogreg(x0=x, y=vaso$Y, intercept=FALSE)
 tmp.wml <- WMLlogreg(x0=x, y=vaso$Y, intercept=FALSE)
 
 
-
-fastmveC <- function(x, nsamp=500) {
-  
-  n <- nrow(x)
-  p <- ncol(x)
-  n2 <- floor(n/2)
-  nind <- p +1
-  tmp <- .C('r_fast_mve', as.double(x),
-            as.integer(n), as.integer(p), as.integer(nsamp),
-            nsing = as.integer(0), ctr = as.double(rep(0,p)),
-            cov = as.double(rep(0,p*p)),
-            scale = as.double(0), best=as.integer(rep(0,n)),
-            as.integer(nind), as.integer(n2), PACKAGE='RobStatTM')
-  mve.cov <- matrix(tmp$cov, p, p)
-  return(list(center= tmp$ctr, cov=mve.cov, scale=tmp$scale,
-              best=tmp$best[1:floor(n/2)],
-              nsamp=nsamp, nsing = tmp$nsing))
-  
-}
-
-
+# 
+# fastmveC <- function(x, nsamp=500) {
+#   
+#   n <- nrow(x)
+#   p <- ncol(x)
+#   n2 <- floor(n/2)
+#   nind <- p +1
+#   tmp <- .C('r_fast_mve', as.double(x),
+#             as.integer(n), as.integer(p), as.integer(nsamp),
+#             nsing = as.integer(0), ctr = as.double(rep(0,p)),
+#             cov = as.double(rep(0,p*p)),
+#             scale = as.double(0), best=as.integer(rep(0,n)),
+#             as.integer(nind), as.integer(n2), PACKAGE='RobStatTM')
+#   mve.cov <- matrix(tmp$cov, p, p)
+#   return(list(center= tmp$ctr, cov=mve.cov, scale=tmp$scale,
+#               best=tmp$best[1:floor(n/2)],
+#               nsamp=nsamp, nsing = tmp$nsing))
+#   
+# }
+# 
+# 
 
 set.seed(123)
-n <- 50000
+n <- 500
 p <- 3
 x <- matrix(rnorm(n*p), n, p)
 tmp <- fastmveC(x=x)
@@ -329,3 +329,117 @@ tmp2 <- rrcov::CovMve(x)
 # slotNames(tmp2)
 slot(tmp2, 'raw.cov')
 slot(tmp2, 'cov')
+
+# compare fastmve with other implementations
+
+set.seed(31)
+n <- 1000; p <- 10
+x <- matrix(rnorm(n*p), n, p)
+system.time( b <- fastmve(x, nsamp=500) )
+median( mahalanobis(x, center=b$center, cov=b$cov) )
+system.time( d <- MASS::cov.rob(x, quantile=floor(n/2), nsamp=500, method='mve') )
+a <- cov.wt(x[ d$best, ])
+median( mahalanobis(x, center=a$center, cov=a$cov) ) * det(a$cov)^(1/p)
+tmp2 <- rrcov::CovMve(x)
+median( slot(tmp2, 'raw.mah') ) * det( slot(tmp2, 'raw.cov') )^(1/p)
+
+# 
+# 
+# set.seed(3311)
+# n <- 50; p <- 2
+# system.time( b <- fastmveC(x, nsamp=500) )
+# 
+# 
+# 
+# 
+# set.seed(33)
+# x <- matrix(rnorm(9), 3, 3)
+# 
+# 
+# my.inv <- function(x) {
+# 
+# p <- ncol(x)
+# n <- nrow(x)
+# tol <- 1e-07
+# # QR decomp
+# res <- .Fortran("dqrdc2", qr = x, n, n, p, as.double(tol), 
+#         rank = integer(1), qraux = double(p), pivot = as.integer(1:p), 
+#         double(2 * p), PACKAGE = "base")[c(1, 6, 7, 8)]
+# qr <- res
+# nc <- ncol(res$qr)
+# y <- diag(1, nc)
+# n <- nrow(qr$qr)
+# p <- ncol(qr$qr)
+# k <- as.integer(qr$rank)
+# ny <- ncol(y)
+# storage.mode(y) <- "double"
+# z <- .Fortran("dqrcf", as.double(qr$qr), n, k, as.double(qr$qraux), 
+#         y, ny, coef = matrix(0, nr = k, nc = ny), info = integer(1), 
+#         NAOK = TRUE, PACKAGE = "base")[c("coef", "info")]
+# print(z$info)
+# z$coef
+# }
+# 
+# x <- matrix(rnorm(9), 3, 3)
+# n <- p <- 3
+# 
+# dyn.load('fast-mve.dll')
+# dyn.unload('fast-mve.dll')
+# 
+# tmp <- .C('inverse2', qr = as.double(x), as.integer(n), as.integer(p), 
+# 	rank = integer(1), qraux = double(p), pivot=as.integer(1:p),
+# 	double(2*p), double(p*p))
+# 
+# 
+# dyn.load('fast-mve.dll')
+# dyn.unload('fast-mve.dll')
+# 
+# 
+# set.seed(33111)
+# n <- 10; p <- 3
+# x <- matrix(rnorm(n*p), n, p)
+# ns <- 6
+# inds <- sample(n, ns, repl=FALSE)
+# ninds <- length(inds)
+# tmp <- .C('r_mean_cov_mah_sample', x=as.double(x), as.integer(n),
+# 	as.integer(p), as.integer(inds-1), as.integer(ninds),
+# 	xw = double(n*p), mean = double(p), cov = double(p*p), mah = 
+# 	double(n), det=double(1), integer(p), double(p), double(2*p), 
+# 	integer(1))
+# matrix(tmp$cov, p, p)
+# print( u <- var(x[inds,]) )
+# v <- apply(x[inds,], 2, mean)
+# print( d <- mahalanobis(x, center=v, cov=u) )
+# tmp$mah
+# tmp$det^2
+# det(u)* ((ninds-1)^p)
+# 
+# 
+# 
+# 
+# 
+# 
+# dyn.unload('fast-mve.dll')
+# source('fast-s-cov.R')
+# dyn.load('fast-mve.dll')
+# library(MASS)
+# set.seed(31)
+# n <- 1000; p <- 10
+# x <- matrix(rnorm(n*p), n, p)
+# system.time( a <- fast.mve(x, nsamp=200) )
+# median( mahalanobis(x, center=a$center, cov=a$cov) )
+# system.time( b <- fastmveC(x, nsamp=500) )
+# median( mahalanobis(x, center=b$center, cov=b$cov) )
+# system.time( d <- cov.rob(x, quantile=floor(n/2), nsamp=500, method='mve') )
+# a <- cov.wt(x[ d$best, ])
+# median( mahalanobis(x, center=a$center, cov=a$cov) ) * det(a$cov)^(1/p)
+# set.seed(31)
+# n <- 5000; p <- 30
+# x <- matrix(rnorm(n*p), n, p)
+# system.time( b <- fastmveC(x, nsamp=200) )
+# median( mahalanobis(x, center=b$center, cov=b$cov) )
+# system.time( d <- cov.rob(x, quantile=floor(n/2), nsamp=500, method='mve') )
+# a <- cov.wt(x[ d$best, ])
+# median( mahalanobis(x, center=a$center, cov=a$cov) ) * det(a$cov)^(1/p)
+# 
+# 
