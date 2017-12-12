@@ -68,3 +68,11 @@ void  F77_NAME(rllarsbi)(
     double *TOL, int *NIT, int *K, int *KODE, double *SIGMA, double *THETA,
     double *RS, double *SC1, double *SC2, double *SC3, double *SC4,
     double *BET0);
+
+void r_fast_mve(double *xx, int *nn, int *pp, int *nnsamp,
+                int *nsingular, double *ctr, double *ccov, double *scale,
+                int *best_ind, int *nnind, int *nn2);
+  
+void F77_CALL(dqrdc2)(double *xw, int *nind, int *nind2, int *p, 
+              double *tol, int *rank, double *qraux, int *pivot, double *work);
+  

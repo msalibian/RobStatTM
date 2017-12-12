@@ -297,6 +297,10 @@ tmp <- BYlogreg(x0=x, y=vaso$Y, intercept=FALSE)
 tmp.w <-  WBYlogreg(x0=x, y=vaso$Y, intercept=FALSE)
 tmp.wml <- WMLlogreg(x0=x, y=vaso$Y, intercept=FALSE)
 
+set.seed(123)
+n <- 50
+p <- 10
+x <- matrix(rnorm(n*p), n, p)
 
-
+.Call(r_fast_mve, )
 
