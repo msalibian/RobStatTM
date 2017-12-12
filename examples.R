@@ -305,7 +305,7 @@ fastmveC <- function(x, nsamp=500) {
   p <- ncol(x)
   n2 <- floor(n/2)
   nind <- p +1
-  tmp <- .Call(r_fast_mve, as.double(x),
+  tmp <- .C('r_fast_mve', as.double(x),
             as.integer(n), as.integer(p), as.integer(nsamp),
             nsing = as.integer(0), ctr = as.double(rep(0,p)),
             cov = as.double(rep(0,p*p)),
@@ -321,7 +321,11 @@ fastmveC <- function(x, nsamp=500) {
 
 
 set.seed(123)
-n <- 50
-p <- 10
+n <- 50000
+p <- 3
 x <- matrix(rnorm(n*p), n, p)
 tmp <- fastmveC(x=x)
+tmp2 <- rrcov::CovMve(x)
+# slotNames(tmp2)
+slot(tmp2, 'raw.cov')
+slot(tmp2, 'cov')
