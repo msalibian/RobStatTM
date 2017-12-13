@@ -21,6 +21,7 @@
 
 #define INFI 1e+20
 
+
 void r_fast_mve(double *xx, int *nn, int *pp, int *nnsamp,
 			int *nsingular, double *ctr, double *ccov, double *scale,
 			int *best_ind, int *nnind, int *nn2)
@@ -33,7 +34,7 @@ void r_mean_cov_mah_sample(double *x, int *n, int *p,
 		int *pivot, double *qraux, double *work, int *rank,
 		int *compute_cov, int *compute_distances, int *compute_det);
 double median(double *x, int n, double *aux);
-void sample_noreplace(int *x, int n, int k, int *all_ind);
+void sample_noreplace_mve(int *x, int n, int k, int *all_ind);
 
 int *indi, iter, *pivot, rank, *all_ind;
 int compute_cov, compute_det, compute_distances;
@@ -61,7 +62,7 @@ for(iter=0; iter < nsamp; iter++) {
 	compute_cov = 0;
 	R_CheckUserInterrupt();	
 	rank = 0;
-	sample_noreplace(indi, n, nind, all_ind); 
+	sample_noreplace_mve(indi, n, nind, all_ind); 
 	r_mean_cov_mah_sample(xx, nn, pp, indi, &nind, tmp, ctr, 
 			cov_vec, di, &det1, pivot, qraux, tmp2, &rank,
 			&compute_cov, &compute_distances, &compute_det);
@@ -228,7 +229,7 @@ double r_mah(double *xr, int nnew, int p, double *x, double *work)
 
 /* Sampling k from 0:n-1 without replacement.
    (c) B. Ripley */
-void sample_noreplace(int *x, int n, int k, int *ind)
+void sample_noreplace_mve(int *x, int n, int k, int *ind)
 {
     int i, j, nn=n;
 
