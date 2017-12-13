@@ -23,7 +23,7 @@
 #' \item{nsing}{Number of random subsamples (among the \code{nsamp} attempted) 
 #' that failed (resulting in singular initial values)}
 #'
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
 #' 
 #' @export
