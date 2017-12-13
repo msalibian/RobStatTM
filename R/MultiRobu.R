@@ -53,7 +53,7 @@ dista0=mahalanobis(X,mu0,V0)
 dista=dista0}
 
 if(initial=='mve')
-{out=fast.mve(X)
+{out=fastmve(X)
 
 mu0=out$center
     V0=out$cov
