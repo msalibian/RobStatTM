@@ -72,7 +72,7 @@ void  F77_NAME(rllarsbi)(
 void r_fast_mve(double *xx, int *nn, int *pp, int *nnsamp,
                 int *nsingular, double *ctr, double *ccov, double *scale,
                 int *best_ind, int *nnind, int *nn2);
-  
+
 void F77_NAME(dqrdc2)(double *xw, int *nind, int *nind2, int *p,
               double *tol, int *rank, double *qraux, int *pivot, double *work);
 
