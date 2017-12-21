@@ -38,5 +38,5 @@ estimators (see \code{\link[robustbase]{lmrob}}).
 \url{http://thebook}
 }
 \author{
-Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 }
