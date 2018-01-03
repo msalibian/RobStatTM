@@ -7,7 +7,12 @@
 #' bisquare family.
 #'
 #' @param RR2 the proportional difference in loss functions (a naive robust R^2 coefficient).
-#' @param cc the tuning constant for the rho function
+#' @param family family string specifying the name of the family of loss function to be used (current valid
+#' options are "bisquare", "optimal" and "modified.optimal").
+#' @param cc tuning parameters to be computed according to efficiency and / or breakdown
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+#' and \link{optimal}.
+
 #'
 #' @return An unbiased version of the robust R^2 coefficient of determination.
 #'
@@ -17,29 +22,29 @@
 #'
 #' @export
 INVTR2 <- function(RR2, family, cc) {
-
+  
   TR2 <- function(R2, family, cc) {
     a <- Erhobic(family, cc, 1)
     b <- Erhobic(family, cc, sqrt(1-R2))
     return( (b-a)/ (b*(1-a)) )
   }
-
+  
   # compute E(rho(u,cc)), rho is the bisquare function
   Erhobic <- function(family, cc, zz) {
     if( family == 'bisquare') {
       dd <- cc * zz
-    a0 <- 2*pnorm(dd)-1
-    a2 <- (-2)*dd*dnorm(dd)+a0
-    a4 <- (-2)*(dd^3)*dnorm(dd)+3*a2
-    a6 <- (-2)*(dd^5)*dnorm(dd)+5*a4
-    ee <- (a6/dd^6)+(3*a2/dd^2)-(3*a4/dd^4)+1-a0
+      a0 <- 2*pnorm(dd)-1
+      a2 <- (-2)*dd*dnorm(dd)+a0
+      a4 <- (-2)*(dd^3)*dnorm(dd)+3*a2
+      a6 <- (-2)*(dd^5)*dnorm(dd)+5*a4
+      ee <- (a6/dd^6)+(3*a2/dd^2)-(3*a4/dd^4)+1-a0
     } else {
-      hh <- function(v,family, cc, z) return(rho(v/z, family=family, cc, z)*dnorm(v) )
-      ee <- 2*(integrate(hh, 0, cc[3]*z, family=family, cc=cc, z=z)$value+1-pnorm(cc[3]*z))
+      hh <- function(v, family, cc, z) return( rho(v/z, family=family, cc)*dnorm(v) )
+      ee <- 2*(integrate(hh, 0, cc[3]*zz, family=family, cc=cc, z=zz)$value+1-pnorm(cc[3]*zz))
     }
     return( ee )
   }
-
+  
   ff <- function(x, y, family, cc) return( TR2(x, family, cc) - y )
   aa <- TR2(.99999, family, cc)
   bb <- TR2(.00001, family, cc)

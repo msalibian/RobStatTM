@@ -4,12 +4,17 @@
 \alias{INVTR2}
 \title{Robust R^2 coefficient of determination}
 \usage{
-INVTR2(RR2, cc)
+INVTR2(RR2, family, cc)
 }
 \arguments{
 \item{RR2}{the proportional difference in loss functions (a naive robust R^2 coefficient).}
 
-\item{cc}{the tuning constant for the rho function}
+\item{family}{family string specifying the name of the family of loss function to be used (current valid
+options are "bisquare", "optimal" and "modified.optimal").}
+
+\item{cc}{tuning parameters to be computed according to efficiency and / or breakdown
+considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+and \link{optimal}.}
 }
 \value{
 An unbiased version of the robust R^2 coefficient of determination.
@@ -19,7 +24,7 @@ This function computes a robust version of the R^2 coefficient of determination.
 }
 \details{
 This function computes a robust version of the R^2 coefficient. It currently only
-works for MM regression estimators computed with a rho function in Tukey's 
+works for MM regression estimators computed with a rho function in Tukey's
 bisquare family.
 }
 \references{
