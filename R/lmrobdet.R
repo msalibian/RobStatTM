@@ -180,7 +180,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family)
       # compute robust R^2
       r.squared <- adj.r.squared <- 0
-      if(control$family == 'bisquare') {
+      # if(control$family == 'bisquare') {
       s2 <- mean(rho(z$resid/z$scale, family = control$family, cc=control$tuning.psi))
       if( p != attr(mt, "intercept") ) {
         df.int <- if (attr(mt, "intercept"))
@@ -194,10 +194,10 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
         } else {
           s02 <- mean(rho(y/z$scale, family = control$family, cc=control$tuning.psi))
         }
-        r.squared <- INVTR2( (s02 - s2)/(s02*(1-s2)), control$tuning.psi)
+        r.squared <- INVTR2( (s02 - s2)/(s02*(1-s2)), control$family, control$tuning.psi)
         adj.r.squared <- ((n-1)/(n-p))*r.squared -(p-1)/(n-p) # ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
       }
-      }
+      # }
       z$r.squared <- r.squared
       z$adj.r.squared <- adj.r.squared
       # DCML

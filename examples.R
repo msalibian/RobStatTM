@@ -137,9 +137,16 @@ x1 <- rnorm(50)
 x2 <- rnorm(50)
 y <- rnorm(50, sd=.1) + x1 - 2*x2
 das <- data.frame(x1=x1, x2=x2, y=y)
-tmp <- lmrobdetMM(y ~ . , data=das)
+tmp <- lmrobdetMM(y ~ . , data=das, control=lmrobdet.control(family='modified.optimal'))
 summary(tmp)
 summary(lm(y~., data=das))
+y <- rnorm(50) + x1 / 3
+das <- data.frame(x1=x1, x2=x2, y=y)
+tmp <- lmrobdetMM(y ~ . , data=das, control=lmrobdet.control(family='optimal'))
+summary(tmp)
+summary(lm(y~., data=das))
+
+
 
 
 # fixed designs
