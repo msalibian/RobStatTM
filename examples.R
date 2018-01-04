@@ -132,19 +132,22 @@ summary(m0)
 m2.null <- lmrobdet(Y ~ . - sstatus -fatherWc, data=coleman)
 rob.linear.test(m2, m2.null)
 
+library(RobStatTM)
 set.seed(123)
 x1 <- rnorm(50)
 x2 <- rnorm(50)
 y <- rnorm(50, sd=.1) + x1 - 2*x2
 das <- data.frame(x1=x1, x2=x2, y=y)
 tmp <- lmrobdetMM(y ~ . , data=das, control=lmrobdet.control(family='modified.optimal'))
-summary(tmp)
-summary(lm(y~., data=das))
-y <- rnorm(50) + x1 / 3
+tmp[c('r.squared', 'adj.r.squared')]
+summary(lm(y~., data=das))[c('r.squared', 'adj.r.squared')]
+y <- rnorm(50) + x1/2 + x2/2
 das <- data.frame(x1=x1, x2=x2, y=y)
+tmp <- lmrobdetMM(y ~ . , data=das)
+tmp[c('r.squared', 'adj.r.squared')]
 tmp <- lmrobdetMM(y ~ . , data=das, control=lmrobdet.control(family='optimal'))
-summary(tmp)
-summary(lm(y~., data=das))
+tmp[c('r.squared', 'adj.r.squared')]
+summary(lm(y~., data=das))[c('r.squared', 'adj.r.squared')]
 
 
 
@@ -276,16 +279,16 @@ library(RobStatTM)
 effs <- c(.85, .9, .95, .99, .999)
 for(j in 1:length(effs))
   print(round(c(effs[j], (c(optimal(effs[j])))[1:3]), 8))
-#          a      lower      upper 
-# 0.85000000 0.04357853 0.10989680 2.50263755 
-#          a      lower      upper 
-# 0.90000000 0.02790187 0.07011172 2.70359179 
-#          a      lower      upper 
-# 0.95000000 0.01317965 0.03305454 3.00328091 
-#          a      lower      upper 
-# 0.99000000 0.00244881 0.00613838 3.56797175 
-#          a      lower      upper 
-# 0.99900000 0.00023860 0.00059807 4.20929762 
+#          a      lower      upper
+# 0.85000000 0.04357853 0.10989680 2.50263755
+#          a      lower      upper
+# 0.90000000 0.02790187 0.07011172 2.70359179
+#          a      lower      upper
+# 0.95000000 0.01317965 0.03305454 3.00328091
+#          a      lower      upper
+# 0.99000000 0.00244881 0.00613838 3.56797175
+#          a      lower      upper
+# 0.99900000 0.00023860 0.00059807 4.20929762
 
 
 set.seed(123)
@@ -305,9 +308,9 @@ tmp.w <-  WBYlogreg(x0=x, y=vaso$Y, intercept=FALSE)
 tmp.wml <- WMLlogreg(x0=x, y=vaso$Y, intercept=FALSE)
 
 
-# 
+#
 # fastmveC <- function(x, nsamp=500) {
-#   
+#
 #   n <- nrow(x)
 #   p <- ncol(x)
 #   n2 <- floor(n/2)
@@ -322,10 +325,10 @@ tmp.wml <- WMLlogreg(x0=x, y=vaso$Y, intercept=FALSE)
 #   return(list(center= tmp$ctr, cov=mve.cov, scale=tmp$scale,
 #               best=tmp$best[1:floor(n/2)],
 #               nsamp=nsamp, nsing = tmp$nsing))
-#   
+#
 # }
-# 
-# 
+#
+#
 
 set.seed(123)
 n <- 500
@@ -350,27 +353,27 @@ median( mahalanobis(x, center=a$center, cov=a$cov) ) * det(a$cov)^(1/p)
 tmp2 <- rrcov::CovMve(x)
 median( slot(tmp2, 'raw.mah') ) * det( slot(tmp2, 'raw.cov') )^(1/p)
 
-# 
-# 
+#
+#
 # set.seed(3311)
 # n <- 50; p <- 2
 # system.time( b <- fastmveC(x, nsamp=500) )
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # set.seed(33)
 # x <- matrix(rnorm(9), 3, 3)
-# 
-# 
+#
+#
 # my.inv <- function(x) {
-# 
+#
 # p <- ncol(x)
 # n <- nrow(x)
 # tol <- 1e-07
 # # QR decomp
-# res <- .Fortran("dqrdc2", qr = x, n, n, p, as.double(tol), 
-#         rank = integer(1), qraux = double(p), pivot = as.integer(1:p), 
+# res <- .Fortran("dqrdc2", qr = x, n, n, p, as.double(tol),
+#         rank = integer(1), qraux = double(p), pivot = as.integer(1:p),
 #         double(2 * p), PACKAGE = "base")[c(1, 6, 7, 8)]
 # qr <- res
 # nc <- ncol(res$qr)
@@ -380,28 +383,28 @@ median( slot(tmp2, 'raw.mah') ) * det( slot(tmp2, 'raw.cov') )^(1/p)
 # k <- as.integer(qr$rank)
 # ny <- ncol(y)
 # storage.mode(y) <- "double"
-# z <- .Fortran("dqrcf", as.double(qr$qr), n, k, as.double(qr$qraux), 
-#         y, ny, coef = matrix(0, nr = k, nc = ny), info = integer(1), 
+# z <- .Fortran("dqrcf", as.double(qr$qr), n, k, as.double(qr$qraux),
+#         y, ny, coef = matrix(0, nr = k, nc = ny), info = integer(1),
 #         NAOK = TRUE, PACKAGE = "base")[c("coef", "info")]
 # print(z$info)
 # z$coef
 # }
-# 
+#
 # x <- matrix(rnorm(9), 3, 3)
 # n <- p <- 3
-# 
+#
 # dyn.load('fast-mve.dll')
 # dyn.unload('fast-mve.dll')
-# 
-# tmp <- .C('inverse2', qr = as.double(x), as.integer(n), as.integer(p), 
+#
+# tmp <- .C('inverse2', qr = as.double(x), as.integer(n), as.integer(p),
 # 	rank = integer(1), qraux = double(p), pivot=as.integer(1:p),
 # 	double(2*p), double(p*p))
-# 
-# 
+#
+#
 # dyn.load('fast-mve.dll')
 # dyn.unload('fast-mve.dll')
-# 
-# 
+#
+#
 # set.seed(33111)
 # n <- 10; p <- 3
 # x <- matrix(rnorm(n*p), n, p)
@@ -410,8 +413,8 @@ median( slot(tmp2, 'raw.mah') ) * det( slot(tmp2, 'raw.cov') )^(1/p)
 # ninds <- length(inds)
 # tmp <- .C('r_mean_cov_mah_sample', x=as.double(x), as.integer(n),
 # 	as.integer(p), as.integer(inds-1), as.integer(ninds),
-# 	xw = double(n*p), mean = double(p), cov = double(p*p), mah = 
-# 	double(n), det=double(1), integer(p), double(p), double(2*p), 
+# 	xw = double(n*p), mean = double(p), cov = double(p*p), mah =
+# 	double(n), det=double(1), integer(p), double(p), double(2*p),
 # 	integer(1))
 # matrix(tmp$cov, p, p)
 # print( u <- var(x[inds,]) )
@@ -420,12 +423,12 @@ median( slot(tmp2, 'raw.mah') ) * det( slot(tmp2, 'raw.cov') )^(1/p)
 # tmp$mah
 # tmp$det^2
 # det(u)* ((ninds-1)^p)
-# 
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
+#
 # dyn.unload('fast-mve.dll')
 # source('fast-s-cov.R')
 # dyn.load('fast-mve.dll')
@@ -448,5 +451,5 @@ median( slot(tmp2, 'raw.mah') ) * det( slot(tmp2, 'raw.cov') )^(1/p)
 # system.time( d <- cov.rob(x, quantile=floor(n/2), nsamp=500, method='mve') )
 # a <- cov.wt(x[ d$best, ])
 # median( mahalanobis(x, center=a$center, cov=a$cov) ) * det(a$cov)^(1/p)
-# 
-# 
+#
+#
