@@ -23,9 +23,7 @@ An unbiased version of the robust R^2 coefficient of determination.
 This function computes a robust version of the R^2 coefficient of determination.
 }
 \details{
-This function computes a robust version of the R^2 coefficient. It currently only
-works for MM regression estimators computed with a rho function in Tukey's
-bisquare family.
+This function computes a robust version of the R^2 coefficient.
 }
 \references{
 \url{http://thebook}
