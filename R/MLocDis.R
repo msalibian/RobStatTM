@@ -1,10 +1,10 @@
-#' Robust multivariate location and scatter M-estimators
+#' Robust univariate location and scatter M-estimators
 #'
-#' This function computes M-estimators for multivariate location and scatter.
+#' This function computes M-estimators for location and scatter.
 #'
-#' This function computes M-estimators for multivariate location and scatter.
+#' This function computes M-estimators for location and scatter.
 #'
-#' @param x a data matrix with observations in rows.
+#' @param x a vector of univariate observations
 #' @param psi a string indicating which score function to use. Valid options are "Bis" for
 #' bi-square and "Hub" for a Huber-type.
 #' @param eff desired asymptotic efficiency. Valid options are 0.9 (default), 0.85 and 0.95.

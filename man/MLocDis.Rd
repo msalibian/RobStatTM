@@ -2,12 +2,12 @@
 % Please edit documentation in R/MLocDis.R
 \name{MLocDis}
 \alias{MLocDis}
-\title{Robust multivariate location and scatter M-estimators}
+\title{Robust univariate location and scatter M-estimators}
 \usage{
 MLocDis(x, psi = "Bis", eff = 0.9, maxit = 50, tol = 1e-04)
 }
 \arguments{
-\item{x}{a data matrix with observations in rows.}
+\item{x}{a vector of univariate observations}
 
 \item{psi}{a string indicating which score function to use. Valid options are "Bis" for
 bi-square and "Hub" for a Huber-type.}
@@ -25,10 +25,10 @@ A list with the following components:
 \item{disper}{M-dispersion estimator}
 }
 \description{
-This function computes M-estimators for multivariate location and scatter.
+This function computes M-estimators for location and scatter.
 }
 \details{
-This function computes M-estimators for multivariate location and scatter.
+This function computes M-estimators for location and scatter.
 }
 \references{
 \url{http://thebook}
