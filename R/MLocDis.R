@@ -1,8 +1,8 @@
-#' Robust univariate location and scatter M-estimators
+#' Robust univariate location and scale M-estimators
 #'
-#' This function computes M-estimators for location and scatter.
+#' This function computes M-estimators for location and scale.
 #'
-#' This function computes M-estimators for location and scatter.
+#' This function computes M-estimators for location and scale.
 #'
 #' @param x a vector of univariate observations
 #' @param psi a string indicating which score function to use. Valid options are "Bis" for
@@ -14,7 +14,7 @@
 #' @return A list with the following components:
 #' \item{mu}{The location estimator}
 #' \item{std.mu}{Estimated standard deviation of the location estimator \code{mu}}
-#' \item{disper}{M-dispersion estimator}
+#' \item{disper}{M-scale/dispersion estimator}
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
