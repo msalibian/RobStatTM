@@ -2,7 +2,7 @@
 % Please edit documentation in R/MLocDis.R
 \name{MLocDis}
 \alias{MLocDis}
-\title{Robust univariate location and scatter M-estimators}
+\title{Robust univariate location and scale M-estimators}
 \usage{
 MLocDis(x, psi = "Bis", eff = 0.9, maxit = 50, tol = 1e-04)
 }
@@ -22,13 +22,13 @@ bi-square and "Hub" for a Huber-type.}
 A list with the following components:
 \item{mu}{The location estimator}
 \item{std.mu}{Estimated standard deviation of the location estimator \code{mu}}
-\item{disper}{M-dispersion estimator}
+\item{disper}{M-scale/dispersion estimator}
 }
 \description{
-This function computes M-estimators for location and scatter.
+This function computes M-estimators for location and scale.
 }
 \details{
-This function computes M-estimators for location and scatter.
+This function computes M-estimators for location and scale.
 }
 \references{
 \url{http://thebook}
