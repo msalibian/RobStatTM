@@ -21,6 +21,8 @@
 #' @export
 INVTR2 <- function(RR2, family, cc) {
   
+  hh <- function(v, family, cc, z) return( rho(v/z, family=family, cc)*dnorm(v) )
+  
   TR2 <- function(R2, family, cc) {
     a <- Erhobic(family, cc, 1)
     b <- Erhobic(family, cc, sqrt(1-R2))
@@ -37,7 +39,6 @@ INVTR2 <- function(RR2, family, cc) {
       a6 <- (-2)*(dd^5)*dnorm(dd)+5*a4
       ee <- (a6/dd^6)+(3*a2/dd^2)-(3*a4/dd^4)+1-a0
     } else {
-      hh <- function(v, family, cc, z) return( rho(v/z, family=family, cc)*dnorm(v) )
       ee <- 2*(integrate(hh, 0, cc[3]*zz, family=family, cc=cc, z=zz)$value+1-pnorm(cc[3]*zz))
     }
     return( ee )
