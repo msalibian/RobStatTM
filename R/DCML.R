@@ -231,9 +231,11 @@ DCML <- function(x, y, z, z0, control) {
   beta.dcml <- t0*coef(z0) +(1-t0)*coef(z)
   V.dcml <- cov.dcml(res.LS=z0$residuals, res.R=z$residuals, CC=CC,
                      sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
-  re.dcml <- as.vector(y - x %*% beta.dcml)
+  fi.dcml <- as.vector( x %*% beta.dcml )
+  re.dcml <- as.vector(y - fi.dcml )
   si.dcml.final <- mscale(u=re.dcml, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
-  return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, scale=si.dcml.final, t0=t0))
+  return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, fitted.values = fi.dcml,
+              scale=si.dcml.final, t0=t0))
 }
 
 #' SM regression estimator using Pen~a-Yohai candidates
