@@ -80,7 +80,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL)
 #' @rdname drop1.lmrobdetMM
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://thebook}
-#' @seealso \code{\link{lmrobdet}}
+#' @seealso \code{\link{lmrobdetMM}}
 #'
 #' @export
 drop1.lmrobdetMM <- function (object, scope, scale, keep)

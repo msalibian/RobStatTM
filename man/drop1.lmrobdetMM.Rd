@@ -37,7 +37,7 @@ recomputing it, successively removing each of a number of specified terms.
 \url{http://thebook}
 }
 \seealso{
-\code{\link{lmrobdet}}
+\code{\link{lmrobdetMM}}
 }
 \author{
 Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
