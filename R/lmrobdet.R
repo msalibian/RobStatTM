@@ -903,7 +903,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       } else stop('Unknown value for lmrobdet.control()$initial')
       # save to complete the DCML object just below
       z.tmp <- list(rank=z$rank, converged=z$converged, qr=z$qr,
-                    df.residual=z$df.residual, iter=z$iter)
+                    df.residual=z$df.residual, iter=z$iter, rweights = z$rweights)
       # DCML
       # LS is already computed in z0
       z <- DCML(x=x, y=y, z=z, z0=z0, control=control)
@@ -912,6 +912,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       z$qr <- z.tmp$qr
       z$df.residual <- z.tmp$df.residual
       z$iter <- z.tmp$iter
+      z$rweights <- z.tmp$rweights
       if(control$compute.rd && !is.null(x))
         z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
       if(model)
