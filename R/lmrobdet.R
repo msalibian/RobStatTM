@@ -763,7 +763,7 @@ our.solve <- function(a,b) {
 #' \item{residuals}{The vector of residuals associated with the robust fit}
 #' \item{converged}{Logical value indicating whether IRWLS iterations for the MM-estimator have converged}
 #' \item{iter}{Number of IRWLS iterations for the MM-estimator}
-#' \item{rweights}{Robustness weights for the MM-estimator}
+#' \item{rweightsMM}{Robustness weights for the MM-estimator}
 #' \item{fitted.values}{Fitted values associated with the robust fit}
 #' \item{rank}{Numeric rank of the fitted linear model}
 #' \item{cov}{The estimated covariance matrix of the regression estimates}
@@ -912,7 +912,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       z$qr <- z.tmp$qr
       z$df.residual <- z.tmp$df.residual
       z$iter <- z.tmp$iter
-      z$rweights <- z.tmp$rweights
+      z$rweightsMM <- z.tmp$rweights
       if(control$compute.rd && !is.null(x))
         z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
       if(model)

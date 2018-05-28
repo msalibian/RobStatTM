@@ -48,7 +48,7 @@ A list with the following components:
 \item{residuals}{The vector of residuals associated with the robust fit}
 \item{converged}{Logical value indicating whether IRWLS iterations for the MM-estimator have converged}
 \item{iter}{Number of IRWLS iterations for the MM-estimator}
-\item{rweights}{Robustness weights for the MM-estimator}
+\item{rweightsMM}{Robustness weights for the MM-estimator}
 \item{fitted.values}{Fitted values associated with the robust fit}
 \item{rank}{Numeric rank of the fitted linear model}
 \item{cov}{The estimated covariance matrix of the regression estimates}
