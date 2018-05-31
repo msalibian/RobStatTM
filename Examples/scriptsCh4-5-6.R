@@ -89,6 +89,7 @@ abline(h=0, lty=2)
 
 
 tmp <- qqnorm(resid(oats2M)/sM2, ylab="Standardized residuals", pch=19, col='gray30')
+qqline(resid(oats2M)/sM2)
 abline(h=c(-2.5, 0, 2.5), lty=2)
 w <- c(24,36,1,35,20)
 text(tmp$x[w] + .1, tmp$y[w] + .1, w)
@@ -250,11 +251,12 @@ algaelsd <- lm(V12 ~ ., data=algae, subset= -c(36, 77))
 
 #-----------------------------------------------------
 #Fig 5.14
-plot(algaels, which=2)
+plot(algaels, which=2, pch=19)
+abline(h=c(-2.5, 0, 2.5), lty=2)
 
 #-------------------------------------------------------
 #Fig 5.15
-plot(algaerob, which=2, id.n=2)
+plot(algaerob, which=2, id.n=2, pch=19)
 abline(h=c(-2.5, 0, 2.5)*algaerob$scale, lty=2)
 
 #-----------------------------------------------
@@ -277,9 +279,9 @@ y <- c(y1,y2)
 out1 <- lm(y~x) # LSE
 out2 <- lmrobdetMM(y~x)  #MM
 
-plot(y ~ x, pch=19, col='gray50')
-abline(out1, lwd=2, col='blue3')
-abline(out2, lwd=2, col='red3')
+plot(y ~ x, pch=19, col='gray30')
+abline(out1, lwd=3, col='blue3')
+abline(out2, lwd=3, col='red3')
 text(c(-3.5,3),c(0,2),c("LS","MM"), cex=1.3, col=c('blue3', 'red3'))
 #--------------------------------------------------
 
@@ -288,9 +290,10 @@ text(c(-3.5,3),c(0,2),c("LS","MM"), cex=1.3, col=c('blue3', 'red3'))
 data(biochem, package='RobStatTM')
 X <- as.matrix(biochem)
 colnames(X) <- c('Phosphate', 'Chloride')
-plot(X, pch=19, main='Biochem Data scatterplot') 
+plot(X, pch=19, main='Biochem Data scatterplot')
 
-qqnorm(X[,1])
+qqnorm(X[,1], pch=19)
+qqline(X[,1], lwd=2, col='gray20')
 
 mu <- colMeans(X)
 cov.mat <- var(X)
@@ -328,11 +331,11 @@ disR <- mahalanobis(X,mu,V)
 
 #Figure 6.3
 par(mfrow=c(2,2))
-plot(disC, xlab="index", ylab="Distances", main = "Classical",cex.main=0.9)
-plot(qchisq(ppoints(59),13),sort(disC),xlab="chi squared quantiles", ylab="Sorted distances", main ="Classical",cex.main=0.9)
+plot(disC, xlab="index", ylab="Distances", main = "Classical", cex.main=0.9, pch=19)
+plot(qchisq(ppoints(59),13),sort(disC),xlab="chi squared quantiles", ylab="Sorted distances", main ="Classical", cex.main=0.9, pch=19)
 lines(sort(disC),sort(disC))
-plot(disM, xlab="index", ylab="Distances", main = "Robust",cex.main=0.9)
-plot(qchisq(ppoints(59),13),sort(disM),xlab="chi squared quantiles", ylab="Sorted distances", main="Robust",cex.main=0.9)
+plot(disM, xlab="index", ylab="Distances", main = "Robust", cex.main=0.9, pch=19)
+plot(qchisq(ppoints(59),13),sort(disM),xlab="chi squared quantiles", ylab="Sorted distances", main="Robust", cex.main=0.9, pch=19)
 lines(sort(disM),sort(disM))
 #----------------------------------------------------------
 
@@ -367,11 +370,11 @@ disS <-sort(disS1)
 # Figure 6.7
 par(mfrow=c(1,3))
 qua <- qchisq(ppoints(n), p)
-plot(qua,disC, xlab="Chi squared quantiles", ylab="Sorted distances", main="Classical", cex.main=0.9)
+plot(qua,disC, xlab="Chi squared quantiles", ylab="Sorted distances", main="Classical", cex.main=0.9, pch=19)
 abline(0,1)
-plot(qua, disS, xlab="Chi squared quantiles", ylab="Sorted distances", main="S-Bisquare", cex.main=0.9)
+plot(qua, disS, xlab="Chi squared quantiles", ylab="Sorted distances", main="S-Bisquare", cex.main=0.9, pch=19)
 abline(0,1)
-plot(qua, disR, xlab="Chi squared quantiles", ylab="Sorted distances", main="Rocke", cex.main=0.9)
+plot(qua, disR, xlab="Chi squared quantiles", ylab="Sorted distances", main="Rocke", cex.main=0.9, pch=19)
 abline(0,1)
 #---------------------------------------------
 
@@ -422,6 +425,7 @@ print(rbind(qC,qM))
 
 dCsor <- sort(dC)
 dMsor <- sort(dM)
+par(mfrow=c(1,1))
 plot(dCsor, dMsor, xlab="Classic", ylab="Robust", log="xy")
 abline(0,1)
 #---------------------------------------------
@@ -429,7 +433,7 @@ abline(0,1)
 
 # Example 6.5 and 6.6
 
-library(GSE) 
+library(GSE)
 library(RobStatTM)
 data(wine, package='RobStatTM')
 X <- as.matrix(wine)
@@ -439,7 +443,7 @@ p <- DM[2]
 
 
 #omitted data Figure 6.11
-#GSE  
+#GSE
 set.seed(100)
 RR <- matrix(runif(n*p)<.2,n,p)
 X2 <- X
@@ -449,10 +453,11 @@ for (i in 1:n) {
   }
 }
 
+qq <- qchisq(.999, p)
+
 out2 <- GSE(X2)
 md2 <- getDistAdj(out2)
 smd2 <- sort(md2)
-qq <- qchisq(.999, p)
 v2 <- (md2 > qq)
 z2 <- 1:n
 z2 <- z2[v2]
@@ -463,8 +468,7 @@ no2 <- length(z2)
 out3 <- CovEM(X2)
 md3 <- getDistAdj(out3)
 smd3 <- sort(md3)
-qq <- qchisq(.999, p)
-v3 <- ( md3>qq )
+v3 <- ( md3 > qq )
 z3 <- 1:n
 z3 <- z3[v3]
 #number of outliers
@@ -472,17 +476,15 @@ no3 <- length(z3)
 
 #Figure 6.11
 abc <- qchisq(ppoints(n), p)
-
-# Figure 6.11
 par(mfrow=c(2,2))
-plot(md3, xlab="Index", ylab="Adjusted distances")
+plot(md3, xlab="Index", ylab="Adjusted distances", pch=19)
 abline(h=qq)
-plot(abc, abc, xlab="Chi-square quantiles", ylab="Adjusted distance quantiles", type='n')
+plot(abc, abc, xlab="Chi-square quantiles", ylab="Adjusted distance quantiles", type='n', pch=19)
 points(abc,smd3)
-abline(0,1) 
-plot(md2, xlab="Index", ylab="Adjusted distances")
+abline(0,1)
+plot(md2, xlab="Index", ylab="Adjusted distances", pch=19)
 abline(h=qq)
-plot(abc, smd2, xlab="Chi square quantile", ylab="Adjusted distance quantiles" )
+plot(abc, smd2, xlab="Chi square quantile", ylab="Adjusted distance quantiles", pch=19)
 abline(0,1)
 
 
@@ -493,13 +495,12 @@ abline(0,1)
 set.seed(100)
 out <- MultiRobu(X, type="MM")
 md <- out$dist
-v <- ( md>qq )
-
+smd <- sort(md)
+v <- ( md> qq )
 z <- 1:n
 z <- z[v]
 # number of outliers
 no <- length(z)
-smd <- sort(md)
 
 #TSGS
 out4 <- TSGS(X, method="bisquare", init="emve", filter="UBF-DDC")
@@ -508,29 +509,27 @@ Sigma4 <- getScatter(out4)
 winef4 <- getFiltDat(out4)
 md4 <- mahalanobis(X, mu4, Sigma4)
 smd4 <- sort(md4)
-qq <- qchisq(.999, p)
-v4 <- ( md4>qq )
-
+v4 <- ( md4 > qq )
 z4 <- 1:n
 z4 <- z4[v4]
 # number of outliers
 no4 <- length(z4)
 
 
-#Figure 6.12 
+#Figure 6.12
 abc <- qchisq(ppoints(n),p)
 par(mfrow=c(2,2))
-plot(md, xlab="Index", ylab="Adjusted distances")
-abline(h = qq) #lines(c(0,60),c(qq,qq)) 
-plot(abc, smd, xlab="Chi square quantiles", ylab="Adjusted distance quantiles")
+plot(md, xlab="Index", ylab="Adjusted distances", pch=19)
+abline(h = qq) #lines(c(0,60),c(qq,qq))
+plot(abc, smd, xlab="Chi square quantiles", ylab="Adjusted distance quantiles", pch=19)
 abline(0,1)
-plot(md4, xlab="Index", ylab="Adjusted distances")
+plot(md4, xlab="Index", ylab="Adjusted distances", pch=19)
 abline(h=qq)
-plot(abc, smd4, xlab="Chi square quantile", ylab="Adjusted distance quantiles" )
+plot(abc, smd4, xlab="Chi square quantile", ylab="Adjusted distance quantiles", pch=19)
 abline(0,1)
 
 #---------------------------------------------------
-  
+
 
 # Example 6.7
 ### AUTISM
@@ -551,7 +550,7 @@ age.f <- factor(age)
 age.2 <- age - 2
 sicdegp2 <- sicdegp
 sicdegp2[sicdegp == 3] <- 0
-sicdegp2[sicdegp == 2] <- 2 
+sicdegp2[sicdegp == 2] <- 2
 sicdegp2[sicdegp == 1] <- 1
 sicdegp2.f <- factor(sicdegp2)
 autism.updated <- subset(data.frame(autism, sicdegp2.f, age.2), !is.na(vsae))
@@ -574,7 +573,7 @@ groups <- cbind(rep(1:p, each=n), rep((1:n), p))
 
 ## Composite Tau
 AutismCompositeTau <- varComprob(vsae ~ age.2 + I(age.2^2)
-                                 + sicdegp2.f + age.2:sicdegp2.f + I(age.2^2):sicdegp2.f, 
+                                 + sicdegp2.f + age.2:sicdegp2.f + I(age.2^2):sicdegp2.f,
                                  groups = groups, data = autism.grouped, varcov = K,
                                  control=varComprob.control(lower=c(0.01,0.01,0.01,-Inf,-Inf,-Inf)))
 
@@ -582,7 +581,7 @@ summary(AutismCompositeTau)
 
 ## Classic S
 AutismS <- varComprob(vsae ~ age.2 + I(age.2^2)
-                      + sicdegp2.f + age.2:sicdegp2.f + I(age.2^2):sicdegp2.f, 
+                      + sicdegp2.f + age.2:sicdegp2.f + I(age.2^2):sicdegp2.f,
                       groups = groups, data = autism.grouped, varcov = K,
                       control=varComprob.control(method="S", psi="rocke", cov.init="covOGK", lower=c(0.01,0.01,0.01,-Inf,-Inf,-Inf)))
 summary(AutismS)
