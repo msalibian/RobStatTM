@@ -288,8 +288,7 @@ text(c(-3.5,3),c(0,2),c("LS","MM"), cex=1.3, col=c('blue3', 'red3'))
 data(biochem, package='RobStatTM')
 X <- as.matrix(biochem)
 colnames(X) <- c('Phosphate', 'Chloride')
-plot(X, pch=19, main='Biochem Data scatterplot') #[,1],X[,2],xlab="phosphate", ylab="chloride")
-title("Data scatterpot")
+plot(X, pch=19, main='Biochem Data scatterplot') 
 
 qqnorm(X[,1])
 
@@ -358,7 +357,7 @@ resu <- CovMcd(X)
 muM <- slot(resu, 'center')
 VM <- slot(resu, 'cov')
 disM1 <- slot(resu, 'mah')
-disM <- sort(disM)
+disM <- sort(disM1)
 resu <- CovSest(X, method= "bisquare")  #S-estimator
 muS <- slot(resu, 'center')
 VS <- slot(resu, 'cov')
@@ -367,15 +366,13 @@ disS <-sort(disS1)
 
 # Figure 6.7
 par(mfrow=c(1,3))
-qua=qchisq(ppoints(n),p)
-plot(qua,disC,xlab="chi squared quantiles", ylab="Sorted distances", main="Classical",cex.main=0.9)
-lines(disC,disC)
-# plot(qua,disM,xlab="chi squared quantiles", ylab="Sorted distances" );
-# title("MCD",cex.main=0.9); lines(disM,disS)
-plot(qua,disS,xlab="chi squared quantiles", ylab="Sorted distances", main = "S-Bisquare",cex.main=0.9)
-lines(disS,disS)
-plot(qua,disR,xlab="chi squared quantiles", ylab="Sorted distances", main = "Rocke",cex.main=0.9)
-lines(disR,disR)
+qua <- qchisq(ppoints(n), p)
+plot(qua,disC, xlab="Chi squared quantiles", ylab="Sorted distances", main="Classical", cex.main=0.9)
+abline(0,1)
+plot(qua, disS, xlab="Chi squared quantiles", ylab="Sorted distances", main="S-Bisquare", cex.main=0.9)
+abline(0,1)
+plot(qua, disR, xlab="Chi squared quantiles", ylab="Sorted distances", main="Rocke", cex.main=0.9)
+abline(0,1)
 #---------------------------------------------
 
 # EXAMPLE 6.4   bus.R  busdata.txt
@@ -451,7 +448,6 @@ for (i in 1:n) {
     if(RR[i,j]) X2[i,j] <- NA
   }
 }
-
 
 out2 <- GSE(X2)
 md2 <- getDistAdj(out2)
