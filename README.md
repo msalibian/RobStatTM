@@ -10,7 +10,7 @@ devtools::install_github("msalibian/RobStatTM")
 
 ### Additional content in this repository:
 
-* The scripts reproducing the examples and figures of Chapters 4, 5 and 6 can be found [here](Examples/scriptsCh4-5-6.R). 
+* The scripts reproducing the examples and figures of Chapters 4, 5 and 6 can be found [here](Examples/scriptsCh4-5-6.R). Those for the other Chapters will be added soon. 
 * A description of the data sets used in the book is [here](Examples/MMYS-2018-Chapter_11-Description-of-Data-Sets.pdf).
 * The preface to the 2nd edition of the book is [here](Examples/MMYS-preface-second-edition.pdf). 
 
