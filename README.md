@@ -7,8 +7,7 @@ The scripts reproducing the examples and figures of Chapters 4, 5 and 6 can be f
 found [here](Examples/MMYS-2018-Chapter_11-Description-of-Data-Sets.pdf).
 
 
-To install it from GitHub directly install the
-`devtools` package and then use
+To install it directly from GitHub, install the `devtools` package and then use
 ```
 devtools::install_github("msalibian/RobStatTM")
 ```
