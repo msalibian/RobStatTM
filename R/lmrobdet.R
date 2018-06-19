@@ -1083,6 +1083,8 @@ lmrobM <- function(formula, data, subset, weights, na.action,
                    singular.ok = TRUE, contrasts = NULL, offset = NULL,
                    control = lmrobdet.control()) {
   # tuning.psi = 3.4434 # 85% efficiency
+  ret.x <- x
+  ret.y <- y
   cl <- match.call()
   mf <- match.call(expand.dots = FALSE)
   m <- match(c("formula", "data", "subset", "weights", "na.action", "offset"),
@@ -1199,7 +1201,23 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     else names(z$coefficients) <- colnames(x)
     if(!is.null(offset)) z$residuals <- y - offset
   }
+
+  z$na.action <- attr(mf, "na.action")
+  z$offset <- offset
+  z$contrasts <- contrasts
+  z$xlevels <- .getXlevels(mt, mf)
   z$call <- cl
+  z$terms <- mt
+  z$assign <- assign
+  # if(control$compute.rd && !is.null(x))
+  #   z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
+  if (model)
+    z$model <- mf
+  if (ret.x)
+    z$x <- if (singular.fit || (!is.null(w) && zero.weights))
+      model.matrix(mt, mf, contrasts) else x
+  if (ret.y)
+    z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
   class(z) <- c('lmrob', 'lmrobdetMM')
   z
 }
