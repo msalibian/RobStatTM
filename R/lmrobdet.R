@@ -1218,7 +1218,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
       model.matrix(mt, mf, contrasts) else x
   if (ret.y)
     z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
-  class(z) <- c('lmrob', 'lmrobdetMM')
+  class(z) <- c('lmrobdetMM', 'lmrob')
   z
 }
 
