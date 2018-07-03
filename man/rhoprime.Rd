@@ -2,7 +2,7 @@
 % Please edit documentation in R/psiFuns.R
 \name{rhoprime}
 \alias{rhoprime}
-\title{The first derivative of Tukeys bisquare rho function}
+\title{The first derivative of the rho function}
 \usage{
 rhoprime(u, family, cc, standardize = FALSE)
 }
@@ -23,7 +23,7 @@ standardized so that its maximum value is 1. See \link{Mpsi}.}
 The value of the first derivative \code{rho} evaluated at \code{u}
 }
 \description{
-The first derivative of Tukeys bisquare rho function
+The first derivative of the rho function
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}

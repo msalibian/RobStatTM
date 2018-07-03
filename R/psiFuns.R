@@ -124,7 +124,7 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 }
 
 
-#' The first derivative of Tukeys bisquare rho function
+#' The first derivative of the rho function
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
@@ -152,7 +152,7 @@ rhoprime <- function(u, family, cc, standardize = FALSE)
 }
 
 
-#' The second derivative of Tukey bisquare rho function
+#' The second derivative of the rho function
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid

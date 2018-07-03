@@ -2,7 +2,7 @@
 % Please edit documentation in R/psiFuns.R
 \name{rhoprime2}
 \alias{rhoprime2}
-\title{The second derivative of Tukey bisquare rho function}
+\title{The second derivative of the rho function}
 \usage{
 rhoprime2(u, family, cc, standardize = FALSE)
 }
@@ -23,7 +23,7 @@ standardized so that its maximum value is 1. See \link{Mpsi}.}
 The value of the second derivative of \code{rho} evaluated at \code{u}
 }
 \description{
-The second derivative of Tukey bisquare rho function
+The second derivative of the rho function
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
