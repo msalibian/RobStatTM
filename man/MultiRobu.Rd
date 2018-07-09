@@ -4,7 +4,7 @@
 \alias{MultiRobu}
 \title{Robust multivariate location and scatter estimators}
 \usage{
-MultiRobu(X, type = "auto")
+MultiRobu(X, type = "auto", maxit = 50, tol = 1e-04)
 }
 \arguments{
 \item{X}{a data matrix with observations in rows.}
@@ -13,6 +13,10 @@ MultiRobu(X, type = "auto")
 are "Rocke" for Rocke's S-estimator, "MM" for an MM-estimator with a 
 SHR rho function, or "auto" (default) which selects "Rocke" if the number 
 of variables is greater than or equal to 10, and "MM" otherwise.}
+
+\item{maxit}{Maximum number of iterations, defaults to 50.}
+
+\item{tol}{Tolerance for convergence, defaults to 1e-4.}
 }
 \value{
 A list with the following components:

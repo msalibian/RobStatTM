@@ -9,6 +9,8 @@
 #' are "Rocke" for Rocke's S-estimator, "MM" for an MM-estimator with a 
 #' SHR rho function, or "auto" (default) which selects "Rocke" if the number 
 #' of variables is greater than or equal to 10, and "MM" otherwise.  
+#' @param maxit Maximum number of iterations, defaults to 50.
+#' @param tol Tolerance for convergence, defaults to 1e-4. 
 #'
 #' @return A list with the following components:
 #' \item{mu}{The location estimator}
@@ -20,7 +22,7 @@
 #' @references \url{http://thebook}
 #'
 #' @export
-MultiRobu<-function(X,type="auto")  {
+MultiRobu<-function(X, type="auto", maxit=50, tol=1e-4)  {
 if (type=="auto") {
   p=dim(X)[2]
   if (p<10) {type="MM"
@@ -28,15 +30,42 @@ if (type=="auto") {
 }  
   
  if (type=="Rocke") {
-   resu=RockeMulti(X)
- } else {resu=MMultiSHR(X)  #MM
+   resu=RockeMulti(X, maxit=maxit, tol=tol)
+ } else {resu=MMultiSHR(X, maxit=maxit, tolpar=tol)  #MM
  }
   mu=resu$mu; V=resu$V
   return(list(mu=mu, V=V, dist=mahalanobis(X,mu,V)))
 }
 
-########
-#Rocke S-estimator
+#' Rocke's robust multivariate location and scatter estimator
+#'
+#' This function computes Rocke's robust estimator for multivariate location and scatter.
+#'
+#' This function computes Rocke's robust estimator for multivariate location and scatter.
+#'
+#' @param X a data matrix with observations in rows.
+#' @param initial A character indicating the initial estimator. Valid options are 'K' (default) 
+#' for a fast and deterministic one, and 'mve' for the Minimum Volume Ellipsoid.   
+#' @param maxsteps Maximum number of steps for the line search section of the algorithm.   
+#' @param propmin Proportion of weights computed from the initial estimator that will be different 
+#' from zero. The number of observations with non-zero weights will be at least p (the number of
+#' columns of \code{X} times \code{propmin}. 
+#' @param qs Tuning paramater for Rocke's loss functions. 
+#' @param maxit Maximum number of iterations.
+#' @param tol Tolerance to decide converngence.#' 
+#' 
+#' @return A list with the following components:
+#' \item{mu}{The location estimator}
+#' \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
+#' \item{dista}{Robust Mahalanobis distances}
+#' \item{w}{weights}
+#' \item{gamma}{gamma}
+#' 
+#' @author Ricardo Maronna, \email{rmaronna@retina.ar}
+#'
+#' @references \url{http://thebook}
+#'
+#' @export
 RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=2, maxit=50, tol=1e-4)
 {
   d <- dim(X)
@@ -233,8 +262,26 @@ averho.uni <- function(sig, x, delta)
 rhoinv <- function(x) 
   return(sqrt(1-(1-x)^(1/3)))
 
-############################
-# Multivariate MM estimator with SHR rho
+#' MMultiSHR robust multivariate location and scatter estimator
+#'
+#' This function computes the MMultiSHR robust estimator for multivariate location and scatter.
+#'
+#' This function computes the MMultiSHRrobust estimator for multivariate location and scatter.
+#'
+#' @param X a data matrix with observations in rows.
+#' @param maxit Maximum number of iterations.
+#' @param tolpar Tolerance to decide converngence.#' 
+#' 
+#' @return A list with the following components:
+#' \item{mu}{The location estimator}
+#' \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
+#' \item{dista}{Robust Mahalanobis distances}
+#' 
+#' @author Ricardo Maronna, \email{rmaronna@retina.ar}
+#'
+#' @references \url{http://thebook}
+#'
+#' @export
 MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
   d <- dim(X)
   n <- d[1]; p <- d[2]
