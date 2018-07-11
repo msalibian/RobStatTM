@@ -11,13 +11,13 @@ RockeMulti(X, initial = "K", maxsteps = 5, propmin = 2, qs = 2,
 \item{X}{a data matrix with observations in rows.}
 
 \item{initial}{A character indicating the initial estimator. Valid options are 'K' (default) 
-for a fast and deterministic one, and 'mve' for the Minimum Volume Ellipsoid.}
+for the Pena-Prieto 'KSD' estimate, and 'mve' for the Minimum Volume Ellipsoid.}
 
 \item{maxsteps}{Maximum number of steps for the line search section of the algorithm.}
 
-\item{propmin}{Proportion of weights computed from the initial estimator that will be different 
-from zero. The number of observations with non-zero weights will be at least p (the number of
-columns of \code{X} times \code{propmin}.}
+\item{propmin}{Regulates the proportion of weights computed from the initial estimator that 
+will be different from zero. The number of observations with initial non-zero weights will 
+be at least p (the number of columns of X) times propmin.}
 
 \item{qs}{Tuning paramater for Rocke's loss functions.}
 
@@ -31,7 +31,7 @@ A list with the following components:
 \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
 \item{dista}{Robust Mahalanobis distances}
 \item{w}{weights}
-\item{gamma}{gamma}
+\item{gamma}{Final value of the constant gamma that regulates the efficiency}
 }
 \description{
 This function computes Rocke's robust estimator for multivariate location and scatter.

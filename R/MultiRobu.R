@@ -45,11 +45,11 @@ if (type=="auto") {
 #'
 #' @param X a data matrix with observations in rows.
 #' @param initial A character indicating the initial estimator. Valid options are 'K' (default) 
-#' for a fast and deterministic one, and 'mve' for the Minimum Volume Ellipsoid.   
+#' for the Pena-Prieto 'KSD' estimate, and 'mve' for the Minimum Volume Ellipsoid.   
 #' @param maxsteps Maximum number of steps for the line search section of the algorithm.   
-#' @param propmin Proportion of weights computed from the initial estimator that will be different 
-#' from zero. The number of observations with non-zero weights will be at least p (the number of
-#' columns of \code{X} times \code{propmin}. 
+#' @param propmin Regulates the proportion of weights computed from the initial estimator that 
+#' will be different from zero. The number of observations with initial non-zero weights will 
+#' be at least p (the number of columns of X) times propmin. 
 #' @param qs Tuning paramater for Rocke's loss functions. 
 #' @param maxit Maximum number of iterations.
 #' @param tol Tolerance to decide converngence.#' 
@@ -59,7 +59,7 @@ if (type=="auto") {
 #' \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
 #' \item{dista}{Robust Mahalanobis distances}
 #' \item{w}{weights}
-#' \item{gamma}{gamma}
+#' \item{gamma}{Final value of the constant gamma that regulates the efficiency}
 #' 
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
@@ -264,9 +264,9 @@ rhoinv <- function(x)
 
 #' MMultiSHR robust multivariate location and scatter estimator
 #'
-#' This function computes the MMultiSHR robust estimator for multivariate location and scatter.
+#' This function computes the MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 #'
-#' This function computes the MMultiSHRrobust estimator for multivariate location and scatter.
+#' This function computes the MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 #'
 #' @param X a data matrix with observations in rows.
 #' @param maxit Maximum number of iterations.
