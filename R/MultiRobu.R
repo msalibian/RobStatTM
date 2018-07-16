@@ -613,3 +613,79 @@ rhoinv <- function(x)
   return(sqrt(1-(1-x)^(1/3)))
 
 
+#' Classical Covariance Estimation
+#' 
+#' Compute an estimate of the covariance/correlation matrix and location
+#' vector using classical methods. 
+#' 
+#' Its main intention is to return an object compatible to that
+#' produced by \code{\link{covRob}}, but fit using classical methods.
+#' 
+#' @param data a numeric matrix or data frame containing the data.
+#' @param corr a logical flag.  If \code{corr = TRUE} then the estimated correlation matrix is computed.
+#' @param center a logical flag or a numeric vector of length \code{p} (where \code{p} is the number of columns of \code{x}) specifying the center.  If \code{center = TRUE} then the center is estimated.  Otherwise the center is taken to be 0.
+#' @param distance a logical flag.  If \code{distance = TRUE} the Mahalanobis distances are computed.
+#' @param na.action a function to filter missing data.  The default \code{na.fail} produces an error if missing values are present.  An alternative is \code{na.omit} which deletes observations that contain one or more missing values.
+#' 
+#' @return a list with class \dQuote{covClassic} containing the following elements:
+#' \item{call}{an image of the call that produced the object with all the arguments named.}
+#' \item{cov}{a numeric matrix containing the estimate of the covariance/correlation matrix.}
+#' \item{center}{a numeric vector containing the estimate of the location vector.}
+#' \item{dist}{a numeric vector containing the squared Mahalanobis distances. Only present if \code{distance = TRUE} in the \code{call}.}
+#' \item{corr}{a logical flag.  If \code{corr = TRUE} then \code{cov}
+#' contains an estimate of the correlation matrix of \code{x}.}
+#' 
+#' @note Originally, and in S-PLUS, this function was called \code{cov}; it has 
+#' been renamed, as that did mask the function in the standard package \pkg{stats}.
+#'
+#'
+#' @examples
+#' data(wine)
+#' round( covClassic(wine)$cov, 2)
+#' 
+#' @export
+covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
+                       na.action = na.fail, unbiased = TRUE, ...)
+{
+  the.call <- match.call(expand.dots = FALSE)
+  
+  data <- na.action(data)
+  if(!is.matrix(data))
+    data <- as.matrix(data)
+  
+  n <- nrow(data)
+  p <- ncol(data)
+  dn <- dimnames(data)
+  dimnames(data) <- NULL
+  rowNames <- dn[[1]]
+  if(is.null(rowNames)) rowNames <- 1:n
+  colNames <- dn[[2]]
+  if(is.null(colNames)) colNames <- paste("V", 1:p, sep = "")
+  
+  if(length(center) != p && is.logical(center))
+    center <- if(center) apply(data, 2, mean) else numeric(p)
+  
+  data <- sweep(data, 2, center)
+  
+  covmat <- crossprod(data) / (if(unbiased) (n - 1) else n)
+  
+  if(distance)
+    dist <- mahalanobis(data, rep(0, p), covmat)
+  
+  if(corr) {
+    std <- sqrt(diag(covmat))
+    covmat <- covmat / (std %o% std)
+  }
+  
+  dimnames(covmat) <- list(colNames, colNames)
+  names(center) <- colNames
+  
+  if(distance)
+    names(dist) <- rowNames
+  
+  ans <- list(call = the.call, cov = covmat, center = center, dist = dist, corr = corr)
+  oldClass(ans) <- c("covClassic")
+  ans
+}
+
+
