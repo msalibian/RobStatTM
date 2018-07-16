@@ -17,6 +17,8 @@ MMultiSHR(X, maxit = 50, tolpar = 1e-04)
 A list with the following components:
 \item{mu}{The location estimator}
 \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
+\item{center}{The location estimator. Same as \code{mu} above.}
+\item{cov}{The scatter matrix estimator, scaled for consistency at the normal distribution. Same as \code{V} above.}
 \item{dista}{Robust Mahalanobis distances}
 }
 \description{

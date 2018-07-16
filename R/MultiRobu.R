@@ -15,6 +15,8 @@
 #' @return A list with the following components:
 #' \item{mu}{The location estimator}
 #' \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
+#' \item{center}{The location estimator. Same as \code{mu} above.}
+#' \item{cov}{The scatter matrix estimator, scaled for consistency at the normal distribution. Same as \code{V} above.}
 #' \item{dist}{Robust Mahalanobis distances}
 #' 
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
@@ -34,7 +36,7 @@ if (type=="auto") {
  } else {resu=MMultiSHR(X, maxit=maxit, tolpar=tol)  #MM
  }
   mu=resu$mu; V=resu$V
-  return(list(mu=mu, V=V, dist=mahalanobis(X,mu,V)))
+  return(list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu))
 }
 
 #' Rocke's robust multivariate location and scatter estimator
@@ -57,6 +59,8 @@ if (type=="auto") {
 #' @return A list with the following components:
 #' \item{mu}{The location estimator}
 #' \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
+#' \item{center}{The location estimator. Same as \code{mu} above.}
+#' \item{cov}{The scatter matrix estimator, scaled for consistency at the normal distribution. Same as \code{V} above.}
 #' \item{dista}{Robust Mahalanobis distances}
 #' \item{w}{weights}
 #' \item{gamma}{Final value of the constant gamma that regulates the efficiency}
@@ -140,7 +144,7 @@ dista=dista0}
   V <- tmp$V
   ff <- tmp$ff
   dista <- dista/ff
-  return(list(mu=mu, V=V, sig=sig, dista=dista, w=w, gamma=gamma))
+  return(list(mu=mu, V=V, sig=sig, dista=dista, w=w, gamma=gamma, cov=V, center=mu))
 }
 
 consRocke <- function(p, n, initial) {
@@ -275,6 +279,8 @@ rhoinv <- function(x)
 #' @return A list with the following components:
 #' \item{mu}{The location estimator}
 #' \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
+#' \item{center}{The location estimator. Same as \code{mu} above.}
+#' \item{cov}{The scatter matrix estimator, scaled for consistency at the normal distribution. Same as \code{V} above.}
 #' \item{dista}{Robust Mahalanobis distances}
 #' 
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
@@ -316,7 +322,7 @@ MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
   }
   tmp <- scalemat(V0=V0, dis=dista, weight='X'); 
   dista <- dista/tmp$ff
-  return(list(V=tmp$V, mu=mu0, dista=dista, w=w))
+  return(list(V=tmp$V, mu=mu0, dista=dista, w=w, center=mu0, cov=tmp$V))
 }
 
 

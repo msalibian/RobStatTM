@@ -22,6 +22,8 @@ of variables is greater than or equal to 10, and "MM" otherwise.}
 A list with the following components:
 \item{mu}{The location estimator}
 \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
+\item{center}{The location estimator. Same as \code{mu} above.}
+\item{cov}{The scatter matrix estimator, scaled for consistency at the normal distribution. Same as \code{V} above.}
 \item{dist}{Robust Mahalanobis distances}
 }
 \description{
