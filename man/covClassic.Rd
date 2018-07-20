@@ -36,7 +36,7 @@ Its main intention is to return an object compatible to that
 produced by \code{\link{covRob}}, but fit using classical methods.
 }
 \note{
-Originally, and in S-PLUS, this function was called \code{cov}; it has 
+Originally, and in S-PLUS, this function was called \code{cov}; it has
 been renamed, as that did mask the function in the standard package \pkg{stats}.
 }
 \examples{

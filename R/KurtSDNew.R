@@ -6,6 +6,9 @@
 #' This function computes robust multivariate location and scatter
 #' using both Pen~a-Prieto and random candidates.
 #'
+#' @aliases KurtSDNew initPP
+#' @rdname KurtSDNew
+#'
 #' @param X a data matrix with observations in rows.
 #' @param muldirand used to determine the number of random directions (candidates), which
 #' is \code{max(p*muldirand, dirmin)}, where \code{p} is the number of columns in \code{X}.
@@ -25,7 +28,7 @@
 #' @references \url{http://thebook}
 #'
 #' @export
-KurtSDNew <- function(X, muldirand=20, muldifix=10,dirmin=1000) {
+initPP <- KurtSDNew <- function(X, muldirand=20, muldifix=10,dirmin=1000) {
 
   oldSeed <- get(".Random.seed", mode="numeric", envir=globalenv())
   on.exit(assign(".Random.seed", oldSeed, envir=globalenv()))

@@ -4,13 +4,16 @@
 #'
 #' This function computes robust estimators for multivariate location and scatter.
 #'
+#' @aliases MultiRobu covRob
+#' @rdname MultiRobu
+#'
 #' @param X a data matrix with observations in rows.
 #' @param type a string indicating which estimator to compute. Valid options
-#' are "Rocke" for Rocke's S-estimator, "MM" for an MM-estimator with a 
-#' SHR rho function, or "auto" (default) which selects "Rocke" if the number 
-#' of variables is greater than or equal to 10, and "MM" otherwise.  
+#' are "Rocke" for Rocke's S-estimator, "MM" for an MM-estimator with a
+#' SHR rho function, or "auto" (default) which selects "Rocke" if the number
+#' of variables is greater than or equal to 10, and "MM" otherwise.
 #' @param maxit Maximum number of iterations, defaults to 50.
-#' @param tol Tolerance for convergence, defaults to 1e-4. 
+#' @param tol Tolerance for convergence, defaults to 1e-4.
 #'
 #' @return A list with the following components:
 #' \item{mu}{The location estimator}
@@ -18,19 +21,19 @@
 #' \item{center}{The location estimator. Same as \code{mu} above.}
 #' \item{cov}{The scatter matrix estimator, scaled for consistency at the normal distribution. Same as \code{V} above.}
 #' \item{dist}{Robust Mahalanobis distances}
-#' 
+#'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
 #' @references \url{http://thebook}
 #'
 #' @export
-MultiRobu<-function(X, type="auto", maxit=50, tol=1e-4)  {
+covRob <- MultiRobu <- function(X, type="auto", maxit=50, tol=1e-4)  {
 if (type=="auto") {
   p=dim(X)[2]
   if (p<10) {type="MM"
   } else {type="Rocke"}
-}  
-  
+}
+
  if (type=="Rocke") {
    resu=RockeMulti(X, maxit=maxit, tol=tol)
  } else {resu=MMultiSHR(X, maxit=maxit, tolpar=tol)  #MM
@@ -45,17 +48,20 @@ if (type=="auto") {
 #'
 #' This function computes Rocke's robust estimator for multivariate location and scatter.
 #'
+#' @aliases RockeMulti covRobRocke
+#' @rdname RockeMulti
+#'
 #' @param X a data matrix with observations in rows.
-#' @param initial A character indicating the initial estimator. Valid options are 'K' (default) 
-#' for the Pena-Prieto 'KSD' estimate, and 'mve' for the Minimum Volume Ellipsoid.   
-#' @param maxsteps Maximum number of steps for the line search section of the algorithm.   
-#' @param propmin Regulates the proportion of weights computed from the initial estimator that 
-#' will be different from zero. The number of observations with initial non-zero weights will 
-#' be at least p (the number of columns of X) times propmin. 
-#' @param qs Tuning paramater for Rocke's loss functions. 
+#' @param initial A character indicating the initial estimator. Valid options are 'K' (default)
+#' for the Pena-Prieto 'KSD' estimate, and 'mve' for the Minimum Volume Ellipsoid.
+#' @param maxsteps Maximum number of steps for the line search section of the algorithm.
+#' @param propmin Regulates the proportion of weights computed from the initial estimator that
+#' will be different from zero. The number of observations with initial non-zero weights will
+#' be at least p (the number of columns of X) times propmin.
+#' @param qs Tuning paramater for Rocke's loss functions.
 #' @param maxit Maximum number of iterations.
-#' @param tol Tolerance to decide converngence.#' 
-#' 
+#' @param tol Tolerance to decide converngence.#'
+#'
 #' @return A list with the following components:
 #' \item{mu}{The location estimator}
 #' \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
@@ -64,13 +70,13 @@ if (type=="auto") {
 #' \item{dista}{Robust Mahalanobis distances}
 #' \item{w}{weights}
 #' \item{gamma}{Final value of the constant gamma that regulates the efficiency}
-#' 
+#'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
 #' @references \url{http://thebook}
 #'
 #' @export
-RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=2, maxit=50, tol=1e-4)
+covRobRocke <- RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=2, maxit=50, tol=1e-4)
 {
   d <- dim(X)
   n <- d[1]
@@ -93,7 +99,7 @@ mu0=out$center
    V0=V0/(det(V0)^(1/p))
 dista0=mahalanobis(X,mu0,V0)
 dista=dista0}
- 
+
 
   delta <- (1-p/n)/2 # max breakdown
   #gamma0 <- consRocke(p,n,'K')$gamma
@@ -105,10 +111,10 @@ dista=dista0}
   gamma <- max(gg, gamma0)
 #print(gamma)
   sig0 <- MScalRocke(x=dista, gamma=gamma, delta=delta, q=qs)
-  
+
   iter <- 0
   difpar <- difsig <- +Inf
-  while( ( ( (difsig > tol) | (difpar > tol) ) & 
+  while( ( ( (difsig > tol) | (difpar > tol) ) &
            (iter < maxit) ) & (difsig > 0) ) {
     iter <- iter + 1
     w <- WRoTru(tt=dista/sig, gamma=gamma, q=qs)
@@ -150,7 +156,7 @@ dista=dista0}
 consRocke <- function(p, n, initial) {
   if(initial=='M') {
     beta <- c(-5.4358, -0.50303, 0.4214)
-  } else { 
+  } else {
     beta <- c(-6.1357, -1.0078, 0.81564)
   }
   if( p >= 15 ) {
@@ -184,25 +190,25 @@ rhorotru <- function(tt, gamma, q) {
 
 
 
-MScalRocke <- function(x, gamma, q, delta = 0.5, tol=1e-5) 
+MScalRocke <- function(x, gamma, q, delta = 0.5, tol=1e-5)
 {
   # sigma= solucion de ave{rhorocke1(x/sigma)}=delta
-  n <- length(x) 
+  n <- length(x)
   y <- sort(abs(x))
   n1 <- floor(n * (1-delta) )
   n2 <- ceiling(n * (1 - delta) / (1 - delta/2) )
   qq <- y[c(n1, n2)]
   u <- 1 + gamma*(delta-1)/2 #asegura rho(u)<delta/2
   sigin <- c(qq[1]/(1+gamma), qq[2]/u)
-  if( qq[1] >= 1) { 
-    tolera <- tol 
-  } else { 
-    tolera <- tol * qq[1] 
-  }
-  if( mean(x==0) > (1-delta) ) { 
-    sig <- 0 
+  if( qq[1] >= 1) {
+    tolera <- tol
   } else {
-    sig <- uniroot(f=averho, interval=sigin, x=x, 
+    tolera <- tol * qq[1]
+  }
+  if( mean(x==0) > (1-delta) ) {
+    sig <- 0
+  } else {
+    sig <- uniroot(f=averho, interval=sigin, x=x,
                    gamma=gamma, delta=delta, q=q, tol=tolera)$root
   } # solucion de ave{rhorocke1(x/sigma)}=delta
   return(sig)
@@ -221,7 +227,7 @@ scalemat <- function(V0, dis, weight='X')
   } else {
     sig <- median(dis)
     cc <- qchisq(0.5, df=p)
-  }    
+  }
   ff <- sig/cc
   return(list(ff=ff, V=V0*ff))
 }
@@ -233,19 +239,19 @@ M_Scale <- function(x, normz=1, delta=0.5, tol=1e-5)
   y <- sort(abs(x))
   n1 <- floor(n*(1-delta))
   n2 <- ceiling(n*(1-delta)/(1-delta/2));
-  qq <- y[c(n1, n2)] 
+  qq <- y[c(n1, n2)]
   u <- rhoinv(delta/2)
   sigin <- c(qq[1],  qq[2]/u) # intervalo inicial
   if (qq[1]>=1) {
     tolera=tol
-  } else { 
+  } else {
     tolera = tol * qq[1]
   }
   #tol. relativa o absol. si sigma> o < 1
   if( mean(x==0) >= (1-delta) ) {
     sig <- 0
   } else {
-    sig <- uniroot(f=averho.uni, interval=sigin, x=x, 
+    sig <- uniroot(f=averho.uni, interval=sigin, x=x,
                    delta=delta, tol=tolera)$root
   }
   if( normz > 0) sig <- sig / 1.56
@@ -260,35 +266,38 @@ rhobisq <- function(x) {
   return(r)
 }
 
-averho.uni <- function(sig, x, delta) 
+averho.uni <- function(sig, x, delta)
   return( mean( rhobisq(x/sig) ) - delta )
 
-rhoinv <- function(x) 
+rhoinv <- function(x)
   return(sqrt(1-(1-x)^(1/3)))
 
-#' MMultiSHR robust multivariate location and scatter estimator
+#' MM robust multivariate location and scatter estimator
 #'
 #' This function computes the MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 #'
 #' This function computes the MM robust estimator for multivariate location and scatter with the "SHR" loss function.
+#'
+#' @aliases MMultiSHR covRobMM
+#' @rdname MMultiSHR
 #'
 #' @param X a data matrix with observations in rows.
 #' @param maxit Maximum number of iterations.
-#' @param tolpar Tolerance to decide converngence.#' 
-#' 
+#' @param tolpar Tolerance to decide converngence.#'
+#'
 #' @return A list with the following components:
 #' \item{mu}{The location estimator}
 #' \item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
 #' \item{center}{The location estimator. Same as \code{mu} above.}
 #' \item{cov}{The scatter matrix estimator, scaled for consistency at the normal distribution. Same as \code{V} above.}
 #' \item{dista}{Robust Mahalanobis distances}
-#' 
+#'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
 #' @references \url{http://thebook}
 #'
 #' @export
-MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
+covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
   d <- dim(X)
   n <- d[1]; p <- d[2]
   delta <- 0.5*(1-p/n) #max. breakdown
@@ -314,19 +323,19 @@ MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
     V <- V/(det(V)^(1/p)) # set det=1
     # V0in <- solve(V0);
     dista <- mahalanobis(x=X,center=mu, cov=V) # %rdis=sqrt(dista);
-    dif1 <- t(mu - mu0) %*% solve(V0, mu-mu0) # (mu-mu0)*V0in*(mu-mu0)' 
+    dif1 <- t(mu - mu0) %*% solve(V0, mu-mu0) # (mu-mu0)*V0in*(mu-mu0)'
     dif2 <-  max(abs(c(solve(V0, V) - diag(p)))) # max(abs(V0in*V-eye(p)));
     difpar <- max(c(dif1, dif2)) #errores relativos de parametros
     mu0 <- mu
     V0 <- V
   }
-  tmp <- scalemat(V0=V0, dis=dista, weight='X'); 
+  tmp <- scalemat(V0=V0, dis=dista, weight='X');
   dista <- dista/tmp$ff
   return(list(V=tmp$V, mu=mu0, dista=dista, w=w, center=mu0, cov=tmp$V))
 }
 
 
-MscalSHR <- function(t, delta=0.5, sig0=median(t), niter=50, tol=1e-4) { 
+MscalSHR <- function(t, delta=0.5, sig0=median(t), niter=50, tol=1e-4) {
   if(mean(t<1e-16) >= 0.5) { sig <- 0
   } else { # fixed point
     sig1 <- sig0
@@ -334,15 +343,15 @@ MscalSHR <- function(t, delta=0.5, sig0=median(t), niter=50, tol=1e-4) {
     # make meanrho(sig11, t) <= sig1
     while( (y1 > sig1) & ( (sig1/sig0) < 1000) ) {
       sig1 <- 2*sig1
-      y1 <- meanrhoSHR(sig1, t, delta) 
+      y1 <- meanrhoSHR(sig1, t, delta)
     }
-    if( (sig1/sig0) >= 1000) { warning('non-convex function') 
+    if( (sig1/sig0) >= 1000) { warning('non-convex function')
       sig <- sig0 } else {
         iter <- 0
         sig2 <- y1
         while( iter <= niter) {
           iter <- iter+1
-          y2 <- meanrhoSHR(sig2, t, delta) 
+          y2 <- meanrhoSHR(sig2, t, delta)
           den <- sig2-y2+y1-sig1 # secante
           if( abs(den) < tol*sig1) {
             sig3 <- sig2
@@ -354,7 +363,7 @@ MscalSHR <- function(t, delta=0.5, sig0=median(t), niter=50, tol=1e-4) {
           y1 <- y2
         }
         sig <- sig2
-      }  
+      }
   }
   return(sig)
 }
@@ -368,11 +377,11 @@ rhoSHR <- function(d)  { # SHR # Optima, squared distances (d=x^2)
   G1 <- (-1.944)
   G2 <- 1.728
   G3 <- (-0.312)
-  G4 <- 0.016 
-  u <- (d > 9.0) 
+  G4 <- 0.016
+  u <- (d > 9.0)
   v <- (d < 4)
   w <- (1-u)*(1-v)
-  z <- v*d/2 + w*((G4/8)*(d^4) + (G3/6)*(d^3) + 
+  z <- v*d/2 + w*((G4/8)*(d^4) + (G3/6)*(d^3) +
                     (G2/4)*(d^2)+ (G1/2)*d + 1.792) + 3.25*u
   z <- z/3.25
   return(z)
@@ -404,7 +413,7 @@ consMMKur <- function(p, n) {
 
 
 
-mahdist <- function(x, center=c(0,0), cov) 
+mahdist <- function(x, center=c(0,0), cov)
 {
 x <- as.matrix(x)
 if(any(is.na(cov)))
@@ -437,10 +446,10 @@ names(ans) <- c("mahdist","flag.rank")
 ans
 }
 ##############################3
-desceRocke <- function(X, gamma0, muini, Vini, 
-                       maxsteps=5, propmin=2, 
+desceRocke <- function(X, gamma0, muini, Vini,
+                       maxsteps=5, propmin=2,
                        qs=2, maxit=50, tol=1e-4)
-## Iterations to minimize Rocke's scale strting from initial vector muini and matrix Vini  
+## Iterations to minimize Rocke's scale strting from initial vector muini and matrix Vini
 {
   d <- dim(X)
   n <- d[1]
@@ -457,10 +466,10 @@ desceRocke <- function(X, gamma0, muini, Vini,
   gg <- min( dife[ (1:n) >= (propmin*p) ] )
   gamma <- max(gg, gamma0)
   sig0 <- MScalRocke(x=dista, gamma=gamma, delta=delta, q=qs)
-  
+
   iter <- 0
   difpar <- difsig <- +Inf
-  while( ( ( (difsig > tol) | (difpar > tol) ) & 
+  while( ( ( (difsig > tol) | (difpar > tol) ) &
            (iter < maxit) ) & (difsig > 0) ) {
     iter <- iter + 1
     w <- WRoTru(tt=dista/sig, gamma=gamma, q=qs)
@@ -502,7 +511,7 @@ desceRocke <- function(X, gamma0, muini, Vini,
 consRocke <- function(p, n, initial) {
   if(initial=='M') {
     beta <- c(-5.4358, -0.50303, 0.4214)
-  } else { 
+  } else {
     beta <- c(-6.1357, -1.0078, 0.81564)
   }
   if( p >= 15 ) {
@@ -536,25 +545,25 @@ rhorotru <- function(tt, gamma, q) {
 
 
 
-MScalRocke <- function(x, gamma, q, delta = 0.5, tol=1e-5) 
+MScalRocke <- function(x, gamma, q, delta = 0.5, tol=1e-5)
 {
   # sigma= solucion de ave{rhorocke1(x/sigma)}=delta
-  n <- length(x) 
+  n <- length(x)
   y <- sort(abs(x))
   n1 <- floor(n * (1-delta) )
   n2 <- ceiling(n * (1 - delta) / (1 - delta/2) )
   qq <- y[c(n1, n2)]
   u <- 1 + gamma*(delta-1)/2 #asegura rho(u)<delta/2
   sigin <- c(qq[1]/(1+gamma), qq[2]/u)
-  if( qq[1] >= 1) { 
-    tolera <- tol 
-  } else { 
-    tolera <- tol * qq[1] 
-  }
-  if( mean(x==0) > (1-delta) ) { 
-    sig <- 0 
+  if( qq[1] >= 1) {
+    tolera <- tol
   } else {
-    sig <- uniroot(f=averho, interval=sigin, x=x, 
+    tolera <- tol * qq[1]
+  }
+  if( mean(x==0) > (1-delta) ) {
+    sig <- 0
+  } else {
+    sig <- uniroot(f=averho, interval=sigin, x=x,
                    gamma=gamma, delta=delta, q=q, tol=tolera)$root
   } # solucion de ave{rhorocke1(x/sigma)}=delta
   return(sig)
@@ -573,7 +582,7 @@ scalemat <- function(V0, dis, weight='M')
   } else {
     sig <- median(dis)
     cc <- qchisq(0.5, df=p)
-  }    
+  }
   ff <- sig/cc
   return(list(ff=ff, V=V0*ff))
 }
@@ -585,19 +594,19 @@ M_Scale <- function(x, normz=1, delta=0.5, tol=1e-5)
   y <- sort(abs(x))
   n1 <- floor(n*(1-delta))
   n2 <- ceiling(n*(1-delta)/(1-delta/2));
-  qq <- y[c(n1, n2)] 
+  qq <- y[c(n1, n2)]
   u <- rhoinv(delta/2)
   sigin <- c(qq[1],  qq[2]/u) # intervalo inicial
   if (qq[1]>=1) {
     tolera=tol
-  } else { 
+  } else {
     tolera = tol * qq[1]
   }
   #tol. relativa o absol. si sigma> o < 1
   if( mean(x==0) >= (1-delta) ) {
     sig <- 0
   } else {
-    sig <- uniroot(f=averho.uni, interval=sigin, x=x, 
+    sig <- uniroot(f=averho.uni, interval=sigin, x=x,
                    delta=delta, tol=tolera)$root
   }
   if( normz > 0) sig <- sig / 1.56
@@ -612,27 +621,27 @@ rhobisq <- function(x) {
   return(r)
 }
 
-averho.uni <- function(sig, x, delta) 
+averho.uni <- function(sig, x, delta)
   return( mean( rhobisq(x/sig) ) - delta )
 
-rhoinv <- function(x) 
+rhoinv <- function(x)
   return(sqrt(1-(1-x)^(1/3)))
 
 
 #' Classical Covariance Estimation
-#' 
+#'
 #' Compute an estimate of the covariance/correlation matrix and location
-#' vector using classical methods. 
-#' 
+#' vector using classical methods.
+#'
 #' Its main intention is to return an object compatible to that
 #' produced by \code{\link{covRob}}, but fit using classical methods.
-#' 
+#'
 #' @param data a numeric matrix or data frame containing the data.
 #' @param corr a logical flag.  If \code{corr = TRUE} then the estimated correlation matrix is computed.
 #' @param center a logical flag or a numeric vector of length \code{p} (where \code{p} is the number of columns of \code{x}) specifying the center.  If \code{center = TRUE} then the center is estimated.  Otherwise the center is taken to be 0.
 #' @param distance a logical flag.  If \code{distance = TRUE} the Mahalanobis distances are computed.
 #' @param na.action a function to filter missing data.  The default \code{na.fail} produces an error if missing values are present.  An alternative is \code{na.omit} which deletes observations that contain one or more missing values.
-#' 
+#'
 #' @return a list with class \dQuote{covClassic} containing the following elements:
 #' \item{call}{an image of the call that produced the object with all the arguments named.}
 #' \item{cov}{a numeric matrix containing the estimate of the covariance/correlation matrix.}
@@ -640,25 +649,25 @@ rhoinv <- function(x)
 #' \item{dist}{a numeric vector containing the squared Mahalanobis distances. Only present if \code{distance = TRUE} in the \code{call}.}
 #' \item{corr}{a logical flag.  If \code{corr = TRUE} then \code{cov}
 #' contains an estimate of the correlation matrix of \code{x}.}
-#' 
-#' @note Originally, and in S-PLUS, this function was called \code{cov}; it has 
+#'
+#' @note Originally, and in S-PLUS, this function was called \code{cov}; it has
 #' been renamed, as that did mask the function in the standard package \pkg{stats}.
 #'
 #'
 #' @examples
 #' data(wine)
 #' round( covClassic(wine)$cov, 2)
-#' 
+#'
 #' @export
 covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
                        na.action = na.fail, unbiased = TRUE, ...)
 {
   the.call <- match.call(expand.dots = FALSE)
-  
+
   data <- na.action(data)
   if(!is.matrix(data))
     data <- as.matrix(data)
-  
+
   n <- nrow(data)
   p <- ncol(data)
   dn <- dimnames(data)
@@ -667,28 +676,28 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
   if(is.null(rowNames)) rowNames <- 1:n
   colNames <- dn[[2]]
   if(is.null(colNames)) colNames <- paste("V", 1:p, sep = "")
-  
+
   if(length(center) != p && is.logical(center))
     center <- if(center) apply(data, 2, mean) else numeric(p)
-  
+
   data <- sweep(data, 2, center)
-  
+
   covmat <- crossprod(data) / (if(unbiased) (n - 1) else n)
-  
+
   if(distance)
     dist <- mahalanobis(data, rep(0, p), covmat)
-  
+
   if(corr) {
     std <- sqrt(diag(covmat))
     covmat <- covmat / (std %o% std)
   }
-  
+
   dimnames(covmat) <- list(colNames, colNames)
   names(center) <- colNames
-  
+
   if(distance)
     names(dist) <- rowNames
-  
+
   ans <- list(call = the.call, cov = covmat, center = center, dist = dist, corr = corr)
   oldClass(ans) <- c("covClassic")
   ans
