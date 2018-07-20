@@ -23,10 +23,10 @@ A list with the following components:
 \item{dista}{Robust Mahalanobis distances}
 }
 \description{
-This function computes the MM robust estimator for multivariate location and scatter with the "SHR" loss function.
+This function computes an MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 }
 \details{
-This function computes the MM robust estimator for multivariate location and scatter with the "SHR" loss function.
+This function computes an MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 }
 \references{
 \url{http://thebook}

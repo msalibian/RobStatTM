@@ -274,9 +274,9 @@ rhoinv <- function(x)
 
 #' MM robust multivariate location and scatter estimator
 #'
-#' This function computes the MM robust estimator for multivariate location and scatter with the "SHR" loss function.
+#' This function computes an MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 #'
-#' This function computes the MM robust estimator for multivariate location and scatter with the "SHR" loss function.
+#' This function computes an MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 #'
 #' @aliases MMultiSHR covRobMM
 #' @rdname MMultiSHR
