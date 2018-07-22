@@ -8,6 +8,9 @@
 #' Croux, C., and Haesbroeck, G. (2002), "Implementing the Bianco and Yohai estimator for 
 #' Logistic Regression" 
 #' 
+#' @aliases WBYlogreg logregWBY
+#' @rdname WBYlogreg
+#' 
 #' @param x0 matrix of explanatory variables; 
 #' @param y vector of binomial responses (0 or 1);
 #' @param intercept 1 or 0 indicating if an intercept is included or or not
@@ -30,7 +33,7 @@
 #' WBYlogreg(x0,y)
 #'
 #' @export
-WBYlogreg<-function(x0,y, intercept=1, const=0.5,kmax=1000,maxhalf=10)
+logregWBY <- WBYlogreg <- function(x0,y, intercept=1, const=0.5,kmax=1000,maxhalf=10)
 { 
   sigmamin=0.0001   
   if (!is.numeric(y)) 

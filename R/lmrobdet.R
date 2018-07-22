@@ -1228,6 +1228,9 @@ lmrobM <- function(formula, data, subset, weights, na.action,
 #'
 #' This function computes a robust likelihood ratio test for linear hypotheses.
 #'
+#' @aliases rob.linear.test lmrobLinTest
+#' @rdname rob.linear.test
+#'
 #' @param object1 an \code{lmrob} object with the fit corresponding to the complete model
 #' @param object2 an \code{lmrob} object with the fit corresponding to the model
 #' restricted under the null linear hypothesis.
@@ -1242,7 +1245,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
 #' @references \url{http://thebook}
 #'
 #' @export
-rob.linear.test <- function(object1, object2)
+lmrobLinTest <- rob.linear.test <- function(object1, object2)
 {
   p <- length(object1$coeff)
   q <- length(object1$coeff) - length(object2$coeff)

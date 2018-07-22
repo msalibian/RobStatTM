@@ -21,6 +21,10 @@
 #' In this package the function \code{rho} is one of
 #' Tukey's bisquare family.
 #'
+#' @aliases mscale scaleM
+#' @rdname mscale
+#'
+#'
 #' @param u vector of residuals
 #' @param delta the right hand side of the M-scale equation
 #' @param family string specifying the name of the family of loss function to be used (current valid
@@ -35,7 +39,6 @@
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
-#' @rdname mscale
 #' @examples
 #' set.seed(123)
 #' # 10% of outliers, sd of good points is 1.5
@@ -44,7 +47,7 @@
 #' sd(r)
 #'
 #' @export
-mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquare", max.it=100, tol=1e-6) {
+scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquare", max.it=100, tol=1e-6) {
   # M-scale of a sample u
   # tol: accuracy
   # delta: breakdown point (right side)
