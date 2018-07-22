@@ -21,9 +21,9 @@
 #' In this package the function \code{rho} is one of
 #' Tukey's bisquare family.
 #'
+#' @export mscale scaleM
 #' @aliases mscale scaleM
 #' @rdname mscale
-#'
 #'
 #' @param u vector of residuals
 #' @param delta the right hand side of the M-scale equation
@@ -46,7 +46,6 @@
 #' mscale(u=r, tol=1e-7, delta=.5, max.it=100, tuning.chi=1.5477)
 #' sd(r)
 #'
-#' @export
 scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquare", max.it=100, tol=1e-6) {
   # M-scale of a sample u
   # tol: accuracy

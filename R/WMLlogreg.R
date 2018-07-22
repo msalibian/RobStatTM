@@ -3,6 +3,7 @@
 #' This function computes a weighted likelihood estimator for the logistic model, where 
 #' the weights penalize high leverage observations. In this version the weights are zero or one.
 #' 
+#' @export WMLlogreg logregWML
 #' @aliases WMLlogreg logregWML
 #' @rdname WMLlogreg
 #' 
@@ -25,7 +26,6 @@
 #' @examples
 #' WMLlogreg(x0,y)
 #'
-#' @export
 logregWML <- WMLlogreg <- function (x0, y, intercept = 1)
   {  
   ttx=colnames(x0)  

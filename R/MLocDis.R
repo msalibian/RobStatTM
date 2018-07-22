@@ -4,6 +4,7 @@
 #'
 #' This function computes M-estimators for location and scale.
 #'
+#' @export MLocDis locScaleM
 #' @aliases MLocDis locScaleM
 #' @rdname MLocDis
 #'
@@ -23,7 +24,6 @@
 #'
 #' @references \url{http://thebook}
 #'
-#' @export
 locScaleM <- MLocDis <- function(x, psi="Bis", eff=0.9, maxit=50, tol=1.e-4) {
   if (psi=="Bis") {kpsi=1
   } else  if (psi=="Hub") {kpsi=2

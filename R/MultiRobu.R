@@ -4,6 +4,7 @@
 #'
 #' This function computes robust estimators for multivariate location and scatter.
 #'
+#' @export MultiRobu covRob
 #' @aliases MultiRobu covRob
 #' @rdname MultiRobu
 #'
@@ -26,7 +27,6 @@
 #'
 #' @references \url{http://thebook}
 #'
-#' @export
 covRob <- MultiRobu <- function(X, type="auto", maxit=50, tol=1e-4)  {
 if (type=="auto") {
   p=dim(X)[2]
@@ -48,6 +48,7 @@ if (type=="auto") {
 #'
 #' This function computes Rocke's robust estimator for multivariate location and scatter.
 #'
+#' @export RockeMulti covRobRocke
 #' @aliases RockeMulti covRobRocke
 #' @rdname RockeMulti
 #'
@@ -75,7 +76,6 @@ if (type=="auto") {
 #'
 #' @references \url{http://thebook}
 #'
-#' @export
 covRobRocke <- RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=2, maxit=50, tol=1e-4)
 {
   d <- dim(X)
@@ -278,6 +278,7 @@ rhoinv <- function(x)
 #'
 #' This function computes an MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 #'
+#' @export MMultiSHR covRobMM
 #' @aliases MMultiSHR covRobMM
 #' @rdname MMultiSHR
 #'
@@ -296,7 +297,6 @@ rhoinv <- function(x)
 #'
 #' @references \url{http://thebook}
 #'
-#' @export
 covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
   d <- dim(X)
   n <- d[1]; p <- d[2]

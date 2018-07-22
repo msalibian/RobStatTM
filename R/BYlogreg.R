@@ -7,6 +7,7 @@
 #' For more details we refer to Croux, C., and Haesbroeck, G. (2002), 
 #' "Implementing the Bianco and Yohai estimator for Logistic Regression" 
 #'
+#' @export BYlogreg logregBY
 #' @aliases BYlogreg logregBY
 #' @rdname BYlogreg
 #'
@@ -31,7 +32,6 @@
 #' @examples
 #' BYlogreg(x0,y)
 #'
-#' @export
 logregBY <- BYlogreg <- function(x0,y, intercept=1, const=0.5,kmax=1000,maxhalf=10)
 { 
   sigmamin=0.0001   

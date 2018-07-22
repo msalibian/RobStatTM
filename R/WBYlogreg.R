@@ -8,6 +8,7 @@
 #' Croux, C., and Haesbroeck, G. (2002), "Implementing the Bianco and Yohai estimator for 
 #' Logistic Regression" 
 #' 
+#' @export WBYlogreg logregWBY
 #' @aliases WBYlogreg logregWBY
 #' @rdname WBYlogreg
 #' 
@@ -32,7 +33,6 @@
 #' @examples
 #' WBYlogreg(x0,y)
 #'
-#' @export
 logregWBY <- WBYlogreg <- function(x0,y, intercept=1, const=0.5,kmax=1000,maxhalf=10)
 { 
   sigmamin=0.0001   

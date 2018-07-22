@@ -6,6 +6,7 @@
 #' This function computes robust multivariate location and scatter
 #' using both Pen~a-Prieto and random candidates.
 #'
+#' @export KurtSDNew initPP
 #' @aliases KurtSDNew initPP
 #' @rdname KurtSDNew
 #'
@@ -27,7 +28,6 @@
 #'
 #' @references \url{http://thebook}
 #'
-#' @export
 initPP <- KurtSDNew <- function(X, muldirand=20, muldifix=10,dirmin=1000) {
 
   oldSeed <- get(".Random.seed", mode="numeric", envir=globalenv())

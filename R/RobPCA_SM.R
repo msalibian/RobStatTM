@@ -3,6 +3,7 @@
 #' This function computes robust principal components based on the minimization of
 #' the "residual" M-scale.
 #'
+#' @export SMPCA pcaRobS
 #' @aliases SMPCA pcaRobS
 #' @rdname SMPCA
 #'
@@ -25,7 +26,6 @@
 #'
 #' @references \url{http://thebook}
 #'
-#' @export
 pcaRobS <- SMPCA<-function(X, ncomp, desprop=0.9, deltasca=0.5, maxit=100) {
 n=dim(X)[1];  p=dim(X)[2]
 tol=1.e-4;
