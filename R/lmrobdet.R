@@ -1017,7 +1017,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   # class(z2$MM) <- "lmrob"
   # class(z2) <- "lmrobdet"
   # z2
-  class(z) <- c('lmrobdetDMCL', 'lmrobdetMM', 'lmrob')
+  class(z) <- c('lmrobdetDCML', 'lmrobdetMM', 'lmrob')
   z
 }
 
