@@ -637,11 +637,8 @@ leukWML <- logregWML(Xleuk, yleuk, intercept=1)
 
 # Example 7.2
 # Figure 7.5
-# loading packages
 library(RobStatTM)
-# library(robustbase)
-# library(robust)
-# skin=read.table("skin.txt", header=T)
+data(skin)
 
 Xskin <- as.matrix( skin[, 1:2] )
 yskin <- skin$vasoconst
