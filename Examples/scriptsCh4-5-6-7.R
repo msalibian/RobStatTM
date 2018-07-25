@@ -586,5 +586,177 @@ AutismS <- varComprob(vsae ~ age.2 + I(age.2^2)
                       control=varComprob.control(method="S", psi="rocke", cov.init="covOGK", lower=c(0.01,0.01,0.01,-Inf,-Inf,-Inf)))
 summary(AutismS)
 
+# Example 7.1
+# Leukemia
+
+#loading packages
+# library(robust)
+# library(robustbase)
+library(RobStatTM)
+# library(MASS)
+data(leuk.dat, package='robust')
+
+Xleuk <-as.matrix( leuk.dat[, 1:2] )
+yleuk <- leuk.dat$y
+# weighted M fit
+leukWBY <- logregWBY(Xleuk, yleuk, intercept=1)
+pr1 <- as.vector( leukWBY$fitted.values )
+
+# ML fit
+leukML <- glm(formula = y ~ wbc + ag, family = binomial, data = leuk.dat)
+
+#--------------------------------
+#Figure 7.4
+
+dev1 <- abs(leukWBY$residual.deviances)
+dev2 <- abs(resid(leukML, type='deviance'))
+n <- length(dev1)
+ord1 <- order(dev1)
+sdev1 <- sort(dev1) # dev1[ord1]
+sdev2 <- sort(dev2) #[ord2] # typo in leukemia.R
+
+plot(ppoints(n), sdev1, type="b",pch=1,xlab="quantiles", ylab= " deviance residuals")
+lines(ppoints(n), sdev2, type="b",pch=2)
+xuu <- ppoints(n)[n]
+text(xuu - .03, max(sdev1) + .1, ord1[n])
+text(xuu, max(sdev2) + .3, ord1[n])
+legend(x="topleft",legend=c("weighted M","maximum likelihood"), pch=c(1,2))
+
+
+#other estimates
+#M fit
+leukBY <- logregBY(Xleuk, yleuk, intercept=1)
+
+#cubif fit
+library(robust)
+leukCUBIF <- glmRob(formula = y ~ wbc + ag, family = binomial, data = leuk.dat, fit.method = "cubif")
+
+#weighted ML fit
+leukWML <- logregWML(Xleuk, yleuk, intercept=1)
+
+
+# Example 7.2
+# Figure 7.5
+# loading packages
+library(RobStatTM)
+# library(robustbase)
+# library(robust)
+# skin=read.table("skin.txt", header=T)
+
+Xskin <- as.matrix( skin[, 1:2] )
+yskin <- skin$vasoconst
+#weighted M fit
+skinWBY <- logregWBY(Xskin, yskin, intercept=1)
+
+# ML fit
+skinML <- glm(formula=vasoconst~logVOL+logRATE, family = binomial, data = skin)
+
+#Figure 7.5
+dev1 <- abs(skinWBY$residual.deviances)
+dev2 <- abs(resid(skinML, type='deviance'))
+sdev1 <- sort(dev1)
+sdev2 <- sort(dev2)
+tt <- c(18,4)
+uu <- order(tt)
+xuu <- ppoints(39)[38:39]
+yuu1 <- sdev1[38:39]
+yuu2 <- sdev2[38:39]
+tx <- c("18","4")
+
+plot(ppoints(39), sdev1, type="b", pch=1, xlab="quantiles", ylab= "deviance residuals")
+lines(ppoints(39), sdev2, type="b", pch=2)
+text(xuu, yuu1 + .1, tt)
+text(xuu, yuu2 + .1, tt)
+legend(x="topleft", legend=c("weighted M","maximum likelihood"), pch=c(1,2))
+
+
+# other estimates
+# M fit
+skinBY <- logregBY(Xskin, yskin, intercept=1)
+
+#cubif fit
+library(robust)
+skinCUBIF <- glmRob(formula =vasoconst~logVOL+logRATE, family = binomial, data = skin, fit.method = "cubif")
+
+# weighted ML fit
+skinWML <- logregWML(Xskin, yskin, intercept=1)
+
+# Example 7.3
+# Breslow data
+
+library(RobStatTM)
+data(breslow.dat, package='robust')
+
+
+#CUBIF Estimator
+yy <- breslow.dat[, 10]
+xx1 <- breslow.dat[, 11]
+xx2 <- breslow.dat[, 12]
+xx3 <- breslow.dat[, 8]=="progabide"
+xx4 <- xx2*xx3
+
+XX <- cbind(rep(1,59), xx1, xx2, xx3, xx4)
+colnames(XX) <- c("intercept","Age10","Base4","Progabide","interac.Base4-Progabide")
+
+# # Does not run
+# ufact <- 1.1
+# ctrl <-  cubinf.control(ufact=ufact)
+# epiCUBIF <- cubinf(XX, yy, family=poisson(), null.dev = FALSE, control=ctrl)
+# epiCUBIF_coefficients <- epiCUBIF$coefficients
+# epiCUBIF_ste <- sqrt(diag(epiCUBIF$cov))
+# epiCUBIF_deviances <- sign(yy-epiCUBIF$fitted)*sqrt(2*(yy*log( pmax(yy,1))-yy-yy*log(epiCUBIF$fitted)+epiCUBIF$fitted))
+
+#ML estimator
+epiMV <- glm(yy~xx1+xx2+xx3+xx4,family=poisson)
+epiMV_coefficients <- epiMV$coefficients
+tt <- summary(epiMV)
+epiMV_ste <- sqrt(diag(tt$cov.unscaled))
+epiMV_deviances <- tt$deviance.resid
+
+#RQL estimator
+library(robustbase)
+epiRQL <- glmrob(yy~xx1+xx2+xx3+xx4,family=poisson)
+epiRQL_coefficients <- epiRQL$coefficients
+epiRQL_ste <- sqrt(diag(epiRQL$cov))
+epiRQL_deviances <- residuals(epiRQL)
+
+
+#MT estimator
+epiMT <- glmrob(yy~	xx1+xx2+xx3+xx4, family=poisson, method="MT")
+epiMT_coefficients <- epiMT$coefficients
+epiMT_ste <- sqrt(diag(epiMT$cov))
+epiMT_deviances <- sign(yy-epiMT$fitted)*sqrt(2*(yy*log( pmax(yy,1))-yy-yy*log(epiMT$fitted)+epiMT$fitted))
+
+
+#epiMP
+epiMP_coefficients <- c(2.0078,    0.0707,    0.1346,   -0.4898  ,  0.0476)
+epiMP_fitted <- exp(XX%*%epiMP_coefficients)
+epiMP_deviances <- sign(yy-epiMP_fitted)*sqrt(2*(yy*log( pmax(yy,1))-yy-yy*log(epiMP_fitted)+epiMP_fitted))
+
+#boxplot Figure 7.6
+par(mfrow=c(1,2), cex=0.6)
+devC <- cbind(abs(epiMV_deviances),abs(epiCUBIF_deviances),abs(epiMT_deviances),abs(epiRQL_deviances),abs(epiMP_deviances))
+boxplot(devC,names=c("ML","CUBIF","MT","QL","MP"),ylab="Absolute Deviance Residuals",main="with outliers")
+boxplot(devC,names=c("ML","CUBIF","MT","QL","MP"),ylab="Absolute Deviance Residuals",main="without outliers",outline=FALSE)
+
+# Figure 7.7
+
+sdev1 <- sort(abs(epiMT_deviances))
+sdev2 <- sort(abs(epiMV_deviances))
+
+plot(ppoints(59)[1:48],sdev1[1:48], type="b",pch=1,xlab="quantiles", ylab= "deviance residuals")
+lines(ppoints(59)[1:48],sdev2[1:48], type="b",pch=2)
+legend(x="topleft",legend=c("MT","ML"), pch=c(1,2))
+
+
+
+
+
+
+
+
+
+
+
 
 
