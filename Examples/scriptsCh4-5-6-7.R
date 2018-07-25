@@ -319,12 +319,12 @@ X <- as.matrix(wine)
 xbar <- colMeans(X)
 C <- cov(X)
 disC <- mahalanobis(X, xbar, C)
-resu <- MultiRobu(X, type="MM")
+resu <- covRobMM(X)
 mu <- resu$mu
 V <- resu$V
 disM <- mahalanobis(X, mu, V)
 
-resu <- MultiRobu(X, type="Rocke");
+resu <- covRobRocke(X);
 mu <- resu$mu
 V <- resu$V
 disR <- mahalanobis(X,mu,V)
@@ -351,7 +351,7 @@ p <- dim(X)[2]
 xbar <- colMeans(X)
 C <- cov(X)
 disC1 <- mahalanobis(X,xbar,C);  disC=sort(disC1)  #Classical estimator
-resu <- MultiRobu(X,"Rocke") #Rocke estimator
+resu <- covRobRocke(X) #Rocke estimator
 muR <- resu$mu
 VR <- resu$V
 disR1 <- mahalanobis(X, muR, VR)
@@ -413,7 +413,7 @@ resiC <- X-fitC
 dC <- rowSums(resiC^2)
 
 #Robust PCA
-rr <- SMPCA(X, q, 0.99)
+rr <- pcaRobS(X, q, 0.99)
 propex <- rr$propex
 fitM <- rr$fit
 resiM <- X-fitM
@@ -493,7 +493,7 @@ abline(0,1)
 
 #MM
 set.seed(100)
-out <- MultiRobu(X, type="MM")
+out <- covRobMM(X)
 md <- out$dist
 smd <- sort(md)
 v <- ( md> qq )
