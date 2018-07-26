@@ -382,17 +382,7 @@ abline(0,1)
 # PCA  Table 6.6 and Figure 6.10
 
 library(RobStatTM)
-ClassPCA <- function(X, ncomp) {
-  mu <- colMeans(X)
-  Xcen <- scale(X, center=mu, scale=FALSE)
-  sx <- svd(Xcen, nu=0)
-  VCC <- sx$v
-  Q <- VCC[,1:ncomp]
-  lam <- sx$d^2
-  fit <- scale(Xcen%*%Q%*%t(Q), center=-mu, scale=FALSE)
-  return( list(fit=fit, evec=VCC, lam=lam) )
-}
-data(bus, package='RobStatTM')
+data(bus)
 X0 <- as.matrix(bus)
 X1 <- X0[,-9]
 ss <- apply(X1, 2, mad)
@@ -403,13 +393,12 @@ p <- dim(X)[2]
 
 #Classical PCA
 q <- 3  #compute three components
-resC <- ClassPCA(X, q)
-lamC <- resC$lam
-lamC <- lamC/sum(lamC)
-prC <- cumsum(lamC)
-nonC <- 1-prC  #proportion of unexaplained variance
-fitC <- resC$fit
-resiC <- X-fitC
+resC <- prcomp(X) 
+prC <- as.vector(summary(resC)$importance['Cumulative Proportion', ] )
+nonC <- 1 - prC  #proportion of unexaplained variance
+Xcent <- scale(X, center=resC$center, scale=FALSE)
+fitC <- scale(Xcent %*% resC$rotation[, 1:q] %*% t(resC$rotation[, 1:q]), center=-resC$center, scale=FALSE) #resC$fit
+resiC <- X - fitC
 dC <- rowSums(resiC^2)
 
 #Robust PCA
