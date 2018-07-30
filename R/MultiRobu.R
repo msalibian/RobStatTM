@@ -3,6 +3,10 @@
 #' This function computes robust estimators for multivariate location and scatter.
 #'
 #' This function computes robust estimators for multivariate location and scatter.
+#' The default behaviour (\code{type = "auto"}) computes a "Rocke" estimator
+#' (as implemented in \code{\link{covRobRocke}}) if the number
+#' of variables is greater than or equal to 10, and an MM-estimator with a
+#' SHR rho function (as implemented in \code{\link{covRobMM}}) otherwise.
 #'
 #' @export MultiRobu covRob
 #' @aliases MultiRobu covRob
@@ -25,6 +29,7 @@
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
+#' @seealso \code{\link{covRobRocke}}, \code{\link{covRobMM}}
 #' @references \url{http://thebook}
 #'
 covRob <- MultiRobu <- function(X, type="auto", maxit=50, tol=1e-4)  {

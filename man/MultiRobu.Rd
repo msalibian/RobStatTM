@@ -32,9 +32,16 @@ This function computes robust estimators for multivariate location and scatter.
 }
 \details{
 This function computes robust estimators for multivariate location and scatter.
+The default behaviour (\code{type = "auto"}) computes a "Rocke" estimator
+(as implemented in \code{\link{covRobRocke}}) if the number
+of variables is greater than or equal to 10, and an MM-estimator with a
+SHR rho function (as implemented in \code{\link{covRobMM}}) otherwise.
 }
 \references{
 \url{http://thebook}
+}
+\seealso{
+\code{\link{covRobRocke}}, \code{\link{covRobMM}}
 }
 \author{
 Ricardo Maronna, \email{rmaronna@retina.ar}
