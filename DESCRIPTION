@@ -11,5 +11,5 @@ Depends: R (>= 3.0.2), shiny, shinyjs, PerformanceAnalytics
 Imports: stats, graphics, utils, methods, DEoptimR, pyinit, rrcov, rARPACK, robustbase
 LazyData: yes
 License: GPL (>= 3)
-Author: Matias Salibian-Barrera [aut] (lmrob orig.), Victor Yohai [aut].
+Author: Matias Salibian-Barrera [aut] (lmrob orig.), Victor Yohai [aut], Ricardo Maronna, Doug Martin, Gregory Brownson, Kjell Konis
 RoxygenNote: 6.0.1
