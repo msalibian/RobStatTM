@@ -24,39 +24,46 @@
 #'
 #' @references \url{http://thebook}
 #'
-locScaleM <- MLocDis <- function(x, psi="Bis", eff=0.9, maxit=50, tol=1.e-4) {
-  if (psi=="Bis") {kpsi=1
-  } else  if (psi=="Hub") {kpsi=2
-  } else {print(c(psi, " No such psi")); kpsi=0
+locScaleM <- MLocDis <- function(x, family = "bisquare", eff = 0.9, maxit = 50, tol = 1.e-4)) {
+  cc <- get(family)(eff)
+
+  mu0 <- median(x)
+  sig0 <- mad(x)
+
+  if(sig0 < 1.e-10) {
+    mu <- 0.0
+    sigma <- 0.0
   }
-  kBis=c(3.44, 3.88, 4.685)
-  kHub=c(0.732, 0.981, 1.34)
-  kk=rbind(kBis, kHub)
-  efis=c(0.85, 0.90, 0.95)
-  if (is.element(eff, efis)) {keff=match(eff,efis);
-  } else {print(c(eff, " No such eff")); keff=0}
-if (kpsi>0 & keff>0) {
-  ktun=kk[kpsi, keff]
-  mu0=median(x); sig0=mad(x)
-  if (sig0<1.e-10) {mu=0; sigma=0
-  } else { #initialize
-    dife=1.e10; iter=0
-    while (dife>tol & iter<maxit) {
-      iter=iter+1
-      resi=(x-mu0)/sig0; ww=wfun(resi/ktun, kpsi)
-      mu=sum(ww*x)/sum(ww)
-      dife=abs(mu-mu0)/sig0; mu0=mu
-    } # end while
-  } # end if sig
-} #end if k
-  rek=resi/ktun; pp=psif(rek, kpsi)*ktun
-  n=length(x)
-  a=mean(pp^2); b=mean(psipri(rek, kpsi))
-  sigmu=sig0^2 *a/(n*b^2)
-  sigmu=sqrt(sigmu)
-  scat=mscale(u=x-mu, delta=.5, tuning.chi=1.56, family='bisquare')
-  resu=list(mu=mu, std.mu=sigmu, disper=scat)
-  return(resu)
+  
+  else {
+    dife <- 1.e10
+    iter <- 0
+
+    while(dife > tol && iter < maxit) {
+      iter <- iter + 1
+      resi <- (x - mu0) / sig0
+      ww <- RobStatTM:::Mwgt(resi, cc, family)
+      mu <- sum(ww * x) / sum(ww)
+      dife <- abs(mu - mu0) / sig0
+      mu0 <- mu
+    }
+  }
+
+  pp <- rhoprime(resi, family, cc)
+  n <- length(x)
+  a <- mean(pp^2)
+  b <- mean(rhoprime2(resi, family, cc))
+  sigmu <- sqrt(sig0^2 * a / (n * b^2))
+  
+  f <- function(u, family, cc) {
+    cc["c"] <- u
+    integrate(function(x, fam, cc) rho(x, family, cc) * dnorm(x), -Inf, Inf, fam = famly, cc = cc)$value - 0.5
+  }
+  
+  cc["c"] <- uniroot(f, c(0.01, 10), family = family, cc = cc)$root
+  scat <- mscale(x - mu, delta = 0.5, tuning.chi = cc, family = family)
+
+  list(mu = mu, std.mu = sigmu, disper = scat)
 } # end function
 
 wfun<- function(x,k) { #weight function
