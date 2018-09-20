@@ -9,9 +9,11 @@
 #' @rdname MLocDis
 #'
 #' @param x a vector of univariate observations
-#' @param psi a string indicating which score function to use. Valid options are "Bis" for
-#' bi-square and "Hub" for a Huber-type.
-#' @param eff desired asymptotic efficiency. Valid options are 0.9 (default), 0.85 and 0.95.
+#' @param psi a string indicating which score function to use. Valid options are "bisquare", "huber",
+#' "optimal" and "modified.optimal".
+#' @param eff desired asymptotic efficiency. Valid options are 0.85, 0.9 (default) and 0.95 when
+#' \code{psi} = "bisquare" or "huber", and 0.85, 0.9 (default), 0.95 and 0.99 when
+#' \code{psi} = "optimal" or "modified.optimal".
 #' @param maxit maximum number of iterations allowed.
 #' @param tol tolerance to decide convergence of the iterative algorithm.
 #'
@@ -24,38 +26,82 @@
 #'
 #' @references \url{http://thebook}
 #'
-locScaleM <- MLocDis <- function(x, psi="Bis", eff=0.9, maxit=50, tol=1.e-4) {
-  if (psi=="Bis") {kpsi=1
-  } else  if (psi=="Hub") {kpsi=2
-  } else {print(c(psi, " No such psi")); kpsi=0
+locScaleM <- MLocDis <- function(x, psi="bisquare", eff=0.9, maxit=50, tol=1.e-4) {
+  kpsi <- switch(psi, bisquare = 1, huber = 2, optimal = 3, modified.optimal = 4, 5)
+  # if (psi=="bisquare") kpsi=1
+  # if (psi=="huber") kpsi=2
+  # } else {print(c(psi, " No such psi")); kpsi=0
+  # }
+  if(kpsi == 5) stop(paste0(psi, ' - No such rho function'))
+  if(kpsi %in% c(1, 2)) { # Start of Ricardo's code
+    kBis=c(3.44, 3.88, 4.685)
+    kHub=c(0.732, 0.981, 1.34)
+    kk=rbind(kBis, kHub)
+    efis=c(0.85, 0.90, 0.95)
+    if (is.element(eff, efis)) {keff=match(eff,efis);
+    } else {print(c(eff, " No such eff")); keff=0
+    }
+    if (kpsi>0 & keff>0) {
+      ktun=kk[kpsi, keff]
+      mu0=median(x); sig0=mad(x)
+      if (sig0<1.e-10) {mu=0; sigma=0
+      } else { #initialize
+        dife=1.e10; iter=0
+        while (dife>tol & iter<maxit) {
+          iter=iter+1
+          resi=(x-mu0)/sig0; ww=wfun(resi/ktun, kpsi)
+          mu=sum(ww*x)/sum(ww)
+          dife=abs(mu-mu0)/sig0; mu0=mu
+        } # end while
+      } # end if sig
+    } #end if k
+    rek=resi/ktun; pp=psif(rek, kpsi)*ktun
+    n=length(x)
+    a=mean(pp^2); b=mean(psipri(rek, kpsi))
+    sigmu=sig0^2 *a/(n*b^2)
+    sigmu=sqrt(sigmu)
+    scat <- mscale(u=x-mu, delta=.5, tuning.chi=1.56, family='bisquare')
+    resu <- list(mu=mu, std.mu=sigmu, disper=scat)
+  } else { #start of Kjell's code
+    family <- psi
+    efis <- c(0.85, 0.90, 0.95, 0.99)
+    keff <- match(eff,efis);
+    if(!is.na(keff)) {
+      cc <- get(family)(eff)
+      mu0 <- median(x)
+      sig0 <- mad(x)
+      if(sig0 < 1.e-10) {
+        mu <- 0.0
+        sigma <- 0.0
+      }
+      else {
+        dife <- 1.e10
+        iter <- 0
+        while(dife > tol && iter < maxit) {
+          iter <- iter + 1
+          resi <- (x - mu0) / sig0
+          ww <- Mwgt(resi, cc, family) #RobStatTM:::Mwgt(resi, cc, family)
+          mu <- sum(ww * x) / sum(ww)
+          dife <- abs(mu - mu0) / sig0
+          mu0 <- mu
+        }
+      }
+      pp <- rhoprime(resi, family, cc)
+      n <- length(x)
+      a <- mean(pp^2)
+      b <- mean(rhoprime2(resi, family, cc))
+      sigmu <- sqrt(sig0^2 * a / (n*b^2))
+      f <- function(u, family, cc) {
+        cc["c"] <- u
+        integrate(function(x, fam, cc) rho(x, family, cc) * dnorm(x), -Inf, Inf, fam = famly, cc = cc)$value - 0.5
+      }
+      cc["c"] <- uniroot(f, c(0.01, 10), family = family, cc = cc)$root
+      scat <- mscale(x - mu, delta = 0.5, tuning.chi = cc, family = family)
+      resu <- list(mu = mu, std.mu = sigmu, disper = scat)
+    } else { print(c(eff, " No such eff"))
+      resu <- NA
+    }
   }
-  kBis=c(3.44, 3.88, 4.685)
-  kHub=c(0.732, 0.981, 1.34)
-  kk=rbind(kBis, kHub)
-  efis=c(0.85, 0.90, 0.95)
-  if (is.element(eff, efis)) {keff=match(eff,efis);
-  } else {print(c(eff, " No such eff")); keff=0}
-if (kpsi>0 & keff>0) {
-  ktun=kk[kpsi, keff]
-  mu0=median(x); sig0=mad(x)
-  if (sig0<1.e-10) {mu=0; sigma=0
-  } else { #initialize
-    dife=1.e10; iter=0
-    while (dife>tol & iter<maxit) {
-      iter=iter+1
-      resi=(x-mu0)/sig0; ww=wfun(resi/ktun, kpsi)
-      mu=sum(ww*x)/sum(ww)
-      dife=abs(mu-mu0)/sig0; mu0=mu
-    } # end while
-  } # end if sig
-} #end if k
-  rek=resi/ktun; pp=psif(rek, kpsi)*ktun
-  n=length(x)
-  a=mean(pp^2); b=mean(psipri(rek, kpsi))
-  sigmu=sig0^2 *a/(n*b^2)
-  sigmu=sqrt(sigmu)
-  scat=mscale(u=x-mu, delta=.5, tuning.chi=1.56, family='bisquare')
-  resu=list(mu=mu, std.mu=sigmu, disper=scat)
   return(resu)
 } # end function
 
