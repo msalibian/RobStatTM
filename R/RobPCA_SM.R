@@ -9,7 +9,7 @@
 #'
 #' @param X a data matrix with observations in rows.
 #' @param ncomp desired (maximum) number of components
-#' @param desprop desired (minimum) proportion of unexplained variability (default = 0.9)
+#' @param desprop desired (minimum) proportion of explained variability (default = 0.9)
 #' @param maxit maximum number of iterations (default= 100)
 #' @param deltasca "delta" parameter of the scale M-estimator (default=0.5)
 #'
@@ -26,7 +26,7 @@
 #'
 #' @references \url{http://thebook}
 #'
-pcaRobS <- SMPCA<-function(X, ncomp, desprop=0.9, deltasca=0.5, maxit=100) {
+pcaRobS <- SMPCA <-function(X, ncomp, desprop=0.9, deltasca=0.5, maxit=100) {
 n=dim(X)[1];  p=dim(X)[2]
 tol=1.e-4;
 #Inicial

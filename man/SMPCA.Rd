@@ -12,7 +12,7 @@ pcaRobS(X, ncomp, desprop = 0.9, deltasca = 0.5, maxit = 100)
 
 \item{ncomp}{desired (maximum) number of components}
 
-\item{desprop}{desired (minimum) proportion of unexplained variability (default = 0.9)}
+\item{desprop}{desired (minimum) proportion of explained variability (default = 0.9)}
 
 \item{deltasca}{"delta" parameter of the scale M-estimator (default=0.5)}
 
