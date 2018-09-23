@@ -341,7 +341,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
 #' the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
 #' Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
-#' can be constructed using the functions \link{bisquare}, \link{modified.optimal} and \link{optimal}.
+#' can be constructed using the functions \link{bisquare}, \link{modopt} and \link{optimal}.
 #' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.
 #' @param max.it maximum number of IRWLS iterations for the MM-estimator
 #' @param refine.tol relative covergence tolerance for the S-estimator
@@ -353,7 +353,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' that performs M-iterations (lmrob..M..fit), so set here.
 #' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
 #' @param family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modified.optimal"). Incomplete entries will be matched to
+#' options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
 #' the current valid options.
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied
 #' to the M-scale parameter \code{bb}.
@@ -406,9 +406,9 @@ lmrobdet.control <- function(bb = 0.5,
 {
 
   family <- match.arg(family, choices = FAMILY.NAMES)
-  if( (efficiency > .9999 ) & ( (family=='modified.optimal') | (family=='optimal') ) ) {
+  if( (efficiency > .9999 ) & ( (family=='modopt') | (family=='optimal') ) ) {
       efficiency <- .9999
-      warning("Current implementation of \'optimal\' or \'modified.optimal\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+      warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
   if(missing(tuning.psi))
     tuning.psi <- do.call(family, args=list(e=efficiency))

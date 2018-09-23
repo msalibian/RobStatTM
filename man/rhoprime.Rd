@@ -10,10 +10,10 @@ rhoprime(u, family, cc, standardize = FALSE)
 \item{u}{point or vector at which rho is to be evaluated}
 
 \item{family}{family string specifying the name of the family of loss function to be used (current valid
-options are "bisquare", "optimal" and "modified.optimal").}
+options are "bisquare", "optimal" and "modopt").}
 
 \item{cc}{tuning parameters to be computed according to efficiency and / or breakdown
-considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
 and \link{optimal}.}
 
 \item{standardize}{logical value determining whether the rho function is to be

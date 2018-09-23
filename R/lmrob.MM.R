@@ -3,7 +3,7 @@
 
 ## The "regularized" psi-function names:
 ## .R: the redescending ones:
-.Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'optimal', 'hampel', 'ggw', 'modified.optimal')
+.Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'optimal', 'hampel', 'ggw', 'modopt')
 ## .M: the monotone ones:
 .Mpsi.M.names <- c('huber')
 ## Note: there could be more: non-redescending, non-monotone {such as Cauchy score}
@@ -38,7 +38,7 @@
                     "Psi_Opt(lower)" = -0.0005459033,
                     "rho(Inf)" = 3.331370)
     , 'hampel' = c(1.5, 3.5, 8) * 0.9016085 ## a, b, r
-    , 'modified.optimal' = c(a = 0.01316352,
+    , 'modopt' = c(a = 0.01316352,
                              normConst = 1.05753107,
                              upper = 3.00373940,
                              c = 1.0,
@@ -66,7 +66,7 @@
                     "Psi_Opt(lower)" = -0.0005459033,
                     "rho(Inf)" = 3.331370)
     , 'hampel' = c(1.5, 3.5, 8) * 0.2119163 ## a, b, r
-    , 'modified.optimal' = c(a = 0.01316352,
+    , 'modopt' = c(a = 0.01316352,
                              normConst = 1.05753107,
                              upper = 3.00373940,
                              c = 0.38124404,
@@ -968,7 +968,7 @@ hatvalues.lmrob <- function(model, ...)
     i <- match(psi, c(
 	'huber', 'bisquare', 'welsh', 'optimal',
 	## 0	    1	        2	 3
-	'hampel', 'ggw', 'lqq', 'modified.optimal'
+	'hampel', 'ggw', 'lqq', 'modopt'
 	## 4	    5	   6      7   
 	))
     if(is.na(i)) stop("internal logic error in psi() function name: ", psi,
@@ -1026,7 +1026,7 @@ hatvalues.lmrob <- function(model, ...)
                if (length(cc) != 6)
                    stop('Coef. for Optimal psi function not of length 6')
            },
-           'modified.optimal' = {
+           'modopt' = {
                ## just check length of coefficients
                if (length(cc) != 6)
                    stop('Coef. for Modified Optimal psi function not of length 6')

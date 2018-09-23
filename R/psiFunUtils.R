@@ -6,7 +6,7 @@ psiSupportFromTuningConst <- function(a, family.name)
   
   switch(family.name,
     bisquare = c(0, a[1]),
-    modified.optimal = psiSupportFromTuningConst_modified.optimal(a[1]),
+    modopt = psiSupportFromTuningConst_modopt(a[1]),
     optimal = psiSupportFromTuningConst_optimal(a[1])
   )
 }
@@ -43,7 +43,7 @@ findTuningConstFromGaussianEfficiency <- function(e, family.name)
 
   switch(family.name,
     optimal = findTuningConstFromGaussianEfficiency_optimal(e),
-    modified.optimal = findTuningConstFromGaussianEfficiency_modified.optimal(e),
+    modopt = findTuningConstFromGaussianEfficiency_modopt(e),
     {
       obj <- function(a, family, e) {
         cc <-  c('c' = a)
@@ -113,26 +113,26 @@ findTuningConstFromGaussianEfficiency_optimal <- function(e, interval = c(1e-6, 
   uniroot(obj, interval = interval, e = e, check.conv = TRUE, tol = 1e-8)$root
 }
 
-########## modified.optimal ##########
+########## modopt ##########
 
 
-psiSupportFromTuningConst_modified.optimal <- function(a)
+psiSupportFromTuningConst_modopt <- function(a)
 {
   u <- 0.77957 - 0.33349 * log(a)
-  # fam <- list(name = "modified.optimal", cc = c(a, 1e-9, Inf, 1.0, 0.0, 0.0))
-  fam <- 'modified.optimal'
+  # fam <- list(name = "modopt", cc = c(a, 1e-9, Inf, 1.0, 0.0, 0.0))
+  fam <- 'modopt'
   cc <- c(a, 1e-9, Inf, 1.0, 0.0, 0.0)
   upper <- uniroot(f = rhoprime, interval = c(u, 1.5*u), family = fam, cc = cc, check.conv = TRUE, tol = 1e-8)$root
   c(0.0, upper)
 }
 
 
-findTuningConstFromGaussianEfficiency_modified.optimal <- function(e, interval = c(1e-6, 0.2255))
+findTuningConstFromGaussianEfficiency_modopt <- function(e, interval = c(1e-6, 0.2255))
 {
   obj <- function(a, e) {
-    sup <- psiSupportFromTuningConst(a, "modified.optimal")
-    # fam <- list(name = "modified.optimal", cc = c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA))
-    fam <- 'modified.optimal'
+    sup <- psiSupportFromTuningConst(a, "modopt")
+    # fam <- list(name = "modopt", cc = c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA))
+    fam <- 'modopt'
     cc <- c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA)
     e - computeGaussianEfficiencyFromFamily(fam, cc, psiSupport = sup)
   }

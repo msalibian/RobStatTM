@@ -6,9 +6,9 @@
 #'
 #' @param RR2 the proportional difference in loss functions (a naive robust R^2 coefficient).
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modified.optimal").
+#' options are "bisquare", "optimal" and "modopt").
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown
-#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
 #' and \link{optimal}.
 
 #'

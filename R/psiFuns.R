@@ -1,7 +1,7 @@
 # The supported rho families.
 
-#FAMILY.NAMES <- c("bisquare", "ggw", "hampel", "huber", "lqq", "modified.optimal", "optimal", "welsh")
-FAMILY.NAMES <- c("bisquare", "modified.optimal", "optimal")
+#FAMILY.NAMES <- c("bisquare", "ggw", "hampel", "huber", "lqq", "modopt", "optimal", "welsh")
+FAMILY.NAMES <- c("bisquare", "modopt", "optimal")
 
 
 #' Tuning parameter the rho loss functions
@@ -47,7 +47,7 @@ optimal <- function(e)
 {
   if( e > .9999) {
     e <- .9999
-    warning("Current implementation of \'optimal\' or \'modified.optimal\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+    warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
   a <- findTuningConstFromGaussianEfficiency(e, "optimal")
   cc <- c(a, psiSupportFromTuningConst(a, "optimal"), 1.0)
@@ -75,14 +75,14 @@ optimal <- function(e)
 #' @author Kjell Konis
 #'
 #' @export
-modified.optimal <- function(e)
+modopt <- function(e)
 {
   if( e > .9999) {
     e <- .9999
-    warning("Current implementation of \'optimal\' or \'modified.optimal\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+    warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
-  a <- findTuningConstFromGaussianEfficiency(e, "modified.optimal")
-  cc <- c(a, DNORM1 / (DNORM1 - a), psiSupportFromTuningConst(a, "modified.optimal")[2], 1.0)
+  a <- findTuningConstFromGaussianEfficiency(e, "modopt")
+  cc <- c(a, DNORM1 / (DNORM1 - a), psiSupportFromTuningConst(a, "modopt")[2], 1.0)
   cc[5] <- Psi_optimal(1.0, cc[1])
   cc[6] <- (0.5 + cc[2] * (Psi_optimal(cc[3], cc[1]) - cc[5]))
   names(cc) <- c("a", "normConst", "upper", "c", "Psi(1)", "rho(Inf)")
@@ -100,9 +100,9 @@ modified.optimal <- function(e)
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modified.optimal").
+#' options are "bisquare", "optimal" and "modopt").
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown
-#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
 #' and \link{optimal}.
 #' @param standardize logical value determining whether the rho function is to be
 #' standardized so that its maximum value is 1. See \link{Mpsi}.
@@ -128,9 +128,9 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modified.optimal").
+#' options are "bisquare", "optimal" and "modopt").
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown
-#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
 #' and \link{optimal}.
 #' @param standardize logical value determining whether the rho function is to be
 #' standardized so that its maximum value is 1. See \link{Mpsi}.
@@ -156,9 +156,9 @@ rhoprime <- function(u, family, cc, standardize = FALSE)
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modified.optimal").
+#' options are "bisquare", "optimal" and "modopt").
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown
-#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modified.optimal}
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
 #' and \link{optimal}.
 #' @param standardize logical value determining whether the rho function is to be
 #' standardized so that its maximum value is 1. See \link{Mpsi}.
