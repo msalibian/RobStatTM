@@ -10,10 +10,10 @@
 #'
 #' @param x a vector of univariate observations
 #' @param psi a string indicating which score function to use. Valid options are "bisquare", "huber",
-#' "optimal" and "modified.optimal".
+#' "optimal" and "modopt".
 #' @param eff desired asymptotic efficiency. Valid options are 0.85, 0.9 (default) and 0.95 when
 #' \code{psi} = "bisquare" or "huber", and 0.85, 0.9 (default), 0.95 and 0.99 when
-#' \code{psi} = "optimal" or "modified.optimal".
+#' \code{psi} = "optimal" or "modopt".
 #' @param maxit maximum number of iterations allowed.
 #' @param tol tolerance to decide convergence of the iterative algorithm.
 #'
@@ -27,7 +27,7 @@
 #' @references \url{http://thebook}
 #'
 locScaleM <- MLocDis <- function(x, psi="bisquare", eff=0.9, maxit=50, tol=1.e-4) {
-  kpsi <- switch(psi, bisquare = 1, huber = 2, optimal = 3, modified.optimal = 4, 5)
+  kpsi <- switch(psi, bisquare = 1, huber = 2, optimal = 3, modopt = 4, 5)
   # if (psi=="bisquare") kpsi=1
   # if (psi=="huber") kpsi=2
   # } else {print(c(psi, " No such psi")); kpsi=0

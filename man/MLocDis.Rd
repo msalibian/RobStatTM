@@ -11,11 +11,11 @@ locScaleM(x, psi = "bisquare", eff = 0.9, maxit = 50, tol = 1e-04)
 \item{x}{a vector of univariate observations}
 
 \item{psi}{a string indicating which score function to use. Valid options are "bisquare", "huber",
-"optimal" and "modified.optimal".}
+"optimal" and "modopt".}
 
 \item{eff}{desired asymptotic efficiency. Valid options are 0.85, 0.9 (default) and 0.95 when
 \code{psi} = "bisquare" or "huber", and 0.85, 0.9 (default), 0.95 and 0.99 when
-\code{psi} = "optimal" or "modified.optimal".}
+\code{psi} = "optimal" or "modopt".}
 
 \item{maxit}{maximum number of iterations allowed.}
 
