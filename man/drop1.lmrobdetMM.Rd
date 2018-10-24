@@ -4,7 +4,7 @@
 \alias{drop1.lmrobdetMM}
 \title{RFPE of submodels of an \code{\link{lmrobdetMM}} fit}
 \usage{
-\method{drop1}{lmrobdetMM}(object, scope, scale, keep)
+\method{drop1}{lmrobdetMM}(object, scope, scale, keep, ...)
 }
 \arguments{
 \item{object}{the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdetMM}}.}
