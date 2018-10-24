@@ -25,12 +25,8 @@ A list with the following components:
 \item{xweights}{vector of zeros and ones used to compute the weighted maimum likelihood estimator}
 }
 \description{
-This function computes a weighted likelihood estimator for the logistic model, where 
+This function computes a weighted likelihood estimator for the logistic model, where
 the weights penalize high leverage observations. In this version the weights are zero or one.
-}
-\examples{
-WMLlogreg(x0,y)
-
 }
 \references{
 \url{http://thebook}

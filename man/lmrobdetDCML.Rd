@@ -71,7 +71,7 @@ computed using an MM-regression estimator based on Pen~a-Yohai
 candidates (instead of subsampling ones).
 }
 \examples{
-data(coleman)
+data(coleman, package='robustbase')
 m1 <- lmrobdetDCML(Y ~ ., data=coleman)
 
 }

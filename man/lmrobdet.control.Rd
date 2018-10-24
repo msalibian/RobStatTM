@@ -96,8 +96,8 @@ There are 2 sets of tuning parameters: those related to the MM-estimator,
 and those controlling the initial Pen~a-Yohai estimator.
 }
 \examples{
-data(coleman)
-m2 <- lmrobdet(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
+data(coleman, package='robustbase')
+m2 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
 
 }
 \seealso{

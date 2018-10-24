@@ -385,8 +385,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @seealso \code{\link{pyinit}}
 #'
 #' @examples
-#' data(coleman)
-#' m2 <- lmrobdet(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
+#' data(coleman, package='robustbase')
+#' m2 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
 #'
 #' @export
 lmrobdet.control <- function(bb = 0.5,
@@ -783,7 +783,7 @@ our.solve <- function(a,b) {
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @examples
-#' data(coleman)
+#' data(coleman, package='robustbase')
 #' m1 <- lmrobdetDCML(Y ~ ., data=coleman)
 #'
 #' @export

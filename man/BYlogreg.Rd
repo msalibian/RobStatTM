@@ -30,16 +30,12 @@ A list with the following components:
 \item{objective}{value of the objective function at the minimum}
 }
 \description{
-This function computes the M-estimator proposed by Bianco and Yohai for 
+This function computes the M-estimator proposed by Bianco and Yohai for
 logistic regression. By default, an intercept term is included and p
-parameters are estimated. Modified by Yohai (2018) to take as initial estimator 
-a weighted ML estimator with weights derived from the MCD estimator. 
-For more details we refer to Croux, C., and Haesbroeck, G. (2002), 
+parameters are estimated. Modified by Yohai (2018) to take as initial estimator
+a weighted ML estimator with weights derived from the MCD estimator.
+For more details we refer to Croux, C., and Haesbroeck, G. (2002),
 "Implementing the Bianco and Yohai estimator for Logistic Regression"
-}
-\examples{
-BYlogreg(x0,y)
-
 }
 \references{
 \url{http://thebook}
