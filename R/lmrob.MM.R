@@ -1,16 +1,9 @@
-#' @useDynLib RobStatTM, .registration = TRUE
-
-
-## The "regularized" psi-function names:
-## .R: the redescending ones:
 .Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'optimal', 'hampel', 'ggw', 'modopt')
-## .M: the monotone ones:
-.Mpsi.M.names <- c('huber')
-## Note: there could be more: non-redescending, non-monotone {such as Cauchy score}
+
+.Mpsi.M.names <- c('huber') ## .M: the monotone ones:
+
 .Mpsi.names <- c(R= .Mpsi.R.names, M= .Mpsi.M.names)
 
-
-##' This allows synonyms as "Tukey" *and* partial matches such as "opt" :
 .regularize.Mpsi <- function(psi, redescending = TRUE) {
     stopifnot(is.character(psi), length(psi) == 1)
     psi <- tolower(psi)
@@ -42,7 +35,7 @@
                              normConst = 1.05753107,
                              upper = 3.00373940,
                              c = 1.0,
-                             "Psi_Opt(1)" = 0.46057111, 
+                             "Psi_Opt(1)" = 0.46057111,
                              "rho(Inf)" = 3.53690811)
     )
 
@@ -70,7 +63,7 @@
                              normConst = 1.05753107,
                              upper = 3.00373940,
                              c = 0.38124404,
-                             "Psi_Opt(1)" = 0.46057111, 
+                             "Psi_Opt(1)" = 0.46057111,
                              "rho(Inf)" = 3.53690811)
     )
 .Mchi.tuning.default <- function(psi) {
@@ -161,15 +154,6 @@ lmrob.control <-
       list(...))
 }
 
-##' Modify a \code{\link{lmrob.control}} list to contain only parameters that
-##' were actually used.  Currently used for \code{\link{print}()}ing of lmrob
-##' objects.
-##'
-##' @title Minimize lmrob control to non-redundant parts
-##' @param control a list, typically the 'control' component of a
-##' \code{\link{lmrob}()} call, or the result of  \code{\link{lmrob.control}()}.
-##' @return list: the (typically) modified \code{control}
-##' @author Martin Maechler {from Manuel's original code}
 lmrob.control.neededOnly <- function(control) {
     if(is.null(control)) return(control)
     switch(sub("^(S|M-S).*", "\\1", control$method),
@@ -637,7 +621,6 @@ lmrob..M..fit <- function (x = obj$x, y = obj$y, beta.initial = obj$coef,
 }
 
 
-##' Compute  S-estimator for linear model -- using  "fast S" algorithm --> ../man/lmrob.S.Rd
 lmrob.S <- function (x, y, control, trace.lev = control$trace.lev, mf = NULL)
 {
     if (!is.matrix(x)) x <- as.matrix(x)
@@ -806,8 +789,6 @@ lmrob.kappa <- function(obj, control = obj$control)
     uniroot(fun.min, c(0.1, 1))$root
 }
 
-## "FIXME" How to get \hat{tau} for a simple *M* estimate here ??
-## lmrob.tau() is used in lmrob..D..fit()
 lmrob.tau <- function(obj, x=obj$x, control = obj$control, h, fast = TRUE)
 {
     if(is.null(control)) stop("'control' is missing")
@@ -961,7 +942,6 @@ hatvalues.lmrob <- function(model, ...)
 }
 
 
-##' psi |--> ipsi \in \{0,1,...6} : integer codes used in C
 .psi2ipsi <- function(psi)
 {
     psi <- .regularize.Mpsi(psi, redescending=FALSE)
@@ -969,15 +949,13 @@ hatvalues.lmrob <- function(model, ...)
 	'huber', 'bisquare', 'welsh', 'optimal',
 	## 0	    1	        2	 3
 	'hampel', 'ggw', 'lqq', 'modopt'
-	## 4	    5	   6      7   
+	## 4	    5	   6      7
 	))
     if(is.na(i)) stop("internal logic error in psi() function name: ", psi,
 		      "  Please report!")
     i - 1L
 }
 
-##' Given psi() fn (as string), possibly convert the tuning-constant vector cc
-##' such that it "fits" to psi()
 .psi.conv.cc <- function(psi, cc)
 {
     if (!is.character(psi) || length(psi) != 1)
@@ -1038,13 +1016,7 @@ hatvalues.lmrob <- function(model, ...)
 
     return(cc)
 }
-##' @title For GGW's psi(), find x with minimal slope, and the min.slope
-##' @param a "scale" of GGW's psi
-##' @param b exponent of GGW's psi
-##' @param c "huber-cutoff" of GGW's psi
-##' @param ... further arguments passed to optimize(), notably 'tol'
-##' @return the return value of optimize():  list(minimum, objective)
-##' @author Manuel Kohler and Martin Maechler
+
 .psi.ggw.mxs <- function(a, b, c, tol = .Machine$double.eps^0.25) {
     ipsi <- .psi2ipsi('ggw')
     ccc <- c(0, a, b, c, 1) ## == .psi.conv.cc('ggw', cc=c(0, a, b, c, 1))
@@ -1123,11 +1095,6 @@ lmrob.efficiency <-  function(psi, cc, ...) {
 lmrob.bp <- function(psi, cc, ...)
   integrate(function(x) Mchi(x, cc, psi)*dnorm(x), -Inf, Inf, ...)$value
 
-##' @title Find tuning constant 'c'  for  "lqq"  psi function ---> ../man/psiFindc.Rd
-##' @param cc numeric vector =  c(min_slope, b/c, eff, bp) ;
-##'      typically 'eff' or 'bp' are NA and will be computed
-##' ....
-##' @return constants for c function: (b, c, s) == (b/c * c, c, s = 1 - min_slope)
 .psi.lqq.findc <-
     function(ms, b.c, eff = NA, bp = NA,
              interval = c(0.1, 4), subdivisions = 100L,
@@ -1159,9 +1126,6 @@ lmrob.bp <- function(psi, cc, ...)
     else bcs(c.)
 }
 
-##' For ("ggw", "lqq"), if  cc is not one of the predefined ones,
-##' compute the tuning constants numerically, from the given specs (eff / bp).
-##' Much related to  .psi.conv.cc() above
 .psi.const <- function(cc, psi)
 {
     switch(psi,
