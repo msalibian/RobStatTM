@@ -83,7 +83,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL)
 #' @seealso \code{\link{lmrobdetMM}}
 #'
 #' @export
-drop1.lmrobdetMM <- function (object, scope, scale, keep)
+drop1.lmrobdetMM <- function (object, scope, scale, keep, ...)
 {
   # if ( (casefold(object$control$method) != "sm") ) # & (casefold(object$control$method) != "m-sm") )
   #   stop("drop1 is only available for MM-estimates.")
