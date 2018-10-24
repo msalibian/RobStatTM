@@ -55,6 +55,8 @@
 #' data(coleman, package='robustbase')
 #' m2 <- lmrobdetMM(Y ~ ., data=coleman)
 #'
+#' @import stats
+#' @useDynLib RobStatTM, .registration = TRUE
 #' @export
 lmrobdetMM <- function(formula, data, subset, weights, na.action,
                    model = TRUE, x = !control$compute.rd, y = FALSE,
