@@ -63,7 +63,7 @@ JS.onCall <-
   })
 "
 
-pkgs <- c("RobStatTM", "robustbase", "PerformanceAnalytics")
+pkgs <- c("datasets", "RobStatTM", "robustbase", "PerformanceAnalytics")
 
 # Define UI for Shiny Application
 shinyUI(navbarPage("RobStatTM",
@@ -136,7 +136,7 @@ shinyUI(navbarPage("RobStatTM",
     )
   ),
   
-  # Tab for Location/Dispersion
+  # Tab for Location/Scale
   tabPanel("Location-Scale",
     h3("Location-Scale"),
     helpText("Calculate the robust location and scale for a single variable in
@@ -150,34 +150,41 @@ shinyUI(navbarPage("RobStatTM",
         
         # Renders selection of univariate vectors chosen from
         # dataset
-        uiOutput("select.variable"),
+        uiOutput("locScale.select.variable"),
         
-        # Selection of score function family
-        selectInput("psi", "Score Function (Psi)",
-                    choices = c("bi-square" = "Bis",
-                                "Huber"     = "Hub")),
+        # Selection of classic, robust, or both
+        radioButtons("locScale.method", "Method",
+                     choices = c("Both"      = "both",
+                                 "Classical" = "classic",
+                                 "Robust"    = "rob")),
         
-        # Radio buttons for desired asymptotic efficiency
-        radioButtons("efficiency", "Asymptotic Efficiency",
-                     choices  = c("0.85", "0.9", "0.95"),
-                     selected = "0.9"),
+        # Type disabled until scaleM() in RobStatTM is reviewed
+        disabled(
+          radioButtons("locScale.type", "Type",
+                       choices = c("Both"     = "both",
+                                   "Scale"    = "scale"))
+        ),
         
-        # Slider for maximum number of iterations
-        sliderInput("max.iter", "Maximum Iterations",
-                    min = 10, max = 100, value = 50),
-        
-        # Slider for tolerance level of convergence
-        sliderInput("tolerance", "Error Tolerance",
-                    min = -16, max = -3, value = -4),
+        conditionalPanel("input['locScale.method'] != 'classic'",
+                         
+           selectInput("locScale.psi", "Score Function (Psi)",
+                       choices = c("bi-square" = "bisquare",
+                                   "Huber"     = "huber")),
+           
+           # Radio buttons for desired asymptotic efficiency
+           radioButtons("locScale.eff", "Asymptotic Efficiency",
+                        choices  = c("0.85", "0.9", "0.95"),
+                        selected = "0.9")
+        ),
         
         # Button to display estimates for location and scale when pressed
-        actionButton("display.Location", "Results")
+        actionButton("locScale.display", "Results")
       ),
       
       mainPanel(
         tags$head(tags$style(HTML(CSS.format1))),
         # Display values for location and scale estimators
-        htmlOutput("results.Location")
+        htmlOutput("locScale.Results")
       )
     )
   ),
@@ -355,7 +362,7 @@ shinyUI(navbarPage("RobStatTM",
                            choices = c("Covariances"  = "cov",
                                        "Correlations" = "corr")),
               
-              conditionalPanel("input['pca.method'] != 'Classical'",
+              conditionalPanel("input['pca.method'] != 'classic'",
                 selectInput("pca.estimator", "Robust PCA Estimator",
                             choices = c("Auto", "MM", "Rocke"))
               ),
