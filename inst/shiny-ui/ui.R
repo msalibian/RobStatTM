@@ -168,7 +168,9 @@ shinyUI(navbarPage("RobStatTM",
         conditionalPanel("input['locScale.method'] != 'classic'",
                          
            selectInput("locScale.psi", "Score Function (Psi)",
-                       choices = c("bi-square" = "bisquare",
+                       choices = c("Mod. Opt." = "modopt",
+                                   "Opt."      = "optimal",
+                                   "Bisquare"  = "bisquare",
                                    "Huber"     = "huber")),
            
            # Radio buttons for desired asymptotic efficiency
