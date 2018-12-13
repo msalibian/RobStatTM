@@ -3,13 +3,16 @@ Version: 0.1
 Date: 2017-03-23
 Title: Robust Statistics
 Authors@R: c(person("Matias", "Salibian-Barrera", role = c("aut", "cre"), email = "matias@stat.ubc.ca"),
-             person("Victor", "Yhoai", role = "aut", email = "vyohai@gmail.com")
+             person("Victor", "Yhoai", role = "aut", email = "vyohai@gmail.com"),
+             person("Ricardo", "Maronna", role="aut", email= "rmaronna@retina.ar"),
+             person("Doug", "Martin", role="aut", email="martinrd3d@gmail.com"),
+             person("Gregory", "Brownson", role="aut", email="gsb25@uw.edu"),
+             person("Kjell", "Konis", role="aut", email="kjellk@gmail.com")
             )
 Description: Software for the Robust Statistics book. Including: Distance Constrained Maximum Likelihood estimation for linear regression models, based on MM estimators computed with Pen~a & Yohai initial candidates. 
 Depends: R (>= 3.0.2)
 Imports: stats, graphics, utils, methods, DEoptimR, pyinit, rrcov, rARPACK, robustbase, shiny, shinyjs, PerformanceAnalytics
 LazyData: yes
 License: GPL (>= 3)
-Author: Matias Salibian-Barrera [aut] (lmrob orig.), Victor Yohai [aut], Ricardo Maronna, Doug Martin, Gregory Brownson, Kjell Konis
 RoxygenNote: 6.1.1
 Encoding: UTF-8
