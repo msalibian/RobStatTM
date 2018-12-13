@@ -13,7 +13,7 @@
 		  psi)
     nms <- if(redescending) .Mpsi.R.names else .Mpsi.names
     if (is.na(i <- pmatch(psi, nms)))
-	stop(gettextf("'psi' should be one of %s", pasteK(dQuote(nms))),
+	stop(gettextf("'psi' should be one of %s", paste(dQuote(nms), collapse=", ")),
 	     domain = NA)
     nms[i]
 }
@@ -301,19 +301,19 @@ globalVariables("r", add=TRUE) ## below and in other lmrob.E() expressions
     if (is.null(cov.corrfact)) {
         cov.corrfact <- if (cov.hubercorr) 'empirical' else 'tau'
     } else if(length(cov.corrfact) != 1 || is.na(match(cov.corrfact, valid.corrfact)))
-	stop(":.vcov.w: cov.corrfact must be one of ", pasteK(dQuote(valid.corrfact)))
+	stop(":.vcov.w: cov.corrfact must be one of ", paste(dQuote(valid.corrfact), collapse=', '))
 
     valid.dfcorr <- c("mean", "none", "mn.vc", "varc", "mn.df")
     ## old: cov.dfcorr = -1 |  0    |   1    |  2    |   3
     if (is.null(cov.dfcorr)) {
         cov.dfcorr <- if (cov.hubercorr || cov.corrfact %in% c('tau', 'hybrid')) "mn.vc" else "mean"
     } else if(length(cov.dfcorr) != 1 || is.na(match(cov.dfcorr, valid.dfcorr)))
-        stop(":.vcov.w: cov.dfcorr must be one of ", pasteK(dQuote(valid.dfcorr)))
+        stop(":.vcov.w: cov.dfcorr must be one of ", paste(dQuote(valid.dfcorr), collapse=', '))
 
     valid.cov.resid <- c('final', 'initial', 'trick')
     if (is.null(cov.resid)) cov.resid <- 'final'
     else if (length(cov.resid) != 1 || is.na(match(cov.resid, valid.cov.resid)))
-	stop(":.vcov.w: cov.resid must be one of ", pasteK(dQuote(valid.cov.resid)))
+	stop(":.vcov.w: cov.resid must be one of ", paste(dQuote(valid.cov.resid), collapse=', '))
     if (is.null(cov.xwx)) cov.xwx <- TRUE
     else if (!is.logical(cov.xwx))
 	stop(':.vcov.w: cov.xwx must be logical (or NULL)')

@@ -273,6 +273,8 @@ SMPY <- function(mf, y, control, split) {
   if(missing(split)) {
     split <- splitFrame(mf, type=control$split.type)
   }
+  f.w <- function(u, family, cc)
+    Mwgt(x = u, cc = cc, psi = family)
   # step 1 - build design matrices, x1 = factors, x2 = continuous, intercept is in x1
   Z <- split$x1
   X <- split$x2
@@ -338,7 +340,7 @@ SMPY <- function(mf, y, control, split) {
   # Run a few IRWLS iterations, adjusting with Z
   max.it <- control$refine.PY
   for(i in 1:max.it) {
-    weights <- f.w( tmp$residuals/sih, family=control$tuning.chi)
+    weights <- f.w( tmp$residuals/sih, family=control$family, control$tuning.chi)
     xw <- X * sqrt(weights)
     yw <- y * sqrt(weights)
     beta <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )

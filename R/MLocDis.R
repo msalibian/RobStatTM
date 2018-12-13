@@ -93,7 +93,7 @@ locScaleM <- MLocDis <- function(x, psi="bisquare", eff=0.9, maxit=50, tol=1.e-4
       sigmu <- sqrt(sig0^2 * a / (n*b^2))
       f <- function(u, family, cc) {
         cc["c"] <- u
-        integrate(function(x, fam, cc) rho(x, family, cc) * dnorm(x), -Inf, Inf, fam = famly, cc = cc)$value - 0.5
+        integrate(function(x, fam, cc) rho(x, fam, cc) * dnorm(x), -Inf, Inf, fam = family, cc = cc)$value - 0.5
       }
       cc["c"] <- uniroot(f, c(0.01, 10), family = family, cc = cc)$root
       scat <- mscale(x - mu, delta = 0.5, tuning.chi = cc, family = family)
