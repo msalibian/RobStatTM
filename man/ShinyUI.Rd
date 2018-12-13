@@ -10,7 +10,7 @@ ShinyUI()
 This function opens the Shiny interface for the package.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Gregory Brownson \email{gsb25@uw.edu}

@@ -3,7 +3,7 @@
 #' This function opens the Shiny interface for the package.
 #'
 #' @author Gregory Brownson \email{gsb25@uw.edu}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
 #' @export
 ShinyUI <- function() {

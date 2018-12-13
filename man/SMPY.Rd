@@ -31,7 +31,7 @@ internally by \code{\link{lmrobdetMM}}, and not meant to be used
 directly.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}

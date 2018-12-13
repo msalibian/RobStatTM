@@ -121,7 +121,7 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 #'
 #' @rdname MMPY
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @export
@@ -210,7 +210,7 @@ MMPY <- function(X, y, control, mf) {
 #'
 #' @rdname DCML
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @export
@@ -262,7 +262,7 @@ DCML <- function(x, y, z, z0, control) {
 #'
 #' @rdname SMPY
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @export
