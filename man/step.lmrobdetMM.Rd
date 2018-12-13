@@ -4,8 +4,9 @@
 \alias{step.lmrobdetMM}
 \title{Robust stepwise using RFPE}
 \usage{
-step.lmrobdetMM(object, scope, direction = c("both", "backward", "forward"),
-  trace = TRUE, keep = NULL, steps = 1000, whole.path = FALSE)
+step.lmrobdetMM(object, scope, direction = c("both", "backward",
+  "forward"), trace = TRUE, keep = NULL, steps = 1000,
+  whole.path = FALSE)
 }
 \arguments{
 \item{object}{a robust fit as returned by \code{\link{lmrobdetMM}}}

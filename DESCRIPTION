@@ -12,4 +12,4 @@ Imports: stats, graphics, utils, methods, DEoptimR, pyinit, rrcov, rARPACK, robu
 LazyData: yes
 License: GPL (>= 3)
 Author: Matias Salibian-Barrera [aut] (lmrob orig.), Victor Yohai [aut], Ricardo Maronna, Doug Martin, Gregory Brownson, Kjell Konis
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

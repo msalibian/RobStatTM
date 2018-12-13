@@ -4,9 +4,9 @@
 \alias{lmrobM}
 \title{Robust estimators for linear regression with fixed designs}
 \usage{
-lmrobM(formula, data, subset, weights, na.action, model = TRUE, x = FALSE,
-  y = FALSE, singular.ok = TRUE, contrasts = NULL, offset = NULL,
-  control = lmrobdet.control())
+lmrobM(formula, data, subset, weights, na.action, model = TRUE,
+  x = FALSE, y = FALSE, singular.ok = TRUE, contrasts = NULL,
+  offset = NULL, control = lmrobdet.control())
 }
 \arguments{
 \item{formula}{a symbolic description of the model to be fit.}
