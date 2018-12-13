@@ -632,8 +632,11 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' or to force running k steps (0)
 #' @param b tuning constant for the M-scale estimator, used if iterations are for an S-estimator.
 #' @param cc tuning constant for the rho function.
+#' @param family string specifying the name of the family of loss function to be used (current 
+#' valid options are "bisquare", "optimal" and "modopt")
 #' @param step a string indicating whether the iterations are to compute an S-estiamator
 #' ('S') or an M-estimator ('M')
+#' 
 #' @return A list with the following components:
 #' \item{beta.rw}{The updated vector of regression coefficients}
 #' \item{scale.rw}{The corresponding estimated residual scale}
