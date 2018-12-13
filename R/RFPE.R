@@ -70,6 +70,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL)
 #' Only names from the set \code{"coefficients"}, \code{"fitted"} and \code{"residuals"}
 #' are allowed. If \code{keep == TRUE}, the complete set is saved. The default behavior is 
 #' not to keep anything.
+#' @param \dots additional parameters to match generic method \code{drop1}
 #'
 #' @return An anova object consisting of the term labels, the degrees of freedom, and Robust Final 
 #' Prediction Errors (RFPE) for each subset model. If \code{keep} is missing, the anova object is 
