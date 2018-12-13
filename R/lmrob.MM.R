@@ -1180,11 +1180,12 @@ Mwgt <- function(x, cc, psi) {
     if(deriv) .Mpsi(x, ccc, ipsi, deriv=deriv) else .Mwgt(x, ccc, ipsi)
 }
 
-##' The normalizing constant for  rho(.) <--> rho~(.)
+# The normalizing constant for  rho(.) <--> rho~(.)
 MrhoInf <- function(cc, psi) {
     cc <- .psi.conv.cc(psi, cc)
     .Call(R_rho_inf, cc, .psi2ipsi(psi))
 }
+
 .MrhoInf <- function(ccc, ipsi) .Call(R_rho_inf, ccc, ipsi)
 
 
