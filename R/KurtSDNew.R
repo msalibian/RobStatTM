@@ -672,11 +672,11 @@ SdwDir <- function(x,nd) {
 
    use_rnd = 1
 
-   if (use_rnd == 0) {
-      k_rnd = 1
-      load("lstunif.RData")    # Load data defined as a variable (list) lstunif
-      n_rnd = 100
-   }
+   # if (use_rnd == 0) {
+   #    k_rnd = 1
+   #    load("lstunif.RData")    # Load data defined as a variable (list) lstunif
+   #    n_rnd = 100
+   # }
 
    sx = dim(x)
    n = sx[1]
@@ -704,23 +704,24 @@ SdwDir <- function(x,nd) {
 
       ## Sampling to obtain initial projections and weights
 
-      if (use_rnd == 1) {
+      # if (use_rnd == 1) {
          nn1 = min(1 + floor(runif(1)*n),n)
-      } else {
-         nn1 = min(1 + floor(lstunif[k_rnd]*n),n)
-         k_rnd = k_rnd + 1
-         if (k_rnd > n_rnd) k_rnd = 1
-      }
+      # } else {
+      #    nn1 = min(1 + floor(lstunif[k_rnd]*n),n)
+      #    k_rnd = k_rnd + 1
+      #    if (k_rnd > n_rnd) k_rnd = 1
+      # }
+
       nn2 = nn1
 
       while ((nn2 == nn1)||(norm(as.matrix(x[nn1,1:p] - x[nn2,1:p]),type = "F") < ep5)) {
-         if (use_rnd == 1) {
+         # if (use_rnd == 1) {
             nn2 = min(1 + floor(runif(1)*n),n)
-         } else {
-            nn2 = min(1 + floor(lstunif[k_rnd]*n),n)
-            k_rnd = k_rnd + 1
-            if (k_rnd > n_rnd) k_rnd = 1
-         }
+         # } else {
+         #    nn2 = min(1 + floor(lstunif[k_rnd]*n),n)
+         #    k_rnd = k_rnd + 1
+         #    if (k_rnd > n_rnd) k_rnd = 1
+         # }
       }
       dd = as.matrix(x[nn1,1:p] - x[nn2,1:p])
       dd = dd/norm(dd,type = "F")
@@ -733,13 +734,13 @@ SdwDir <- function(x,nd) {
 
       j = 1
       while ((j <= n_grp)&&(ndir < nd)) {
-         if (use_rnd == 1) {
+         # if (use_rnd == 1) {
             auxs = sort.int(runif(s_grp), index.return = T)
-         } else {
-            auxs = sort.int(lstunif[k_rnd:(k_rnd+s_grp-1)], index.return = T)
-            k_rnd = k_rnd + s_grp
-            if (k_rnd > n_rnd) k_rnd = 1
-         }
+         # } else {
+         #    auxs = sort.int(lstunif[k_rnd:(k_rnd+s_grp-1)], index.return = T)
+         #    k_rnd = k_rnd + s_grp
+         #    if (k_rnd > n_rnd) k_rnd = 1
+         # }
          bb = auxs$ix
          nn = bb[1:p]
          idr = lbl[(1+(j-1)*s_grp):(j*s_grp)]

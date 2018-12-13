@@ -646,6 +646,7 @@ rhoinv <- function(x)
 #' @param center a logical flag or a numeric vector of length \code{p} (where \code{p} is the number of columns of \code{x}) specifying the center.  If \code{center = TRUE} then the center is estimated.  Otherwise the center is taken to be 0.
 #' @param distance a logical flag.  If \code{distance = TRUE} the Mahalanobis distances are computed.
 #' @param na.action a function to filter missing data.  The default \code{na.fail} produces an error if missing values are present.  An alternative is \code{na.omit} which deletes observations that contain one or more missing values.
+#' @param unbiased a logical flag. If \code{TRUE} the unbiased estimator is returned (computed with denominator equal to \code{n-1}), else the MLE (computed with denominator equal to \code{n}) is returned.
 #'
 #' @return a list with class \dQuote{covClassic} containing the following elements:
 #' \item{call}{an image of the call that produced the object with all the arguments named.}
@@ -665,7 +666,7 @@ rhoinv <- function(x)
 #'
 #' @export
 covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
-                       na.action = na.fail, unbiased = TRUE, ...)
+                       na.action = na.fail, unbiased = TRUE)
 {
   the.call <- match.call(expand.dots = FALSE)
 

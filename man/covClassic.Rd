@@ -5,7 +5,7 @@
 \title{Classical Covariance Estimation}
 \usage{
 covClassic(data, corr = FALSE, center = TRUE, distance = TRUE,
-  na.action = na.fail, unbiased = TRUE, ...)
+  na.action = na.fail, unbiased = TRUE)
 }
 \arguments{
 \item{data}{a numeric matrix or data frame containing the data.}
@@ -17,6 +17,8 @@ covClassic(data, corr = FALSE, center = TRUE, distance = TRUE,
 \item{distance}{a logical flag.  If \code{distance = TRUE} the Mahalanobis distances are computed.}
 
 \item{na.action}{a function to filter missing data.  The default \code{na.fail} produces an error if missing values are present.  An alternative is \code{na.omit} which deletes observations that contain one or more missing values.}
+
+\item{unbiased}{a logical flag. If \code{TRUE} the unbiased estimator is returned (computed with denominator equal to \code{n-1}), else the MLE (computed with denominator equal to \code{n}) is returned.}
 }
 \value{
 a list with class \dQuote{covClassic} containing the following elements:

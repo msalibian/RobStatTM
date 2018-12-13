@@ -786,6 +786,7 @@ our.solve <- function(a,b) {
 #' data(coleman, package='robustbase')
 #' m1 <- lmrobdetDCML(Y ~ ., data=coleman)
 #'
+#' @importFrom robustbase robMD
 #' @export
 lmrobdetDCML <- function(formula, data, subset, weights, na.action,
                      model = TRUE, x = !control$compute.rd, y = FALSE,
