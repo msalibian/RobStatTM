@@ -15,6 +15,7 @@
 #' is \code{max(p*muldirand, dirmin)}, where \code{p} is the number of columns in \code{X}.
 #' @param muldifix used to determine the number of random directions (candidates), which
 #' is \code{min(n, 2*muldifix*p)}.
+#' @param dirmin minimum number of random directions
 #'
 #' @return A list with the following components:
 #' \item{idx}{A zero/one vector with ones in the positions of the suspected outliers}

@@ -15,6 +15,8 @@ is \code{max(p*muldirand, dirmin)}, where \code{p} is the number of columns in \
 
 \item{muldifix}{used to determine the number of random directions (candidates), which
 is \code{min(n, 2*muldifix*p)}.}
+
+\item{dirmin}{minimum number of random directions}
 }
 \value{
 A list with the following components:
