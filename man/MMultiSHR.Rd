@@ -29,7 +29,7 @@ This function computes an MM robust estimator for multivariate location and scat
 This function computes an MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Ricardo Maronna, \email{rmaronna@retina.ar}

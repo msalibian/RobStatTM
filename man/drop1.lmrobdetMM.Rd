@@ -36,7 +36,7 @@ This function computes the RFPE for the MM-estimators obtained with \code{\link{
 recomputing it, successively removing each of a number of specified terms.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \code{\link{lmrobdetMM}}

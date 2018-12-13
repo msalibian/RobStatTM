@@ -16,7 +16,7 @@
 #'
 #' @rdname INVTR2
 #' @author Victor Yohai
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
 #' @export
 INVTR2 <- function(RR2, family, cc) {

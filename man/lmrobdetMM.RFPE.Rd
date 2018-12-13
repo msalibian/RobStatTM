@@ -20,7 +20,7 @@ the robust final prediction error (numeric).
 This function computes the robust Final Prediction Errors (RFPE) for a robust regression fit using M-estimates.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \code{\link{lmrobdetMM}}

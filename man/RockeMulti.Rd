@@ -43,7 +43,7 @@ This function computes Rocke's robust estimator for multivariate location and sc
 This function computes Rocke's robust estimator for multivariate location and scatter.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Ricardo Maronna, \email{rmaronna@retina.ar}

@@ -24,7 +24,7 @@
 #' that failed (resulting in singular initial values)}
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #' 
 #' @export
 fastmve <- function(x, nsamp=500) {

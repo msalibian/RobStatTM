@@ -27,7 +27,7 @@
 #' \item{objective}{value of the objective function at the minimum}
 #'
 #' @author Christophe Croux, Gentiane Haesbroeck, Victor Yohai
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
 logregBY <- BYlogreg <- function(x0,y, intercept=1, const=0.5,kmax=1000,maxhalf=10)
 {

@@ -24,7 +24,7 @@ A list with the following components: c("test","chisq.pvalue","f.pvalue","df")
 This function computes a robust likelihood ratio test for linear hypotheses.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Victor Yohai, \email{vyohai@gmail.com}

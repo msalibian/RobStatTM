@@ -11,7 +11,7 @@
 #'
 #' @rdname lmrobdetMM.RFPE
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{lmrobdetMM}}
 #'
 #' @export
@@ -80,7 +80,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL)
 #'
 #' @rdname drop1.lmrobdetMM
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{lmrobdetMM}}
 #'
 #' @export
@@ -194,7 +194,7 @@ drop1.lmrobdetMM <- function (object, scope, scale, keep, ...)
 #'
 #' @rdname step.lmrobdetMM
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @export

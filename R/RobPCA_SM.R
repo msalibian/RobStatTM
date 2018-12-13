@@ -24,7 +24,7 @@
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}, based on original code
 #' by D. Pen~a and J. Prieto
 #'
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
 pcaRobS <- SMPCA <-function(X, ncomp, desprop=0.9, deltasca=0.5, maxit=100) {
 n=dim(X)[1];  p=dim(X)[2]

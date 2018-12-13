@@ -32,7 +32,7 @@ This function computes robust principal components based on the minimization of
 the "residual" M-scale.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Ricardo Maronna, \email{rmaronna@retina.ar}, based on original code

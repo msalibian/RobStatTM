@@ -29,7 +29,7 @@ This function computes a weighted likelihood estimator for the logistic model, w
 the weights penalize high leverage observations. In this version the weights are zero or one.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Victor Yohai

@@ -76,7 +76,7 @@ m2 <- lmrobdetMM(Y ~ ., data=coleman)
 
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \link{DCML}, \link{MMPY}, \link{SMPY}

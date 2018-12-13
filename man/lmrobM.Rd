@@ -73,7 +73,7 @@ re-descending M estimator. The scale is set to a quantile of the
 absolute residuals from the L1 estimator.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Victor Yohai, \email{vyohai@gmail.com}, based on \code{lmrob}

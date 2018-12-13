@@ -35,7 +35,7 @@ fast algorithm related to the fast algorithm for S-regression
 estimators (see \code{\link[robustbase]{lmrob}}).
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}

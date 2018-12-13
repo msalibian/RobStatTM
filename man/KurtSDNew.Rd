@@ -35,7 +35,7 @@ This function computes robust multivariate location and scatter
 using both Pen~a-Prieto and random candidates.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Ricardo Maronna, \email{rmaronna@retina.ar}, based on original code

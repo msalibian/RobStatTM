@@ -76,7 +76,7 @@ m1 <- lmrobdetDCML(Y ~ ., data=coleman)
 
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}

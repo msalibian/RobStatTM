@@ -53,7 +53,7 @@ that most reduces the Robust Final Prediction Error. The scale estimate from \co
 is used to compute the Robust Final Prediction Error throughout the procedure.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}

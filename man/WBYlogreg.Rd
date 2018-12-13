@@ -40,7 +40,7 @@ Croux, C., and Haesbroeck, G. (2002), "Implementing the Bianco and Yohai estimat
 Logistic Regression"
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Christophe Croux, Gentiane Haesbroeck, Victor Yohai

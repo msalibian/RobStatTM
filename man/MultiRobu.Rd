@@ -38,7 +38,7 @@ of variables is greater than or equal to 10, and an MM-estimator with a
 SHR rho function (as implemented in \code{\link{covRobMM}}) otherwise.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \code{\link{covRobRocke}}, \code{\link{covRobMM}}

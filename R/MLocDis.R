@@ -24,7 +24,7 @@
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
 locScaleM <- MLocDis <- function(x, psi="bisquare", eff=0.9, maxit=50, tol=1.e-4) {
   kpsi <- switch(psi, bisquare = 1, huber = 2, optimal = 3, modopt = 4, 5)

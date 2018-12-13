@@ -34,7 +34,7 @@ This function computes M-estimators for location and scale.
 This function computes M-estimators for location and scale.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Ricardo Maronna, \email{rmaronna@retina.ar}

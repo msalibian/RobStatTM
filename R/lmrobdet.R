@@ -48,7 +48,7 @@
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \link{DCML}, \link{MMPY}, \link{SMPY}
 #'
 #' @examples
@@ -782,7 +782,7 @@ our.solve <- function(a,b) {
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @examples
@@ -1081,7 +1081,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 #'
 #' @author Victor Yohai, \email{vyohai@gmail.com}, based on \code{lmrob}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
 #' @export
 lmrobM <- function(formula, data, subset, weights, na.action,
@@ -1249,7 +1249,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
 #' \item{df}{degrees of freedom}
 #'
 #' @author Victor Yohai, \email{vyohai@gmail.com}
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
 lmrobLinTest <- rob.linear.test <- function(object1, object2)
 {

@@ -26,7 +26,7 @@ This function computes a robust version of the R^2 coefficient of determination.
 This function computes a robust version of the R^2 coefficient.
 }
 \references{
-\url{http://thebook}
+\url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
 Victor Yohai

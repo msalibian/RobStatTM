@@ -27,7 +27,7 @@
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}, based on original code
 #' by D. Pen~a and J. Prieto
 #'
-#' @references \url{http://thebook}
+#' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
 initPP <- KurtSDNew <- function(X, muldirand=20, muldifix=10,dirmin=1000) {
 
