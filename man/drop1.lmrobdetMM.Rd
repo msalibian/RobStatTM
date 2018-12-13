@@ -21,6 +21,8 @@ scale estimator in \code{object} is used.}
 Only names from the set \code{"coefficients"}, \code{"fitted"} and \code{"residuals"}
 are allowed. If \code{keep == TRUE}, the complete set is saved. The default behavior is 
 not to keep anything.}
+
+\item{\dots}{additional parameters to match generic method \code{drop1}}
 }
 \value{
 An anova object consisting of the term labels, the degrees of freedom, and Robust Final 
