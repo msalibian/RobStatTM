@@ -215,7 +215,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       # z$MM$terms <- mt
       # z$MM$assign <- assign
       if(control$compute.rd && !is.null(x))
-        z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
+        z$MD <- robustbase::robMD(x, attr(mt, "intercept"), wqr=z$qr)
       if(model)
         z$model <- mf
       if(ret.x)
@@ -301,7 +301,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
   z$terms <- mt
   z$assign <- assign
   if(control$compute.rd && !is.null(x))
-    z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
+    z$MD <- robustbase::robMD(x, attr(mt, "intercept"), wqr=z$qr)
   if (model)
     z$model <- mf
   if (ret.x)
@@ -789,7 +789,6 @@ our.solve <- function(a,b) {
 #' data(coleman, package='robustbase')
 #' m1 <- lmrobdetDCML(Y ~ ., data=coleman)
 #'
-#' @importFrom robustbase robMD
 #' @export
 lmrobdetDCML <- function(formula, data, subset, weights, na.action,
                      model = TRUE, x = !control$compute.rd, y = FALSE,
@@ -920,7 +919,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       z$iter <- z.tmp$iter
       z$rweightsMM <- z.tmp$rweights
       if(control$compute.rd && !is.null(x))
-        z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
+        z$MD <- robustbase::robMD(x, attr(mt, "intercept"), wqr=z$qr)
       if(model)
         z$model <- mf
       if(ret.x)
@@ -1006,7 +1005,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   z$terms <- mt
   z$assign <- assign
   if(control$compute.rd && !is.null(x))
-    z$MD <- robMD(x, attr(mt, "intercept"), wqr=z$qr)
+    z$MD <- robustbase::robMD(x, attr(mt, "intercept"), wqr=z$qr)
   if (model)
     z$model <- mf
   if (ret.x)

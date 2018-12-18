@@ -789,7 +789,7 @@ lmrob.kappa <- function(obj, control = obj$control)
     uniroot(fun.min, c(0.1, 1))$root
 }
 
-#' @importFrom robustbase lmrob
+### @importFrom robustbase lmrob
 lmrob.tau <- function(obj, x=obj$x, control = obj$control, h, fast = TRUE)
 {
     if(is.null(control)) stop("'control' is missing")
@@ -911,7 +911,7 @@ lmrob.tau.fast.coefs <- function(cc, psi) {
     tfact <- 2 - ta/tb^2
     taus.0 <- sqrt(1 - tfact * levs)
     ## calculate correction factor
-    tcorr <- coef(lmrob(taus / taus.0 - 1 ~ levs - 1))
+    tcorr <- coef(robustbase::lmrob(taus / taus.0 - 1 ~ levs - 1))
     c(tfact = tfact, tcorr = tcorr)
 }
 
