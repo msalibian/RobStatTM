@@ -54,7 +54,7 @@ while (iter<maxit & abs(del)>tol) {
 	Xcen=scale(X, center=mu, scale=FALSE)
 #update B
 	C=t(Xcen)%*%diag(ww)%*%Xcen
-	B=rARPACK::eigs_sym(C, q)$vectors
+	B <- svd(C, nu=q, nv=q)$u 	# B=rARPACK::eigs_sym(C, q)$vectors
 	fit=Xcen%*%B%*%t(B)
 	res=Xcen-fit   #residuals
 	rr=colSums(t(res)^2)
