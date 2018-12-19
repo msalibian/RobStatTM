@@ -13,6 +13,6 @@ Description: Software for the "Robust Statistics: Theory and Methods" book <http
 Depends: R (>= 3.0.2)
 Imports: stats, graphics, utils, methods, DEoptimR, pyinit, rrcov, rARPACK, robustbase, shiny, shinyjs, PerformanceAnalytics, DT, fit.models, ggplot2, gridExtra, robust, xts
 LazyData: yes
-License: GPL-3
+License: GPL (>= 3)
 RoxygenNote: 6.1.1
 Encoding: UTF-8
