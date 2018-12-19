@@ -8,9 +8,19 @@
 #              parameters
 
 # Command To Run:
-#   shiny::runGitHub("RobStatTM-Gui", "GregoryBrownson", subdir = "ShinyRobStatTM", ref = 'dev')
+#   shiny::runGitHub("RobStatTM-Gui", "GregoryBrownson", subdir = "ShinyRobStatTM")
 
-library(DT)
+pkgs <- c("shiny", "shinyjs")
+
+options(warn=-1L)
+
+missing.packages <- setdiff(pkgs, rownames(installed.packages()))
+if (length(missing.packages) > 0) {
+  cat(paste("The following packages are missing:", missing.packages, ".\n"))
+  cat("Installing missing packages!")
+  install.packages(missing.packages)
+}
+
 library(shiny)
 library(shinyjs)
 
@@ -23,7 +33,7 @@ CSS.format1 <-
   }
 
   body {
-    min-height: 2000px;
+    min-height: 1000px;
   }
 
   .option-group {
@@ -39,6 +49,39 @@ CSS.format1 <-
     text-transform: uppercase;
     margin-bottom: 5px;
   }
+"
+
+CSS.tableFormat <-
+"
+  table {
+    max-height: 150px;
+    white-space: nowrap;
+  }
+
+  table tr th {
+    padding: 2px 5px;
+  }
+
+  table tr td {
+    padding: 2px 5px;
+  }
+
+  table tfoot td { border: none; font-style: italic; }
+
+  #fmTable {
+    max-height: 150px;
+    white-space: nowrap;
+  }
+
+  #fmTable tr td {
+    padding: 2px 5px;
+  }
+
+  #fmTable tr th {
+    padding: 2px 5px;
+  }
+
+  #fmTable tfoot td { border: none; font-style: italic; }
 "
 
 # JavaScript function to display slider input values in scientific notation
@@ -168,15 +211,12 @@ shinyUI(navbarPage("RobStatTM",
         conditionalPanel("input['locScale.method'] != 'classic'",
                          
            selectInput("locScale.psi", "Score Function (Psi)",
-                       choices = c("Mod. Opt." = "modopt",
-                                   "Opt."      = "optimal",
-                                   "Bisquare"  = "bisquare",
-                                   "Huber"     = "huber")),
+                       choices = c("modified optimal" = "modopt",
+                                   "optimal"          = "optimal",
+                                   "bisquare"         = "bisquare",
+                                   "huber"            = "huber")),
            
-           # Radio buttons for desired asymptotic efficiency
-           radioButtons("locScale.eff", "Asymptotic Efficiency",
-                        choices  = c("0.85", "0.9", "0.95"),
-                        selected = "0.9")
+           uiOutput('locScale.eff.options')
         ),
         
         # Button to display estimates for location and scale when pressed
@@ -223,7 +263,7 @@ shinyUI(navbarPage("RobStatTM",
             mainPanel(
               tags$head(tags$style(HTML(CSS.format1))),
               
-              uiOutput("linRegress.results.ui")
+              htmlOutput("linRegress.results")
             )
           )
         ), 
@@ -261,7 +301,7 @@ shinyUI(navbarPage("RobStatTM",
             ),
           
             mainPanel(
-              tags$head(tags$style(HTML(CSS.format1))),
+              tags$head(tags$style(HTML(paste0(CSS.format1, CSS.tableFormat)))),
               
               uiOutput("linRegress.plot.ui")
             )
@@ -301,7 +341,7 @@ shinyUI(navbarPage("RobStatTM",
             mainPanel(
               tags$head(tags$style(HTML(CSS.format1))),
               
-              uiOutput("covariance.results.ui")
+              htmlOutput("covariance.results")
             )
           )
         ),
@@ -373,34 +413,32 @@ shinyUI(navbarPage("RobStatTM",
             ),
             
             mainPanel(
-              tags$head(tags$style(HTML(CSS.format1))),
+              tags$head(tags$style(HTML(paste0(CSS.format1, CSS.tableFormat)))),
               
-              uiOutput("pca.results.ui")
+              htmlOutput("pca.results")
             )
           )
         ),
         
-        disabled(
-          tabPanel("Plots",
-            sidebarLayout(
-              sidebarPanel(
-                tags$head(tags$style(HTML(CSS.format1))),
-                h4("Plots"),
-                checkboxInput("pca.scatter", "Scatter Plots", TRUE),
-                checkboxInput("pca.loadings", "Loadings", TRUE),
-                checkboxInput("pca.scree", "Screeplot", TRUE),
-                
-                actionButton("pca.display.plots", "View Plots")
-              ),
+      disabled(tabPanel("Plots",
+          sidebarLayout(
+            sidebarPanel(
+              tags$head(tags$style(HTML(CSS.format1))),
+              h4("Plots"),
+              checkboxInput("pca.scatter", "Scatter Plots", TRUE),
+              checkboxInput("pca.loadings", "Loadings", TRUE),
+              checkboxInput("pca.scree", "Screeplot", TRUE),
               
-              mainPanel(
-                tags$head(tags$style(HTML(CSS.format1))),
-                
-                uiOutput("pca.plot.ui")
-              )
+              actionButton("pca.display.plots", "View Plots")
+            ),
+            
+            mainPanel(
+              tags$head(tags$style(HTML(CSS.format1))),
+              
+              uiOutput("pca.plot.ui")
             )
           )
-        )
+        ))
       )
     )
   ),
