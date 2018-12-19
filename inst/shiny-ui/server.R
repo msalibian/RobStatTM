@@ -7,7 +7,9 @@
 #              selecting location and scale
 #              parameters
 
-pkgs <- c("DT", "fit.models", "ggplot2", "grid", "gridExtra",
+options(warn = -1L, scipen = -1L)
+
+pkgs <- c("DT", "fit.models", "ggplot2", "grid", "gridExtra", "gtools",
           "PerformanceAnalytics", "robust", "robustbase", "shiny", "xts")
 
 missing.packages <- setdiff(pkgs, rownames(installed.packages()))
@@ -22,6 +24,7 @@ library(fit.models)
 library(ggplot2)
 library(grid)
 library(gridExtra)
+library(gtools)
 library(PerformanceAnalytics)
 library(RobStatTM)
 library(robust)
@@ -29,11 +32,37 @@ library(robustbase)
 library(shiny)
 library(xts)
 
+# Set theme for ggplot
 thm <- theme_bw() +
        theme(plot.title = element_text(hjust = 0.5))
 
 theme_set(thm)
 
+# Add models to respective class and create new fit.models class when necessary
+
+if (is.null(fit.models:::e$fmreg$lmfm)) {
+  fmclass.register("lmfm", c("lmrobM", "lmrobdetMM", "lmrobdetDCML"))
+} else {
+  fmclass.add.class("lmfm", "lmrobM", warn = F)
+  fmclass.add.class("lmfm", "lmrobdetMM", warn = F)
+  fmclass.add.class("lmfm", "lmrobdetDCML", warn = F)
+}
+
+if (is.null(fit.models:::e$fmreg$covfm)) {
+  fmclass.register("covfm", c("covClassic", "covRob"))
+} else {
+  fmclass.add.class("covfm", "covClassic", warn = F)
+  fmclass.add.class("covfm", "covRob", warn = F)
+}
+
+if (is.null(fit.models:::e$fmreg$pcompfm)) {
+  fmclass.register("pcompfm", c("prcomp", "prcompRob"))
+} else {
+  fmclass.add.class("pcompfm", "prcomp", warn = F)
+  fmclass.add.class("pcompfm", "prcompRob", warn = F)
+}
+
+# Functions which interface with rest of package and makes things easier for fit.models
 locScaleClassic <- function(x) {
   z <- list()
   
@@ -67,14 +96,6 @@ lmrobdetMM <- function(form, ...) {
   fit$call <- form
   return(fit)
 }
-
-# Add classes to lmfm and covfm in fit.models registry
-fmclass.add.class("lmfm", "lmrobM", warn = F)
-fmclass.add.class("lmfm", "lmrobdetMM", warn = F)
-fmclass.add.class("lmfm", "lmrobdetDCML", warn = F)
-
-fmclass.add.class("covfm", "covClassic", warn = F)
-fmclass.add.class("covfm", "covRob", warn = F)
 
 covClassic <- function(data, data.name, ...) {
   z <- RobStatTM::covClassic(data, ...)
@@ -125,182 +146,728 @@ covRobRocke <- function(data, data.name, corr = F, ...) {
   return(z)
 }
 
-print.summary.covfm <- function(x, digits = max(3, getOption("digits") - 3),
-                                print.distance = FALSE, ...)
-{
-  n.models <- length(x)
-  mod.names <- names(x)
-
-  cat("\nCalls: \n")
-  for(i in 1:n.models) {
-    cat(mod.names[i], ": ")
-    print(x[[i]]$call)
-  }
-
-  p <- dim(x[[1]]$cov)[1]
-  i1 <- rep(seq(p), times = p)
-  i2 <- rep(seq(p), each = p)
-
-  cov.index <- paste("[", paste(i1, i2, sep = ","), "]", sep = "")
-  cov.index <- matrix(cov.index, p, p)
-  cov.index <- cov.index[row(cov.index) >= col(cov.index)]
-
-  cov.unique <- t(sapply(x, function(u) u$cov[row(u$cov) >= col(u$cov)]))
-  dimnames(cov.unique) <- list(mod.names, cov.index)
-
-  cat("\nComparison of Covariance/Correlation Estimates:\n")
-  cat(" (unique correlation terms) \n")
-  print(cov.unique, digits = digits, ...)
+prcompRob <- function(data, ncomp = ncol(data), desprop = 1.0, ...) {
+  X = pcaRobS(data, ncomp = ncomp, desprop = desprop)
   
-  center <- t(sapply(x, function(u) u$center))
-  center.names <- names(x[[1]]$center)
-  dimnames(center) <- list(mod.names, center.names)
-
-  cat("\nComparison of Location Estimates: \n")
-  print(center, digits = digits, ...)
+  # X.scaled <- scale(data, center = center, scale = scale)
   
-  if (all(sapply(x, function(u) u$corr) == FALSE)) {
-    cov.index <- paste("[", paste(1:p, 1:p, sep = ","), "]", sep = "")
+  n <- ncol(X$eigvec)
   
-    cov.sd <- t(sapply(x, function(u) sqrt(diag(u$cov))))
-    dimnames(cov.sd) <- list(mod.names, cov.index)
-    
-    cat("\nComparison of Scale Estimates:\n")
-    print(cov.sd, digits = digits, ...)
-  }
-
-  evals <- t(sapply(x, function(u) u$evals))
-  eval.names <- names(x[[1]]$evals)
-  dimnames(evals) <- list(mod.names, eval.names)
-
-  cat("\nComparison of Eigenvalues: \n")
-  print(evals, digits = digits, ...)
-
-  have.dist <- sapply(x, function(u) !is.null(u$dist))
-  if(print.distance && all(have.dist)) {
-    dists <- t(sapply(x, function(u) u$dist))
-    dimnames(dists) <- list(mod.names, names(x[[1]]$dist))
-    cat("\nComparison of Mahalanobis Distances: \n")
-    print(dists, digits = digits, ...)
-  }
-
-  invisible(x)
-}
-
-options(scipen = -1)
-
-# Custom stuff for robust pca
-princompRob <- function(data, est = "Auto", center = T, scale = F, ...) {
-  
-  stopifnot(any(est == c("Auto", "MM", "Rocke")))
-  
-  if (est == "MM") {
-    X <- RobStatTM::covRobMM(data)
-  } else if (est == "Rocke") {
-    X <- RobStatTM::covRobRocke(data)
-  } else {
-    X <- RobStatTM::covRob(data)
-  }
-  
-  X.eigen  <- eigen(X$cov)
-  X.scaled <- scale(data, center = center, scale = scale)
+  pc.index <- sapply(1L:n, function(i) { paste("PC", i) })
   
   z <- list()
   
-  z$sdev     <- sqrt(X.eigen$values)
-  z$rotation <- X.eigen$vectors
-  z$center   <- X$center
-  z$scale    <- ifelse(scale, attr(X.scales, "scaled:scale"), FALSE)
-  z$x        <- X.scaled %*% X.eigen$vectors
+  z$sdev     <- sqrt(diag(var(X$repre)))
+  z$rotation <- X$eigvec
+  colnames(z$rotation) <- pc.index
   
-  class(z) <- "princompRob"
+  z$center   <- X$mu
+  z$scale    <- FALSE
+  z$x        <- X$repre
+  
+  class(z) <- "prcompRob"
   
   z
 }
 
-summary.princompRob <- function(object, ...) {
+# Custom summary and html output functions for methods above
+htmlText <- function(x, ...) {
+  UseMethod("htmlText", x)
+}
+
+htmlCoefTable <- function(coefs, lines, digits = max(3, getOption("digits") - 3)) {
+    temp <- sapply(colnames(coefs), function(name) {  paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+    
+    lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+    
+    temp <- sapply(1:nrow(coefs),
+                   function (i, coef) {
+                     line <- paste0("<tr><th scope=\"row\">", row.names(coef)[i], "</th>")
+                     temp <- sapply(coef[i, 1:3], function(val) { paste0("<td align=\"right\">", format(signif(val, digits = digits)), "</td>") })
+                     paste0(line, paste(temp, collapse = ''), "<td align=\"right\">", format(signif(coef[i, 4], digits = digits)),
+                            " ", stars.pval(coef[i, 4]),"</td></tr>")
+                   },
+                   coefs)
+    
+    lines <- paste0(lines, paste(temp, collapse = ''), "<tfoot><td colspan=\"5\">Signif. codes: ",
+                    attr(stars.pval(0), 'legend'), "</td></tfoot></table></div>")
+    
+    return(lines)
+}
+
+htmlText.summary.lm <- function(x, digits = max(3, getOption("digits") - 3), ...) {
+  # Get residuals
+  resid <- x$residuals
+  df <- x$df
+  resid.df <- df[2L]
+  
+  lines <- ""
+  
+  # Display residual statistics
+  if (resid.df > 5L) {
+  	nam <- c("Min", "1Q", "Median", "3Q", "Max")
+  	resid.quantile <- if (length(dim(resid)) == 2L) {
+              	        structure(apply(t(resid), 1L, quantile),
+              		      dimnames = list(nam, dimnames(resid)[[2L]]))
+                      }	else  {
+                          zz <- zapsmall(quantile(resid), digits + 1L)
+                          structure(zz, names = nam)
+                      }
+  	lines <- paste0(lines, "<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                    "<caption><font color=\"#000000\"><b>Residual Statistics:</b></font></caption>",
+                    "<tr>")
+  	
+  	temp <- sapply(nam, function(name) {  paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  	
+  	lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  	
+  	temp <- sapply(resid.quantile, function(val) { paste0("<td align=\"right\">", format(signif(val, digits = digits)), "</td>") })
+  	
+  	lines <- paste0(lines, "<tr>", paste(temp, collapse = ''), "</tr>")
+  } else if (rdf > 0L) {
+    lines <- paste0(lines, "<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                    "<caption><font color=\"#000000\"><b>Residual Statistics:</b></font></caption>",
+                    "<tr>")
+    
+    temp <- sapply(1L:length(resid), function(i) {  paste0("<th scope=\"col\" align=\"center\">", paste("Res.", i), "</th>") })
+  	
+  	lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+    
+    temp <- sapply(resid, function(val) { paste0("<td align=\"right\">", format(signif(val, digits = digits)), "</td>") })
+  	
+  	lines <- paste0(lines, "<tr>", paste(temp, collapse = ''), "</tr></table></div>")
+  } else { # resid.df == 0 : perfect fit!
+    lines <- paste0(lines, "<div><font color=\"#000000\"><b>", "ALL ", df[1L],
+                    " residuals are 0: no residual degrees of freedom!", "</b></font></div>" )
+  }
+  
+  # Display coefficient statistics
+  if (length(x$aliased) == 0L) {
+    lines <- paste0(lines, "<div><font color=\"#000000\"><b>No Coefficients</b></font></div>" )
+  } else {
+    if (nsingular <- df[3L] - df[1L]) {
+      lines <- paste0(lines, "<div><font color=\"#000000\"><b>", "Coefficients: (", nsingular,
+                      " not defined because of singularities)", "</b></font></div>")
+    } else {
+      lines <- paste0(lines, "<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                      "<caption><font color=\"#000000\"><b>Coefficients:</b></font></caption>",
+                      "<tr><td></td>")
+    }
+    
+    coefs <- x$coefficients
+    
+    if(!is.null(aliased <- x$aliased) && any(aliased)) {
+      cn <- names(aliased)
+      coefs <- matrix(NA, length(aliased), 4, dimnames = list(cn, colnames(coefs)))
+      coefs[!aliased, ] <- x$coefficients
+    }
+    
+    lines <- htmlCoefTable(coefs, lines, digits = digits)
+  }
+  
+  # Display regression statistics
+  lines <- paste0(lines, "<div><p><font color=\"#000000\">", "<br>Residual standard error: ", format(signif(x$sigma, digits)),
+                  " on ", resid.df, " degrees of freedom.", "<br>" )
+  
+  if(nzchar(mess <- naprint(x$na.action))) {
+    lines <- paste0(lines, "(", mess, ")<br>")
+  }
+  
+  if (!is.null(x$fstatistic)) {
+    
+    lines <- paste0(lines, "<div><p><font color=\"#000000\">", "Multiple R-squared:", formatC(x$r.squared, digits = digits),
+                    ",  Adjusted R-squared: ", formatC(x$adj.r.squared, digits = digits), "<br>",
+                    "F-statistic: ", formatC(x$fstatistic[1L], digits = digits), " on ", x$fstatistic[2L], " and ",
+              	    x$fstatistic[3L], " DF,  p-value: ",
+              	    format.pval(pf(x$fstatistic[1L], x$fstatistic[2L],
+                                   x$fstatistic[3L], lower.tail = FALSE),
+                                   digits = digits))
+  }
+  
+  lines <- paste0(lines, "</font></p></div>")
+  
+#   correl <- x$correlation
+#   
+#   if (!is.null(correl)) {
+#   	p <- NCOL(correl)
+#   	if (p > 1L) {
+# 	    cat("\nCorrelation of Coefficients:\n")
+# 	    if(is.logical(symbolic.cor) && symbolic.cor) {# NULL < 1.7.0 objects
+# 		    print(symnum(correl, abbr.colnames = NULL))
+#       } else {
+#         correl <- format(round(correl, 2), nsmall = 2, digits = digits)
+#         correl[!lower.tri(correl)] <- ""
+#         print(correl[-1, -p, drop=FALSE], quote = FALSE)
+#       }
+# 	  }
+#   }
+#   
+#   cat("\n")#- not in S
+  return(paste0("<div style=\"border: 1px solid #ccc;
+                                  border-radius: 6px;
+                                  padding: 0px 5px;
+                                  margin: 5px -10px;
+                                  background-color: #f5f5f5;\">",
+                lines,
+                "</div>"))
+}
+
+htmlText.summary.lmrobdetMM <- function(x, digits = max(3L, getOption("digits") - 3L), ...) {
+  lines <- ""
+  
+  control <- x$control
+  # Residual statistics
+  resid <- x$residuals
+  df <- x$df
+  rdf <- df[2L]
+  if (!is.null(x$weights) && diff(range(x$weights))) {
+    lines <- paste0(lines, "<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                    "<caption><font color=\"#000000\"><b>Weighted Residual Statistics:</b></font></caption>",
+                    "<tr>")
+  } else {
+    lines <- paste0(lines, "<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                    "<caption><font color=\"#000000\"><b>Residual Statistics:</b></font></caption>",
+                    "<tr>")
+  }
+
+  if (rdf > 5L) {
+    nam <- c("Min", "1Q", "Median", "3Q", "Max")
+  	resid.quantile <- if (length(dim(resid)) == 2L) {
+              	        structure(apply(t(resid), 1L, quantile),
+              		      dimnames = list(nam, dimnames(resid)[[2L]]))
+                      }	else  {
+                          zz <- zapsmall(quantile(resid), digits + 1L)
+                          structure(zz, names = nam)
+                      }
+  	
+  	
+  	temp <- sapply(nam, function(name) {  paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  	
+  	lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  	
+  	temp <- sapply(resid.quantile, function(val) { paste0("<td align=\"right\">", format(signif(val, digits = digits)), "</td>") })
+  	
+  	lines <- paste0(lines, "<tr>", paste(temp, collapse = ''), "</tr>")
+  } else if (rdf > 0L) {
+    lines <- paste0(lines, "<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                    "<caption><font color=\"#000000\"><b>Residual Statistics:</b></font></caption>",
+                    "<tr>")
+    
+    temp <- sapply(1L:length(resid), function(i) {  paste0("<th scope=\"col\" align=\"center\">", paste("Res.", i), "</th>") })
+  	
+  	lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+    
+    temp <- sapply(resid, function(val) { paste0("<td align=\"right\">", format(signif(val, digits = digits)), "</td>") })
+  	
+  	lines <- paste0(lines, "<tr>", paste(temp, collapse = ''), "</tr></table></div>")
+  } else { # resid.df == 0 : perfect fit!
+    lines <- paste0(lines, "<div><font color=\"#000000\"><b>", "ALL ", df[1L],
+                    " residuals are 0: no residual degrees of freedom!", "</b></font></div>" )
+  }
+  
+  # Coefficient statistics
+  if( length(x$aliased) ) {
+    if( !(x$converged) ) {
+      if (x$scale == 0) {
+        lines <- paste0(lines, "<div style=\"overflow:auto;\"><p>Exact fit detected!<br></p>",
+                        "<table cellpadding:\"10\"><caption><font color=\"#000000\"><b>",
+                        "Coefficients:</b></font></caption><tr><td></td>")
+      } else {
+        if (control$method == "S") {
+          lines <- paste0(lines, "<div style=\"overflow:auto;\"><p>Algorithm did not converge!<br></p>",
+                          "<table cellpadding:\"10\"><caption><font color=\"#000000\"><b>",
+                          "Coefficients of the *initial* S-estimator:</b></font></caption><tr><td></td>")
+        } else {
+          lines <- paste0(lines, "<div style=\"overflow:auto;\"><p>Algorithm did not converge!<br></p>",
+                          "<table cellpadding:\"10\"><caption><font color=\"#000000\"><b>",
+                          "Coefficients of the ", control$method, "-estimator:</b></font></caption><tr><td></td>")
+        }
+      }
+      
+      lines <- htmlCoefTable(coefs, lines, digits = digits)
+    } else {
+      if (nsingular <- df[3L] - df[1L]) {
+        lines <- paste0(lines, "<div><font color=\"#000000\"><b>", "Coefficients: (", nsingular,
+                      " not defined because of singularities)", "</b></font></div>")
+      } else {
+        lines <- paste0(lines, "<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                      "<caption><font color=\"#000000\"><b>Coefficients:</b></font></caption>",
+                      "<tr><td></td>")
+      }
+      
+      coefs <- x$coefficients
+      
+      if(!is.null(aliased <- x$aliased) && any(aliased)) {
+        cn <- names(aliased)
+        coefs <- matrix(NA, length(aliased), 4, dimnames=list(cn, colnames(coefs)))
+        coefs[!aliased, ] <- x$coefficients
+      }
+      
+      lines <- htmlCoefTable(coefs, lines, digits = digits)
+
+      lines <- paste0(lines, "<div><p><font color=\"#000000\">", "<br>Robust residual standard error: ", format(signif(x$scale, digits)),"<br>")
+      
+      if (!is.null(x$r.squared) && x$df[1] != attr(x$terms, "intercept")) {
+        lines <- paste0(lines, "Multiple R-squared:  ", formatC(x$r.squared, digits = digits),
+                        ",  Adjusted R-squared: ", formatC(x$adj.r.squared, digits = digits), "<br>", "Convergence in ", x$iter,
+                        " IRWLS iterations")
+      }
+    }
+  } else {
+    lines <- paste0(lines, "<div><font color=\"#000000\"><b>No Coefficients</b></font></div>")
+  }
+  
+  return(paste0("<div style=\"border: 1px solid #ccc;
+                                  border-radius: 6px;
+                                  padding: 0px 5px;
+                                  margin: 5px -10px;
+                                  background-color: #f5f5f5;\">",
+                lines,
+                "</div>"))
+}
+
+htmlText.summary.lmfm <- function(x, digits = max(3L, getOption("digits") - 3L), ...) {
+  lines <- ""
+  n.models <- length(x)
+  mod.names <- names(x)
+  fancy.names <- format(paste(mod.names, ":", sep = ""), justify = "right")
+  
+  resid.q <- t(sapply(x, function(u) quantile(residuals(u), na.rm = TRUE)))
+  colnames(resid.q) <- c("Min", "1Q", "Median", "3Q", "Max")
+
+  lines <- paste0(lines, "<div style=\"overflow-x:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Residual Statistics:</b></font></caption><tr><td><b>Method</b></td>")
+  
+  temp <- sapply(colnames(resid.q), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  temp <- sapply(resid.q[1, ],
+                 function(val) {
+                   paste0("<td align=\"right\"><font color=\"#FF0000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                 })
+  
+  lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#FF0000\">", mod.names[1], "</font></td>", paste(temp, collapse = ''), '</tr>')
+  
+  temp <- sapply(resid.q[2, ],
+                 function(val) {
+                   paste0("<td align=\"right\"><font color=\"#000000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                 })
+  
+  lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#000000\">", mod.names[2], "</font></td>", paste(temp, collapse = ''), "</tr></table></div>")
+
+  coefs <- lapply(x, coef)
+  variables <- lapply(coefs, rownames)
+  
+  var.common <- intersect(variables[[1]], variables[[2]])
+  var.uncommon <- lapply(variables, setdiff, var.common)
+  var.names <- c(var.common, unlist(var.uncommon))
+  model.var.names <- lapply(var.uncommon, function(x, y) { c(y, x) }, var.common)
+  n.coefs <- length(var.names)
+  coefmat <- matrix(NA, n.coefs * n.models, 4)
+  r.names <- rep(fancy.names, n.coefs)
+  rownames(coefmat) <- format(r.names, justify = "right")
+  names <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+  colnames(coefmat) <- names
+
+  for(i in 1:n.models) {
+    mc1 <- coefs[[i]][which(model.var.names[[i]] %in% var.common), ]
+    mc2 <- coefs[[i]][which(model.var.names[[i]] %in% var.uncommon[[i]]), ]
+    coefmat[n.models * 0:(n.coefs - 1) + i, ][which(var.names %in% model.var.names[[i]]), ] <- matrix(rbind(mc1, mc2), ncol = 4)
+  }
+
+  lines <- paste0(lines, "<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Coefficients:</b></font></caption>",
+                  "<tr><td></td><th scope=\"col\" align=\"center\">Method</th>")
+  
+  temp <- sapply(names, function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  vars <- var.names
+  
+  for (i in 1:n.coefs) {
+    ind <- 2 * i - 1
+    
+    lines <- paste0(lines, "<tr><th scope=\"row\" rowspan=\"2\">", vars[i], "</th>",
+                    "<td align=\"left\"><font color=\"#FF0000\">", mod.names[1L], "</font></td>")
+    temp <- sapply(coefmat[ind, 1L:3L],
+                   function(val) {
+                     paste0("<td align=\"right\"><font color=\"#FF0000\">", format(signif(val, digits = digits)), "</font></td>")
+                   })
+    
+    lines <- paste0(lines, paste(temp, collapse = ''), "<td align=\"right\"><font color=\"#FF0000\">",
+                    format(signif(coefmat[ind, 4L], digits = digits, ...)), " ", stars.pval(coefmat[ind, 4L]),
+                    "</font></td></tr><tr><td align=\"left\">", mod.names[2L], "</td>")
+    
+    
+    temp <- sapply(coefmat[ind + 1L, 1L:3L],
+                   function(val) {
+                     paste0("<td align=\"right\"><font color=\"#000000\">", format(signif(val, digits = digits, ...)), "</font></td>")
+                   })
+    
+    lines <- paste0(lines, paste(temp, collapse = ''), "<td align=\"right\"><font color=\"#000000\">",
+                    format(signif(coefmat[ind + 1, 4L], digits = digits, ...)),
+                    " ", stars.pval(coefmat[ind + 1, 4L]), "</font></td></tr>")
+  }
+  
+  lines <- paste0(lines, "<tfoot><td colspan=\"5\">Signif. codes: ",
+                  attr(stars.pval(0), 'legend'), "</td></tfoot></table></div>")
+
+  lines <- paste0(lines, "<div><p><font color=\"#000000\">", "<br><b>Residual Scale Estimates:</b><br>")
+  for(i in 1:n.models) {
+    lines <- paste0(lines, "\t", fancy.names[i], " ", format(x[[i]]$sigma, digits = digits, ...), " on ",
+                    x[[i]]$df[2L], " degrees of freedom<br>")
+  }
+  
+  rsq <- sapply(x, function(u) u$r.squared)
+  has.rsq <- which(!sapply(rsq, function(u) is.null(u) || is.na(u)))
+  if(length(has.rsq)) {
+    lines <- paste0(lines, "<br><b>Multiple R-squared:</b>")
+    for(i in 1:n.models) {
+      lines <- paste0(lines, "<br>  ", fancy.names[i], " ", format(rsq[i], digits = digits))
+    }
+  }
+  
+  lines <- paste0(lines, "</font></p></div>")
+
+  # Add correlations in a later release?
+  
+  # correlations <- lapply(x, function(u) u$correlation)
+  # if(all(!sapply(correlations, is.null))) {    
+  #   if(any(sapply(correlations, NCOL) > 1)) {
+  #     cat("Correlations:\n")
+  #     for(i in 1:n.models) {
+  #       if((p <- NCOL(correlations[[i]])) > 1) {        
+  #         correl <- format(round(correlations[[i]], 2), nsmall = 2,
+  #                          digits = digits, ...)
+  #         correl[!lower.tri(correl)] <- ""
+  #         cat(mod.names[i], ":\n", sep = "")
+  #         print(correl[-1, -p, drop = FALSE], quote = FALSE, ...)
+  #       }
+  #       cat("\n")
+  #     }
+  #   }
+  # }
+  
+  return(paste0("<div style=\"border: 1px solid #ccc;
+                                  border-radius: 6px;
+                                  padding: 0px 5px;
+                                  margin: 5px -10px;
+                                  background-color: #f5f5f5;\">",
+                lines,
+                "</div>"))
+}
+
+htmlText.summary.covClassic <- function(x, digits = max(3L, getOption("digits") - 3L),
+                                        print.distance = FALSE, ...) {
+  lines <- paste0("<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Classical Estimate of Covariance:</b></font></caption>",
+                  "<tr><td></td>")
+  
+  temp <- sapply(colnames(x$cov), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  for (i in 1:nrow(x$cov)) {
+    lines <- paste0(lines, "<tr><th scope=\"row\">", row.names(x$cov)[i], "</th>")
+    temp <- sapply(x$cov[i, ], function(val) { paste0("<td align=\"right\">", format(val, scientific = T, digits = 4), "</td>") })
+    lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  }
+  
+  lines <- paste0(lines, "</table></div>")
+  
+  lines <- paste0(lines, "<div style=\"overflow-x:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Classical Estimate of Location:</b></font></caption><tr>")
+  
+  temp <- sapply(names(x$center), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  temp <- sapply(x$center, function(val) { paste0("<td align=\"right\">", format(val, scientific = T, digits = 4), "</td>") })
+  
+  lines <- paste0(lines, "<tr>", paste(temp, collapse = ''), "</tr></table></div>")
+  
+  lines <- paste0(lines, "<div style=\"overflow-x:auto;\"><table>",
+                  "<caption><font color=\"#000000\"><b>Eigenvalues:</b></font></caption><tr>")
+  
+  temp <- sapply(names(x$evals), function(name) { paste0("<th scope=\"col\ align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  temp <- sapply(x$evals, function(val) { 
+                   paste0("<td align=\"right\">", format(val, scientific = T, digits = 4), "</td>")
+                 })
+  
+  lines <- paste0(lines, "<tr>", paste(temp, collapse = ''), "</tr></table></div>")
+  
+  return(paste0("<div style=\"border: 1px solid #ccc;
+                                  border-radius: 6px;
+                                  padding: 0px 5px;
+                                  margin: 5px -10px;
+                                  background-color: #f5f5f5;\">",
+                lines,
+                "</div>"))
+}
+
+htmlText.summary.covRob <- function(x, digits = max(3L, getOption("digits") - 3L),
+                                      print.distance = FALSE, ...) {
+  lines <- paste0("<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Robust Estimate of Covariance:</b></font></caption>",
+                  "<tr><td></td>")
+  
+  temp <- sapply(colnames(x$cov), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  for (i in 1:nrow(x$cov)) {
+    lines <- paste0(lines, "<tr><th scope=\"row\">", row.names(x$cov)[i], "</th>")
+    temp <- sapply(x$cov[i, ], function(val) { paste0("<td align=\"right\">", format(val, scientific = T, digits = 4), "</td>") })
+    lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  }
+  
+  lines <- paste0(lines, "</table></div>")
+  
+  lines <- paste0(lines, "<div style=\"overflow-x:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Robust Estimate of Location:</b></font></caption><tr>")
+  
+  temp <- sapply(names(x$center), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  temp <- sapply(x$center, function(val) { paste0("<td align=\"right\">", format(val, scientific = T, digits = 4), "</td>") })
+  
+  lines <- paste0(lines, "<tr>", paste(temp, collapse = ''), "</tr></table></div>")
+  
+  lines <- paste0(lines, "<div style=\"overflow-x:auto;\"><table>",
+                  "<caption><font color=\"#000000\"><b>Eigenvalues:</b></font></caption><tr>")
+  
+  temp <- sapply(names(x$evals), function(name) { paste0("<th scope=\"col\ align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  temp <- sapply(x$evals, function(val) { 
+                   paste0("<td align=\"right\">", format(val, scientific = T, digits = 4), "</td>")
+                 })
+  
+  lines <- paste0(lines, "<tr>", paste(temp, collapse = ''), "</tr></table></div>")
+  
+  return(paste0("<div style=\"border: 1px solid #ccc;
+                                  border-radius: 6px;
+                                  padding: 0px 5px;
+                                  margin: 5px -10px;
+                                  background-color: #f5f5f5;\">",
+                lines,
+                "</div>"))
+}
+
+htmlText.summary.covfm <- function(x, digits = max(3L, getOption("digits") - 3L),
+                                     print.distance = FALSE, ...) {
+  mod.names <- names(x)
+  
+  lines <- paste0("<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Comparison of Covariance/Correlation Estimates:</b></font></caption>",
+                  "<tr><td></td><th scope=\"col\" align=\"center\">Method</th>")
+  
+  temp <- sapply(colnames(x[[1]]$cov), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  
+  for (i in 1:nrow(x[[1]]$cov)) {
+    lines <- paste0(lines, "<tr><th scope=\"row\" rowspan=\"2\">", row.names(x[[1]]$cov)[i], "</th>",
+                    "<td align=\"left\"><font color=\"#FF0000\">", mod.names[1], "</font></td>")
+    temp <- sapply(x[[1]]$cov[i, ],
+                   function(val) {
+                     paste0("<td align=\"right\"><font color=\"#FF0000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                   })
+    lines <- paste0(lines, paste(temp, collapse = ''), "</tr><tr><td align=\"left\">", mod.names[2], "</td>")
+    
+    temp <- sapply(x[[2]]$cov[i, ],
+                   function(val) {
+                     paste0("<td align=\"right\"><font color=\"#000000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                   })
+    
+    lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  }
+  
+  lines <- paste0(lines, "</table></div>")
+  
+  lines <- paste0(lines, "<div style=\"overflow-x:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Robust Estimate of Location:</b></font></caption><tr><td><b>Method</b></td>")
+  
+  temp <- sapply(names(x[[1]]$center), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  temp <- sapply(x[[1]]$center,
+                 function(val) {
+                   paste0("<td align=\"right\"><font color=\"#FF0000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                 })
+  
+  lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#FF0000\">", mod.names[1], "</font></td>", paste(temp, collapse = ''), '</tr>')
+  
+  temp <- sapply(x[[2]]$center,
+                 function(val) {
+                   paste0("<td align=\"right\"><font color=\"#000000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                 })
+  
+  lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#000000\">", mod.names[2], "</font></td>", paste(temp, collapse = ''), "</tr></table></div>")
+  
+  lines <- paste0(lines, "<div style=\"overflow-x:auto;\"><table>",
+                  "<caption><font color=\"#000000\"><b>Eigenvalues:</b></font></caption><tr><td><b>Method</b></td>")
+  
+  temp <- sapply(names(x[[1]]$evals), function(name) { paste0("<th scope=\"col\ align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  temp <- sapply(x[[1]]$evals,
+                 function(val) { 
+                   paste0("<td align=\"right\"><font color=\"#FF0000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                 })
+  
+  lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#FF0000\">", mod.names[1], "</font></td>", paste(temp, collapse = ''), "</tr>")
+  
+  temp <- sapply(x[[2]]$evals,
+                 function(val) { 
+                   paste0("<td align=\"right\"><font color=\"#000000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                 })
+  
+  lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#000000\">", mod.names[2],
+                  "</font></td>", paste(temp, collapse = ''), "</tr></table></div>")
+
+  return(paste0("<div style=\"border: 1px solid #ccc;
+                                  border-radius: 6px;
+                                  padding: 0px 5px;
+                                  margin: 5px -10px;
+                                  background-color: #f5f5f5;\">",
+                lines,
+                "</div>"))
+}
+
+# Custom stuff for robust pca
+
+summary.prcompRob <- function(object, ...) {
   chkDots(...)
+  
   vars <- object$sdev^2
-  vars <- vars/sum(vars)
+  vars <- vars / sum(vars)
+  
   importance <- rbind("Standard deviation" = object$sdev,
-                      "Proportion of Variance" = round(vars, 5),
-                      "Cumulative Proportion" = round(cumsum(vars), 5))
+                      "Proportion of Variance" = round(vars, 5L),
+                      "Cumulative Proportion" = round(cumsum(vars), 5L))
+  
   colnames(importance) <- colnames(object$rotation)
+  
   object$importance <- importance
-  class(object) <- "summary.princompRob"
+  
+  class(object) <- "summary.prcompRob"
   object
 }
 
-print.summary.princompRob <- function(x,
+htmlText.summary.prcompRob <- function(x,
                                       digits = max(3L, getOption("digits") - 3L),
                                       ...) {
-  cat("Importance of components:\n")
-  print(x$importance, digits = digits, ...)
-  invisible(x)
+  lines <- paste0("<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Importance of Components:</b></font></caption>",
+                  "<tr><td></td>")
+  temp <- sapply(colnames(x$importance), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  for (i in 1:nrow(x$importance)) {
+    lines <- paste0(lines, "<tr><th scope=\"row\">", row.names(x$importance)[i], "</th>")
+    temp <- sapply(x$importance[i, ], function(val) { paste0("<td align=\"right\">", signif(val, 4), "</td>") })
+    lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  }
+  
+  paste0(lines, "</table></div>")
+  
+  return(paste0("<div style=\"border: 1px solid #ccc;
+                                  border-radius: 6px;
+                                  padding: 0px 5px;
+                                  margin: 5px -10px;
+                                  background-color: #f5f5f5;\">",
+                lines,
+                "</div>"))
 }
 
-# Register new fmclass along with subclasses
-if (is.null(fit.models:::e$fmreg$pcompfm)) {
-  fmclass.register("pcompfm", c("prcomp", "princompRob"))
+htmlText.summary.prcomp <- function(x,
+                                    digits = max(3L, getOption("digits") - 3L),
+                                    ...) {
+  lines <- paste0("<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Importance of Components:</b></font></caption>",
+                  "<tr><td></td>")
+  temp  <- sapply(colnames(x$importance), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
+  
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  
+  for (i in 1L:nrow(x$importance)) {
+    lines <- paste0(lines, "<tr><th scope=\"row\">", row.names(x$importance)[i], "</th>")
+    temp  <- sapply(x$importance[i, ], function(val) { paste0("<td align=\"right\">", signif(val, 4), "</td>") })
+    lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  }
+  
+  lines <- paste0(lines, "</table></div>")
+  
+  return(paste0("<div style=\"border: 1px solid #ccc;
+                                  border-radius: 6px;
+                                  padding: 0px 5px;
+                                  margin: 5px -10px;
+                                  background-color: #f5f5f5;\">",
+                lines,
+                "</div>"))
 }
 
 summary.pcompfm <- function(object, ...) {
   object$Classic <- summary(object$Classic)
-  object$Robust  <- summary(object$Robust) 
+  object$Robust  <- summary(object$Robust)
   oldClass(object) <- "summary.pcompfm"
   object
 }
 
-# Summary method comparing 
-print.summary.pcompfm <- function(x,
-                                  digits = max(3L, getOption("digits") - 3L),
-                                  ...) {
-  n <- ncol(x[[1]]$rotation)
+# Summary method comparing
+htmlText.summary.pcompfm <- function(x,
+                                     digits = max(3L, getOption("digits") - 3L),
+                                     ...) {
+  mod.names <- names(x)
   
-  # components <- lapply(x, function(u) formatC(signif(u$rotation, 2), format = "e", digits = 2))
-  # components[[1]] <- sapply(components[[1]], function(u) {
-  #                             if(u < 0.0) {
-  #                               as.character(u)
-  #                             } else {
-  #                               paste0(" ", u)
-  #                             }
-  #                           })
-  # components[[2]] <- sapply(components[[2]], function(u) {
-  #                             if(u < 0.0) {
-  #                               paste0('(', u, ')')
-  #                             } else {
-  #                               paste0("( ", u, ')')
-  #                             }
-  #                           })
-  # components <- paste(components[[1]], components[[2]])
-  # 
-  # components <- noquote(matrix(components, ncol = n))
-  # 
-  # pc.index <- sapply(1:n, function(i) paste("PC", i))
-  # 
-  # pc.index <- format(pc.index, width = max(nchar(components)), justify = "centre")
-  # 
-  # dimnames(components) <- list(rep("Classic (Robust)", n), pc.index)
-  # 
-  # cat("Comparison of Principal Components:\n")
-  # print(components, ...)
+  lines <- paste0("<div style=\"overflow:auto;\"><table cellpadding:\"10\">",
+                  "<caption><font color=\"#000000\"><b>Importance of Components:</b></font></caption>",
+                  "<tr><td></td><td><b>Method</b></td>")
   
-  pc.index <- sapply(1:n, function(i) paste("PC", i))
+  temp  <- sapply(colnames(x[[1L]]$importance), function(name) { paste0("<th scope=\"col\" align=\"center\">", name, "</th>") })
   
-  sd <- t(sapply(x, function(u) u$sdev))
-  dimnames(sd) <- list(c("Classic", "Robust"), pc.index)
+  lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
   
-  sd.total <- rowSums(sd)
-  sd.prop  <- sd / sd.total
-  sd.cum   <- t(apply(sd, 1, cumsum)) / sd.total
+  for (i in 1L:nrow(x[[1L]]$importance)) {
+    lines <- paste0(lines, "<tr><th scope=\"row\" rowspan=\"2\">", row.names(x[[1L]]$importance)[i], "</th>",
+                    "<td align=\"left\"><font color=\"#FF0000\">", mod.names[1L], "</font></td>")
+    temp  <- sapply(x[[1L]]$importance[i, ],
+                    function(val) {
+                      paste0("<td align=\"right\"><font color=\"#FF0000\">", signif(val, 4L), "</font></td>")
+                    })
+    
+    lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+    lines <- paste0(lines, "<td align=\"left\"><font color=\"#000000\">", mod.names[2L], "</font></td>")
+    
+    temp  <- sapply(x[[2L]]$importance[i, ],
+                    function(val) {
+                      paste0("<td align=\"right\"><font color=\"#000000\">", signif(val, 4L), "</font></td>")
+                    })
+    
+    lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
+  }
   
-  cat("\nComparison of Importance of Components\n")
-  cat("\n\tStandard Deviation:\n")
-  print(sd, digits = digits, ...)
-  cat("\n\tProportion of Variance:\n")
-  print(sd.prop, digits = digits, ...)
-  cat("\n\tCumulative Proportion:\n")
-  print(sd.cum, digits = digits, ...)
+  lines <- paste0(lines, "</table></div>")
+  
+  return(paste0("<div style=\"border: 1px solid #ccc;
+                                  border-radius: 6px;
+                                  padding: 0px 5px;
+                                  margin: 5px -10px;
+                                  background-color: #f5f5f5;\">",
+                lines,
+                "</div>"))
 }
 
 # Back-end implementation of Shiny server
@@ -350,7 +917,7 @@ shinyServer(function(input, output) {
         ),
         
         fluidRow(
-          column(2, offset = 5,
+          column(2L, offset = 5L,
             disabled(
               
               actionLink("data.info.link", label = "More Info")
@@ -377,14 +944,14 @@ shinyServer(function(input, output) {
                       quote  = input$quote)
       
       if (input$data.ts == TRUE) {
-        values$dat[, 1] <- as.Date(as.character(values$dat[, 1]))
+        values$dat[, 1L] <- as.Date(as.character(values$dat[, 1L]))
         
-        values$dat <- xts(values$dat[, -1], values$dat[, 1])
+        values$dat <- xts(values$dat[, -1L], values$dat[, 1L])
       }
       
       # If there are no headers, give data headers
       if (input$header == FALSE) {
-        colnames(dat)[-1] <- paste0('X', 1:(ncol(dat) - 1))
+        colnames(dat)[-1L] <- paste0('X', 1L:(ncol(dat) - 1L))
       }
     } else {
       # If no dataset exists, return nothing
@@ -422,7 +989,7 @@ shinyServer(function(input, output) {
       
       data <- values$dat
       
-      data[, num.index] <- round(data[, num.index], 3)
+      data[, num.index] <- round(data[, num.index], 3L)
     }
     
     return (as.data.frame(data))
@@ -432,7 +999,7 @@ shinyServer(function(input, output) {
 ####################
 ## Location/Scale ##
 ####################
-
+  
     # Render variable input list
   output$locScale.select.variable <- renderUI({
     # If there is no data, do nothing
@@ -443,6 +1010,18 @@ shinyServer(function(input, output) {
     # Render select input for variables
     selectInput("locScale.variable", "Variable",
                 choices = values$dat.numeric.variables)
+  })
+  
+  output$locScale.eff.options <- renderUI({
+    if (any(input$locScale.psi == c("modopt", "optimal"))) {
+      radioButtons("locScale.eff", "Asymptotic Efficiency",
+                            choices  = c("0.85" = 0.85, "0.9" = 0.9, "0.95" = 0.95, "0.99" = 0.99),
+                            selected = 0.99)
+    } else {
+      radioButtons("locScale.eff", "Asymptotic Efficiency",
+                            choices  = c("0.85" = 0.85, "0.9" = 0.9, "0.95" = 0.95),
+                            selected = 0.9)
+    }
   })
   
   # On-click, find the estimators and create string object of results
@@ -465,7 +1044,7 @@ shinyServer(function(input, output) {
                                   padding: 0px 5px;
                                   margin: 5px -10px;
                                   background-color: #f5f5f5;\">",
-                      line1, line2,
+                    line1, line2,
                     "</div>"))
       
     } else if (input$locScale.method == 'classic') {
@@ -489,9 +1068,10 @@ shinyServer(function(input, output) {
                         eff   = as.numeric(input$locScale.eff))
       
       line1 <- paste0("<font color=\"#000000\">Comparison of Location <strong>(SE)</strong>:<br>Classical&emsp;",
-                      signif(est1$mu, 3), " (<strong>", signif(est1$std.mu, 3), ")</strong><br>Robust&nbsp;&nbsp;&nbsp;&emsp;",
-                      signif(est2$mu, 3), " (<strong>", signif(est2$std.mu, 3), ")</strong><br><br>")
-      line2 <- paste0("Comparison of Scale:<br> Classical&emsp;", signif(est1$disper, 3), "<br> Robust&nbsp;&nbsp;&nbsp;&emsp;", signif(est2$disper, 3), "</font>")
+                      signif(est1$mu, 3L), " (<strong>", signif(est1$std.mu, 3L), ")</strong><br>Robust&nbsp;&nbsp;&nbsp;&emsp;",
+                      signif(est2$mu, 3L), " (<strong>", signif(est2$std.mu, 3L), ")</strong><br><br>")
+      line2 <- paste0("Comparison of Scale:<br> Classical&emsp;", signif(est1$disper, 3L), "<br> Robust&nbsp;&nbsp;&nbsp;&emsp;",
+                      signif(est2$disper, 3L), "</font>")
 
       return(paste0("<div style=\"border: 1px solid #ccc;
                                   border-radius: 6px;
@@ -516,10 +1096,10 @@ shinyServer(function(input, output) {
     contents_estimators()
   })
   
-#########################
-## Linear Regression I ##
-#########################
-  
+#######################
+## Linear Regression ##
+#######################
+
   ## Running Regression ##
   
   values$linRegress.methods <- c("LS", "M", "MM", "DCML")
@@ -529,7 +1109,7 @@ shinyServer(function(input, output) {
     if (input$linRegress.second.method) {
       tabPanel("",
         fluidRow(
-          column(6,
+          column(6L,
             selectInput("linRegress.fit.option", "Method",
                         choices   = c("LS", "M", "MM", "DCML"),
                         selected  = "MM"),
@@ -547,7 +1127,7 @@ shinyServer(function(input, output) {
             uiOutput("linRegress.robust.control")
           ),
           
-          column(6,
+          column(6L,
             selectInput("linRegress.fit.option2", "Method",
                         choices   = c("LS", "M", "MM", "DCML"),
                         selected  = "MM"),
@@ -618,19 +1198,19 @@ shinyServer(function(input, output) {
       return("")
     }
     
-    formula.str <- paste(input$linRegress.dependent, " ~ ")
+    formula.str <- paste0(input$linRegress.dependent, " ~ ")
     
     ind.vars <- input$linRegress.independent
     
     n <- length(ind.vars)
     
-    if (n > 1) {
-      for (i in 1:(n - 1)) {
-        formula.str <- paste(formula.str, ind.vars[i], " + ")
+    if (n > 1L) {
+      for (i in 1L:(n - 1L)) {
+        formula.str <- paste0(formula.str, ind.vars[i], " + ")
       }
     }
     
-    formula.str <- paste(formula.str, ind.vars[n])
+    formula.str <- paste0(formula.str, ind.vars[n])
     
     textInput("linRegress.formula.text", "Formula",
               formula.str)
@@ -658,7 +1238,7 @@ shinyServer(function(input, output) {
     # Render select input for variables
     selectInput("linRegress.independent2", "Independent",
                 choices  = ind.vars,
-                selected = ind.vars[1],
+                selected = ind.vars[1L],
                 multiple = TRUE)
   })
   
@@ -711,7 +1291,7 @@ shinyServer(function(input, output) {
             h4("Robust Controls"),
             
             selectInput("linRegress.family", "Family",
-                        choices = c("Bisquare" = "bisquare",
+                        choices = c("Bi-square" = "bisquare",
                                     "Opt."      = "optimal",
                                     "Mod. Opt." = "modopt"),
                         selected = "modopt"),
@@ -726,7 +1306,7 @@ shinyServer(function(input, output) {
           h4("Robust Controls"),
           
           selectInput("linRegress.family", "Family",
-                      choices = c("Bisquare" = "bisquare",
+                      choices = c("Bi-square" = "bisquare",
                                   "Opt."      = "optimal",
                                   "Mod. Opt." = "modopt"),
                       selected = "modopt"),
@@ -745,7 +1325,7 @@ shinyServer(function(input, output) {
         h4("Robust Controls 2"),
         
         selectInput("linRegress.family2", "Family",
-                    choices = c("Bisquare" = "bisquare",
+                    choices = c("Bi-square" = "bisquare",
                                 "Opt."      = "optimal",
                                 "Mod. Opt." = "modopt"),
                     selected = "modopt"),
@@ -757,123 +1337,108 @@ shinyServer(function(input, output) {
   
   observeEvent(input$linRegress.display, {
     if (is.null(values$dat)) {
-      output$linRegress.results.ui <- renderUI({
-        htmlOutput("linRegress.results")
-      })
-      
       output$linRegress.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: No data loaded!", "</b><font>"))
       })
     } else if (any(is.null(input$linRegress.independent) || is.null(input$linRegress.dependent))) {
-      output$linRegress.results.ui <- renderUI({
-        htmlOutput("linRegress.results")
-      })
-      
       output$linRegress.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: Missing independent variables! Please add at least one.", "</b><font>"))
       })
     } else if (!is.numeric(values$dat[, input$linRegress.dependent])) {
-      output$linRegress.results.ui <- renderUI({
-        htmlOutput("linRegress.results")
-      })
-      
       output$linRegress.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", invalid_response(), "</b><font>"))
       })
+    }
+      
+    if (input$linRegress.second.method) {
+      
+      methods <- c(input$linRegress.fit.option, input$linRegress.fit.option2)
+      
+      index <- match(methods, values$linRegress.methods)
+    
+      n <- length(index)
+    
+      model <- sapply(index,
+                      function(i, m) {
+                        m[i]
+                      },
+                      values$linRegress.functions)
     } else {
-      output$linRegress.results.ui <- renderUI({
-        verbatimTextOutput("linRegress.results")
-      })
-      
-      if (input$linRegress.second.method) {
-        
-        methods <- c(input$linRegress.fit.option, input$linRegress.fit.option2)
-        
-        index <- match(methods, values$linRegress.methods)
-      
-        n <- length(index)
-      
-        model <- sapply(index,
-                        function(i, m) {
-                          m[i]
-                        },
-                        values$linRegress.functions)
+      model <- values$linRegress.functions[match(input$linRegress.fit.option, values$linRegress.methods)]
+    }
+    
+    fit <- vector(mode = "list", length = length(index))
+    if (model[1L] == "lm") {
+      fit[[1L]] <- do.call(model[1L], list(as.formula(input$linRegress.formula.text), data = values$dat))
+    } else {
+      control <- lmrobdet.control(efficiency = input$linRegress.eff,
+                                  family = input$linRegress.family,
+                                  compute.rd = T)
+    
+      fit[[1L]] <- do.call(model[1L], list(as.formula(input$linRegress.formula.text),
+                                         data    = values$dat,
+                                         control = control))
+    }
+    
+    fit[[1L]]$call <- call(model[1L], as.formula(input$linRegress.formula.text))
+    
+    if (input$linRegress.second.method) {
+      if (model[2L] == "lm") {
+        fit[[2L]] <- do.call(model[2L], list(as.formula(input$linRegress.formula.text2), data = values$dat))
       } else {
-        model <- values$linRegress.functions[match(input$linRegress.fit.option, values$linRegress.methods)]
-      }
-      
-      fit <- vector(mode = "list", length = length(index))
-      if (model[1] == "lm") {
-        fit[[1]] <- do.call(model[1], list(as.formula(input$linRegress.formula.text), data = values$dat))
-      } else {
-        control <- lmrobdet.control(efficiency = input$linRegress.eff,
-                                    family = input$linRegress.family,
+        control <- lmrobdet.control(efficiency = input$linRegress.eff2,
+                                    family = input$linRegress.family2,
                                     compute.rd = T)
       
-        fit[[1]] <- do.call(model[1], list(as.formula(input$linRegress.formula.text),
+        fit[[2L]] <- do.call(model[2L], list(as.formula(input$linRegress.formula.text2),
                                            data    = values$dat,
                                            control = control))
       }
+        
+      fit[[2L]]$call <- call(model[2L], as.formula(input$linRegress.formula.text2))
       
-      fit[[1]]$call <- call(model[1], as.formula(input$linRegress.formula.text))
       
-      if (input$linRegress.second.method) {
-        if (model[2] == "lm") {
-          fit[[2]] <- do.call(model[2], list(as.formula(input$linRegress.formula.text2), data = values$dat))
-        } else {
-          control <- lmrobdet.control(efficiency = input$linRegress.eff2,
-                                      family = input$linRegress.family2,
-                                      compute.rd = T)
+      if (model[2L] == "lm" && model[1L] != "lm") {
+        model <- model[2L:1L]
         
-          fit[[2]] <- do.call(model[2], list(as.formula(input$linRegress.formula.text2),
-                                             data    = values$dat,
-                                             control = control))
-        }
-          
-        fit[[2]]$call <- call(model[2], as.formula(input$linRegress.formula.text2))
+        methods <- methods[2L:1L]
         
-        
-        if (model[2] == "lm" && model[1] != "lm") {
-          model <- model[2:1]
-          
-          methods <- methods[2:1]
-          
-          fm <- fit.models(fit[[2]], fit[[1]])
-        } else {
-          fm <- fit.models(fit[[1]], fit[[2]])
-        }
+        fm <- fit.models(fit[[2L]], fit[[1L]])
       } else {
-        fm <- fit.models(fit[[1]])
+        fm <- fit.models(fit[[1L]], fit[[2L]])
       }
-  
-      values$linRegress.active <- T
-      
-      if (input$linRegress.second.method) {
-        if (input$linRegress.fit.option == input$linRegress.fit.option2) {
-          values$linRegress.models <- c(paste(input$linRegress.fit.option, "1"), paste(input$linRegress.fit.option[1], "2"))
-        } else {
-          values$linRegress.models <- methods
-        }
-      } else {
-        values$linRegress.models <- input$linRegress.fit.option
-      }
-      
-      names(fm) <- values$linRegress.models
-        
-      output$linRegress.results <- renderPrint({
-        values$linRegress.fm <- fm
-        
-        values$linRegress.fit <- fm[[1]]
-        
-        print(summary(values$linRegress.fm))
-        
-        values$linRegress.num.fits <- length(fm)
-          
-        if (values$linRegress.num.fits == 2) {
-          values$linRegress.fit2 <- fm[[2]]
-        }
-      })
+    } else {
+      fm <- fit[[1L]]
     }
+
+    values$linRegress.active <- T
+    
+    if (input$linRegress.second.method) {
+      if (input$linRegress.fit.option == input$linRegress.fit.option2) {
+        values$linRegress.models <- c(paste(input$linRegress.fit.option, "1"), paste(input$linRegress.fit.option[1], "2"))
+      } else {
+        values$linRegress.models <- methods
+      }
+      names(fm) <- values$linRegress.models
+      
+      values$linRegress.fit <- fm[[1L]]
+      
+      values$linRegress.fit2 <- fm[[2L]]
+      
+      values$linRegress.num.fits <- 2L
+    } else {
+      values$linRegress.fit <- fm
+      
+      values$linRegress.models <- input$linRegress.fit.option
+      values$linRegress.num.fits <- 1L
+    }
+    
+    values$linRegress.fm <- fm
+    
+      
+    output$linRegress.results <- renderText({
+      return(htmlText(summary(values$linRegress.fm)))
+    })
   })
   
   invalid_response <- eventReactive(input$linRegress.display, {
@@ -882,41 +1447,24 @@ shinyServer(function(input, output) {
                  "type. Please select a response variable with numeric values"))
   })
   
-  
-  
-  ## Plotting ##
-  
-  # output$extreme.points <- renderUI({
-  #   if (is.null(dim(values$dat))) {
-  #     return("")
-  #   }
-  #   
-  #   num.obs <- nrow(values$dat)
-  #   
-  #   numericInput("num.extreme.points",
-  #                "Number of Extreme Points to Identify",
-  #                value = 0,
-  #                max = num.obs)
-  # })
-  
   observeEvent(input$linRegress.display.plots, {
     values$linRegress.plots.active <- T
     
     plots <- vector(mode = "list")
     
-    i <- 0
+    i <- 0L
     
     fit <- values$linRegress.fit
     
+    fit.vals <- fitted(fit)
+    
     # Residual v. fitted values
     if (input$linRegress.residual.fit == T) {
-      i <- i + 1
-      
-      fit.vals <- fitted(fit)
+      i <- i + 1L
       
       dat <- data.frame(X = fit.vals, Y = fit$residuals)
       
-      sigma <- 1
+      sigma <- 1L
       
       if (any(class(fit) == "lm")) {
         sigma <- sd(fit$residuals)
@@ -930,9 +1478,9 @@ shinyServer(function(input, output) {
                       ggtitle(title.name) +
                       xlab("Fitted Values") +
                       ylab("Residuals") +
-                      geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                      geom_point(color = "dodgerblue2", shape = 18L, size = 2L) +
                       geom_hline(yintercept = c(-2.5 * sigma, 0, 2.5 * sigma),
-                                 linetype = 2)
+                                 linetype = 2L)
       
       if (input$include.rugplot == T) {
         plots[[i]] <- plots[[i]] + geom_rug()
@@ -941,11 +1489,9 @@ shinyServer(function(input, output) {
     
     # Response v. fitted values
     if (input$linRegress.response.fit == T) {
-      i <- i + 1
-
-      fit.vals <- fitted(fit)
+      i <- i + 1L
       
-      response <- fit$model[, 1]
+      response <- fit$model[, 1L]
 
       dat <- data.frame(X = fit.vals, Y = response)
       
@@ -955,7 +1501,7 @@ shinyServer(function(input, output) {
                       ggtitle(title.name) +
                       xlab("Fitted Values") +
                       ylab("Response") +
-                      geom_point(color = "dodgerblue2", shape = 18, size = 2)
+                      geom_point(color = "dodgerblue2", shape = 18L, size = 2L)
 
       if (input$include.rugplot == T) {
         plots[[i]] <- plots[[i]] + geom_rug()
@@ -964,7 +1510,7 @@ shinyServer(function(input, output) {
 
     # QQ Plot
     if (input$linRegress.qq == T) {
-      i <- i + 1
+      i <- i + 1L
 
       dat <- data.frame(Res = sort(fit$residuals))
       
@@ -972,10 +1518,10 @@ shinyServer(function(input, output) {
 
       # Calculate slope and intercept for qqline
       
-      y     <- quantile(fit$residuals, c(0.25, 0.75), type = 5)
+      y     <- quantile(fit$residuals, c(0.25, 0.75), type = 5L)
       x     <- qnorm(c(0.25, 0.75))
       slope <- diff(y) / diff(x)
-      int   <- y[1] - slope * x[1]
+      int   <- y[1L] - slope * x[1L]
       
       if (input$linRegress.qq.env == T) {
         confidence.level <- 0.95
@@ -1025,7 +1571,7 @@ shinyServer(function(input, output) {
         
         mat <- model.matrix(fit)
         
-        if(attr(tr, "intercept") == 1) {
+        if(attr(tr, "intercept") == 1L) {
           mat <- mat[, -1, drop = F]
         }
         
@@ -1137,12 +1683,12 @@ shinyServer(function(input, output) {
       
       fit2 <- values$linRegress.fit2
       
+      fit.vals <- fitted(fit2)
+      
       # Residual v. fitted values
       if (input$linRegress.residual.fit == T) {
         j <- j + 1
-        
-        fit.vals <- fitted(fit2)
-        
+      
         dat <- data.frame(X = fit.vals, Y = fit2$residuals)
         
         title.name <- ifelse(any(class(fit2) == "lm"), values$linRegress.models[2], paste("Robust", values$linRegress.models[2]))
@@ -1184,8 +1730,6 @@ shinyServer(function(input, output) {
       # Response v. fitted values
       if (input$linRegress.response.fit == T) {
         j <- j + 1
-  
-        fit.vals <- fitted(fit2)
   
         dat <- data.frame(X = fit.vals, Y = fit2$model[, 1])
         
@@ -1245,16 +1789,16 @@ shinyServer(function(input, output) {
           dat$lower <- fit.vals - zz * SE
           dat$upper <- fit.vals + zz * SE
           
-          plt <- ggplot(data = dat, aes(x = z, y = Res)) +
-                   ggtitle(title.name) +
-                   xlab("Normal Quantiles") +
-                   ylab("Ordered Residuals") +
-                   geom_point(color = "dodgerblue2", shape = 18, size = 2) +
-                   geom_abline(slope = slope, intercept = int) +
-                   geom_ribbon(aes(ymin = lower, ymax = upper),
-                               alpha = 0.2, color = "dodgerblue2", fill = "dodgerblue2")
+         plt <- ggplot(data = dat, aes(x = z, y = Res)) +
+                  ggtitle(title.name) +
+                  xlab("Normal Quantiles") +
+                  ylab("Ordered Residuals") +
+                  geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                  geom_abline(slope = slope, intercept = int) +
+                  geom_ribbon(aes(ymin = lower, ymax = upper),
+                              alpha = 0.2, color = "dodgerblue2", fill = "dodgerblue2")
         } else {
-          plt <- ggplot(data = dat, aes(sample = Res)) +
+          plt <- ggplot(data = dat, aes(x = z, y = Res)) +
                    ggtitle(title.name) +
                    xlab("Normal Quantiles") +
                    ylab("Ordered Residuals") +
@@ -1782,6 +2326,10 @@ shinyServer(function(input, output) {
     }
   })
   
+################
+## Covariance ##
+################
+  
   output$covariance.select.variables <- renderUI({
     if (is.null(dim(values$dat))) {
       return("")
@@ -1795,34 +2343,18 @@ shinyServer(function(input, output) {
   
   observeEvent(input$covariance.display, {
     if (is.null(values$dat)) {
-      output$covariance.results.ui <- renderUI({
-        htmlOutput("covariance.results")
-      })
-      
       output$covariance.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: No data loaded!", "</b><font>"))
       })
     } else if (is.null(input$covariance.variables)) {
-      output$covariance.results.ui <- renderUI({
-        htmlOutput("covariance.results")
-      })
-      
       output$covariance.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: Missing variables! Please input at least 2 variables.", "</b><font>"))
       })
     } else if (length(input$covariance.variables) == 1) {
-      output$covariance.results.ui <- renderUI({
-        htmlOutput("covariance.results")
-      })
-      
       output$covariance.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: Insufficient number of variables! Please add more.", "</b><font>"))
       })
     } else {
-      output$covariance.results.ui <- renderUI({
-        verbatimTextOutput("covariance.results")
-      })
-      
       values$covariance.active <- TRUE
     
       corr <- FALSE
@@ -1878,8 +2410,8 @@ shinyServer(function(input, output) {
       }
       
       # Print summary method for covariance results
-      output$covariance.results <- renderPrint({
-        print(summary(values$covariance.fit))
+      output$covariance.results <- renderText({
+        return(htmlText(summary(values$covariance.fit)))
       })
     }
   })
@@ -2354,25 +2886,25 @@ shinyServer(function(input, output) {
         }
         
         ellipse.pts <- lapply(1:nrow(grid),
-                       function(i) {
-                         row <- grid[i, "x"]
-                         col <- grid[i, "y"]
-                         if (row > col) {
-                           cov <- X[row, col]
-                           
-                           pts <- c(seq(0.0, 2*pi, length.out = 181), NA)
-                           xs <- cos(pts + acos(cov) / 2)
-                           ys <- cos(pts - acos(cov) / 2)
-                           
-                           data.frame(xvar = names(data)[col], yvar = names(data)[row],
-                                      i = row, j = col,
-                                      x = xs,  y = ys)
-                         } else {
-                           data.frame(xvar = names(data)[col], yvar = names(data)[row],
-                                      i = row, j = col,
-                                      x = as.numeric(NA), y = as.numeric(NA))
-                         }
-                       })
+                              function(i) {
+                                row <- grid[i, "x"]
+                                col <- grid[i, "y"]
+                                if (row > col) {
+                                  cov <- X[row, col]
+                                  
+                                  pts <- c(seq(0.0, 2*pi, length.out = 181), NA)
+                                  xs <- cos(pts + acos(cov) / 2)
+                                  ys <- cos(pts - acos(cov) / 2)
+                                  
+                                  data.frame(xvar = names(data)[col], yvar = names(data)[row],
+                                             i = row, j = col,
+                                             x = xs,  y = ys)
+                                } else {
+                                  data.frame(xvar = names(data)[col], yvar = names(data)[row],
+                                             i = row, j = col,
+                                             x = as.numeric(NA), y = as.numeric(NA))
+                                }
+                              })
         
         ellipse.pts <- do.call("rbind", ellipse.pts)
         
@@ -2450,22 +2982,20 @@ shinyServer(function(input, output) {
       if (input$covariance.chi.qqplot == T) {
         i <- i + 1
         
-        md <- lapply(fm,
-                     function(x, mat) {
-                       sqrt(mahalanobis(mat, x$center, x$cov))
-                     },
-                     data)
+        md <- sqrt(mahalanobis(data, fit$center, fit$cov))
         
         chisq.points <- sqrt(qchisq(ppoints(nrow(data)), ncol(data)))
         
-        dat <- data.frame(x = chisq.points, y = sort(md[[1]]))
+        dat <- data.frame(x = chisq.points, y = sort(md))
         
-        p1 <- ggplot(data = dat, aes(x = x, y = y)) +
-                ggtitle("Classic") +
-                xlab("Chi-Squared Quantiles") +
-                ylab("Sorted Distances") +
-                geom_point(color = "dodgerblue2", shape = 18, size = 2) +
-                geom_abline(slope = 1, intercept = 0, linetype = 2)
+        plt <- ggplot(data = dat, aes(x = x, y = y)) +
+                 ggtitle("Classic") +
+                 xlab("Chi-Squared Quantiles") +
+                 ylab("Sorted Distances") +
+                 geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                 geom_abline(slope = 1, intercept = 0, linetype = 2)
+        
+        plots[[i]] <- ggplotGrob(plt)
       }
     }
     
@@ -2620,6 +3150,10 @@ shinyServer(function(input, output) {
     }
   })
   
+#########################
+## PCA ##
+#########################
+  
   output$pca.select.variables <- renderUI({
     if (is.null(dim(values$dat))) {
       return("")
@@ -2633,33 +3167,18 @@ shinyServer(function(input, output) {
   
   observeEvent(input$pca.display, {
     if (is.null(values$dat)) {
-      output$pca.results.ui <- renderUI({
-        htmlOutput("pca.results")
-      })
-      
       output$pca.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: No data loaded!", "</b><font>"))
       })
     } else if (is.null(input$pca.variables)) {
-      output$pca.results.ui <- renderUI({
-        htmlOutput("pca.results")
-      })
-      
       output$pca.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: Missing variables! Please input at least 2 variables.", "</b><font>"))
       })
-    } else if (length(input$pca.variables) == 1) {
-      output$pca.results.ui <- renderUI({
-        htmlOutput("pca.results")
-      })
-      
+    } else if (length(input$pca.variables) <= 2) {
       output$pca.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: Insufficient number of variables! Please add more.", "</b><font>"))
       })
     } else {
-      output$pca.results.ui <- renderUI({
-        verbatimTextOutput("pca.results")
-      })
       
       values$pca.active <- TRUE
       
@@ -2672,22 +3191,117 @@ shinyServer(function(input, output) {
       } else if (input$pca.method == "rob") {
         values$pca.num <- 1
         
-        values$pca.fit <- princompRob(data,
-                                      est = input$pca.estimator)
+        values$pca.fit <- prcompRob(data)
       } else {
         values$pca.num <- 2
         
         values$pca.fit <- fit.models(Classic = prcomp(data),
-                                     Robust  = princompRob(data,
-                                                           est = input$pca.estimator))
+                                     Robust  = prcompRob(data,
+                                     est = input$pca.estimator))
       }
       
       # Print summary method for pca results
-      output$pca.results <- renderPrint({
-        print(summary(values$pca.fit))
+      output$pca.results <- renderText({
+        
+        return(htmlText(summary(values$pca.fit)))
       })
     }
   })
+  
+  ## PCA - Plotting
+  # observeEvent(input$pca.display.plots, {
+  #   values$pca.plots.active <- TRUE
+  #   
+  #   i <- 0
+  #   
+  #   n <- min(5, ncol(data))
+  #   
+  #   plots <- vector(mode = "list")
+  #   
+  #   if (values$pca.num == 2) {
+  #     fm <- values$pca.fit
+  #     if (input$pca.scree == T) {
+  #        i <- i + 1
+  #       
+  #       vars <- lapply(fm, function(x) { x$sdev^2 })
+  #       vars <- sapply(vars, function(v) { v / sum(v) })
+  #       
+  #       indx <- sapply(1:n, function(i) { paste("Comp.", i) })
+  #       
+  #       indx <- rep(indx, 2)
+  #       
+  #       Method <- c(rep("Classic", n), rep("Robust", n))
+  #       
+  #       dat <- data.frame(indx, eigen.vals, Method)
+  #       
+  #       plt <- ggplot(data = dat) +
+  #                ggtitle("Scree Plot") +
+  #                ylab("Variance") +
+  #                geom_line(aes(x = indx, y = eigen.vals, color = Method, linetype = Method), size = 1) +
+  #                geom_point(aes(x = indx, y = eigen.vals, color = Method), shape = 16, size = 2) +
+  #                scale_color_manual(values = c("red", "black")) +
+  #                scale_linetype_manual(values = c("dashed", "solid"))
+  #      
+  #       plots[[i]] <- ggplotGrob(plt)
+  #     }
+  #   } else {
+  #     fit <- values$pca.fit
+  #     if (input$pca.scatter == T) {
+  #       
+  #     }
+  #     
+  #     if (input$pca.loadings == T) {
+  #       dat <- fit$x
+  #       
+  #       grid <- expand.grid(x = 1:n, y = 1:n)
+  #       
+  #       text.size <- ifelse(ncol(data) > 2, 4, 10)
+  #       
+  #       # data.frame with xy coordinates
+  #       all <- lapply(1:n,
+  #                     function(i) {
+  #                       xcol <- grid[i, "x"]
+  #                       ycol <- grid[i, "y"]
+  #                       data.frame(xvar = names(data)[ycol], yvar = names(data)[xcol],
+  #                                  i = grid[i, "x"], j = grid[i, "y"],
+  #                                  x = data[, xcol], y = data[, ycol])
+  #                     })
+  #       
+  #       all <- do.call("rbind", all)
+  #       
+  #       all.upper <- all
+  #       
+  #       all.upper[[6]][all.upper[[3]] <  all.upper[[4]]] <- "NA"
+  #       all.upper[[5]][all.upper[[3]] <= all.upper[[4]]] <- "NA"
+  #       
+  #       all.upper$x <- suppressWarnings(as.numeric(as.character(all.upper$x)))
+  #       all.upper$y <- suppressWarnings(as.numeric(as.character(all.upper$y)))
+  #       
+  #       all.upper$xvar <- factor(all.upper$xvar, levels = names(data))
+  #       all.upper$yvar <- factor(all.upper$yvar, levels = names(data))
+  #     }
+  #     
+  #     if (input$pca.scree == T) {
+  #       i <- i + 1
+  #       
+  #       vars <- fit$sdev^2
+  #       vars <- vars / sum(vars)
+  #       
+  #       indx <- sapply(1:n, function(i) { paste("Comp.", i) })
+  #       
+  #       dat <- data.frame(indx, vars)
+  #       
+  #       plt <- ggplot(data = dat) +
+  #                ggtitle("Scree Plot") +
+  #                ylab("Variance") +
+  #                geom_line(aes(x = indx, y = vars), color = "dodgerblue2", size = 1) +
+  #                geom_point(aes(x = indx, y = vars), color = "dodgerblue2", shape = 5, size = 2)
+  #               # scale_x_continuous(name = "Factor Number", breaks = min(dat$indx):max(dat$indx))
+  #      
+  #       plots[[i]] <- ggplotGrob(plt)
+  #     }
+  #   }
+  # })
   
   # Reset all windows once new data set is loaded
   observeEvent(input$display.table, {
@@ -2751,6 +3365,14 @@ shinyServer(function(input, output) {
       output$covariance.plot.ui <- renderUI({ invisible() })
       
       values$covariance.plots.active <- FALSE
+    }
+  })
+  
+  observeEvent(input$pca.display, {
+    if (values$pca.plots.active) {
+      output$pca.plot.ui <- renderUI({ invisible() })
+      
+      values$pca.plots.active <- FALSE
     }
   })
   
