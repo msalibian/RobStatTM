@@ -31,6 +31,17 @@ A list with the following components:
 This function computes robust principal components based on the minimization of
 the "residual" M-scale.
 }
+\examples{
+data(bus)
+X0 <- as.matrix(bus)
+X1 <- X0[,-9]
+ss <- apply(X1, 2, mad)
+mu <- apply(X1, 2, median)
+X <- scale(X1, center=mu, scale=ss)
+q <- 3  #compute three components
+rr <- pcaRobS(X, q, 0.99)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

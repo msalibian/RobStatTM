@@ -33,6 +33,16 @@ This function computes M-estimators for location and scale.
 \details{
 This function computes M-estimators for location and scale.
 }
+\examples{
+set.seed(123)
+r <- rnorm(150, sd=1.5)
+locScaleM(r)
+# 10\% of outliers, sd of good points is 1.5
+set.seed(123)
+r2 <- c(rnorm(135, sd=1.5), rnorm(15, mean=-10, sd=.5))
+locScaleM(r2)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

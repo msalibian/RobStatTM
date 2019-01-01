@@ -52,6 +52,20 @@ function steps through all smaller submodels removing, at each step, the variabl
 that most reduces the Robust Final Prediction Error. The scale estimate from \code{object} 
 is used to compute the Robust Final Prediction Error throughout the procedure.
 }
+\examples{
+cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+set.seed(300)
+X <- matrix(rnorm(50*6), 50, 6)
+beta <- c(1,1,1,0,0,0)
+y <- as.vector(X \%*\% beta) + 1 + rnorm(50)
+y[1:6] <- seq(30, 55, 5)
+for (i in 1:6) X[i,] <- c(X[i,1:3],i/2,i/2,i/2)
+Z <- cbind(y,X)
+Z <- as.data.frame(Z)
+obj <- lmrobdetMM(y ~ ., data=Z, control=cont)
+out <- step.lmrobdetMM(obj)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

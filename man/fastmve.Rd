@@ -34,6 +34,13 @@ Ellipsoid (MVE) for multivariate location and scatter, using a
 fast algorithm related to the fast algorithm for S-regression
 estimators (see \code{\link[robustbase]{lmrob}}).
 }
+\examples{
+data(bus)
+X0 <- as.matrix(bus)
+X1 <- X0[,-9]
+tmp <- fastmve(X1)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

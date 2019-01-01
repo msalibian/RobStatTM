@@ -45,13 +45,13 @@ M-estimators.
 }
 \details{
 This function performs iterative improvements for S- or
-M-estimators, both iterations are formally the same, the
+M-estimators. Both iterations are formally the same, the
 only difference is that for M-iterations the residual
 scale estimate remains fixed, while for S-iterations
 it is updated at each step. In this case, we follow
 the Fast-S algorithm of Salibian-Barrera and Yohai
-an use one step update for the M-scale, as opposed
-to a full computation.
+an use one step updates for the M-scale, as opposed
+to a full computation. This as internal function.
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}.

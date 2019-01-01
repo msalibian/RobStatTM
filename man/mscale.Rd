@@ -52,10 +52,14 @@ Tukey's bisquare family.
 }
 \examples{
 set.seed(123)
-# 10\% of outliers, sd of good points is 1.5
-r <- c(rnorm(45, sd=1.5), rnorm(5, mean=-5, sd=.5))
-mscale(u=r, tol=1e-7, delta=.5, max.it=100, tuning.chi=1.5477)
+r <- rnorm(150, sd=1.5)
+mscale(r)
 sd(r)
+# 10\% of outliers, sd of good points is 1.5
+set.seed(123)
+r2 <- c(rnorm(135, sd=1.5), rnorm(15, mean=-5, sd=.5))
+mscale(r2)
+sd(r2)
 
 }
 \author{

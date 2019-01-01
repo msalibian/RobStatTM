@@ -23,6 +23,14 @@ A list with the following components: c("test","chisq.pvalue","f.pvalue","df")
 \description{
 This function computes a robust likelihood ratio test for linear hypotheses.
 }
+\examples{
+data(oats)
+cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+oats1M <- lmrobM(response1 ~ variety+block, control=cont, data=oats)
+oats1M_var <- lmrobM(response1 ~ block, control=cont, data=oats)
+anov1M_var <- rob.linear.test(oats1M, oats1M_var)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

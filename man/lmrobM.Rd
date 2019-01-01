@@ -72,6 +72,12 @@ and uses it as a starting point to find a minimum of a
 re-descending M estimator. The scale is set to a quantile of the
 absolute residuals from the L1 estimator.
 }
+\examples{
+data(shock)
+cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+shockrob <- lmrobM(time ~ n.shocks, data = shock,control=cont)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

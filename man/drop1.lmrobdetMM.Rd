@@ -33,7 +33,9 @@ subset model, and a row for each component kept.
 }
 \description{
 This function computes the RFPE for the MM-estimators obtained with \code{\link{lmrobdetMM}} by
-recomputing it, successively removing each of a number of specified terms.
+recomputing it, successively removing each of a number of specified terms. 
+It is used internally by \code{\link{step.lmrobdetMM}} and not meant to be used
+directly.
 }
 \references{
 \url{http://www.wiley.com/go/maronna/robust}

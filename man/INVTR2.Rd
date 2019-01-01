@@ -21,9 +21,13 @@ An unbiased version of the robust R^2 coefficient of determination.
 }
 \description{
 This function computes a robust version of the R^2 coefficient of determination.
+It is used internally by \code{\link{lmrobdetMM}}, 
+and not meant to be used directly.
 }
 \details{
-This function computes a robust version of the R^2 coefficient.
+This function computes a robust version of the R^2 coefficient. 
+It is used internally by \code{\link{lmrobdetMM}}, 
+and not meant to be used directly.
 }
 \references{
 \url{http://www.wiley.com/go/maronna/robust}

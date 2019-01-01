@@ -28,6 +28,13 @@ A list with the following components:
 This function computes a weighted likelihood estimator for the logistic model, where
 the weights penalize high leverage observations. In this version the weights are zero or one.
 }
+\examples{
+data(skin)
+Xskin <- as.matrix( skin[, 1:2] )
+yskin <- skin$vasoconst
+skinWML <- logregWML(Xskin, yskin, intercept=1)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

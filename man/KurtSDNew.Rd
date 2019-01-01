@@ -34,6 +34,13 @@ estimators using both random and deterministic starting points.
 This function computes robust multivariate location and scatter
 using both Pen~a-Prieto and random candidates.
 }
+\examples{
+data(bus)
+X0 <- as.matrix(bus)
+X1 <- X0[,-9]
+tmp <- initPP(X1)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

@@ -37,6 +37,13 @@ The default behaviour (\code{type = "auto"}) computes a "Rocke" estimator
 of variables is greater than or equal to 10, and an MM-estimator with a
 SHR rho function (as implemented in \code{\link{covRobMM}}) otherwise.
 }
+\examples{
+data(bus)
+X0 <- as.matrix(bus)
+X1 <- X0[,-9]
+tmp <- covRob(X1)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

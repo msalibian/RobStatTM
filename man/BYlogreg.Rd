@@ -38,6 +38,13 @@ a weighted ML estimator with weights derived from the MCD estimator.
 For more details we refer to Croux, C., and Haesbroeck, G. (2002),
 "Implementing the Bianco and Yohai estimator for Logistic Regression"
 }
+\examples{
+data(skin)
+Xskin <- as.matrix( skin[, 1:2] )
+yskin <- skin$vasoconst
+skinBY <- logregBY(Xskin, yskin, intercept=1)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

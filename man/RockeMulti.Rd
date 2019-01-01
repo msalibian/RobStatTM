@@ -42,6 +42,13 @@ This function computes Rocke's robust estimator for multivariate location and sc
 \details{
 This function computes Rocke's robust estimator for multivariate location and scatter.
 }
+\examples{
+data(bus)
+X0 <- as.matrix(bus)
+X1 <- X0[,-9]
+tmp <- covRobRocke(X1)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }

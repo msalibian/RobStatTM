@@ -27,6 +27,8 @@ The scale estimate value at the last iteration or at convergence.
 }
 \description{
 The estimated covariance matrix of the DCML regression estimator.
+This function is used internally and not meant to be used
+directly.
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}

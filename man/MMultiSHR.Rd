@@ -28,6 +28,13 @@ This function computes an MM robust estimator for multivariate location and scat
 \details{
 This function computes an MM robust estimator for multivariate location and scatter with the "SHR" loss function.
 }
+\examples{
+data(bus)
+X0 <- as.matrix(bus)
+X1 <- X0[,-9]
+tmp <- covRobMM(X1)
+
+}
 \references{
 \url{http://www.wiley.com/go/maronna/robust}
 }
