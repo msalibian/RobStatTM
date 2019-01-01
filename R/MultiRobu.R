@@ -31,6 +31,12 @@
 #'
 #' @seealso \code{\link{covRobRocke}}, \code{\link{covRobMM}}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
+#' 
+#' @examples
+#' data(bus)
+#' X0 <- as.matrix(bus)
+#' X1 <- X0[,-9]
+#' tmp <- covRob(X1)
 #'
 covRob <- MultiRobu <- function(X, type="auto", maxit=50, tol=1e-4)  {
 if (type=="auto") {
@@ -80,6 +86,12 @@ if (type=="auto") {
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
 #' @references \url{http://www.wiley.com/go/maronna/robust}
+#' 
+#' @examples
+#' data(bus)
+#' X0 <- as.matrix(bus)
+#' X1 <- X0[,-9]
+#' tmp <- covRobRocke(X1)
 #'
 covRobRocke <- RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=2, maxit=50, tol=1e-4)
 {
@@ -302,6 +314,12 @@ rhoinv <- function(x)
 #'
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
+#' @examples
+#' data(bus)
+#' X0 <- as.matrix(bus)
+#' X1 <- X0[,-9]
+#' tmp <- covRobMM(X1)
+#' 
 covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
   d <- dim(X)
   n <- d[1]; p <- d[2]

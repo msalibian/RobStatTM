@@ -28,6 +28,12 @@
 #' by D. Pen~a and J. Prieto
 #'
 #' @references \url{http://www.wiley.com/go/maronna/robust}
+#' 
+#' @examples
+#' data(bus)
+#' X0 <- as.matrix(bus)
+#' X1 <- X0[,-9]
+#' tmp <- initPP(X1)
 #'
 initPP <- KurtSDNew <- function(X, muldirand=20, muldifix=10,dirmin=1000) {
 

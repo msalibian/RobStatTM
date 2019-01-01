@@ -1,6 +1,8 @@
 #' Robust Final Prediction Error
 #'
 #' This function computes the robust Final Prediction Errors (RFPE) for a robust regression fit using M-estimates.
+#' It is used internally by \code{\link{step.lmrobdetMM}} and not meant to be used
+#' directly.
 #'
 #' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdetMM}}.
 #' @param scale a numeric value specifying the scale estimate used to compute the RFPE. Usually this 
@@ -57,7 +59,9 @@ lmrobdetMM.RFPE <- function(object, scale = NULL)
 #' RFPE of submodels of an \code{\link{lmrobdetMM}} fit
 #'
 #' This function computes the RFPE for the MM-estimators obtained with \code{\link{lmrobdetMM}} by
-#' recomputing it, successively removing each of a number of specified terms.
+#' recomputing it, successively removing each of a number of specified terms. 
+#' It is used internally by \code{\link{step.lmrobdetMM}} and not meant to be used
+#' directly.
 #'
 #' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdetMM}}.
 #' @param scope an optional \code{formula} giving the terms to be considered for dropping. Typically 
@@ -196,6 +200,8 @@ drop1.lmrobdetMM <- function (object, scope, scale, keep, ...)
 #' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
+#'
+#' @examples
 #'
 #' @export
 step.lmrobdetMM <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,

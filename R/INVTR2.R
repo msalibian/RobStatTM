@@ -1,8 +1,12 @@
 #' Robust R^2 coefficient of determination
 #'
 #' This function computes a robust version of the R^2 coefficient of determination.
+#' It is used internally by \code{\link{lmrobdetMM}}, 
+#' and not meant to be used directly.
 #'
 #' This function computes a robust version of the R^2 coefficient. 
+#' It is used internally by \code{\link{lmrobdetMM}}, 
+#' and not meant to be used directly.
 #'
 #' @param RR2 the proportional difference in loss functions (a naive robust R^2 coefficient).
 #' @param family family string specifying the name of the family of loss function to be used (current valid

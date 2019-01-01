@@ -26,6 +26,12 @@
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' 
+#' @examples
+#' data(bus)
+#' X0 <- as.matrix(bus)
+#' X1 <- X0[,-9]
+#' tmp <- fastmve(X1)
+#' 
 #' @export
 fastmve <- function(x, nsamp=500) {
   n <- nrow(x)

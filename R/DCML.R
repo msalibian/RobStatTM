@@ -41,10 +41,14 @@
 #'
 #' @examples
 #' set.seed(123)
-#' # 10% of outliers, sd of good points is 1.5
-#' r <- c(rnorm(45, sd=1.5), rnorm(5, mean=-5, sd=.5))
-#' mscale(u=r, tol=1e-7, delta=.5, max.it=100, tuning.chi=1.5477)
+#' r <- rnorm(150, sd=1.5)
+#' mscale(r)
 #' sd(r)
+#' # 10% of outliers, sd of good points is 1.5
+#' set.seed(123)
+#' r2 <- c(rnorm(135, sd=1.5), rnorm(15, mean=-5, sd=.5))
+#' mscale(r2)
+#' sd(r2)
 #'
 scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquare", max.it=100, tol=1e-6) {
   # M-scale of a sample u
@@ -67,6 +71,8 @@ scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquar
 #' Approximate covariance matrix of the DCML regression estimator.
 #'
 #' The estimated covariance matrix of the DCML regression estimator.
+#' This function is used internally and not meant to be used
+#' directly.
 #'
 #' @param res.LS vector of residuals from the least squares fit
 #' @param res.R vector of residuals from the robust regression fit

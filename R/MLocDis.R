@@ -25,6 +25,15 @@
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
 #' @references \url{http://www.wiley.com/go/maronna/robust}
+#' 
+#' @examples
+#' set.seed(123)
+#' r <- rnorm(150, sd=1.5)
+#' locScaleM(r)
+#' # 10% of outliers, sd of good points is 1.5
+#' set.seed(123)
+#' r2 <- c(rnorm(135, sd=1.5), rnorm(15, mean=-10, sd=.5))
+#' locScaleM(r2)
 #'
 locScaleM <- MLocDis <- function(x, psi="bisquare", eff=0.9, maxit=50, tol=1.e-4) {
   kpsi <- switch(psi, bisquare = 1, huber = 2, optimal = 3, modopt = 4, 5)
@@ -105,15 +114,15 @@ locScaleM <- MLocDis <- function(x, psi="bisquare", eff=0.9, maxit=50, tol=1.e-4
   return(resu)
 } # end function
 
-wfun<- function(x,k) { #weight function
+wfun <- function(x,k) { #weight function
   if (k==1) ww=(1-x^2)^2 *(abs(x)<=1)
   else  ww=(abs(x)<=1)+(abs(x)>1)/(abs(x)+1.e-20)
   return(ww)
 }
 
-psif<-function(x,k) {return(x*wfun(x,k))}
+psif <- function(x,k) {return(x*wfun(x,k))}
 
-psipri<-function(x,k) {
+psipri <- function(x,k) {
   if (k==1) pp=	(((1 - (x^2))^2) - 4 * (x^2) * (1 - (x^2))) * (abs(x) < 1)
   else pp=(abs(x)<=1)
   return(pp)

@@ -29,6 +29,12 @@
 #'
 #' @author Christophe Croux, Gentiane Haesbroeck, Victor Yohai
 #' @references \url{http://www.wiley.com/go/maronna/robust}
+#' 
+#' @examples
+#' data(skin)
+#' Xskin <- as.matrix( skin[, 1:2] )
+#' yskin <- skin$vasoconst
+#' skinWBY <- logregWBY(Xskin, yskin, intercept=1)
 #'
 logregWBY <- WBYlogreg <- function(x0,y, intercept=1, const=0.5,kmax=1000,maxhalf=10)
 {

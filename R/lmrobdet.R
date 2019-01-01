@@ -614,13 +614,13 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' M-estimators.
 #'
 #' This function performs iterative improvements for S- or
-#' M-estimators, both iterations are formally the same, the
+#' M-estimators. Both iterations are formally the same, the
 #' only difference is that for M-iterations the residual
 #' scale estimate remains fixed, while for S-iterations
 #' it is updated at each step. In this case, we follow
 #' the Fast-S algorithm of Salibian-Barrera and Yohai
-#' an use one step update for the M-scale, as opposed
-#' to a full computation.
+#' an use one step updates for the M-scale, as opposed
+#' to a full computation. This as internal function. 
 #'
 #' @param x design matrix
 #' @param y vector of responses
@@ -1082,6 +1082,11 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 #' @author Victor Yohai, \email{vyohai@gmail.com}, based on \code{lmrob}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
+#' @examples
+#' data(shock)
+#' cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+#' shockrob <- lmrobM(time ~ n.shocks, data = shock,control=cont)
+#'
 #' @export
 lmrobM <- function(formula, data, subset, weights, na.action,
                    model = TRUE, x = FALSE, y = FALSE,
@@ -1250,6 +1255,13 @@ lmrobM <- function(formula, data, subset, weights, na.action,
 #' @author Victor Yohai, \email{vyohai@gmail.com}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
+#' @examples
+#' data(oats)
+#' cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+#' oats1M <- lmrobM(response1 ~ variety+block, control=cont, data=oats)
+#' oats1M_var <- lmrobM(response1 ~ block, control=cont, data=oats)
+#' anov1M_var <- rob.linear.test(oats1M, oats1M_var)
+#' 
 lmrobLinTest <- rob.linear.test <- function(object1, object2)
 {
   p <- length(object1$coeff)
