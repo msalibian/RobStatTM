@@ -202,6 +202,17 @@ drop1.lmrobdetMM <- function (object, scope, scale, keep, ...)
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @examples
+#' cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+#' set.seed(300)
+#' X <- matrix(rnorm(50*6), 50, 6)
+#' beta <- c(1,1,1,0,0,0)
+#' y <- as.vector(X %*% beta) + 1 + rnorm(50)
+#' y[1:6] <- seq(30, 55, 5)
+#' for (i in 1:6) X[i,] <- c(X[i,1:3],i/2,i/2,i/2)
+#' Z <- cbind(y,X)
+#' Z <- as.data.frame(Z)
+#' obj <- lmrobdetMM(y ~ ., data=Z, control=cont)
+#' out <- step.lmrobdetMM(obj)
 #'
 #' @export
 step.lmrobdetMM <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
