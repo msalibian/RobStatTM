@@ -8,11 +8,9 @@ To install it directly from GitHub, install the `devtools` package and then use
 devtools::install_github("msalibian/RobStatTM")
 ```
 
-### Additional content in this repository:
+### Additional content in this repository
 
-* The scripts reproducing the examples and figures of Chapters 4, 5, 6 and 7 can be found [here](inst/scripts/scriptsCh4-5-6-7.R). Those for the other Chapters will be added soon. 
-* A description of the data sets used in the book is [here](Examples/MMYS-2018-Chapter_11-Description-of-Data-Sets.pdf).
-* The preface to the 2nd edition of the book is [here](Examples/MMYS-preface-second-edition.pdf). 
-
-
-
+* The scripts reproducing the examples and figures of Chapters 4, 5, 6 and 7 can be found [here](inst/scripts/scriptsCh4-5-6-7.R). Those for the other Chapters will be added soon.
+<!-- * A description of the data sets used in the book is [here](Examples/MMYS-2018-Chapter_11-Description-of-Data-Sets.pdf).
+* The preface to the 2nd edition of the book is [here](Examples/MMYS-preface-second-edition.pdf).
+-->
