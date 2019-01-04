@@ -20,6 +20,11 @@ rho function in the corresponding family. The output of this
 function can be passed to the functions \link{lmrobdet.control},
 \link{mscale} and \link{rho}.
 }
+\examples{
+# Tuning parameters for an 85\%-efficient M-estimator at a Gaussian model
+bisquare(.85)
+
+}
 \author{
 Kjell Konis
 }

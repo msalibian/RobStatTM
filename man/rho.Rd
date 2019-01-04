@@ -28,6 +28,13 @@ to compute either an M-scale estimator or a robust regression
 estimator. It currently can be used to compute the bisquare, optimal
 and modified optimal loss functions.
 }
+\examples{
+# Evaluate rho tuned for 85\% efficiency
+rho(u=1.1, family='bisquare', cc=bisquare(.85))
+# Evaluate rho tuned for 50\% breakdown
+rho(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
+
+}
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 }

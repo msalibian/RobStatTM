@@ -25,6 +25,13 @@ The value of the first derivative \code{rho} evaluated at \code{u}
 \description{
 The first derivative of the rho function
 }
+\examples{
+# Evaluate the derivative of a rho function tuned for 85\% efficiency
+rhoprime(u=1.1, family='bisquare', cc=bisquare(.85))
+# Evaluate the derivative of a rho function tuned for 50\% breakdown
+rhoprime(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
+
+}
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 }

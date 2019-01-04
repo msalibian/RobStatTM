@@ -20,6 +20,10 @@ FAMILY.NAMES <- c("bisquare", "modopt", "optimal")
 #' @rdname bisquare
 #' @author Kjell Konis
 #'
+#' @examples
+#' # Tuning parameters for an 85%-efficient M-estimator at a Gaussian model
+#' bisquare(.85)
+#'
 #' @export
 bisquare <- function(e) #, breakdown.point)
 {
@@ -41,6 +45,10 @@ bisquare <- function(e) #, breakdown.point)
 #' parameters.
 #'
 #' @author Kjell Konis
+#'
+#' @examples
+#' # Tuning parameters for an 85%-efficient M-estimator at a Gaussian model
+#' optimal(.85)
 #'
 #' @export
 optimal <- function(e)
@@ -73,6 +81,10 @@ optimal <- function(e)
 #' parameters.
 #'
 #' @author Kjell Konis
+#'
+#' @examples
+#' # Tuning parameters for an 85%-efficient M-estimator at a Gaussian model
+#' modopt(.85)
 #'
 #' @export
 modopt <- function(e)
@@ -112,6 +124,12 @@ modopt <- function(e)
 #' @rdname rho
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
+#' @examples
+#' # Evaluate rho tuned for 85% efficiency
+#' rho(u=1.1, family='bisquare', cc=bisquare(.85))
+#' # Evaluate rho tuned for 50% breakdown
+#' rho(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
+#'
 #' @export
 rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 {
@@ -140,6 +158,12 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 #' @rdname rhoprime
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
+#' @examples
+#' # Evaluate the derivative of a rho function tuned for 85% efficiency
+#' rhoprime(u=1.1, family='bisquare', cc=bisquare(.85))
+#' # Evaluate the derivative of a rho function tuned for 50% breakdown
+#' rhoprime(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
+#'
 #' @export
 rhoprime <- function(u, family, cc, standardize = FALSE)
 {
@@ -167,6 +191,12 @@ rhoprime <- function(u, family, cc, standardize = FALSE)
 #'
 #' @rdname rhoprime2
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#'
+#' @examples
+#' # Evaluate the 2nd derivative of a rho function tuned for 85% efficiency
+#' rhoprime2(u=1.1, family='bisquare', cc=bisquare(.85))
+#' # Evaluate the 2nd derivative of a rho function tuned for 50% breakdown
+#' rhoprime2(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
 #'
 #' @export
 rhoprime2 <- function(u, family, cc, standardize = FALSE)
