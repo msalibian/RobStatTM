@@ -71,7 +71,7 @@ static const R_CMethodDef CEntries[]  = {
 };
 
 
-static R_CallMethodDef CallEntries[] = {
+static const R_CallMethodDef CallEntries[] = {
     CALLDEF(R_rho_inf, 2),
     CALLDEF(R_psifun, 4),
     CALLDEF(R_chifun, 4),
@@ -81,7 +81,7 @@ static R_CallMethodDef CallEntries[] = {
 };
 
 
-static R_FortranMethodDef FortEntries[] = {
+static const R_FortranMethodDef FortEntries[] = {
     {"rslarsbi",  (DL_FUNC) &F77_SUB(rllarsbi), 18},
     {"dqrdc2", (DL_FUNC) &F77_SUB(dqrdc2), 9},
     {NULL, NULL, 0}
@@ -91,5 +91,5 @@ static R_FortranMethodDef FortEntries[] = {
 void R_init_RobStatTM(DllInfo *dll)
 {
     R_registerRoutines(dll, CEntries, CallEntries, FortEntries, NULL);
-    R_useDynamicSymbols(dll, FALSE);
+    R_useDynamicSymbols(dll, FALSE); 
 }
