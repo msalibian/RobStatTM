@@ -400,15 +400,6 @@ shinyUI(navbarPage("RobStatTM",
                                        "Classical" = "classic",
                                        "Robust"    = "rob")),
               
-              radioButtons("pca.type", "Type",
-                           choices = c("Covariances"  = "cov",
-                                       "Correlations" = "corr")),
-              
-              conditionalPanel("input['pca.method'] != 'classic'",
-                selectInput("pca.estimator", "Robust PCA Estimator",
-                            choices = c("Auto", "MM", "Rocke"))
-              ),
-              
               actionButton("pca.display", "Results")
             ),
             
