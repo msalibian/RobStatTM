@@ -25,7 +25,7 @@
 #' by D. Pen~a and J. Prieto
 #'
 #' @references \url{http://www.wiley.com/go/maronna/robust}
-#' 
+#'
 #' @examples
 #' data(bus)
 #' X0 <- as.matrix(bus)
@@ -35,11 +35,12 @@
 #' X <- scale(X1, center=mu, scale=ss)
 #' q <- 3  #compute three components
 #' rr <- pcaRobS(X, q, 0.99)
+#' round(rr$eigvec, 3)
 #'
 pcaRobS <- SMPCA <-function(X, ncomp, desprop=0.9, deltasca=0.5, maxit=100) {
-  
+
   Wf <- function(r){ return((1-r)^2*(r<=1)) }    #Bisquare weights for r=resid^2
-  
+
   n=dim(X)[1];  p=dim(X)[2]
   tol=1.e-4;
   #Inicial
@@ -48,7 +49,7 @@ pcaRobS <- SMPCA <-function(X, ncomp, desprop=0.9, deltasca=0.5, maxit=100) {
   lamL=lamL/sum(lamL);  propSPC=cumsum(lamL)
   q1=sum(propSPC<desprop)+1
   q=min(c(q1,ncomp))
-  
+
   QL=sp@loadings[,1:q]; Xcen=scale(X, center=mu0, scale=FALSE)
   fitL=scale(Xcen%*%QL%*%t(QL), center=-mu0,scale=FALSE)
   #sigini es para prop. de var. explicada
@@ -58,7 +59,7 @@ pcaRobS <- SMPCA <-function(X, ncomp, desprop=0.9, deltasca=0.5, maxit=100) {
   rr=colSums(t(X-fitL)^2);
   sig0=mscale(sqrt(rr), delta=deltasca,  tuning.chi = 1, family='bisquare')^2
   ww=Wf(rr/sig0);  B0=QL
-  
+
   iter=0; del=100;
   while (iter<maxit & abs(del)>tol) {
     iter=iter+1;

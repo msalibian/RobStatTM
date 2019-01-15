@@ -40,6 +40,7 @@ mu <- apply(X1, 2, median)
 X <- scale(X1, center=mu, scale=ss)
 q <- 3  #compute three components
 rr <- pcaRobS(X, q, 0.99)
+round(rr$eigvec, 3)
 
 }
 \references{

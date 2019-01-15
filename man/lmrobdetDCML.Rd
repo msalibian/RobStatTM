@@ -73,6 +73,8 @@ candidates (instead of subsampling ones).
 \examples{
 data(coleman, package='robustbase')
 m1 <- lmrobdetDCML(Y ~ ., data=coleman)
+m1
+summary(m1)
 
 }
 \references{

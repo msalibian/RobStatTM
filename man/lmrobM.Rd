@@ -76,6 +76,8 @@ absolute residuals from the L1 estimator.
 data(shock)
 cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
 shockrob <- lmrobM(time ~ n.shocks, data = shock,control=cont)
+shockrob
+summary(shockrob)
 
 }
 \references{

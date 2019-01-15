@@ -54,6 +54,8 @@
 #' @examples
 #' data(coleman, package='robustbase')
 #' m2 <- lmrobdetMM(Y ~ ., data=coleman)
+#' m2
+#' summary(m2)
 #'
 #' @import stats
 #' @useDynLib RobStatTM, .registration = TRUE
@@ -387,6 +389,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @examples
 #' data(coleman, package='robustbase')
 #' m2 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
+#' m2
+#' summary(m2)
 #'
 #' @export
 lmrobdet.control <- function(bb = 0.5,
@@ -620,7 +624,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' it is updated at each step. In this case, we follow
 #' the Fast-S algorithm of Salibian-Barrera and Yohai
 #' an use one step updates for the M-scale, as opposed
-#' to a full computation. This as internal function. 
+#' to a full computation. This as internal function.
 #'
 #' @param x design matrix
 #' @param y vector of responses
@@ -632,11 +636,11 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' or to force running k steps (0)
 #' @param b tuning constant for the M-scale estimator, used if iterations are for an S-estimator.
 #' @param cc tuning constant for the rho function.
-#' @param family string specifying the name of the family of loss function to be used (current 
+#' @param family string specifying the name of the family of loss function to be used (current
 #' valid options are "bisquare", "optimal" and "modopt")
 #' @param step a string indicating whether the iterations are to compute an S-estiamator
 #' ('S') or an M-estimator ('M')
-#' 
+#'
 #' @return A list with the following components:
 #' \item{beta.rw}{The updated vector of regression coefficients}
 #' \item{scale.rw}{The corresponding estimated residual scale}
@@ -788,6 +792,8 @@ our.solve <- function(a,b) {
 #' @examples
 #' data(coleman, package='robustbase')
 #' m1 <- lmrobdetDCML(Y ~ ., data=coleman)
+#' m1
+#' summary(m1)
 #'
 #' @export
 lmrobdetDCML <- function(formula, data, subset, weights, na.action,
@@ -1086,6 +1092,8 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 #' data(shock)
 #' cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
 #' shockrob <- lmrobM(time ~ n.shocks, data = shock,control=cont)
+#' shockrob
+#' summary(shockrob)
 #'
 #' @export
 lmrobM <- function(formula, data, subset, weights, na.action,
@@ -1260,8 +1268,8 @@ lmrobM <- function(formula, data, subset, weights, na.action,
 #' cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
 #' oats1M <- lmrobM(response1 ~ variety+block, control=cont, data=oats)
 #' oats1M_var <- lmrobM(response1 ~ block, control=cont, data=oats)
-#' anov1M_var <- rob.linear.test(oats1M, oats1M_var)
-#' 
+#' ( anov1M_var <- rob.linear.test(oats1M, oats1M_var) )
+#'
 lmrobLinTest <- rob.linear.test <- function(object1, object2)
 {
   p <- length(object1$coeff)

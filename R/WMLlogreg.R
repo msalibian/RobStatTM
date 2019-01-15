@@ -22,12 +22,14 @@
 #'
 #' @author Victor Yohai
 #' @references \url{http://www.wiley.com/go/maronna/robust}
-#' 
+#'
 #' @examples
 #' data(skin)
 #' Xskin <- as.matrix( skin[, 1:2] )
 #' yskin <- skin$vasoconst
 #' skinWML <- logregWML(Xskin, yskin, intercept=1)
+#' skinWML$coeff
+#' skinWML$standard.deviation
 #'
 logregWML <- WMLlogreg <- function (x0, y, intercept = 1)
   {

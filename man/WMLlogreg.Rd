@@ -33,6 +33,8 @@ data(skin)
 Xskin <- as.matrix( skin[, 1:2] )
 yskin <- skin$vasoconst
 skinWML <- logregWML(Xskin, yskin, intercept=1)
+skinWML$coeff
+skinWML$standard.deviation
 
 }
 \references{

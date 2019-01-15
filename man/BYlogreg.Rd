@@ -43,6 +43,8 @@ data(skin)
 Xskin <- as.matrix( skin[, 1:2] )
 yskin <- skin$vasoconst
 skinBY <- logregBY(Xskin, yskin, intercept=1)
+skinBY$coeff
+skinBY$standard.deviation
 
 }
 \references{

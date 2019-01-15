@@ -1,17 +1,17 @@
 #' Minimum Volume Ellipsoid covariance estimator
 #'
-#' This function uses a fast algorithm to compute the Minimum Volume 
-#' Ellipsoid (MVE) for multivariate location and scatter. 
-#' 
-#' This function computes the Minimum Volume 
-#' Ellipsoid (MVE) for multivariate location and scatter, using a 
-#' fast algorithm related to the fast algorithm for S-regression
-#' estimators (see \code{\link[robustbase]{lmrob}}).  
+#' This function uses a fast algorithm to compute the Minimum Volume
+#' Ellipsoid (MVE) for multivariate location and scatter.
 #'
-#' @param x data matrix (n x p) with cases stored in rows.  
+#' This function computes the Minimum Volume
+#' Ellipsoid (MVE) for multivariate location and scatter, using a
+#' fast algorithm related to the fast algorithm for S-regression
+#' estimators (see \code{\link[robustbase]{lmrob}}).
+#'
+#' @param x data matrix (n x p) with cases stored in rows.
 #' @param nsamp number of random starts for the iterative algorithm, these
 #' are constructed using subsamples of the data.
-#' 
+#'
 #' @return A list with the following components:
 #' \item{center}{a vector with the robust multivariate location estimator}
 #' \item{cov}{a matrix with the robust covariance / scatter matrix estimator}
@@ -20,18 +20,20 @@
 #' to the power 1/p}
 #' \item{best}{Indices of the observations that correspond to the MVE estimator}
 #' \item{nsamp}{Number of random starts used for the iterative algorithm}
-#' \item{nsing}{Number of random subsamples (among the \code{nsamp} attempted) 
+#' \item{nsing}{Number of random subsamples (among the \code{nsamp} attempted)
 #' that failed (resulting in singular initial values)}
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
-#' 
+#'
 #' @examples
 #' data(bus)
 #' X0 <- as.matrix(bus)
 #' X1 <- X0[,-9]
 #' tmp <- fastmve(X1)
-#' 
+#' round(tmp$cov[1:10, 1:10], 3)
+#' tmp$center
+#'
 #' @export
 fastmve <- function(x, nsamp=500) {
   n <- nrow(x)

@@ -21,16 +21,16 @@ data to the \code{center}, multiplied by the determinant of the covariance matri
 to the power 1/p}
 \item{best}{Indices of the observations that correspond to the MVE estimator}
 \item{nsamp}{Number of random starts used for the iterative algorithm}
-\item{nsing}{Number of random subsamples (among the \code{nsamp} attempted) 
+\item{nsing}{Number of random subsamples (among the \code{nsamp} attempted)
 that failed (resulting in singular initial values)}
 }
 \description{
-This function uses a fast algorithm to compute the Minimum Volume 
+This function uses a fast algorithm to compute the Minimum Volume
 Ellipsoid (MVE) for multivariate location and scatter.
 }
 \details{
-This function computes the Minimum Volume 
-Ellipsoid (MVE) for multivariate location and scatter, using a 
+This function computes the Minimum Volume
+Ellipsoid (MVE) for multivariate location and scatter, using a
 fast algorithm related to the fast algorithm for S-regression
 estimators (see \code{\link[robustbase]{lmrob}}).
 }
@@ -39,6 +39,8 @@ data(bus)
 X0 <- as.matrix(bus)
 X1 <- X0[,-9]
 tmp <- fastmve(X1)
+round(tmp$cov[1:10, 1:10], 3)
+tmp$center
 
 }
 \references{

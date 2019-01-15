@@ -99,6 +99,8 @@ and those controlling the initial Pen~a-Yohai estimator.
 \examples{
 data(coleman, package='robustbase')
 m2 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
+m2
+summary(m2)
 
 }
 \seealso{

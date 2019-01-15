@@ -39,6 +39,8 @@ data(bus)
 X0 <- as.matrix(bus)
 X1 <- X0[,-9]
 tmp <- initPP(X1)
+round(tmp$cov[1:10, 1:10], 3)
+tmp$center
 
 }
 \references{

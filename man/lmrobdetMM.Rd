@@ -73,6 +73,8 @@ candidates (instead of subsampling ones).
 \examples{
 data(coleman, package='robustbase')
 m2 <- lmrobdetMM(Y ~ ., data=coleman)
+m2
+summary(m2)
 
 }
 \references{
