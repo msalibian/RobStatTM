@@ -1,5 +1,5 @@
 Package: RobStatTM
-Version: 0.1
+Version: 1.0
 Date: 2018-12-18
 Title: Robust Statistics: Theory and Methods
 Authors@R: c(person("Matias", "Salibian-Barrera", role = c("aut", "cre"), email = "matias@stat.ubc.ca"),
