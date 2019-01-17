@@ -22,8 +22,8 @@ is \code{min(n, 2*muldifix*p)}.}
 A list with the following components:
 \item{idx}{A zero/one vector with ones in the positions of the suspected outliers}
 \item{disma}{Robust squared Mahalanobis distances}
-\item{center}{Robust mean estimator}
-\item{cova}{Robust covariance matrix estimator}
+\item{center}{Robust mean estimate}
+\item{cova}{Robust covariance matrix estimate}
 \item{t}{Outlyingness of data points}
 }
 \description{

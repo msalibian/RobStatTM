@@ -18,9 +18,9 @@
 #' @param tol tolerance to decide convergence of the iterative algorithm.
 #'
 #' @return A list with the following components:
-#' \item{mu}{The location estimator}
+#' \item{mu}{The location estimate}
 #' \item{std.mu}{Estimated standard deviation of the location estimator \code{mu}}
-#' \item{disper}{M-scale/dispersion estimator}
+#' \item{disper}{M-scale/dispersion estimate}
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'

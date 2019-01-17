@@ -23,9 +23,9 @@ locScaleM(x, psi = "bisquare", eff = 0.9, maxit = 50, tol = 1e-04)
 }
 \value{
 A list with the following components:
-\item{mu}{The location estimator}
+\item{mu}{The location estimate}
 \item{std.mu}{Estimated standard deviation of the location estimator \code{mu}}
-\item{disper}{M-scale/dispersion estimator}
+\item{disper}{M-scale/dispersion estimate}
 }
 \description{
 This function computes M-estimators for location and scale.

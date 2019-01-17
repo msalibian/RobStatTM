@@ -83,7 +83,7 @@ scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquar
 #' sample correction of the tuning constant of the M-scale
 #' @param control a list of control parameters as returned by \code{\link{lmrobdet.control}}
 #'
-#' @return The scale estimate value at the last iteration or at convergence.
+#' @return The covariance matrix estimate.
 #'
 #' @rdname cov.dcml
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}

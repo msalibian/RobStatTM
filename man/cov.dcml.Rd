@@ -23,7 +23,7 @@ sample correction of the tuning constant of the M-scale}
 \item{control}{a list of control parameters as returned by \code{\link{lmrobdet.control}}}
 }
 \value{
-The scale estimate value at the last iteration or at convergence.
+The covariance matrix estimate.
 }
 \description{
 The estimated covariance matrix of the DCML regression estimator.

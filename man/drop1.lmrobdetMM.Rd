@@ -14,8 +14,8 @@ this argument is omitted, in which case all possible terms are dropped (without 
 rules). The \code{scope} can also be a character vector of term labels. If the argument is supplied as a 
 formula, any \code{.} is interpreted relative to the formula implied by the \code{object} argument.}
 
-\item{scale}{an optional residual scale estimator. If missing the residual
-scale estimator in \code{object} is used.}
+\item{scale}{an optional residual scale estimate. If missing the residual
+scale estimate in \code{object} is used.}
 
 \item{keep}{a character vector of names of components that should be saved for each subset model. 
 Only names from the set \code{"coefficients"}, \code{"fitted"} and \code{"residuals"}

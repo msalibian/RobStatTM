@@ -14,8 +14,8 @@ are constructed using subsamples of the data.}
 }
 \value{
 A list with the following components:
-\item{center}{a vector with the robust multivariate location estimator}
-\item{cov}{a matrix with the robust covariance / scatter matrix estimator}
+\item{center}{a vector with the robust multivariate location estimate}
+\item{cov}{a matrix with the robust covariance / scatter matrix estimate}
 \item{scale}{A scalar that equals the median of the mahalanobis distances of the
 data to the \code{center}, multiplied by the determinant of the covariance matrix
 to the power 1/p}

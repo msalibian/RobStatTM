@@ -28,10 +28,10 @@ be at least p (the number of columns of X) times propmin.}
 }
 \value{
 A list with the following components:
-\item{mu}{The location estimator}
-\item{V}{The scatter matrix estimator, scaled for consistency at the normal distribution}
-\item{center}{The location estimator. Same as \code{mu} above.}
-\item{cov}{The scatter matrix estimator, scaled for consistency at the normal distribution. Same as \code{V} above.}
+\item{mu}{The location estimate}
+\item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
+\item{center}{The location estimate. Same as \code{mu} above.}
+\item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
 \item{dista}{Robust Mahalanobis distances}
 \item{w}{weights}
 \item{gamma}{Final value of the constant gamma that regulates the efficiency}
