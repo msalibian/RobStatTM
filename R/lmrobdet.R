@@ -394,8 +394,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #'
 #' @export
 lmrobdet.control <- function(bb = 0.5,
-                             efficiency = 0.85,
-                             family = 'bisquare',
+                             efficiency = 0.99,
+                             family = 'optimal',
                              tuning.psi,
                              tuning.chi,
                              compute.rd = FALSE,

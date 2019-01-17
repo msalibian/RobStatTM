@@ -4,7 +4,7 @@
 \alias{lmrobdet.control}
 \title{Tuning parameters for lmrobdetMM and lmrobdetDCML}
 \usage{
-lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare",
+lmrobdet.control(bb = 0.5, efficiency = 0.99, family = "optimal",
   tuning.psi, tuning.chi, compute.rd = FALSE, corr.b = TRUE,
   split.type = "f", initial = "S", max.it = 100,
   refine.tol = 1e-07, rel.tol = 1e-07, refine.PY = 10,
