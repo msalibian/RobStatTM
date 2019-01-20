@@ -51,7 +51,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL)
   d2 <- mean(rhoprime2(u=res, family = object$control$family, cc = object$control$tuning.psi, standardize=TRUE))
   if (d2 <= 0)
     return(NA)
-  return( (a2 + b2/d2) ) # (a + b/d)*6 / tun^2 )
+  return( (a2 + b2/d2/length(res)) ) # (a + b/d)*6 / tun^2 )
 }
 
 
