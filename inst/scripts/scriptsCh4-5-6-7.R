@@ -1,6 +1,6 @@
 # ALL SCRIPTS
 
-# EXAMPLE 4.1 shocks.R  shocks.txt
+# EXAMPLE 4.1 shock.R  shocks.txt
 # Figure 4.1 and 4.3
 
 library(quantreg)  # For L1 fit
@@ -262,6 +262,7 @@ abline(h=c(-2.5, 0, 2.5)*algaerob$scale, lty=2)
 #-----------------------------------------------
 
 # EXAMPLE 5.5  ExactFit.R
+# Figure 5.18
 
 library(RobStatTM)
 library(pyinit)
@@ -420,7 +421,8 @@ abline(0,1)
 #---------------------------------------------
 
 
-# Example 6.5 and 6.6
+# EXAMPLEs 6.5 and 6.6  wine1.R
+# Figures 6.11 and 6.12
 
 library(GSE)
 library(RobStatTM)
@@ -520,8 +522,8 @@ abline(0,1)
 #---------------------------------------------------
 
 
-# Example 6.7
-### AUTISM
+# EXAMPLE 6.7  autism.R
+# Tables 6.8, 6.9
 library(RobStatTM)
 library(robustvarComp)
 library(nlme)
@@ -575,8 +577,10 @@ AutismS <- varComprob(vsae ~ age.2 + I(age.2^2)
                       control=varComprob.control(method="S", psi="rocke", cov.init="covOGK", lower=c(0.01,0.01,0.01,-Inf,-Inf,-Inf)))
 summary(AutismS)
 
-# Example 7.1
-# Leukemia
+#-------------------------------------------------------
+
+# EXAMPLE 7.1  leukemia.R
+# Figure 7.4, Table 7.1
 
 #loading packages
 # library(robust)
@@ -622,10 +626,10 @@ leukCUBIF <- glmRob(formula = y ~ wbc + ag, family = binomial, data = leuk.dat, 
 
 #weighted ML fit
 leukWML <- logregWML(Xleuk, yleuk, intercept=1)
+#-------------------------------------------------------
 
-
-# Example 7.2
-# Figure 7.5
+# EXAMPLE 7.2
+# Figure 7.5, Table 7.2
 library(RobStatTM)
 data(skin)
 
@@ -666,13 +670,13 @@ skinCUBIF <- glmRob(formula =vasoconst~logVOL+logRATE, family = binomial, data =
 
 # weighted ML fit
 skinWML <- logregWML(Xskin, yskin, intercept=1)
+#-------------------------------------------------------
 
-# Example 7.3
-# Breslow data
+# EXAMPLE 7.3  epilepsy.R  Breslow data
+# Figure 7.6, Table 7.3
 
 library(RobStatTM)
 data(breslow.dat, package='robust')
-
 
 #CUBIF Estimator
 yy <- breslow.dat[, 10]
