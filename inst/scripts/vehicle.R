@@ -1,5 +1,5 @@
 # vehicle.R
-# EXAMPLE 6.3    
+# EXAMPLE 6.3
 # Figure 6.7
 
 library(RobStatTM)
@@ -35,7 +35,7 @@ plot(qua, disS, xlab="Chi squared quantiles", ylab="Sorted distances", main="S-B
 abline(0,1)
 plot(qua, disR, xlab="Chi squared quantiles", ylab="Sorted distances", main="Rocke", cex.main=0.9, pch=19)
 abline(0,1)
-
+par(mfrow=c(1,1))
 
 
 

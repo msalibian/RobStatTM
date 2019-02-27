@@ -1,5 +1,5 @@
 # wine.R
-# EXAMPLE 6.2  
+# EXAMPLE 6.2
 # Figure 6.3
 
 library(RobStatTM)
@@ -26,7 +26,7 @@ lines(sort(disC),sort(disC))
 plot(disM, xlab="index", ylab="Distances", main = "Robust", cex.main=0.9, pch=19)
 plot(qchisq(ppoints(59),13),sort(disM),xlab="chi squared quantiles", ylab="Sorted distances", main="Robust", cex.main=0.9, pch=19)
 lines(sort(disM),sort(disM))
-
+par(mfrow=c(1,1))
 
 
 

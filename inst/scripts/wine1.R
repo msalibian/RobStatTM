@@ -55,7 +55,7 @@ plot(md2, xlab="Index", ylab="Adjusted distances", pch=19)
 abline(h=qq)
 plot(abc, smd2, xlab="Chi square quantile", ylab="Adjusted distance quantiles", pch=19)
 abline(0,1)
-
+par(mfrow=c(1,1))
 
 #----------------------------------------------------------
 #Analysis with independent contamination Figure 6.12
@@ -96,4 +96,4 @@ plot(md4, xlab="Index", ylab="Adjusted distances", pch=19)
 abline(h=qq)
 plot(abc, smd4, xlab="Chi square quantile", ylab="Adjusted distance quantiles", pch=19)
 abline(0,1)
-
+par(mfrow=c(1,1))

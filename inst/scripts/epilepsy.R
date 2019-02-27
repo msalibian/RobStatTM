@@ -3,7 +3,6 @@
 # Breslow data
 
 library(RobStatTM)
-# Must install robust
 data(breslow.dat, package='robust')
 
 

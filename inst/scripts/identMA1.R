@@ -10,7 +10,7 @@ n.innov = 300
 n = 200
  theta= 0.8
 
-n.start = n.innov - n 
+n.start = n.innov - n
 innov = rnorm(n.innov)
 
 x= arima.sim(model = list(ma = theta), n, innov = innov, n.start = n.start)
@@ -26,30 +26,31 @@ plot(x,  ylab=expression(x[t]),ylim=c(-9,9))
 plot(y,  ylab=expression(y[t]),ylim=c(-9,9))
 ao.times = (1:n)[ao != 0]
 points(ao.times, y[ao != 0])
- 
- 
+par(mfrow=c(1,1))
 
- 
 
-out=arima.rob(y~1, auto.ar=TRUE)			
- #Figure 8.10 
-par(mfrow=c(4,2)) 
+
+
+
+out=arima.rob(y~1, auto.ar=TRUE)
+ #Figure 8.10
+par(mfrow=c(4,2))
 acf1=acf(x ,10, plot=FALSE )
-plot(acf1, main="acf of x") 
+plot(acf1, main="acf of x")
 acf2=acf(x,10,"partial", plot=FALSE)
-plot(acf2, main="pcf of x") 
+plot(acf2, main="pcf of x")
 acf3=acf(y,10, plot=FALSE)
-plot(acf3, main="acf of y") 
+plot(acf3, main="acf of y")
 acf4=acf(y,10,"partial", plot=FALSE)
-plot(acf4, main="pcf of y") 
+plot(acf4, main="pcf of y")
 #out$y.robust is the series filtered y
 acf5=acf(out$y.robust,10, plot=FALSE)
-plot(acf5, main="acf based on procedure (a)") 
+plot(acf5, main="acf based on procedure (a)")
 acf6=acf(out$y.robust,10,"partial", plot=FALSE)
-plot(acf6, main="pcf based on procedure (a)") 
+plot(acf6, main="pcf based on procedure (a)")
 
 
- 
+
 
 
 
@@ -58,15 +59,15 @@ tank1=ARMAacf(ar =out$model$ar     , lag.max = 10, pacf = FALSE)
 tank2=ARMAacf(ar = out$model$ar , lag.max = 10, pacf = TRUE)
 
 
- 
+
 acf7=acf5
 acf8=acf6
 acf7$acf[,,1]=as.matrix(tank1)
-plot(acf7, main="acf based on procedure (b)") 
+plot(acf7, main="acf based on procedure (b)")
 
 acf8$acf[,,1]=as.matrix(tank2)
-plot(acf8, main="pcf based on procedure (b)") 
+plot(acf8, main="pcf based on procedure (b)")
 
- 
- 
+
+
 
