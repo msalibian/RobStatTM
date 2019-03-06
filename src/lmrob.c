@@ -4,8 +4,6 @@
 /* file lmrob.c
  * was	roblm/src/roblm.c - version 0.6	 by Matias Salibian-Barreras
 
- * Includes the stable correct asymptotic variance estimators
- * of Croux, Dhaene, Hoorelbeke
  * Includes the fast-s algorithm
  */
 
@@ -970,10 +968,10 @@ double rho_opt(double x, const double c[])
 
   if(x <= c[1])
     return(0.0);
-  
+
   if(x >= c[2])
     return(1.0);
-  
+
   return((Psi_opt(x, c) - c[4]) / c[5]);
 }
 
@@ -1455,7 +1453,7 @@ double rho_modOpt(double x, const double c[])
 
   if(x < 1.0)
     return((0.5 * x * x) / c[5]);
-  
+
   if(x > c[2])
     return(1.0);
 
@@ -1481,7 +1479,7 @@ double psi_modOpt(double x, const double c[])
 
   if(absx <= 1.0)
     return(c[3] * x);
-  
+
   if(absx >= c[2])
     return(0.0);
 
@@ -1500,7 +1498,7 @@ double psip_modOpt(double x, const double c[])
   *   c[4]: Psi_opt(1.0, c)
   *   c[5]: rho_modOpt(Inf) when c[3] = 1
   */
- 
+
   x = fabs(x) / c[3];
 
   if(x <= 1.0)
@@ -1528,7 +1526,7 @@ double wgt_modOpt(double x, const double c[])
 
   if(x <= 1.0)
     return(1.0);
-  
+
   if(x >= c[2])
     return(0.0);
 
