@@ -8,8 +8,8 @@ Authors@R: c(person("Matias", "Salibian-Barrera", role = c("aut", "cre"), email 
              person("Doug", "Martin", role="aut", email="martinrd3d@gmail.com"),
              person("Gregory", "Brownson", role="aut", email="gsb25@uw.edu", comment="ShinyUI"),
              person("Kjell", "Konis", role="aut", email="kjellk@gmail.com"),
-             person("Christophe", "Croux", role="ctb", email="christophe.croux@edhec.edu", comment=c("WBYlogreg, "BYlogreg")),
-             person("Gentiane", "Haesbroeck", role="ctb", email="G.Haesbroeck@uliege.be", comment=c("WBYlogreg", "BYlogreg")),
+             person("Christophe", "Croux", role="ctb", email="christophe.croux@edhec.edu", comment="WBYlogreg, BYlogreg"),
+             person("Gentiane", "Haesbroeck", role="ctb", email="G.Haesbroeck@uliege.be", comment="WBYlogreg, BYlogreg")
             )
 Description: Software for the "Robust Statistics: Theory and Methods" book <http://www.wiley.com/go/maronna/robust>.
 Depends: R (>= 3.0.2)
