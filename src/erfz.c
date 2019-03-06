@@ -16,35 +16,17 @@ SEXP R_erfi(SEXP x)
 
 double complex erfz(double complex z)
 /*******************************************************************************
-  
+
   Evalutaes the error function for a complex argument. Based on the Fortran
   subroutine CERROR.
 
-  Licensing:
-
-    The original Fortran routine CERROR is copyrighted by Shanjie Zhang and
-    Jianming Jin.  However, they give permission to incorporate this routine
-    into a user program provided that the copyright is acknowledged.
-
   Modified:
-  
+
     26 July 2017
 
   Author:
-  
+
     Kjell P. Konis
-
-  Authors of original Fortran subroutine:
-
-    Shanjie Zhang and Jianming Jin
-
-  Reference:
-
-    Shanjie Zhang and Jianming Jin,
-    Computation of Special Functions,
-    Wiley, 1996,
-    ISBN: 0-471-11963-6,
-    LC: QA351.C45.
 
 *******************************************************************************/
 {
@@ -76,7 +58,7 @@ double complex erfz(double complex z)
     }
 
     cer = c0 * cs * M_2_SQRTPI;
-    
+
   } else {
 
     cl = 1.0 / z1;
