@@ -372,8 +372,10 @@ SMPY <- function(mf, y, control, split) {
   control$cov <- ".vcov.w"
   control$subsampling <- 'simple'
   # lmrob() sets the above when is.list(init)==TRUE
-  control$psi <- control$tuning.psi$name
-  control$tuning.psi <- control$tuning.psi$cc
+  # control$psi <- control$tuning.psi$name
+  # control$tuning.psi <- control$tuning.psi$cc
+  control$psi <- control$family # tuning.psi$name
+  
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
   return(outlmrob) #, init.SMPY=uu))
 }
