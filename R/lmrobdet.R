@@ -1207,7 +1207,9 @@ lmrobM <- function(formula, data, subset, weights, na.action,
                             method = "M",
                             cov = ".vcov.w")
     z <- lmrob.fit(x, y, rb.ctl, initial, mf)
+    oldz.control <- z$control
     z$control <- control
+    z$control$method <- oldz.control$method
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
               else rep.int(as.numeric(NA), p),
