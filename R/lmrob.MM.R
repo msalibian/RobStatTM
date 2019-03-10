@@ -263,7 +263,6 @@ lmrob.fit <- function(x, y, control, init=NULL, mf=NULL) {
     if (is.null(init$rank)) init$rank <- init$qr$rank
     control$method <- est ## ~= original 'method', but only with the steps executed.
     init$control <- control
-    print('here')
     ## --- covariance estimate
     init$cov <-
 	if (init$scale == 0) { ## exact fit
