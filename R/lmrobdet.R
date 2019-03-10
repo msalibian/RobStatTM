@@ -453,9 +453,9 @@ print.lmrobdetMM <- function(x, digits = max(3, getOption("digits") - 3), ...)
         cat("Exact fit detected\n\nCoefficients:\n")
       } else {
         cat("Algorithm did not converge\n\n")
-        if (control$method == "S")
-          cat("Coefficients of the *initial* S-estimator:\n")
-        else
+        # if (control$method == "S")
+          # cat("Coefficients of the *initial* S-estimator:\n")
+        # else
           cat(sprintf("Coefficients of the %s-estimator:\n",
                       control$method))
       }
@@ -489,11 +489,11 @@ summary.lmrobdetMM <- function(object, correlation = FALSE, symbolic.cor = FALSE
     ## 'df' vector, modeled after summary.lm() : ans$df <- c(p, rdf, NCOL(Qr$qr))
     ## where  p <- z$rank ; rdf <- z$df.residual ; Qr <- qr.lm(object)
     ans$df <- c(p, df, NCOL(object$qr$qr))
-    ans$coefficients <-
-      if( ans$converged)
-        cbind(est, se, tval, 2 * pt(abs(tval), df, lower.tail = FALSE))
-    else
-      cbind(est, if(sigma <= 0) 0 else NA, NA, NA)
+    ans$coefficients <- cbind(est, se, tval, 2 * pt(abs(tval), df, lower.tail = FALSE))
+     #   if( ans$converged)
+     #    cbind(est, se, tval, 2 * pt(abs(tval), df, lower.tail = FALSE))
+     # else
+     #   cbind(est, if(sigma <= 0) 0 else NA, NA, NA)
     dimnames(ans$coefficients) <- list(names(est), cf.nms)
     ans$cov <- object$cov
     if(length(object$cov) > 1L)
@@ -1210,6 +1210,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     oldz.control <- z$control
     z$control <- control
     z$control$method <- oldz.control$method
+    z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family)
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
               else rep.int(as.numeric(NA), p),

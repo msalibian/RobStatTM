@@ -254,7 +254,7 @@ lmrob.fit <- function(x, y, control, init=NULL, mf=NULL) {
 		    "%s-step did NOT converge. Returning unconverged %s-estimate",
 		    step, est),
 			domain = NA)
-                break
+                # break # now we return unconverged estimator with all associated inference
             }
         }
     }
@@ -263,13 +263,13 @@ lmrob.fit <- function(x, y, control, init=NULL, mf=NULL) {
     if (is.null(init$rank)) init$rank <- init$qr$rank
     control$method <- est ## ~= original 'method', but only with the steps executed.
     init$control <- control
-
+    print('here')
     ## --- covariance estimate
     init$cov <-
 	if (init$scale == 0) { ## exact fit
 	    matrix(0, ncol(x), ncol(x),
 		   dimnames=list(colnames(x), colnames(x)))
-	} else if (!init$converged || is.null(x)) {
+	} else if (is.null(x)) { #!init$converged || is.null(x)) {
 	    NA
 	} else {
 	    if (is.null(control$cov) || control$cov == "none")
