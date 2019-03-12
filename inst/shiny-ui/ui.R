@@ -14,7 +14,7 @@ pkgs <- c("shiny", "shinyjs")
 
 options(warn=-1L)
 
-missing.packages <- setdiff(pkgs, rownames(installed.packages()))
+missing.packages <- pkgs[sapply(pkgs, function(p) { length(find.package(p, quiet = T)) == 0 })]
 if (length(missing.packages) > 0) {
   cat(paste("The following packages are missing:", missing.packages, ".\n"))
   cat("Installing missing packages!")
