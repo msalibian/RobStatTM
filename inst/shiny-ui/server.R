@@ -12,7 +12,7 @@ options(warn = -1L, scipen = -1L)
 pkgs <- c("DT", "fit.models", "ggplot2", "grid", "gridExtra", "gtools",
           "PerformanceAnalytics", "robust", "robustbase", "shiny", "xts")
 
-missing.packages <- setdiff(pkgs, rownames(installed.packages()))
+missing.packages <- pkgs[sapply(pkgs, function(p) { length(find.package(p, quiet = T)) == 0 })]
 if (length(missing.packages) > 0) {
   cat(paste("The following packages are missing:", missing.packages, ".\n"))
   cat("Installing missing packages!")
