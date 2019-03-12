@@ -17,9 +17,10 @@ SEXP R_erfi(SEXP x)
 double complex erfz(double complex z)
 /*******************************************************************************
 
-  Evalutaes the error function for a complex argument. Based on the Fortran
-  subroutine CERROR.
-
+  Evalutaes the error function for a complex argument. 
+ 
+ Licensing:  None
+ 
   Modified:
 
     26 July 2017
@@ -27,6 +28,12 @@ double complex erfz(double complex z)
   Author:
 
     Kjell P. Konis
+ 
+ Algorithm Reference:
+ Shanjie Zhang and Jianming Jin,
+ Computation of Special Functions,
+ Wiley, 1996,
+ ISBN: 0-471-11963-6,
 
 *******************************************************************************/
 {
