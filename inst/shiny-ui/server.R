@@ -3386,7 +3386,7 @@ shinyServer(function(input, output) {
   
   output$help.text <- renderText({"
     <div>
-      <font color=\"#000000\"> Please contact <a href=\"mailto:gsb25@uw.edu\">Greg Brownson</a>
+      <font color=\"#000000\"> Please contact <a href=\"mailto:gregory.brownson@gmail.com\">Greg Brownson</a>
         for any questions about the application. Any comments or suggestions to improve on the
         <strong>RobStatTM</strong> shiny interface are encouraged as well!</font>
     </div>
