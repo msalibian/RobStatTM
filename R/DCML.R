@@ -368,6 +368,7 @@ SMPY <- function(mf, y, control, split) {
   uu <- list(coef=beta00, scale=ss, residuals=res)
   # Compute the MMestimator using lmrob, starting from this initial
   # and associated residual scale estimate
+  orig.control <- control
   control$method <- 'M'
   control$cov <- ".vcov.w"
   control$subsampling <- 'simple'
@@ -375,8 +376,8 @@ SMPY <- function(mf, y, control, split) {
   # control$psi <- control$tuning.psi$name
   # control$tuning.psi <- control$tuning.psi$cc
   control$psi <- control$family # tuning.psi$name
-  
   outlmrob <- lmrob.fit(XX, y, control, init=uu, mf=mf)
+  outlmrob$control <- orig.control
   return(outlmrob) #, init.SMPY=uu))
 }
 
