@@ -3,6 +3,8 @@
 \usepackage[]{color}
 % The line below tells R to use knitr on this.
 %\VignetteEngine{knitr::knitr_notangle}
+ %\VignetteIndexEntry{Shiny Interface to RobStatTM}
+%\usepackage[utf8]{inputenc}
 
 %% maxwidth is the original width if it is less than linewidth
 %% otherwise use linewidth (to make sure the graphics do not exceed the margin)
@@ -115,7 +117,7 @@
   opts_chunk$set(concordance=TRUE)
 @
 
-\title{Shiny Interface to the RobStatTM Library}
+\title{Shiny Interface to the RobStatTM Package}
 \author{Gregory Brownson}
 \maketitle
 \begin{abstract}
