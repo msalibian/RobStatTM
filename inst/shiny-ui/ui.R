@@ -211,10 +211,11 @@ shinyUI(navbarPage("RobStatTM",
         conditionalPanel("input['locScale.method'] != 'classic'",
                          
            selectInput("locScale.psi", "Score Function (Psi)",
-                       choices = c("modified optimal" = "modopt",
-                                   "optimal"          = "optimal",
-                                   "bisquare"         = "bisquare",
-                                   "huber"            = "huber")),
+                       choices = c("Opt."      = "optimal",
+                                   "Mod. Opt." = "modopt",
+                                   "Bisquare"  = "bisquare",
+                                   "Huber"     = "huber"),
+                       selected = "optimal"),
            
            uiOutput('locScale.eff.options')
         ),

@@ -1280,7 +1280,7 @@ shinyServer(function(input, output) {
                         choices = c("Bisquare" = "bisquare",
                                     "Opt."      = "optimal",
                                     "Mod. Opt." = "modopt"),
-                        selected = "modopt"),
+                        selected = "optimal"),
             
             numericInput("linRegress.eff", "Efficiency", value = 0.99, min = 0.80, max = 0.99, step = 0.01)
           )
@@ -1294,7 +1294,7 @@ shinyServer(function(input, output) {
                         choices = c("Bi-square" = "bisquare",
                                     "Opt."      = "optimal",
                                     "Mod. Opt." = "modopt"),
-                        selected = "modopt"),
+                        selected = "optimal"),
             
             numericInput("linRegress.eff", "Efficiency", value = 0.99, min = 0.80, max = 0.99, step = 0.01)
           )
@@ -1309,7 +1309,7 @@ shinyServer(function(input, output) {
                       choices = c("Bi-square" = "bisquare",
                                   "Opt."      = "optimal",
                                   "Mod. Opt." = "modopt"),
-                      selected = "modopt"),
+                      selected = "optimal"),
           
           numericInput("linRegress.eff", "Efficiency", value = 0.99, min = 0.80, max = 0.99, step = 0.01)
         )
@@ -1328,7 +1328,7 @@ shinyServer(function(input, output) {
                     choices = c("Bi-square" = "bisquare",
                                 "Opt."      = "optimal",
                                 "Mod. Opt." = "modopt"),
-                    selected = "modopt"),
+                    selected = "optimal"),
         
         numericInput("linRegress.eff2", "Efficiency", value = 0.99, min = 0.80, max = 0.99, step = 0.01)
       )
