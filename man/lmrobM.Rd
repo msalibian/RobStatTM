@@ -6,7 +6,7 @@
 \usage{
 lmrobM(formula, data, subset, weights, na.action, model = TRUE,
   x = FALSE, y = FALSE, singular.ok = TRUE, contrasts = NULL,
-  offset = NULL, control = lmrobdet.control())
+  offset = NULL, control = lmrobM.control())
 }
 \arguments{
 \item{formula}{a symbolic description of the model to be fit.}
@@ -39,7 +39,7 @@ in the linear predictor during fitting. An offset term can be included in the fo
 instead or as well, and if both are specified their sum is used.}
 
 \item{control}{a list specifying control parameters as returned by the function
-\link{lmrobdet.control}.}
+\link{lmrobM.control}.}
 }
 \value{
 A list with the following components:
@@ -74,8 +74,8 @@ absolute residuals from the L1 estimator.
 }
 \examples{
 data(shock)
-cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
-shockrob <- lmrobM(time ~ n.shocks, data = shock,control=cont)
+cont <- lmrobM.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+shockrob <- lmrobM(time ~ n.shocks, data = shock, control=cont)
 shockrob
 summary(shockrob)
 
