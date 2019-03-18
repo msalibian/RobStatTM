@@ -1374,6 +1374,7 @@ lmrobM.control <- function(bb = 0.5,
     tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
   return(list(family=family, # psi=psi,
               bb=bb, tuning.psi=tuning.psi,
+              tuning.chi = tuning.chi,
               max.it=max.it,
               rel.tol=rel.tol, mscale_tol = mscale_tol, mscale_maxit = mscale_maxit,
               solve.tol=solve.tol, trace.lev=trace.lev, mts=mts))
