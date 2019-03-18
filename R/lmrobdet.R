@@ -376,7 +376,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param resid_keep_prop See parameter \code{resid_keep_method} above. See \code{\link{pyinit}}.
 #' @param py_maxit Maximum number of iterations. See \code{\link{pyinit}}.
 #' @param py_eps Relative tolerance for convergence.  See \code{\link{pyinit}}.
-#' @param mscale_maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}.
+#' @param mscale_maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}} and \code{\link{mscale}}.
 #' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}}.
 #' @param mscale_rho_fun String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.
 #'
@@ -1327,21 +1327,17 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 #' Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
 #' can be constructed using the functions \link{bisquare}, \link{modopt} and \link{optimal}.
 #' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.
-#' @param max.it maximum number of IRWLS iterations for the MM-estimator
+#' @param max.it maximum number of IRWLS iterations for the M-estimator
 #' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}}.
+#' @param mscale_maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{mscale}}.
 #' @param rel.tol relative covergence tolerance for the IRWLS iterations for the M-estimator
 #' @param solve.tol relative tolerance for inversion
 #' @param trace.lev positive values (increasingly) provide details on the progress of the M-algorithm
 #' @param mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
 #' that performs M-iterations (lmrob..M..fit), so set here.
-#' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
 #' @param family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
 #' the current valid options.
-#' @param corr.b logical value indicating whether a finite-sample correction should be applied
-#' to the M-scale parameter \code{bb}.
-#' @param split.type determines how categorical and continuous variables are split. See
-#' \code{\link[robustbase]{splitFrame}}.
 #'
 #' @return A list with the necessary tuning parameters.
 #'
@@ -1357,11 +1353,10 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 lmrobM.control <- function(bb = 0.5,
                            efficiency = 0.99,
                            family = 'optimal',
-                           tuning.psi,
-                           compute.rd = FALSE,
-                           corr.b = TRUE,
+                           tuning.chi, tuning.psi,
                            max.it = 100, rel.tol = 1e-7,
                            mscale_tol = 1e-06,
+                           mscale_maxit = 50,
                            solve.tol = 1e-7, trace.lev = 0,
                            mts = 1000)
 {
@@ -1380,10 +1375,8 @@ lmrobM.control <- function(bb = 0.5,
   return(list(family=family, # psi=psi,
               bb=bb, tuning.psi=tuning.psi,
               max.it=max.it,
-              corr.b = corr.b,
-              rel.tol=rel.tol, mscale_tol = mscale_tol,
-              solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
-              compute.rd=compute.rd))
+              rel.tol=rel.tol, mscale_tol = mscale_tol, mscale_maxit = mscale_maxit,
+              solve.tol=solve.tol, trace.lev=trace.lev, mts=mts))
 }
 
 
