@@ -28,10 +28,10 @@
 #' @param u vector of residuals
 #' @param delta the right hand side of the M-scale equation
 #' @param family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modopt"). 
+#' options are "bisquare", "optimal" and "modopt").
 #' @param tuning.chi the tuning object for the rho function as returned
-#' by \code{\link{lmrobdet.control}}, \link{bisquare}, \link{modopt} or \link{optimal}. 
-#' It should correspond to the family of rho functions specified in the argument \code{family}. 
+#' by \code{\link{lmrobdet.control}}, \link{bisquare}, \link{modopt} or \link{optimal}.
+#' It should correspond to the family of rho functions specified in the argument \code{family}.
 #' @param tol relative tolerance for convergence
 #' @param max.it maximum number of iterations allowed
 #'
@@ -101,7 +101,7 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
   b0 <- mean(rhoprime2(rr, family = control$family, cc = control$tuning.psi))
   dee <- control$bb
   if(control$corr.b) dee <- dee * (1 - p/n)
-  a2 <- mscale(u=res.LS, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
+  a2 <- mscale(u=res.LS, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
   tt <- t0^2*sig.R^2*a1/b0^2 + a2^2*(1-t0)^2 +2*t0*(1-t0)*sig.R*c0/b0
   V <- tt*solve(CC)
   return(V)
@@ -230,7 +230,7 @@ DCML <- function(x, y, z, z0, control) {
   n <- length(z$residuals)
   dee <- control$bb
   if(control$corr.b) dee <- dee*(1-p/n)
-  si.dcml <- mscale(u=z$residuals, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
+  si.dcml <- mscale(u=z$residuals, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
   deltas <- .3*p/n
   CC <- t(x * z$rweights) %*% x / sum(z$rweights)
   # print(all.equal(CC, t(x) %*% diag(z$rweights) %*% x / sum(z$rweights)))
@@ -241,7 +241,7 @@ DCML <- function(x, y, z, z0, control) {
                      sig.R=si.dcml, t0=t0, p=p, n=n, control=control) / n
   fi.dcml <- as.vector( x %*% beta.dcml )
   re.dcml <- as.vector(y - fi.dcml )
-  si.dcml.final <- mscale(u=re.dcml, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
+  si.dcml.final <- mscale(u=re.dcml, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
   return(list(coefficients=beta.dcml, cov=V.dcml, residuals=re.dcml, fitted.values = fi.dcml,
               scale=si.dcml.final, t0=t0))
 }
@@ -326,11 +326,11 @@ SMPY <- function(mf, y, control, split) {
   betapy <- initial$coefficients[,1]
   r <- as.vector(y1 - X1 %*% betapy)
   best.tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-  sspy <- mscale(u=best.tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
+  sspy <- mscale(u=best.tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
   for(i in 2:kk) {
     r <- as.vector(y1 - X1 %*% initial$coefficients[,i])
     tmp <- lmrob.lar(x=Z, y=r, control = control, mf = NULL)
-    s.cand <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
+    s.cand <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
     if( s.cand < sspy ) {
       sspy <- s.cand
       betapy <- initial$coefficients[,i]
@@ -352,7 +352,7 @@ SMPY <- function(mf, y, control, split) {
     beta <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
     r1 <- as.vector(y - X %*% beta)
     tmp <- lmrob.lar(x=Z, y=r1, control = control, mf = NULL)
-    sih <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family)
+    sih <- mscale(u=tmp$residuals, tol=control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
     if(sih < sspy) {
       sspy <- sih
       betapy <- beta
