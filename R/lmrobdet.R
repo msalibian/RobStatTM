@@ -1204,7 +1204,8 @@ lmrobM <- function(formula, data, subset, weights, na.action,
 
     rb.ctl <- lmrob.control(psi = control$family, #tuning.psi$name,
                             tuning.psi = control$tuning.psi, #$cc,
-                            method = "M",
+                            method = "M", max.it = control$max.it,
+                            rel.tol = control$rel.tol, trace.lev = control$trace.lev,
                             cov = ".vcov.w")
     z <- lmrob.fit(x, y, rb.ctl, initial, mf)
     oldz.control <- z$control
