@@ -181,7 +181,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       # si.dcml.final <- mscale(u=re.dcml, tol = control$mscale.tol, delta=dee, tuning.chi=control$tuning.chi)
       n <- length(z$resid)
       z$scale.S <- z$scale
-      z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family)
+      z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
       # compute robust R^2
       r.squared <- adj.r.squared <- 0
       # if(control$family == 'bisquare') {
@@ -377,7 +377,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param py_maxit Maximum number of iterations. See \code{\link{pyinit}}.
 #' @param py_eps Relative tolerance for convergence.  See \code{\link{pyinit}}.
 #' @param mscale_maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}}.
-#' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{pyinit}}.
+#' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}}.
 #' @param mscale_rho_fun String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.
 #'
 #' @return A list with the necessary tuning parameters.
@@ -1064,7 +1064,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 #' in the linear predictor during fitting. An offset term can be included in the formula
 #' instead or as well, and if both are specified their sum is used.
 #' @param control a list specifying control parameters as returned by the function
-#' \link{lmrobdet.control}.
+#' \link{lmrobM.control}.
 #'
 #' @return A list with the following components:
 #' \item{coefficients}{The estimated vector of regression coefficients}
@@ -1090,8 +1090,8 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 #'
 #' @examples
 #' data(shock)
-#' cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
-#' shockrob <- lmrobM(time ~ n.shocks, data = shock,control=cont)
+#' cont <- lmrobM.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+#' shockrob <- lmrobM(time ~ n.shocks, data = shock, control=cont)
 #' shockrob
 #' summary(shockrob)
 #'
@@ -1099,7 +1099,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 lmrobM <- function(formula, data, subset, weights, na.action,
                    model = TRUE, x = FALSE, y = FALSE,
                    singular.ok = TRUE, contrasts = NULL, offset = NULL,
-                   control = lmrobdet.control()) {
+                   control = lmrobM.control()) {
   # tuning.psi = 3.4434 # 85% efficiency
   ret.x <- x
   ret.y <- y
@@ -1210,7 +1210,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     oldz.control <- z$control
     z$control <- control
     z$control$method <- oldz.control$method
-    z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family)
+    z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
               else rep.int(as.numeric(NA), p),
@@ -1311,6 +1311,82 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 }
 
 
+#' Tuning parameters for lmrobM
+#'
+#' This function sets tuning parameters for the M estimator implemented in \code{lmrobM}.
+#'
+#' @rdname lmrobM.control
+#' @param bb tuning constant (between 0 and 1/2) for the M-scale used to compute the residual
+#' scale estimator. Defaults to 0.5.
+#' @param tuning.chi tuning constant for the function used to compute the M-scale
+#' used for the residual scale estimator. If missing, it is computed inside \code{lmrobdet.control} to match
+#' the value of \code{bb} according to the family of rho functions specified in \code{family}.
+#' @param tuning.psi tuning parameters for the regression M-estimator computed with a rho function
+#' as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
+#' the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
+#' Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
+#' can be constructed using the functions \link{bisquare}, \link{modopt} and \link{optimal}.
+#' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.
+#' @param max.it maximum number of IRWLS iterations for the MM-estimator
+#' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}}.
+#' @param rel.tol relative covergence tolerance for the IRWLS iterations for the M-estimator
+#' @param solve.tol relative tolerance for inversion
+#' @param trace.lev positive values (increasingly) provide details on the progress of the M-algorithm
+#' @param mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
+#' that performs M-iterations (lmrob..M..fit), so set here.
+#' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
+#' @param family string specifying the name of the family of loss function to be used (current valid
+#' options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
+#' the current valid options.
+#' @param corr.b logical value indicating whether a finite-sample correction should be applied
+#' to the M-scale parameter \code{bb}.
+#' @param split.type determines how categorical and continuous variables are split. See
+#' \code{\link[robustbase]{splitFrame}}.
+#'
+#' @return A list with the necessary tuning parameters.
+#'
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#'
+#' @examples
+#' data(coleman, package='robustbase')
+#' m2 <- lmrobM(Y ~ ., data=coleman, control=lmrobM.control())
+#' m2
+#' summary(m2)
+#'
+#' @export
+lmrobM.control <- function(bb = 0.5,
+                           efficiency = 0.99,
+                           family = 'optimal',
+                           tuning.psi,
+                           compute.rd = FALSE,
+                           corr.b = TRUE,
+                           max.it = 100, rel.tol = 1e-7,
+                           mscale_tol = 1e-06,
+                           solve.tol = 1e-7, trace.lev = 0,
+                           mts = 1000)
+{
+
+  family <- match.arg(family, choices = FAMILY.NAMES)
+  if( (efficiency > .9999 ) & ( (family=='modopt') | (family=='optimal') ) ) {
+    efficiency <- .9999
+    warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+  }
+  if(missing(tuning.psi))
+    tuning.psi <- do.call(family, args=list(e=efficiency))
+  if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) )
+    tuning.psi <- c( 'c' = tuning.psi )
+  if(missing(tuning.chi))
+    tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
+  return(list(family=family, # psi=psi,
+              bb=bb, tuning.psi=tuning.psi,
+              max.it=max.it,
+              corr.b = corr.b,
+              rel.tol=rel.tol, mscale_tol = mscale_tol,
+              solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
+              compute.rd=compute.rd))
+}
+
+
 ### The first part of lmrob()  much cut'n'paste from lm() - on purpose!
 
 
@@ -1333,3 +1409,7 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 ## Maximum Likelihood one (DCML)
 ##
 ## We also made the default convergence settings for the S less strict
+
+
+
+
