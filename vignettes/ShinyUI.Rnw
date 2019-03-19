@@ -120,42 +120,22 @@
 \title{Shiny Interface to the RobStatTM Package}
 \author{Gregory Brownson}
 \maketitle
-\begin{abstract}
-This vignette explains the use of the Shiny User Interface to the
-RobStatTM R package that was implemented during the 2018 Google Summer
-of Code (GSoC). GSoC funding was awarded to UW AMath MS-CFRM student
-Gregory Brownson as project lead, with Doug Martin and Matias Salibian-Barrera
-as mentors for the project.
-\end{abstract}
 
 \section{Introduction}
 
-\subsection*{Overall Goal}
-
-Our overall goal in developing a Shiny user interface (UI) to the
-\textbf{RobStatTM} package (ShinyRobStatTM) companion to the \textbf{Robust
-Statistics: Theory and Methods} book (Maronna et al. 2018 second edition).
-In particular, the Shiny UI broadens the applications of the package
-by allowing users to work with robust statistical methods without
-first having to learn to use the R command line interface. The Shiny
-point-and-click interface substantially lowers the learning curve
-for computing robust statistics and we believe will thereby result
-in an increased frequency in use of these methods.
-
-\subsection*{Interface with RobStatTM}
-
+This document describes a Shiny UI to the
+\textbf{RobStatTM} R package companion to the \textit{Robust
+Statistics: Theory and Methods} book (Maronna et al. 2019 second edition). 
 The shiny application provides an interface with \textbf{RobStatTM}
 without needing to set many R function arguments or understanding
 the complexities of the underlying functions. The simplicity of the
-UI will allow students and practitioners who are new to robust methods
+UI will allow students and practitioners who are new to robust statistical methods
 to easily use them and compare robust results with classical methods.
 Within the Shiny UI, the user will be able to load a data set either
-from an existing R package or a local .csv file and then run the data
+from an existing R package or a local .csv and then run the data
 through different methods of analysis. Currently, the UI provides
 an interface to robust location and scale, robust linear regression,
 robust covariance estimation, and robust principal component analysis.
-More methods will be added in the future as the \textbf{RobStatTM}
-package development continues.
 
 \newpage{}
 
@@ -176,10 +156,11 @@ The Shiny UI depends on the following packages:
 \item \textbf{shinyjs}
 \item \textbf{xts}
 \end{itemize}
-The Shiny application will detect any missing packages and install
-them automatically, removing the responsibility of package management
-from the user. Now that the Shiny UI background has been established,
-the subsequent sections will explain how to use the UI.
+With the above packages all installed, and the Shiny UI application displayed, you are now ready to start using the Shiny UI.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add image of the Shiny UI initial screen here %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage{}
 
@@ -187,11 +168,12 @@ the subsequent sections will explain how to use the UI.
 
 Data may be loaded into the Shiny UI from an existing R package or
 upload a csv file to the application by selecting either ``R Package''
-or ``Upload'' as shown in Figure \ref{f1}. Once a user selects
+or ``Upload'' as shown in Figure \ref{f1}. Once you select
 a package from the list under \textbf{Library Name}, the \textbf{Select
-Dataset} input is populated by existing names of datasets in that
-package. After selecting a dataset, the user should click on the \textbf{Load
-Data} button to load the data into the application for further analysis.
+Dataset} input will be populated by the names of existing of datasets in that
+package. After selecting a dataset, you should click on the \textbf{Load
+Data} button to load the data into the application for further analysis,
+and the data will be displayed in a table on the right.
 
 \begin{figure}[H]
 \begin{centering}
@@ -201,18 +183,18 @@ Data} button to load the data into the application for further analysis.
 \end{figure}
 
 Figure \ref{f2} shows the options for uploading a csv file to the
-application. The user must specify the file format such as the delimiter
-and string quotation syntax. If the data is a time series, then the
-user must check the corresponding box as shown in the example. The
+application. Since not all csv files  You must specify the file format such as the delimiter
+and string quotation syntax. If the data is a time series, then you
+must check the corresponding box as shown in the example. The
 first column of data must contain the date or time indices to be read
-as a time series. In the example, we use the data set \textbf{hfunds.ts.csv}
-which contains returns for five hedge funds and upload it as a time
+as a time series. The format of In the example, we use the data set \textbf{hfunds.ts.csv}
+which contains returns for five hedge funds, and upload it as a time
 series. The window in the main (right) panel displays the data in
-a table like format and we may view the returns for each date. There
+a table like format and where you may view the returns for each date. There
 are five columns corresponding to the different types of hedge funds:
 emerging markets (\textbf{EM}), Private Equity (\textbf{PE}), U.S.
 High Yield (\textbf{USHY}), Alternative Investments (\textbf{AI}),
-and Bond (\textbf{BND})\textbf{. }For datasets with a large number
+and Bond (\textbf{BND})\textbf{.} For datasets with a large number
 of variables, we suggest viewing the application in \textbf{Full Screen}.
 
 \begin{figure}[th]
@@ -224,7 +206,7 @@ of variables, we suggest viewing the application in \textbf{Full Screen}.
 
 \newpage{}
 
-\section{Robust Location-Scale}
+\section{Robust Location and Scale Estimators}
 
 This section allows the comparison of classical estimates for mean
 and standard deviation and robust estimates for location and scale
@@ -232,16 +214,16 @@ for a single variable.
 
 \subsection*{Computing Location and Scale}
 
-The Shiny UI interfaces with the \textbf{locScaleM() }function in
-\textbf{RobStatTM} to comput robust estimates of location and scale.
+The Shiny UI interfaces with the \textbf{locScaleM()} function in
+\textbf{RobStatTM} to compute robust estimates of location and scale.
 Simply select a \textbf{Variable} and choose a \textbf{Method} from
 the options of \emph{Classical}, \emph{Robust}, or \emph{Both}. The
-classical and robust methods are compared when \emph{Both }is chosen.
+classical and robust methods are compared when \emph{Both} is chosen.
 Furthermore, if either \emph{Robust} or \emph{Both} are selected,
 then a set of options for the robust method appear in the bottom of
 the side panel on the left where the user may select the \textbf{Score
 Function} and \textbf{Asymptotic Efficiency}. To compute the estimates
-and display the summary, click the \textbf{Results }button. Figure
+and display the summary, click the \textbf{Results} button. Figure
 \ref{f3} shows an example comparing the estimates of location and
 scale for the Private Equity fund from the \textbf{hfunds.ts} data
 where we used the modified optimal score function and an asymptotic
