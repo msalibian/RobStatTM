@@ -47,8 +47,6 @@ Z is a standard normal random variable.
 The iterative algorithm starts from the scaled median of
 the absolute values of the input vector, and then
 cycles through the equation s^2 = s^2 * mean(rho(r/s, cc)) / b.
-In this package the function \code{rho} is one of
-Tukey's bisquare family.
 }
 \examples{
 set.seed(123)
