@@ -1328,8 +1328,8 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 
 #' Tuning parameters for lmrobM
 #'
-#' This function sets tuning parameters for the M estimators of regression and scale as implemented
-#' in \code{\link{lmrobM}} and \code{\link{mscale}}.
+#' This function sets tuning parameters for the M estimators of regression implemented
+#' in \code{\link{lmrobM}}.
 #'
 #' @rdname lmrobM.control
 #' @param bb tuning constant (between 0 and 1/2) for the M-scale used to compute the residual
