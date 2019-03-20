@@ -42,7 +42,7 @@ can be constructed using the functions \link{bisquare}, \link{modopt} and \link{
 A list with the necessary tuning parameters.
 }
 \description{
-This function sets tuning parameters for the M estimators of regression and scale as implemented 
+This function sets tuning parameters for the M estimators of regression and scale as implemented
 in \code{\link{lmrobM}} and \code{\link{mscale}}.
 }
 \examples{

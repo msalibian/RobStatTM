@@ -348,7 +348,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param refine.tol relative covergence tolerance for the S-estimator
 #' @param rel.tol relative covergence tolerance for the IRWLS iterations for the MM-estimator
 #' @param refine.PY number of refinement steps for the Pen~a-Yohai candidates
-#' @param solve.tol (for the S algorithm): relative tolerance for matrix inversion. Hence, this corresponds to \code{\link{solve.default()}}'s tol. 
+#' @param solve.tol (for the S algorithm): relative tolerance for matrix inversion. Hence, this corresponds to \code{\link{solve.default}}'s tol.
 #' @param trace.lev positive values (increasingly) provide details on the progress of the MM-algorithm
 #' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
 #' @param family string specifying the name of the family of loss function to be used (current valid
@@ -1197,7 +1197,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     rb.ctl <- lmrob.control(psi = control$family, #tuning.psi$name,
                             tuning.psi = control$tuning.psi, #$cc,
                             method = "M", max.it = control$max.it,
-                            rel.tol = control$rel.tol, 
+                            rel.tol = control$rel.tol,
                             trace.lev = control$trace.lev,
                             cov = ".vcov.w")
     z <- lmrob.fit(x, y, rb.ctl, initial, mf)
@@ -1328,7 +1328,7 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 
 #' Tuning parameters for lmrobM
 #'
-#' This function sets tuning parameters for the M estimators of regression and scale as implemented 
+#' This function sets tuning parameters for the M estimators of regression and scale as implemented
 #' in \code{\link{lmrobM}} and \code{\link{mscale}}.
 #'
 #' @rdname lmrobM.control

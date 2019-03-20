@@ -54,7 +54,7 @@ appropriate when there are categorical explanatory variables in the model.}
 
 \item{refine.PY}{number of refinement steps for the Pen~a-Yohai candidates}
 
-\item{solve.tol}{(for the S algorithm): relative tolerance for matrix inversion. Hence, this corresponds to \code{\link{solve.default()}}'s tol.}
+\item{solve.tol}{(for the S algorithm): relative tolerance for matrix inversion. Hence, this corresponds to \code{\link{solve.default}}'s tol.}
 
 \item{trace.lev}{positive values (increasingly) provide details on the progress of the MM-algorithm}
 
