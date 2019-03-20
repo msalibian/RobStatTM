@@ -331,9 +331,6 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' the Distance Constrained Maximum Likelihood regression estimators
 #' computed by \code{lmrobdetDCML}.
 #'
-#' There are 2 sets of tuning parameters: those related to the MM-estimator,
-#' and those controlling the initial Pen~a-Yohai estimator.
-#'
 #' @rdname lmrobdet.control
 #' @param tuning.chi tuning constant for the function used to compute the M-scale
 #' used for the initial S-estimator. If missing, it is computed inside \code{lmrobdet.control} to match
@@ -351,10 +348,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param refine.tol relative covergence tolerance for the S-estimator
 #' @param rel.tol relative covergence tolerance for the IRWLS iterations for the MM-estimator
 #' @param refine.PY number of refinement steps for the Pen~a-Yohai candidates
-#' @param solve.tol relative tolerance for inversion
+#' @param solve.tol (for the S algorithm): relative tolerance for matrix inversion. Hence, this corresponds to \code{\link{solve.default()}}'s tol. 
 #' @param trace.lev positive values (increasingly) provide details on the progress of the MM-algorithm
-#' @param mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
-#' that performs M-iterations (lmrob..M..fit), so set here.
 #' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
 #' @param family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
@@ -384,7 +379,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
-#' @seealso \code{\link{pyinit}}
+#' @seealso \code{\link{pyinit}}, \code{\link{mscale}}.
 #'
 #' @examples
 #' data(coleman, package='robustbase')
@@ -407,10 +402,8 @@ lmrobdet.control <- function(bb = 0.5,
                              solve.tol = 1e-7, trace.lev = 0,
                              psc_keep = 0.5, resid_keep_method = 'threshold',
                              resid_keep_thresh = 2, resid_keep_prop = .2, py_maxit = 20, py_eps = 1e-5,
-                             mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = 'bisquare',
-                             mts = 1000)
+                             mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = 'bisquare')
 {
-
   family <- match.arg(family, choices = FAMILY.NAMES)
   if( (efficiency > .9999 ) & ( (family=='modopt') | (family=='optimal') ) ) {
       efficiency <- .9999
@@ -428,13 +421,13 @@ lmrobdet.control <- function(bb = 0.5,
               refine.tol=refine.tol,
               corr.b = corr.b, refine.PY = refine.PY,
               rel.tol=rel.tol,
-              solve.tol=solve.tol, trace.lev=trace.lev, mts=mts,
+              solve.tol=solve.tol, trace.lev=trace.lev,
               compute.rd=compute.rd,
               split.type=split.type,
               initial=initial, # method=method, subsampling=subsampling,
               psc_keep=psc_keep, resid_keep_method=resid_keep_method, resid_keep_thresh=resid_keep_thresh,
               resid_keep_prop=resid_keep_prop, py_maxit=py_maxit, py_eps=py_eps, mscale_maxit=mscale_maxit,
-              mscale_tol=mscale_tol, mscale_rho_fun='bisquare'))
+              mscale_tol=mscale_tol, mscale_rho_fun='bisquare', mts=1000)) # mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function that performs M-iterations (lmrob..M..fit), so set here.
 }
 
 
@@ -1204,7 +1197,8 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     rb.ctl <- lmrob.control(psi = control$family, #tuning.psi$name,
                             tuning.psi = control$tuning.psi, #$cc,
                             method = "M", max.it = control$max.it,
-                            rel.tol = control$rel.tol, trace.lev = control$trace.lev,
+                            rel.tol = control$rel.tol, 
+                            trace.lev = control$trace.lev,
                             cov = ".vcov.w")
     z <- lmrob.fit(x, y, rb.ctl, initial, mf)
     oldz.control <- z$control
@@ -1334,7 +1328,8 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 
 #' Tuning parameters for lmrobM
 #'
-#' This function sets tuning parameters for the M estimator implemented in \code{lmrobM}.
+#' This function sets tuning parameters for the M estimators of regression and scale as implemented 
+#' in \code{\link{lmrobM}} and \code{\link{mscale}}.
 #'
 #' @rdname lmrobM.control
 #' @param bb tuning constant (between 0 and 1/2) for the M-scale used to compute the residual
@@ -1352,10 +1347,7 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 #' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}}.
 #' @param mscale_maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{mscale}}.
 #' @param rel.tol relative covergence tolerance for the IRWLS iterations for the M-estimator
-#' @param solve.tol relative tolerance for inversion
 #' @param trace.lev positive values (increasingly) provide details on the progress of the M-algorithm
-#' @param mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
-#' that performs M-iterations (lmrob..M..fit), so set here.
 #' @param family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
 #' the current valid options.
@@ -1378,8 +1370,7 @@ lmrobM.control <- function(bb = 0.5,
                            max.it = 100, rel.tol = 1e-7,
                            mscale_tol = 1e-06,
                            mscale_maxit = 50,
-                           solve.tol = 1e-7, trace.lev = 0,
-                           mts = 1000)
+                           trace.lev = 0)
 {
 
   family <- match.arg(family, choices = FAMILY.NAMES)
@@ -1398,7 +1389,7 @@ lmrobM.control <- function(bb = 0.5,
               tuning.chi = tuning.chi,
               max.it=max.it,
               rel.tol=rel.tol, mscale_tol = mscale_tol, mscale_maxit = mscale_maxit,
-              solve.tol=solve.tol, trace.lev=trace.lev, mts=mts))
+              trace.lev=trace.lev, mts=1000)) # mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function that performs M-iterations (lmrob..M..fit), so set here.
 }
 
 

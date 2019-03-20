@@ -6,8 +6,7 @@
 \usage{
 lmrobM.control(bb = 0.5, efficiency = 0.99, family = "optimal",
   tuning.chi, tuning.psi, max.it = 100, rel.tol = 1e-07,
-  mscale_tol = 1e-06, mscale_maxit = 50, solve.tol = 1e-07,
-  trace.lev = 0, mts = 1000)
+  mscale_tol = 1e-06, mscale_maxit = 50, trace.lev = 0)
 }
 \arguments{
 \item{bb}{tuning constant (between 0 and 1/2) for the M-scale used to compute the residual
@@ -37,18 +36,14 @@ can be constructed using the functions \link{bisquare}, \link{modopt} and \link{
 
 \item{mscale_maxit}{Maximum number of iterations for the M-scale algorithm. See \code{\link{mscale}}.}
 
-\item{solve.tol}{relative tolerance for inversion}
-
 \item{trace.lev}{positive values (increasingly) provide details on the progress of the M-algorithm}
-
-\item{mts}{maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
-that performs M-iterations (lmrob..M..fit), so set here.}
 }
 \value{
 A list with the necessary tuning parameters.
 }
 \description{
-This function sets tuning parameters for the M estimator implemented in \code{lmrobM}.
+This function sets tuning parameters for the M estimators of regression and scale as implemented 
+in \code{\link{lmrobM}} and \code{\link{mscale}}.
 }
 \examples{
 data(coleman, package='robustbase')

@@ -11,8 +11,7 @@ lmrobdet.control(bb = 0.5, efficiency = 0.99, family = "optimal",
   solve.tol = 1e-07, trace.lev = 0, psc_keep = 0.5,
   resid_keep_method = "threshold", resid_keep_thresh = 2,
   resid_keep_prop = 0.2, py_maxit = 20, py_eps = 1e-05,
-  mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = "bisquare",
-  mts = 1000)
+  mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = "bisquare")
 }
 \arguments{
 \item{bb}{tuning constant (between 0 and 1/2) for the M-scale used to compute the initial S-estimator. It
@@ -55,7 +54,7 @@ appropriate when there are categorical explanatory variables in the model.}
 
 \item{refine.PY}{number of refinement steps for the Pen~a-Yohai candidates}
 
-\item{solve.tol}{relative tolerance for inversion}
+\item{solve.tol}{(for the S algorithm): relative tolerance for matrix inversion. Hence, this corresponds to \code{\link{solve.default()}}'s tol.}
 
 \item{trace.lev}{positive values (increasingly) provide details on the progress of the MM-algorithm}
 
@@ -80,9 +79,6 @@ be removed. See \code{\link{pyinit}}.}
 \item{mscale_tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}} and \code{\link{mscale}}.}
 
 \item{mscale_rho_fun}{String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.}
-
-\item{mts}{maximum number of subsamples. Un-used, but passed (unnecessarily) to the function
-that performs M-iterations (lmrob..M..fit), so set here.}
 }
 \value{
 A list with the necessary tuning parameters.
@@ -92,10 +88,6 @@ This function sets tuning parameters for the MM estimator implemented in \code{l
 the Distance Constrained Maximum Likelihood regression estimators
 computed by \code{lmrobdetDCML}.
 }
-\details{
-There are 2 sets of tuning parameters: those related to the MM-estimator,
-and those controlling the initial Pen~a-Yohai estimator.
-}
 \examples{
 data(coleman, package='robustbase')
 m2 <- lmrobdetMM(Y ~ ., data=coleman, control=lmrobdet.control(refine.PY=50))
@@ -104,7 +96,7 @@ summary(m2)
 
 }
 \seealso{
-\code{\link{pyinit}}
+\code{\link{pyinit}}, \code{\link{mscale}}.
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
