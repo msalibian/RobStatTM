@@ -1201,7 +1201,6 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     #tmp2[[1]] <- quote(lmrob)
     #tmp2$init <- initial
     #z <- eval(expr=tmp2, envir=parent.frame()) # lmrob(formula, control=my.control, init=initial) #tuning.psi=tuning.psi ,init=initial) lmrob.control(tuning.psi=lmrobdet.control()$tuning.psi),
-
     rb.ctl <- lmrob.control(psi = control$family, #tuning.psi$name,
                             tuning.psi = control$tuning.psi, #$cc,
                             method = "M", max.it = control$max.it,
@@ -1212,6 +1211,27 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     z$control <- control
     z$control$method <- oldz.control$method
     z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
+    r.squared <- adj.r.squared <- 0
+    # if(control$family == 'bisquare') {
+    s2 <- mean(rho(z$resid/z$scale, family = control$family, cc=control$tuning.psi))
+    if( p != attr(mt, "intercept") ) {
+      df.int <- if (attr(mt, "intercept"))
+        1L
+      else 0L
+      if(df.int == 1L) {
+        tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
+                                   initial.scale=z$scale, k=500,
+                                   conv=1, family = control$family, cc = control$tuning.psi, step='M')$beta.rw)
+        s02 <- mean(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
+      } else {
+        s02 <- mean(rho(y/z$scale, family = control$family, cc=control$tuning.psi))
+      }
+      r.squared <- INVTR2( (s02 - s2)/(s02*(1-s2)), control$family, control$tuning.psi)
+      adj.r.squared <- ((n-1)/(n-p))*r.squared -(p-1)/(n-p) # ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
+    }
+    # }
+    z$r.squared <- r.squared
+    z$adj.r.squared <- adj.r.squared
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
               else rep.int(as.numeric(NA), p),
