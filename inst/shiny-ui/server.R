@@ -19,22 +19,15 @@ if (length(missing.packages) > 0) {
   install.packages(missing.packages)
 }
 
-library(DT)
-library(fit.models)
-library(ggplot2)
-library(grid)
-library(gridExtra)
-library(gtools)
-library(PerformanceAnalytics)
-library(RobStatTM)
-library(robust)
-library(robustbase)
-library(shiny)
-library(xts)
+lapply(pkgs, library, character.only = TRUE ,quietly = T)
+
+library(RobStatTM, quietly = T)
 
 # Set theme for ggplot
 thm <- theme_bw() +
-       theme(plot.title = element_text(hjust = 0.5))
+       theme(plot.title = element_text(hjust = 0.5),
+             axis.text = element_text(size = 12),
+             axis.title = element_text(size = 14, face = "bold"))
 
 theme_set(thm)
 
@@ -97,9 +90,15 @@ lmrobdetMM <- function(form, ...) {
   return(fit)
 }
 
-covClassic <- function(data, data.name, ...) {
+covClassic <- function(data, data.name, corr = F, ...) {
   z <- RobStatTM::covClassic(data, ...)
+  z$corr <- corr
   z$call <- call("covClassic", data = as.name(data.name))
+  
+  if(corr) {
+    z$sdev <- sqrt(diag(z$cov))
+    z$cov <- z$cov / (z$sdev %o% z$sdev)
+  }
   
   return(z)
 }
@@ -110,9 +109,9 @@ covRob <- function(data, data.name, corr = F, ...) {
   z$call <- call("covRob", data = as.name(data.name))
   class(z) <- "covRob"
   
-  if(corr == T) {
-    D <- sqrt(diag(z$cov))
-    z$cov <- t(diag(1 / D)) %*% z$cov %*% diag(1 / D)
+  if(corr) {
+    z$sdev <- sqrt(diag(z$cov))
+    z$cov <- z$cov / (z$sdev %o% z$sdev)
   }
   
   return(z)
@@ -124,9 +123,9 @@ covRobMM <- function(data, data.name, corr = F, ...) {
   z$call <- call("covRobMM", data = as.name(data.name))
   class(z) <- "covRob"
   
-  if(corr == T) {
-    D <- sqrt(diag(z$cov))
-    z$cov <- t(diag(1 / D)) %*% z$cov %*% diag(1 / D)
+  if(corr) {
+    z$sdev <- sqrt(diag(z$cov))
+    z$cov <- z$cov / (z$sdev %o% z$sdev)
   }
   
   return(z)
@@ -138,9 +137,9 @@ covRobRocke <- function(data, data.name, corr = F, ...) {
   z$call <- call("covRobRocke", data = as.name(data.name))
   class(z) <- "covRob"
   
-  if (corr == T) {
-    D <- sqrt(diag(z$cov))
-    z$cov <- t(diag(1 / D)) %*% z$cov %*% diag(1 / D)
+  if (corr) {
+    z$sdev <- sqrt(diag(z$cov))
+    z$cov <- z$cov / (z$sdev %o% z$sdev)
   }
   
   return(z)
@@ -917,7 +916,7 @@ shinyServer(function(input, output) {
         ),
         
         fluidRow(
-          column(2L, offset = 5L,
+          column(2, offset = 5,
             disabled(
               
               actionLink("data.info.link", label = "More Info")
@@ -944,14 +943,14 @@ shinyServer(function(input, output) {
                       quote  = input$quote)
       
       if (input$data.ts == TRUE) {
-        values$dat[, 1L] <- as.Date(as.character(values$dat[, 1L]))
+        values$dat[, 1] <- as.Date(as.character(values$dat[, 1]))
         
-        values$dat <- xts(values$dat[, -1L], values$dat[, 1L])
+        values$dat <- xts(values$dat[, -1], values$dat[, 1])
       }
       
       # If there are no headers, give data headers
       if (input$header == FALSE) {
-        colnames(dat)[-1L] <- paste0('X', 1L:(ncol(dat) - 1L))
+        colnames(dat)[-1] <- paste0('X', 1L:(ncol(dat) - 1L))
       }
     } else {
       # If no dataset exists, return nothing
@@ -1368,47 +1367,47 @@ shinyServer(function(input, output) {
     }
     
     fit <- vector(mode = "list", length = length(index))
-    if (model[1L] == "lm") {
-      fit[[1L]] <- do.call(model[1L], list(as.formula(input$linRegress.formula.text), data = values$dat))
+    if (model[1] == "lm") {
+      fit[[1]] <- do.call(model[1], list(as.formula(input$linRegress.formula.text), data = values$dat))
     } else {
       control <- lmrobdet.control(efficiency = input$linRegress.eff,
                                   family = input$linRegress.family,
                                   compute.rd = T)
     
-      fit[[1L]] <- do.call(model[1L], list(as.formula(input$linRegress.formula.text),
+      fit[[1]] <- do.call(model[1], list(as.formula(input$linRegress.formula.text),
                                          data    = values$dat,
                                          control = control))
     }
     
-    fit[[1L]]$call <- call(model[1L], as.formula(input$linRegress.formula.text))
+    fit[[1]]$call <- call(model[1], as.formula(input$linRegress.formula.text))
     
     if (input$linRegress.second.method) {
-      if (model[2L] == "lm") {
-        fit[[2L]] <- do.call(model[2L], list(as.formula(input$linRegress.formula.text2), data = values$dat))
+      if (model[2] == "lm") {
+        fit[[2]] <- do.call(model[2], list(as.formula(input$linRegress.formula.text2), data = values$dat))
       } else {
         control <- lmrobdet.control(efficiency = input$linRegress.eff2,
                                     family = input$linRegress.family2,
                                     compute.rd = T)
       
-        fit[[2L]] <- do.call(model[2L], list(as.formula(input$linRegress.formula.text2),
+        fit[[2]] <- do.call(model[2], list(as.formula(input$linRegress.formula.text2),
                                            data    = values$dat,
                                            control = control))
       }
         
-      fit[[2L]]$call <- call(model[2L], as.formula(input$linRegress.formula.text2))
+      fit[[2]]$call <- call(model[2], as.formula(input$linRegress.formula.text2))
       
       
-      if (model[2L] == "lm" && model[1L] != "lm") {
-        model <- model[2L:1L]
+      if (model[2] == "lm" && model[1] != "lm") {
+        model <- model[2:1]
         
-        methods <- methods[2L:1L]
+        methods <- methods[2:1]
         
-        fm <- fit.models(fit[[2L]], fit[[1L]])
+        fm <- fit.models(fit[[2]], fit[[1]])
       } else {
-        fm <- fit.models(fit[[1L]], fit[[2L]])
+        fm <- fit.models(fit[[1]], fit[[2]])
       }
     } else {
-      fm <- fit[[1L]]
+      fm <- fit[[1]]
     }
 
     values$linRegress.active <- T
@@ -1421,9 +1420,9 @@ shinyServer(function(input, output) {
       }
       names(fm) <- values$linRegress.models
       
-      values$linRegress.fit <- fm[[1L]]
+      values$linRegress.fit <- fm[[1]]
       
-      values$linRegress.fit2 <- fm[[2L]]
+      values$linRegress.fit2 <- fm[[2]]
       
       values$linRegress.num.fits <- 2L
     } else {
@@ -1478,7 +1477,7 @@ shinyServer(function(input, output) {
                       ggtitle(title.name) +
                       xlab("Fitted Values") +
                       ylab("Residuals") +
-                      geom_point(color = "dodgerblue2", shape = 18L, size = 2L) +
+                      geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                       geom_hline(yintercept = c(-2.5 * sigma, 0, 2.5 * sigma),
                                  linetype = 2L)
       
@@ -1491,7 +1490,7 @@ shinyServer(function(input, output) {
     if (input$linRegress.response.fit == T) {
       i <- i + 1L
       
-      response <- fit$model[, 1L]
+      response <- fit$model[, 1]
 
       dat <- data.frame(X = fit.vals, Y = response)
       
@@ -1501,7 +1500,7 @@ shinyServer(function(input, output) {
                       ggtitle(title.name) +
                       xlab("Fitted Values") +
                       ylab("Response") +
-                      geom_point(color = "dodgerblue2", shape = 18L, size = 2L)
+                      geom_point(color = "dodgerblue2", shape = 18, size = 2.5)
 
       if (input$include.rugplot == T) {
         plots[[i]] <- plots[[i]] + geom_rug()
@@ -1518,10 +1517,10 @@ shinyServer(function(input, output) {
 
       # Calculate slope and intercept for qqline
       
-      y     <- quantile(fit$residuals, c(0.25, 0.75), type = 5L)
+      y     <- quantile(fit$residuals, c(0.25, 0.75), type = 5)
       x     <- qnorm(c(0.25, 0.75))
       slope <- diff(y) / diff(x)
-      int   <- y[1L] - slope * x[1L]
+      int   <- y[1] - slope * x[1]
       
       if (input$linRegress.qq.env == T) {
         confidence.level <- 0.95
@@ -1544,7 +1543,7 @@ shinyServer(function(input, output) {
                         ggtitle(title.name) +
                         xlab("Normal Quantiles") +
                         ylab("Ordered Residuals") +
-                        geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                        geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                         geom_abline(slope = slope, intercept = int) +
                         geom_ribbon(aes(ymin = lower, ymax = upper),
                                     alpha = 0.2, color = "dodgerblue2", fill = "dodgerblue2")
@@ -1587,7 +1586,7 @@ shinyServer(function(input, output) {
                          ggtitle(title.name) +
                          xlab("Distances") +
                          ylab("Standardized Residuals") +
-                         geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                         geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                          geom_hline(yintercept = c(-2.5, 0, 2.5),
                                     linetype = 2) +
                          geom_vline(xintercept = chi,
@@ -1605,7 +1604,7 @@ shinyServer(function(input, output) {
                          ggtitle(title.name) +
                          xlab("Robust Distances") +
                          ylab("Robustly Standardized Residuals") +
-                         geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                         geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                          geom_hline(yintercept = c(-2.5, 0, 2.5),
                                     linetype = 2) +
                          geom_vline(xintercept = chi,
@@ -1615,7 +1614,7 @@ shinyServer(function(input, output) {
     
     # Estimated residual density
     if (input$linRegress.residual.density == T) {
-      i <- i + 1
+      i <- i + 1L
       
       dat <- data.frame(Res = fit$residuals)
       
@@ -1660,7 +1659,7 @@ shinyServer(function(input, output) {
                         ggtitle(title.name) +
                         xlab("Index") +
                         ylab("Standardized Residuals") +
-                        geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                        geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                         geom_line()
       } else {
         st.residuals <- fit$residuals / fit$scale
@@ -1671,7 +1670,7 @@ shinyServer(function(input, output) {
                         ggtitle(title.name) +
                         xlab("Index") +
                         ylab("Robustly Standardized Residuals") +
-                        geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                        geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                         geom_line()
       }
     }
@@ -1705,7 +1704,7 @@ shinyServer(function(input, output) {
                  ggtitle(title.name) +
                  xlab("Fitted Values") +
                  ylab("Residuals") +
-                 geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                 geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                  geom_hline(yintercept = c(-2.5 * sigma, 0, 2.5 * sigma),
                             linetype = 2)
         
@@ -1739,7 +1738,7 @@ shinyServer(function(input, output) {
                  ggtitle(title.name) +
                  xlab("Fitted Values") +
                  ylab("Response") +
-                 geom_point(color = "dodgerblue2", shape = 18, size = 2)
+                 geom_point(color = "dodgerblue2", shape = 18, size = 2.5)
   
         if (input$include.rugplot == T) {
           plt <- plt + geom_rug()
@@ -1793,7 +1792,7 @@ shinyServer(function(input, output) {
                   ggtitle(title.name) +
                   xlab("Normal Quantiles") +
                   ylab("Ordered Residuals") +
-                  geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                  geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                   geom_abline(slope = slope, intercept = int) +
                   geom_ribbon(aes(ymin = lower, ymax = upper),
                               alpha = 0.2, color = "dodgerblue2", fill = "dodgerblue2")
@@ -1852,7 +1851,7 @@ shinyServer(function(input, output) {
                    ggtitle(title.name) +
                    xlab("Distances") +
                    ylab("Standardized Residuals") +
-                   geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                   geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                    geom_hline(yintercept = c(-2.5, 0, 2.5),
                               linetype = 2) + 
                    geom_vline(xintercept = chi,
@@ -1870,7 +1869,7 @@ shinyServer(function(input, output) {
                    ggtitle(title.name) +
                    xlab("Robust Distances") +
                    ylab("Robustly Standardized Residuals") +
-                   geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                   geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                    geom_hline(yintercept = c(-2.5, 0, 2.5),
                               linetype = 2) + 
                    geom_vline(xintercept = chi,
@@ -1959,7 +1958,7 @@ shinyServer(function(input, output) {
                    ggtitle(title.name) +
                    xlab("Index") +
                    ylab("Standardized Residuals") +
-                   geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                   geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                    geom_line()
         } else {
           st.residuals <- fit2$residuals / fit2$scale
@@ -1970,7 +1969,7 @@ shinyServer(function(input, output) {
                    ggtitle(title.name) +
                    xlab("Index") +
                    ylab("Robustly Standardized Residuals") +
-                   geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                   geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                    geom_line()
         }
         
@@ -2017,7 +2016,7 @@ shinyServer(function(input, output) {
                  ggtitle(title.name) +
                  xlab(names[2]) +
                  ylab(names[1]) +
-                 geom_point(data = mat, aes(x = X, y = Y), color = "dodgerblue2", shape = 18, size = 2) +
+                 geom_point(data = mat, aes(x = X, y = Y), color = "dodgerblue2", shape = 18, size = 2.5) +
                  geom_abline(data = line.dat, aes(slope = slope, intercept = int, linetype = method, color = method), size = 1, show.legend = T) +
                  scale_color_manual(values = c("red", "black")) +
                  scale_linetype_manual(values = c("dashed", "solid"))
@@ -2372,17 +2371,18 @@ shinyServer(function(input, output) {
         values$covariance.fit <- covClassic(data,
                                             data.name = input$dataset,
                                             corr = corr)
+        
       } else if (input$covariance.method == "rob") {
         values$covariance.num <- 1
         
         if (input$covariance.estimator == "MM") {
-          values$covariance.fit <- covRobMM.temp(data,
+          values$covariance.fit <- covRobMM(data,
                                                  data.name = input$dataset,
                                                  corr = corr)
         } else if (input$covariance.estimator == "Rocke") {
-          values$covariance.fit <- covRobRocke.temp(data,
-                                                    data.name = input$dataset,
-                                                    corr = corr)
+          values$covariance.fit <- covRobRocke(data,
+                                               data.name = input$dataset,
+                                               corr = corr)
         } else {
           values$covariance.fit <- covRob(data,
                                           data.name = input$dataset,
@@ -2428,10 +2428,17 @@ shinyServer(function(input, output) {
     if (values$covariance.num == 2) {
       fm <- values$covariance.fit
       
+      corr <- fm[[1]]$corr
+      
       if (input$covariance.eigen == T) {
         i <- i + 1
         
-        eigen.vals <- c(eigen(fm[[1]]$cov)$values, eigen(fm[[2]]$cov)$values)
+        eigen.vals <- if (corr) {
+                        c(eigen(fm[[1]]$cov * (fm[[1]]$sdev %o% fm[[1]]$sdev))$values,
+                          eigen(fm[[2]]$cov * (fm[[2]]$sdev %o% fm[[2]]$sdev))$values)
+                      } else {
+                        c(eigen(fm[[1]]$cov)$values, eigen(fm[[2]]$cov)$values)
+                      }
         
         n <- length(eigen.vals) / 2
         
@@ -2445,7 +2452,7 @@ shinyServer(function(input, output) {
                  ggtitle("Eigenvalues") +
                  ylab("Eigenvalue") +
                  geom_line(aes(x = indx, y = eigen.vals, color = Method, linetype = Method), size = 1) +
-                 geom_point(aes(x = indx, y = eigen.vals, color = Method), shape = 16, size = 2) +
+                 geom_point(aes(x = indx, y = eigen.vals, color = Method), shape = 16, size = 2.5) +
                  scale_color_manual(values = c("red", "black")) +
                  scale_linetype_manual(values = c("dashed", "solid")) +
                  scale_x_continuous(name = "Factor Number", breaks = min(dat$indx):max(dat$indx))
@@ -2456,11 +2463,19 @@ shinyServer(function(input, output) {
       if (input$covariance.mahalanobis == T) {
         i <- i + 1
         
-        md <- lapply(values$covariance.fit,
-                     function(x, mat) {
-                       sqrt(mahalanobis(mat, x$center, x$cov))
-                     },
-                     data)
+        md <- if (corr) {
+                lapply(values$covariance.fit,
+                       function(x, mat) {
+                         sqrt(mahalanobis(mat, x$center, x$cov * (x$sdev %o% x$sdev)))
+                       },
+                       data)
+              } else {
+                lapply(values$covariance.fit,
+                       function(x, mat) {
+                         sqrt(mahalanobis(mat, x$center, x$cov))
+                       },
+                       data)
+              }
         
         N <- sapply(md, length)
         p <- sapply(values$covariance.fit, function(x) nrow(x$cov))
@@ -2475,7 +2490,7 @@ shinyServer(function(input, output) {
                 ggtitle("Classic") +
                 xlab("Index") +
                 ylab("Mahalanobis Distance") +
-                geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                 geom_hline(yintercept = thresh[1], linetype = 2)
         
         dat = data.frame(indx = indx[[2]], MD = md[[2]])
@@ -2484,7 +2499,7 @@ shinyServer(function(input, output) {
                 ggtitle("Robust") +
                 xlab("Index") +
                 ylab("Mahalanobis Distance") +
-                geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                 geom_hline(yintercept = thresh[2], linetype = 2)
         
         y.min <- min(layer_scales(p1)$y$range$range, layer_scales(p2)$y$range$range)
@@ -2562,18 +2577,18 @@ shinyServer(function(input, output) {
                  facet_grid(xvar ~ yvar, scales = "free") +
                  theme(aspect.ratio = 1)
         
-        if (fit$corr == F) {
+        if (fit$corr) {
+          X <- fit$cov
+        } else {
           s <- sqrt(diag(fit$cov))
           X <- fit$cov / (s %o% s) 
-        } else {
-          X <- fit$cov
         }
         
-        if (fit2$corr == F) {
-          s <- sqrt(diag(fit2$cov))
-          X2 <- fit2$cov / (s %o% s) 
-        } else {
+        if (fit2$corr) {
           X2 <- fit2$cov
+        } else {
+          s <- sqrt(diag(fit2$cov))
+          X2 <- fit2$cov / (s %o% s)
         }
         
         ellipse.pts <- lapply(1:nrow(grid),
@@ -2703,11 +2718,19 @@ shinyServer(function(input, output) {
       if (input$covariance.chi.qqplot == T) {
         i <- i + 1
         
-        md <- lapply(fm,
-                     function(x, mat) {
-                       sqrt(mahalanobis(mat, x$center, x$cov))
-                     },
-                     data)
+        md <- if(corr) {
+                lapply(fm,
+                       function(x, mat) {
+                         sqrt(mahalanobis(mat, x$center, x$cov * (x$sdev %o% x$sdev)))
+                       },
+                       data)
+              } else {
+                lapply(fm,
+                       function(x, mat) {
+                         sqrt(mahalanobis(mat, x$center, x$cov))
+                       },
+                       data)
+              }
         
         chisq.points <- sqrt(qchisq(ppoints(nrow(data)), ncol(data)))
         
@@ -2717,7 +2740,7 @@ shinyServer(function(input, output) {
                 ggtitle("Classic") +
                 xlab("Chi-Squared Quantiles") +
                 ylab("Sorted Distances") +
-                geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                 geom_abline(slope = 1, intercept = 0, linetype = 2)
         
         dat <- data.frame(x = chisq.points, y = sort(md[[2]]))
@@ -2726,8 +2749,17 @@ shinyServer(function(input, output) {
                 ggtitle("Robust") +
                 xlab("Chi-Squared Quantiles") +
                 ylab("Sorted Distances") +
-                geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                 geom_abline(slope = 1, intercept = 0, linetype = 2)
+        
+        y.min <- min(layer_scales(p1)$y$range$range, layer_scales(p2)$y$range$range)
+        y.max <- max(layer_scales(p1)$y$range$range, layer_scales(p2)$y$range$range)
+        
+        p1 <- p1 + scale_y_continuous(limits = c(y.min, y.max),
+                                      expand = expand_scale(mult = c(0.05, 0.05)))
+        
+        p2 <- p2 + scale_y_continuous(limits = c(y.min, y.max),
+                                      expand = expand_scale(mult = c(0.05, 0.05)))
         
         plots[[i]] <- cbind(ggplotGrob(p1), ggplotGrob(p2), size = "last")
       }
@@ -2753,12 +2785,12 @@ shinyServer(function(input, output) {
         
         plt <- ggplot(data = dat, aes(x = x, y = y)) +
                  ggtitle("Distance-Distance Plot") +
-                 xlab("Robust Distance") +
-                 ylab("Classic Distance") +
+                 xlab("Classic Distance") +
+                 ylab("Robust Distance") +
                  xlim(c(min.val, max.val)) +
                  ylim(c(min.val, max.val)) +
                  theme(aspect.ratio = 1) +
-                 geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                 geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                  geom_hline(yintercept = thresh[1], linetype = 2) +
                  geom_vline(xintercept = thresh[1], linetype = 2) +
                  geom_abline(aes(slope = 1, intercept = 0), linetype = 2)
@@ -2772,7 +2804,12 @@ shinyServer(function(input, output) {
       if (input$covariance.eigen == T) {
         i <- i + 1
         
-        eigen.vals <- eigen(fit$cov)$values
+        eigen.vals <- if (fit$corr == TRUE) {
+                        eigen(fit$cov * (fit$sdev %o% fit$sdev))$values
+                      } else {
+                        eigen(fit$cov)$values
+                      }
+        
         
         n <- length(eigen.vals)
         
@@ -2784,7 +2821,7 @@ shinyServer(function(input, output) {
                  ggtitle("Eigenvalues") +
                  ylab("Eigenvalue") +
                  geom_line(aes(x = indx, y = eigen.vals), color = "dodgerblue2", size = 1) +
-                 geom_point(aes(x = indx, y = eigen.vals), color = "dodgerblue2", shape = 5, size = 2) +
+                 geom_point(aes(x = indx, y = eigen.vals), color = "dodgerblue2", shape = 5, size = 2.5) +
                  scale_x_continuous(name = "Factor Number", breaks = min(dat$indx):max(dat$indx))
        
         plots[[i]] <- ggplotGrob(plt)
@@ -2793,8 +2830,11 @@ shinyServer(function(input, output) {
       if (input$covariance.mahalanobis == T) {
         i <- i + 1
         
-        md <- sqrt(mahalanobis(data,
-                               fit$center, fit$cov))
+        md <- if (fit$corr == TRUE) {
+                sqrt(mahalanobis(data, fit$center, fit$cov * (fit$sdev %o% fit$sdev)))
+              } else {
+                sqrt(mahalanobis(data, fit$center, fit$cov))
+              }
         
         n <- length(md)
         p <- nrow(fit$cov)
@@ -2815,7 +2855,7 @@ shinyServer(function(input, output) {
                  ggtitle(title.name) +
                  xlab("Index") +
                  ylab("Mahalanobis Distance") +
-                 geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                 geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                  geom_hline(yintercept = thresh[1], linetype = 2)
         
         plots[[i]] <- ggplotGrob(plt)
@@ -2982,7 +3022,11 @@ shinyServer(function(input, output) {
       if (input$covariance.chi.qqplot == T) {
         i <- i + 1
         
-        md <- sqrt(mahalanobis(data, fit$center, fit$cov))
+        md <- if (fit$corr == T) {
+                sqrt(mahalanobis(data, fit$center, fit$cov * (fit$sdev %o% fit$sdev)))
+              } else {
+                sqrt(mahalanobis(data, fit$center, fit$cov))
+              }
         
         chisq.points <- sqrt(qchisq(ppoints(nrow(data)), ncol(data)))
         
@@ -2992,7 +3036,7 @@ shinyServer(function(input, output) {
                  ggtitle("Classic") +
                  xlab("Chi-Squared Quantiles") +
                  ylab("Sorted Distances") +
-                 geom_point(color = "dodgerblue2", shape = 18, size = 2) +
+                 geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                  geom_abline(slope = 1, intercept = 0, linetype = 2)
         
         plots[[i]] <- ggplotGrob(plt)
@@ -3238,7 +3282,7 @@ shinyServer(function(input, output) {
   #                ggtitle("Scree Plot") +
   #                ylab("Variance") +
   #                geom_line(aes(x = indx, y = eigen.vals, color = Method, linetype = Method), size = 1) +
-  #                geom_point(aes(x = indx, y = eigen.vals, color = Method), shape = 16, size = 2) +
+  #                geom_point(aes(x = indx, y = eigen.vals, color = Method), shape = 16, size = 2.5) +
   #                scale_color_manual(values = c("red", "black")) +
   #                scale_linetype_manual(values = c("dashed", "solid"))
   #      
@@ -3295,7 +3339,7 @@ shinyServer(function(input, output) {
   #                ggtitle("Scree Plot") +
   #                ylab("Variance") +
   #                geom_line(aes(x = indx, y = vars), color = "dodgerblue2", size = 1) +
-  #                geom_point(aes(x = indx, y = vars), color = "dodgerblue2", shape = 5, size = 2)
+  #                geom_point(aes(x = indx, y = vars), color = "dodgerblue2", shape = 5, size = 2.5)
   #               # scale_x_continuous(name = "Factor Number", breaks = min(dat$indx):max(dat$indx))
   #      
   #       plots[[i]] <- ggplotGrob(plt)

@@ -21,8 +21,7 @@ if (length(missing.packages) > 0) {
   install.packages(missing.packages)
 }
 
-library(shiny)
-library(shinyjs)
+lapply(pkgs, library, character.only = TRUE ,quietly = T)
 
 # Some custom CSS code for formatting panels
 CSS.format1 <- 
