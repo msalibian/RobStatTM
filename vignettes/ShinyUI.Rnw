@@ -68,12 +68,16 @@
 \usepackage{amsthm}
 \usepackage{graphicx}
 \usepackage{setspace}
+\usepackage{courier}
 \onehalfspacing
 \usepackage[unicode=true,
  bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
  breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
  {hyperref}
+\usepackage[all]{hypcap}
 \hypersetup{pdftitle={RobStatTM Shiny User Interface}}
+
+
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
@@ -131,7 +135,7 @@ without needing to set many R function arguments or understanding
 the complexities of the underlying functions. The simplicity of the
 UI will allow students and practitioners who are new to robust statistical methods
 to easily use them and compare robust results with classical methods.
-Within the Shiny UI, the user will be able to load a data set either
+Within the Shiny UI, you will be able to load a data set either
 from an existing R package or a local .csv and then run the data
 through different methods of analysis. Currently, the UI provides
 an interface to robust location and scale, robust linear regression,
@@ -176,31 +180,33 @@ Data} button to load the data into the application for further analysis,
 and the data will be displayed in a table on the right.
 
 \begin{figure}[H]
-\begin{centering}
-\includegraphics[scale=0.5]{img/DataLibrary.png}\caption{Interface to load a data set from an existing R package}
-\par\end{centering}
-\label{f1}
+\centering
+\includegraphics[scale=0.5]{img/DataLibrary.png}
+\caption{\label{f1}Interface to load a data set from an existing R package}
+
 \end{figure}
 
 Figure \ref{f2} shows the options for uploading a csv file to the
-application. Since not all csv files  You must specify the file format such as the delimiter
-and string quotation syntax. If the data is a time series, then you
+application. Since some csv files do not have the default format
+(comma-delimited values, double quote escape character), advanced
+options are available to specify the separator or escape character.
+If the data is a time series, then you
 must check the corresponding box as shown in the example. The
 first column of data must contain the date or time indices to be read
 as a time series. The format of In the example, we use the data set \textbf{hfunds.ts.csv}
 which contains returns for five hedge funds, and upload it as a time
 series. The window in the main (right) panel displays the data in
-a table like format and where you may view the returns for each date. There
-are five columns corresponding to the different types of hedge funds:
+a table like format and where you may view the returns for each date.
+Each column corresponds to one of the five different types of hedge funds:
 emerging markets (\textbf{EM}), Private Equity (\textbf{PE}), U.S.
 High Yield (\textbf{USHY}), Alternative Investments (\textbf{AI}),
-and Bond (\textbf{BND})\textbf{.} For datasets with a large number
+and Bond (\textbf{BND}). For datasets with a large number
 of variables, we suggest viewing the application in \textbf{Full Screen}.
 
 \begin{figure}[th]
-\begin{centering}
-\includegraphics[scale=0.5]{img/Data_upload.png}\caption{Interface to upload a csv file from a user's computer to the application}
-\par\end{centering}
+\centering
+\includegraphics[scale=0.5]{img/Data_upload.png}
+\caption{Interface to upload a csv file to the application}
 \label{f2}
 \end{figure}
 
@@ -208,43 +214,44 @@ of variables, we suggest viewing the application in \textbf{Full Screen}.
 
 \section{Robust Location and Scale Estimators}
 
-This section allows the comparison of classical estimates for mean
-and standard deviation and robust estimates for location and scale
-for a single variable.
+Click on the \textbf{Location-Scale} tab to open the dialog which allows you
+to compute classical estimates for mean
+and standard deviation and/or robust estimates for location and scale
+for a single variable, comparing results when you choose to compute both classical and robust estimates.
 
 \subsection*{Computing Location and Scale}
 
-The Shiny UI interfaces with the \textbf{locScaleM()} function in
+The Shiny UI interfaces with the \texttt{locScaleM()} function in
 \textbf{RobStatTM} to compute robust estimates of location and scale.
-Simply select a \textbf{Variable} and choose a \textbf{Method} from
+Select a \textbf{Variable} and choose a \textbf{Method} from
 the options of \emph{Classical}, \emph{Robust}, or \emph{Both}. The
-classical and robust methods are compared when \emph{Both} is chosen.
+classical and robust methods are both computed and then compared when \emph{Both} is chosen.
 Furthermore, if either \emph{Robust} or \emph{Both} are selected,
-then a set of options for the robust method appear in the bottom of
-the side panel on the left where the user may select the \textbf{Score
-Function} and \textbf{Asymptotic Efficiency}. To compute the estimates
+then additional parameters for tuning the robust method will appear in the bottom of
+the side panel on the left, where default values  \textbf{Psi
+Function} and \textbf{Asymptotic Efficiency}. You may choose an alternate psi function
+from the Psi Function drop-down list, and can choose one of the alternate values for
+asymptotic efficiency. To compute the estimates
 and display the summary, click the \textbf{Results} button. Figure
 \ref{f3} shows an example comparing the estimates of location and
 scale for the Private Equity fund from the \textbf{hfunds.ts} data
 where we used the modified optimal score function and an asymptotic
-efficiency of 95\%. In a later version, the user will be able to select
+efficiency of 95\%. In a later version, you will be able to select
 multiple variables to compute both the univariate location and scale
 or just the scale for each variable.
 
 \begin{figure}[H]
 
-\begin{centering}
+\centering
 \includegraphics[scale=0.6]{img/Location-Scale.png}\caption{Comparison of Classical and robust estimates for location and scale
 of Private Equity fund returns in \textbf{hfunds.ts}}
-\par\end{centering}
 \label{f3}
 \end{figure}
 
 Note that the results are displayed in the main panel on the right.
 This is the layout for each model summary in the Shiny UI. For location
 and scale, the summary displays estimates for location, the standard
-error of the location estimate, and the estimate for scale. In the
-future, we plan to allow the user to compute just the scale estimate.
+error of the location estimate, and the estimate for scale.
 
 \section{Robust Linear Regression}
 
@@ -253,41 +260,42 @@ tab in the menu as shown in Figure \ref{f4} (all subsequent models
 are located under the \textbf{Models }tab). This section allows a
 simple computation and comparison of classical and robust linear regression
 methods.
+
 \begin{figure}[H]
-\begin{centering}
+\centering
 \includegraphics[width=4in]{img/RobustLR_select.png}\caption{Navigation to \textbf{Robust Linear Regression} menu}
-\par\end{centering}
 \label{f4}
 \end{figure}
 
 
-\subsection*{Computing Linear Models}
+\subsection*{Fitting Linear Models}
 
-There are four methods to choose from in the UI: least-squares (LS),
-M, MM, and distance constrained maximum-likelihood (DCML). Users have
-the option to compare models by checking the \textbf{Add Second Method}
+There are four linear model fitting methods to choose from in the UI: least-squares (LS),
+M, MM, and distance constrained maximum-likelihood (DCML). You have
+the option to compare any two models by checking the \textbf{Add Second Method}
 box and selecting inputs for a second model. In Figure \ref{f5},
-the classical least-squares and robust MM regression methods are being
-compared. Dependent and independent variables must be selected for
-the model and the regression formula is automatically populated in
+the classical least-squares (LS) and robust MM regression methods are being
+compared. You must select dependent and independent variables for
+the model, and then the regression formula will automatically populate
 the text box. When comparing regressions, the formulas do not need
-to be identical. To fit the models and view the summary, click the
-\textbf{Results} button at the bottom of the options side-panel.
+to be identical. You fit the models and view the summary by pressing the
+\textbf{Results} button at the bottom of the model panel, and then the results
+will be displayed in the panel that appears at the right.
 
 \begin{figure}[H]
-\begin{centering}
-\includegraphics[scale=0.5]{img/RobustLR_summary.png}\caption{Least-squares and robust MM regression comparison using\textbf{ mineral}
+\centering
+\includegraphics[scale=0.5]{img/RobustLR_summary.png}
+\caption{Least-squares and robust MM regression comparison using \textbf{mineral}
 data from \textbf{RobStatTM}}
-\par\end{centering}
 \label{f5}
 \end{figure}
 
 The standard errors, t-statistics, and p-values for the robust coefficients
 for robust fits are computed using a robust covariance matrix for
 the independent variables, as an important step to ensure that those
-quantities are robust themselves. Furthermore, the\emph{ proportion
+quantities are robust themselves (see the RobStatTM book Section 5.6 for details). Furthermore, the \emph{proportion
 of variance explained by the model}, or R\textsuperscript{2}, for
-robust fits is a robust version of classical least-squares R\textsuperscript{2}.
+robust fits is a robust version of classical least-squares R\textsuperscript{2}. In the current release of RobStatTM there is a bug in the R\textsuperscript{2} computation.
 In the example, we fit the formula \emph{zinc \textasciitilde{} copper}
 for the LS and MM estimators while using the modified optimal value
 for psi with asymptotic efficiency of 99\%. The equivalent command-line
@@ -306,11 +314,12 @@ summary(fm)
 
 \subsection*{Plots}
 
-Once fitting a model(s), results may be visualized in the \textbf{Plots}
-tab. In the side-panel, the user may choose from the following selection:
+After fitting a linear regression model, or a pair of such models, you
+may graphically analyze the results using the \textbf{Plots}
+tab. In the side-panel, you may choose from the following selection:
 \emph{Residuals v. Fit}, \emph{Response v. Fit}, \emph{Residuals Normal
-Q-Q Plot}, \emph{Std. Residuals v. Robust Distances}, \emph{Estimated
-Residual Density}, \emph{Std. Residuals v. Index (Time)}, and \emph{Scatter
+Q-Q Plot}, \emph{Estimated Residual Density}, \emph{Std. Residuals v. Robust Distances},
+\emph{Std. Residuals v. Index (or Time in the case of time series data)}, and \emph{Scatter
 with Overlaid Fits}. Note the \emph{Scatter with Overlaid Fits} plot
 is only available in the case of two univariate regressions. The following
 are examples of each plot:
@@ -318,7 +327,9 @@ are examples of each plot:
 \subsubsection*{Residuals versus Fitted Values}
 
 \begin{figure}[H]
-\centering{}\includegraphics[scale=0.6]{img/LR_ResVsFit.png}\caption{Scatterplot of LS and robust MM residuals versus fitted values: \textbf{mineral}}
+\centering
+\includegraphics[scale=0.6]{img/LR_ResVsFit.png}
+\caption{Scatterplot of LS and robust MM residuals versus fitted values: \textbf{mineral}}
 \label{f6}
 \end{figure}
 
@@ -326,7 +337,9 @@ are examples of each plot:
 \subsubsection*{Response versus Fitted Values}
 
 \begin{figure}[H]
-\centering{}\includegraphics[scale=0.6]{img/LR_RespVsFit.png}\caption{Scatterplot of response values versus LS and robust MM fitted values:
+\centering
+\includegraphics[scale=0.6]{img/LR_RespVsFit.png}
+\caption{Scatterplot of response values versus LS and robust MM fitted values:
 \textbf{mineral}}
 \label{f7}
 \end{figure}
@@ -335,7 +348,9 @@ are examples of each plot:
 \subsubsection*{Normal Q-Q Plots of Residuals}
 
 \begin{figure}[H]
-\centering{}\includegraphics[scale=0.6]{img/LR_NormQQ.png}\caption{LS and robust MM normal Q-Q plots of residuals: \textbf{mineral}}
+\centering
+\includegraphics[scale=0.6]{img/LR_NormQQ.png}
+\caption{LS and robust MM normal Q-Q plots of residuals: \textbf{mineral}}
 \label{f8}
 \end{figure}
 
@@ -343,7 +358,9 @@ are examples of each plot:
 \subsubsection*{Probability Density Estimates of Residuals}
 
 \begin{figure}[H]
-\centering{}\includegraphics[scale=0.6]{img/LR_ResDens.png}\caption{Probability density estimates of LS and robust MM residuals:\textbf{
+\centering
+\includegraphics[scale=0.6]{img/LR_ResDens.png}
+\caption{Probability density estimates of LS and robust MM residuals:\textbf{
 mineral}}
 \label{f9}
 \end{figure}
@@ -352,7 +369,8 @@ mineral}}
 \subsubsection*{Standardized Residuals versus Robust Distances}
 
 \begin{figure}[H]
-\centering{}\includegraphics[scale=0.6]{img/LR_ResVsDist.png}\caption{LS and robust MM Plots of standardized residuals versus Mahalanobis
+\centering\includegraphics[scale=0.6]{img/LR_ResVsDist.png}
+\caption{LS and robust MM Plots of standardized residuals versus Mahalanobis
 distances: \textbf{mineral}}
 \label{f10}
 \end{figure}
@@ -361,7 +379,9 @@ distances: \textbf{mineral}}
 \subsubsection*{Standardized Residuals versus Index (Time)}
 
 \begin{figure}[H]
-\centering{}\includegraphics[scale=0.6]{img/LR_ResVsIndex.png}\caption{Indexed LS and robust MM standardized residuals: \textbf{mineral}}
+\centering
+\includegraphics[scale=0.6]{img/LR_ResVsIndex.png}
+\caption{LS and robust MM standardized residuals: \textbf{mineral}}
 \label{f11}
 \end{figure}
 
@@ -369,52 +389,51 @@ distances: \textbf{mineral}}
 \subsubsection*{Scatterplots with Overlaid Fits}
 
 \begin{figure}[H]
-\centering{}\includegraphics[scale=0.6]{img/LR_OverScat.png}\caption{Scatterplot of data with overlaid LS and robust MM fits: \textbf{mineral}}
+\centering
+\includegraphics[scale=0.6]{img/LR_OverScat.png}
+\caption{Scatterplot of data with overlaid LS and robust MM fits: \textbf{mineral}}
 \label{f12}
 \end{figure}
 
 
 \section{Robust Covariance}
 
-This section allows a simple computation and comparison of classical
-and robust covariance/correlation estimation.
-
-\subsection*{Computing Robust Covariance}
-
-Estimating robust and/or classical covariance/correlation matrices
-is easy with the Shiny UI since the UI provides a simple interface
-with the \textbf{RobStatTM} functions \textbf{covClassic()} and \textbf{covRob()}.
+The Shiny UI allows you to use the \textbf{RobStatTM} functions \textbf{covClassic()} and \textbf{covRob()}.
 First off, since the methods used in \textbf{RobStatTM} only allow
 for numeric data, the options for \textbf{Variables} are limited to
-those with numeric values only. The user may choose to compute classical
+those with numeric values only. You may choose to compute classical
 estimates of covariance/correlation, robust estimates of covariance/correlation,
-or both using the \textbf{Method} option. If \emph{Robust}, or \emph{Both}
-is chosen, then an option to select the \textbf{Robust Covariance
-Estimator} is available. Users may select \emph{MM}, \emph{Rocke},
+or both using the \textbf{Method} allows you to choose either the classical
+method alone, the robust method alone, or use the default of both methods,
+which is highly recommended. If \emph{Robust}, or \emph{Both}
+is chosen, then you use the Robust Covariance Estimator drop-down list to make
+an estimator choice. You may select \emph{MM}, \emph{Rocke},
 or \emph{Auto} as the estimator. If \emph{Auto} is selected, then
 a Rocke-estimator is used if the number of variables is greater than
-or equal to 10, and an MM-estimator is used otherwise. Lastly, may
-select whether to compute the covariance matrix or correlation matrix
-under the \textbf{Type} input. Figure \ref{f13} displays the comparison
+or equal to 10, and an MM-estimator is used otherwise. Figure \ref{f13} displays the comparison
 of classical and robust covariance estimates for the \textbf{hfunds.ts}
 data.
 
 \begin{figure}[H]
-\includegraphics[width=6in]{img/RobustCovarianceSummary.png}\caption{Classical and robust covariance estimates for funds in \textbf{hfunds.ts}
+\centering
+\includegraphics[width=6in]{img/RobustCovarianceSummary.png}
+\caption{Classical and robust covariance estimates for funds in \textbf{hfunds.ts}
 data}
-
-\centering{}\label{f13}
+\label{f13}
 \end{figure}
 
-In the example above, we may see a comparison of the classical and
-robust estimates for covariance/correlation terms, location, scale,
-and eigenvalues. A command-line equivalent to the example in Figure
+In the example above, you see a comparison of the classical and
+robust covariance matrix estimates and their associated location estimates, along with 
+classical and robust eigenvalues associated with those covariance matrix estimates. You
+may find it of interest run the above example with the
+choice "Covariances" changed to "Correlations". A 
+command-line equivalent to the table in Figure
 \ref{f13} is shown below
 
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
 # Use fit.models to estimate centers and covariance matrices
-cov.fm <- fit.models(classic = covClassic(hfunds.ts),
-                     robust  = covRob(hfunds.ts, type = "auto"))
+cov.fm <- fit.models(Classic = covClassic(hfunds.ts),
+                     Robust  = covRob(hfunds.ts, type = "auto"))
 
 # Comparison of results
 print(summary(cov.fm))
@@ -422,7 +441,7 @@ print(summary(cov.fm))
 
 \subsection*{Plots}
 
-The Shiny UI includes the following plotting options for \textbf{Robust
+The Shiny UI provides the following plotting options for \textbf{Robust
 Covariance}: \emph{Eigenvalues}, \emph{Mahalanobis Distances}, \emph{Ellipses
 Matrix}, \emph{Distances Chi-Squared Q-Q Plots}. Below are examples
 of each plot:
@@ -430,9 +449,9 @@ of each plot:
 \subsubsection*{Eigenvalues}
 
 \begin{figure}[H]
-\begin{centering}
-\includegraphics[scale=0.6]{img/CovarianceEigen.png}\caption{Scree plot for classical and robust covariance estimates: \textbf{hfunds.ts}}
-\par\end{centering}
+\centering
+\includegraphics[scale=0.6]{img/CovarianceEigen.png}
+\caption{Scree plot for classical and robust covariance estimates: \textbf{hfunds.ts}}
 \label{f14}
 \end{figure}
 
@@ -440,45 +459,40 @@ of each plot:
 \subsubsection*{Mahalanobis Distances}
 
 \begin{figure}[H]
-\begin{centering}
+\centering
 \includegraphics[scale=0.6]{img/CovarianceMd.png}\caption{Mahalanobis distances for classical and robust covariance estimates:
 \textbf{hfunds.ts}}
-\par\end{centering}
 \label{f15}
 \end{figure}
-
-
-\subsubsection*{Ellipses Matrix}
-
-\begin{figure}[H]
-\begin{centering}
-\includegraphics[scale=0.6]{img/CovarianceEllipses.png}\caption{Ellipses matrices with classical and robust correlation estimates:
-\textbf{hfunds.ts}}
-\par\end{centering}
-\label{f16}
-\end{figure}
-
 
 \subsubsection*{Distances Chi-Squared Q-Q Plot}
 
 \begin{figure}[H]
-\begin{centering}
-\includegraphics[scale=0.6]{img/CovarianceChi.png}\caption{Classical and robust Mahalanobis distances chi-squared Q-Q plots:
+\centering
+\includegraphics[scale=0.6]{img/CovarianceChi.png}
+\caption{Classical and robust Mahalanobis distances chi-squared Q-Q plots:
 \textbf{hfunds.ts}}
-\par\end{centering}
 \label{f17}
 \end{figure}
-
 
 \subsubsection*{Distance-Distance scatterplot}
 
 \begin{figure}[H]
-\begin{centering}
-\includegraphics[scale=0.6]{img/CovarianceDistDist.png}\caption{Scatterplot of classical and robust Mahalanobis distances: \textbf{hfunds.ts}}
-\par\end{centering}
+\centering
+\includegraphics[scale=0.6]{img/CovarianceDistDist.png}
+\caption{Scatterplot of classical and robust Mahalanobis distances: \textbf{hfunds.ts}}
 \label{f18}
 \end{figure}
 
+\subsubsection*{Ellipses Matrix}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{img/CovarianceEllipses.png}
+\caption{Ellipses matrices with classical and robust correlation estimates:
+\textbf{hfunds.ts}}
+\label{f16}
+\end{figure}
 
 \section{Robust PCA}
 
@@ -491,18 +505,18 @@ The options for computing principal components are similar to the
 options for computing covariance. Classical principal components are
 computed using \textbf{prcomp()} and robust principal components are
 computed using the \textbf{pcaRobS()} function in \textbf{RobStatTM}.
-Users must select at least three \textbf{Variables} for analysis.
+You must select at least three \textbf{Variables} for analysis.
 If the option ``Both'' is selected for \textbf{Method}, then the
 classical and robust principal components will be computed and compared.
 Figure \ref{f19} contains an example comparing classical and robust
 principal components of the \textbf{hfunds.ts} data.
 
 \begin{figure}[H]
-\begin{centering}
-\includegraphics[scale=0.6]{img/PcaSummary.png}\caption{Classical and robust estimates for principal components in \textbf{hfunds.ts}
-data}
-\par\end{centering}
-\label{f19}
+  \centering
+    \includegraphics[scale=0.6]{img/PcaSummary.png}
+  \caption{Classical and robust estimates for principal components in \textbf{hfunds.ts}
+           data}
+  \label{f19}
 \end{figure}
 
 The command-line equivalent to the example from Figure \ref{f19}
