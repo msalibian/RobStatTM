@@ -20,7 +20,7 @@
 #' @param maxit Maximum number of iterations, defaults to 50.
 #' @param tol Tolerance for convergence, defaults to 1e-4.
 #'
-#' @return A list with the following components:
+#' @return A list with class \dQuote{covClassic} with the following components:
 #' \item{mu}{The location estimate}
 #' \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
 #' \item{center}{The location estimate. Same as \code{mu} above.}
@@ -40,7 +40,6 @@
 #' round(tmp$cov[1:10, 1:10], 3)
 #' tmp$mu
 #'
-#'
 covRob <- MultiRobu <- function(X, type="auto", maxit=50, tol=1e-4)  {
 if (type=="auto") {
   p=dim(X)[2]
@@ -53,7 +52,10 @@ if (type=="auto") {
  } else {resu=MMultiSHR(X, maxit=maxit, tolpar=tol)  #MM
  }
   mu=resu$mu; V=resu$V
-  return(list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu))
+  # Feed list into object and give class
+  z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu)
+  class(z) <- c("covRob")
+  return(z)
 }
 
 #' Rocke's robust multivariate location and scatter estimator
@@ -77,7 +79,7 @@ if (type=="auto") {
 #' @param maxit Maximum number of iterations.
 #' @param tol Tolerance to decide converngence.#'
 #'
-#' @return A list with the following components:
+#' @return A list with class \dQuote{covRob} containing the following elements:
 #' \item{mu}{The location estimate}
 #' \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
 #' \item{center}{The location estimate. Same as \code{mu} above.}
@@ -308,7 +310,7 @@ rhoinv <- function(x)
 #' @param maxit Maximum number of iterations.
 #' @param tolpar Tolerance to decide converngence.#'
 #'
-#' @return A list with the following components:
+#' @return A list with class \dQuote{covRob} containing the following elements
 #' \item{mu}{The location estimate}
 #' \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
 #' \item{center}{The location estimate. Same as \code{mu} above.}
