@@ -51,7 +51,7 @@ reproduce the issue? What outcome did you expect and what outcome did you get?
 
 #### Minimal reproducible examples
 
-(This section adapted from [Rob Hyndman's guidelines](https://robjhyndman.com/hyndsight/minimal-reproducible-examples/)).
+(This section is adapted from [Rob Hyndman's notes on minimal reproducible examples](https://robjhyndman.com/hyndsight/minimal-reproducible-examples/)).
 
 A Minimal reproducible example (MRE) is intended to reproduce an error using the smallest amount of
 code possible. To check that your MRE code is reproducible, try running it in a fresh R
