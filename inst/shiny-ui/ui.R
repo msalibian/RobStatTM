@@ -269,7 +269,7 @@ shinyUI(navbarPage("RobStatTM",
         ), 
         
         # Plot selection
-        tabPanel(title = "Plotting", value = "linear.plotting",
+        tabPanel(title = "Plots", value = "linear.plotting",
           sidebarLayout(
             sidebarPanel(
               tags$head(tags$style(HTML(CSS.format1))),
