@@ -15,7 +15,7 @@ covRobMM(X, maxit = 50, tolpar = 1e-04)
 \item{tolpar}{Tolerance to decide converngence.#'}
 }
 \value{
-A list with the following components:
+A list with class \dQuote{covRob} containing the following elements
 \item{mu}{The location estimate}
 \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
 \item{center}{The location estimate. Same as \code{mu} above.}

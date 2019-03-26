@@ -27,7 +27,7 @@ be at least p (the number of columns of X) times propmin.}
 \item{tol}{Tolerance to decide converngence.#'}
 }
 \value{
-A list with the following components:
+A list with class \dQuote{covRob} containing the following elements:
 \item{mu}{The location estimate}
 \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
 \item{center}{The location estimate. Same as \code{mu} above.}

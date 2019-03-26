@@ -20,7 +20,7 @@ of variables is greater than or equal to 10, and "MM" otherwise.}
 \item{tol}{Tolerance for convergence, defaults to 1e-4.}
 }
 \value{
-A list with the following components:
+A list with class \dQuote{covClassic} with the following components:
 \item{mu}{The location estimate}
 \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
 \item{center}{The location estimate. Same as \code{mu} above.}
@@ -44,7 +44,6 @@ X1 <- X0[,-9]
 tmp <- covRob(X1)
 round(tmp$cov[1:10, 1:10], 3)
 tmp$mu
-
 
 }
 \references{
