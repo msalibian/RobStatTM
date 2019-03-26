@@ -52,6 +52,7 @@ if (type=="auto") {
  } else {resu=MMultiSHR(X, maxit=maxit, tolpar=tol)  #MM
  }
   mu=resu$mu; V=resu$V
+  
   # Feed list into object and give class
   z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu)
   class(z) <- c("covRob")
@@ -174,7 +175,11 @@ dista=dista0}
   V <- tmp$V
   ff <- tmp$ff
   dista <- dista/ff
-  return(list(mu=mu, V=V, sig=sig, dista=dista, w=w, gamma=gamma, cov=V, center=mu))
+  
+  # GSB: Feed list into object and give class
+  z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu)
+  class(z) <- c("covRob")
+  return(z)
 }
 
 consRocke <- function(p, n, initial) {
@@ -363,7 +368,11 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
   }
   tmp <- scalemat(V0=V0, dis=dista, weight='X');
   dista <- dista/tmp$ff
-  return(list(V=tmp$V, mu=mu0, dista=dista, w=w, center=mu0, cov=tmp$V))
+  
+  # GSB: Feed list into object and give class
+  z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu)
+  class(z) <- c("covRob")
+  return(z)
 }
 
 
