@@ -996,7 +996,7 @@ shinyServer(function(input, output) {
       
       values$dat.numeric.variables <- values$dat.variables[num.index]
       
-      values$dat.numeric <- as.data.frame(values$dat[values$dat.numeric])
+      values$dat.numeric <- as.data.frame(values$dat[values$dat.numeric.variables])
       
       data <- values$dat
       
