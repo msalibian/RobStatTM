@@ -293,7 +293,7 @@ shinyUI(navbarPage("RobStatTM",
               #checkboxInput("include.smooth", "Include Smooth", TRUE),
               checkboxInput("include.rugplot", "Include Rugplot", FALSE),
               checkboxInput("linRegress.qq.env", "QQ Plot Envelope", TRUE),
-              checkboxInput("linRegress.qqline.robust", "Include Robust QQ Line", TRUE),
+              #checkboxInput("linRegress.qqline.robust", "Include Robust QQ Line", TRUE),
               #uiOutput("extreme.points"),
               
               # Button to run selected regression
