@@ -937,10 +937,22 @@ shinyServer(function(input, output) {
       req(input$file)
       
       # Read data from file
-      values$dat <- read.csv(input$file$datapath,
-                      header = input$header,
-                      sep    = input$sep,
-                      quote  = input$quote)
+      values$dat <- tryCatch({
+                      read.csv(input$file$datapath,
+                               header = input$header,
+                               sep    = input$sep,
+                               quote  = input$quote,
+                               numerals = "allow.loss")
+                    },
+                    error = function(cond) {
+                      message("There appears to be an error. Try checking the format of the CSV file.")
+                      message("Here's the original error message:")
+                      message(cond)
+                      
+                      return(NA)
+                    })
+      
+      class(values$dat[[1]])
       
       if (input$data.ts == TRUE) {
         values$dat[, 1] <- as.Date(as.character(values$dat[, 1]))
@@ -982,9 +994,9 @@ shinyServer(function(input, output) {
       
       num.index <- sapply(values$dat, is.numeric)
       
-      values$dat.numeric <- values$dat[, num.index]
+      values$dat.numeric.variables <- values$dat.variables[num.index]
       
-      values$dat.numeric.variables <- colnames(values$dat.numeric)
+      values$dat.numeric <- as.data.frame(values$dat[values$dat.numeric])
       
       data <- values$dat
       
