@@ -19,7 +19,7 @@ if (length(missing.packages) > 0) {
   install.packages(missing.packages)
 }
 
-lapply(pkgs, library, character.only = TRUE ,quietly = T)
+lapply(pkgs, library, character.only = TRUE, quietly = T)
 
 library(RobStatTM, quietly = T)
 
