@@ -318,7 +318,7 @@ After fitting a linear regression model, or a pair of such models, you
 may graphically analyze the results using the \textbf{Plots}
 tab. In the side-panel, you may choose from the following selection:
 \emph{Residuals v. Fit}, \emph{Response v. Fit}, \emph{Residuals Normal
-Q-Q Plot}, \emph{Estimated Residual Density}, \emph{Std. Residuals v. Robust Distances},
+QQ Plot}, \emph{Estimated Residual Density}, \emph{Std. Residuals v. Robust Distances},
 \emph{Std. Residuals v. Index (or Time in the case of time series data)}, and \emph{Scatter
 with Overlaid Fits}. Note the \emph{Scatter with Overlaid Fits} plot
 is only available in the case of two univariate regressions. The following
@@ -345,12 +345,12 @@ are examples of each plot:
 \end{figure}
 
 
-\subsubsection*{Normal Q-Q Plots of Residuals}
+\subsubsection*{Normal QQ Plots of Residuals}
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{img/LR_NormQQ.png}
-\caption{LS and robust MM normal Q-Q plots of residuals: \textbf{mineral}}
+\caption{LS and robust MM normal QQ plots of residuals: \textbf{mineral}}
 \label{f8}
 \end{figure}
 
@@ -443,7 +443,7 @@ print(summary(cov.fm))
 
 The Shiny UI provides the following plotting options for \textbf{Robust
 Covariance}: \emph{Eigenvalues}, \emph{Mahalanobis Distances}, \emph{Ellipses
-Matrix}, \emph{Distances Chi-Squared Q-Q Plots}. Below are examples
+Matrix}, \emph{Distances Chi-Squared QQ Plots}. Below are examples
 of each plot:
 
 \subsubsection*{Eigenvalues}
@@ -465,12 +465,12 @@ of each plot:
 \label{f15}
 \end{figure}
 
-\subsubsection*{Distances Chi-Squared Q-Q Plot}
+\subsubsection*{Distances Chi-Squared QQ Plot}
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{img/CovarianceChi.png}
-\caption{Classical and robust Mahalanobis distances chi-squared Q-Q plots:
+\caption{Classical and robust Mahalanobis distances chi-squared QQ plots:
 \textbf{hfunds.ts}}
 \label{f17}
 \end{figure}
