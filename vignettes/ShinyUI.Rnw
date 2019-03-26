@@ -58,7 +58,7 @@
 \usepackage{alltt}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
-\usepackage{geometry}
+\usepackage[margin=0.5in]{geometry}
 \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
 \setlength{\parskip}{\smallskipamount}
 \setlength{\parindent}{0pt}
@@ -168,6 +168,16 @@ With the above packages all installed, and the Shiny UI application displayed, y
 
 \newpage{}
 
+Figure \ref{fig:home} displays the initial screen you encounte in the Shiny UI application. This page is where you would select or upload a data set,
+and then navigate to one of the model tabs for further analysis. The subsequent sections contain detailed instructions for each component of the Shiny UI.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{img/Home.png}
+\caption{Initial screen after starting the Shiny UI}
+\label{fig:home}
+\end{figure}
+
 \section{Loading Data}
 
 Data may be loaded into the Shiny UI from an existing R package or
@@ -182,8 +192,8 @@ and the data will be displayed in a table on the right.
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{img/DataLibrary.png}
-\caption{\label{f1}Interface to load a data set from an existing R package}
-
+\caption{Interface to load a data set from an existing R package}
+\label{f1}
 \end{figure}
 
 Figure \ref{f2} shows the options for uploading a csv file to the
@@ -209,8 +219,6 @@ of variables, we suggest viewing the application in \textbf{Full Screen}.
 \caption{Interface to upload a csv file to the application}
 \label{f2}
 \end{figure}
-
-\newpage{}
 
 \section{Robust Location and Scale Estimators}
 
@@ -302,6 +310,9 @@ for psi with asymptotic efficiency of 99\%. The equivalent command-line
 code is
 
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
+# Load mineral data set
+data(mineral)
+  
 # Send fits to fit.models
 fm <- fit.models(LS = lm(zinc ~ copper, data = mineral),
                  MM = lmrobdetMM(zinc ~ copper, data = mineral, 
@@ -313,6 +324,13 @@ summary(fm)
 @
 
 \subsection*{Plots}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{img/LR_PlotOpts.png}
+\caption{Linear Regression plotting options }
+\label{fig:linRegPlotOpts}
+\end{figure}
 
 After fitting a linear regression model, or a pair of such models, you
 may graphically analyze the results using the \textbf{Plots}
@@ -411,13 +429,13 @@ an estimator choice. You may select \emph{MM}, \emph{Rocke},
 or \emph{Auto} as the estimator. If \emph{Auto} is selected, then
 a Rocke-estimator is used if the number of variables is greater than
 or equal to 10, and an MM-estimator is used otherwise. Figure \ref{f13} displays the comparison
-of classical and robust covariance estimates for the \textbf{hfunds.ts}
-data.
+of classical and robust covariance estimates for the some variables in the \textbf{wine}
+data set.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6in]{img/RobustCovarianceSummary.png}
-\caption{Classical and robust covariance estimates for funds in \textbf{hfunds.ts}
+\caption{Classical and robust covariance estimates for selected variables in \textbf{wine}
 data}
 \label{f13}
 \end{figure}
@@ -431,15 +449,26 @@ command-line equivalent to the table in Figure
 \ref{f13} is shown below
 
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
+# Load wine data
+data(wine)
+dat <- wine[c("V2", "V4", "V8", "V11", "V12")]
+
 # Use fit.models to estimate centers and covariance matrices
-cov.fm <- fit.models(Classic = covClassic(hfunds.ts),
-                     Robust  = covRob(hfunds.ts, type = "auto"))
+cov.fm <- fit.models(Classic = covClassic(dat),
+                     Robust  = covRob(dat, type = "auto"))
 
 # Comparison of results
 print(summary(cov.fm))
 @
 
 \subsection*{Plots}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.6]{img/Covariance_PlotOpts.png}
+\caption{Covariance plotting options}
+\label{fig:covPlotOpts}
+\end{figure}
 
 The Shiny UI provides the following plotting options for \textbf{Robust
 Covariance}: \emph{Eigenvalues}, \emph{Mahalanobis Distances}, \emph{Ellipses
@@ -450,8 +479,8 @@ of each plot:
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.6]{img/CovarianceEigen.png}
-\caption{Scree plot for classical and robust covariance estimates: \textbf{hfunds.ts}}
+\includegraphics[scale = 0.6]{img/CovarianceEigen.png}
+\caption{Scree plot for classical and robust covariance estimates: \textbf{wine}}
 \label{f14}
 \end{figure}
 
@@ -460,8 +489,8 @@ of each plot:
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.6]{img/CovarianceMd.png}\caption{Mahalanobis distances for classical and robust covariance estimates:
-\textbf{hfunds.ts}}
+\includegraphics[width=6.5in]{img/CovarianceMd.png}\caption{Mahalanobis distances for classical and robust covariance estimates:
+\textbf{wine}}
 \label{f15}
 \end{figure}
 
@@ -469,9 +498,9 @@ of each plot:
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.6]{img/CovarianceChi.png}
+\includegraphics[width=6.5in]{img/CovarianceChi.png}
 \caption{Classical and robust Mahalanobis distances chi-squared QQ plots:
-\textbf{hfunds.ts}}
+\textbf{wine}}
 \label{f17}
 \end{figure}
 
@@ -490,7 +519,8 @@ of each plot:
 \centering
 \includegraphics[scale=0.6]{img/CovarianceEllipses.png}
 \caption{Ellipses matrices with classical and robust correlation estimates:
-\textbf{hfunds.ts}}
+\textbf{hfunds.ts}. If you repeat the analysis with just three (or four) well-chosen variables,
+then you will get a 3 by 3 (or 4 by 4) display.}
 \label{f16}
 \end{figure}
 
@@ -509,13 +539,13 @@ You must select at least three \textbf{Variables} for analysis.
 If the option ``Both'' is selected for \textbf{Method}, then the
 classical and robust principal components will be computed and compared.
 Figure \ref{f19} contains an example comparing classical and robust
-principal components of the \textbf{hfunds.ts} data.
+principal components of the \textbf{bus} data.
 
 \begin{figure}[H]
   \centering
-    \includegraphics[scale=0.6]{img/PcaSummary.png}
-  \caption{Classical and robust estimates for principal components in \textbf{hfunds.ts}
-           data}
+    \includegraphics[width=6.5in]{img/PcaSummary.png}
+  \caption{Classical and robust estimates for principal components for first ten variables in the \textbf{bus}
+           data set}
   \label{f19}
 \end{figure}
 
@@ -523,9 +553,12 @@ The command-line equivalent to the example from Figure \ref{f19}
 is:
 
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
+# Load bus data
+data(bus)
+
 # Use fit.models to estimate principal components
-pca.fm <- fit.models(Classic = prcomp(hfunds.ts),
-                     Robust = prcompRob(hfunds.ts))
+pca.fm <- fit.models(Classic = prcomp(bus[, 1:10]),
+                     Robust  = prcompRob(bus[, 1:10]))
 
 # Comparison of results
 print(summary(pca.fm))
