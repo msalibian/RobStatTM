@@ -1476,6 +1476,7 @@ shinyServer(function(input, output) {
       plots[[i]] <- ggplot(data = dat, aes(x = X, y = Y)) +
                       ggtitle(title.name) +
                       xlab("Fitted Values") +
+                      theme(aspect.ratio = 3/4) +
                       ylab("Residuals") +
                       geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                       geom_hline(yintercept = c(-2.5 * sigma, 0, 2.5 * sigma),
@@ -1498,6 +1499,7 @@ shinyServer(function(input, output) {
 
       plots[[i]] <- ggplot(data = dat, aes(x = X, y = Y)) +
                       ggtitle(title.name) +
+                      theme(aspect.ratio = 3/4) +
                       xlab("Fitted Values") +
                       ylab("Response") +
                       geom_point(color = "dodgerblue2", shape = 18, size = 2.5)
@@ -1543,6 +1545,7 @@ shinyServer(function(input, output) {
                         ggtitle(title.name) +
                         xlab("Normal Quantiles") +
                         ylab("Ordered Residuals") +
+                        theme(aspect.ratio = 3/4) +
                         geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                         geom_abline(slope = slope, intercept = int) +
                         geom_ribbon(aes(ymin = lower, ymax = upper),
@@ -1552,6 +1555,7 @@ shinyServer(function(input, output) {
                         ggtitle(title.name) +
                         xlab("Normal Quantiles") +
                         ylab("Ordered Residuals") +
+                        theme(aspect.ratio = 3/4) +
                         geom_qq() +
                         geom_abline(slope = slope, intercept = int)
       }
@@ -1586,6 +1590,7 @@ shinyServer(function(input, output) {
                          ggtitle(title.name) +
                          xlab("Distances") +
                          ylab("Standardized Residuals") +
+                         theme(aspect.ratio = 3/4) +
                          geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                          geom_hline(yintercept = c(-2.5, 0, 2.5),
                                     linetype = 2) +
@@ -1604,6 +1609,7 @@ shinyServer(function(input, output) {
                          ggtitle(title.name) +
                          xlab("Robust Distances") +
                          ylab("Robustly Standardized Residuals") +
+                         theme(aspect.ratio = 3/4) +
                          geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                          geom_hline(yintercept = c(-2.5, 0, 2.5),
                                     linetype = 2) +
@@ -1624,6 +1630,7 @@ shinyServer(function(input, output) {
                       ggtitle(title.name) +
                       xlab("Residuals") +
                       ylab("Density") +
+                      theme(aspect.ratio = 3/4) +
                       geom_histogram(aes(x = Res, y = ..density..),
                                      fill  = 'white',
                                      color = 'black',
@@ -1659,6 +1666,7 @@ shinyServer(function(input, output) {
                         ggtitle(title.name) +
                         xlab("Index") +
                         ylab("Standardized Residuals") +
+                        theme(aspect.ratio = 3/4) +
                         geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                         geom_line()
       } else {
@@ -1670,6 +1678,7 @@ shinyServer(function(input, output) {
                         ggtitle(title.name) +
                         xlab("Index") +
                         ylab("Robustly Standardized Residuals") +
+                        theme(aspect.ratio = 3/4) +
                         geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                         geom_line()
       }
@@ -1704,6 +1713,7 @@ shinyServer(function(input, output) {
                  ggtitle(title.name) +
                  xlab("Fitted Values") +
                  ylab("Residuals") +
+                 theme(aspect.ratio = 3/4) +
                  geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                  geom_hline(yintercept = c(-2.5 * sigma, 0, 2.5 * sigma),
                             linetype = 2)
@@ -1738,6 +1748,7 @@ shinyServer(function(input, output) {
                  ggtitle(title.name) +
                  xlab("Fitted Values") +
                  ylab("Response") +
+                 theme(aspect.ratio = 3/4) +
                  geom_point(color = "dodgerblue2", shape = 18, size = 2.5)
   
         if (input$include.rugplot == T) {
@@ -1792,6 +1803,7 @@ shinyServer(function(input, output) {
                   ggtitle(title.name) +
                   xlab("Normal Quantiles") +
                   ylab("Ordered Residuals") +
+                  theme(aspect.ratio = 3/4) +
                   geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                   geom_abline(slope = slope, intercept = int) +
                   geom_ribbon(aes(ymin = lower, ymax = upper),
@@ -1801,6 +1813,7 @@ shinyServer(function(input, output) {
                    ggtitle(title.name) +
                    xlab("Normal Quantiles") +
                    ylab("Ordered Residuals") +
+                   theme(aspect.ratio = 3/4) +
                    geom_qq() +
                    geom_abline(slope = slope, intercept = int)
         }
@@ -1851,6 +1864,7 @@ shinyServer(function(input, output) {
                    ggtitle(title.name) +
                    xlab("Distances") +
                    ylab("Standardized Residuals") +
+                   theme(aspect.ratio = 3/4) +
                    geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                    geom_hline(yintercept = c(-2.5, 0, 2.5),
                               linetype = 2) + 
@@ -1869,6 +1883,7 @@ shinyServer(function(input, output) {
                    ggtitle(title.name) +
                    xlab("Robust Distances") +
                    ylab("Robustly Standardized Residuals") +
+                   theme(aspect.ratio = 3/4) +
                    geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                    geom_hline(yintercept = c(-2.5, 0, 2.5),
                               linetype = 2) + 
@@ -1905,6 +1920,7 @@ shinyServer(function(input, output) {
                  ggtitle(title.name) +
                  xlab("Residuals") +
                  ylab("Density") +
+                 theme(aspect.ratio = 3/4) +
                  geom_histogram(aes(x = Res, y = ..density..),
                                 fill  = 'white',
                                 color = 'black',
@@ -1958,6 +1974,7 @@ shinyServer(function(input, output) {
                    ggtitle(title.name) +
                    xlab("Index") +
                    ylab("Standardized Residuals") +
+                   theme(aspect.ratio = 3/4) +
                    geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                    geom_line()
         } else {
@@ -1969,6 +1986,7 @@ shinyServer(function(input, output) {
                    ggtitle(title.name) +
                    xlab("Index") +
                    ylab("Robustly Standardized Residuals") +
+                   theme(aspect.ratio = 3/4) +
                    geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                    geom_line()
         }
@@ -2016,6 +2034,7 @@ shinyServer(function(input, output) {
                  ggtitle(title.name) +
                  xlab(names[2]) +
                  ylab(names[1]) +
+                 theme(aspect.ratio = 3/4) +
                  geom_point(data = mat, aes(x = X, y = Y), color = "dodgerblue2", shape = 18, size = 2.5) +
                  geom_abline(data = line.dat, aes(slope = slope, intercept = int, linetype = method, color = method), size = 1, show.legend = T) +
                  scale_color_manual(values = c("red", "black")) +
@@ -2451,6 +2470,7 @@ shinyServer(function(input, output) {
         plt <- ggplot(data = dat) +
                  ggtitle("Eigenvalues") +
                  ylab("Eigenvalue") +
+                 theme(aspect.ratio = 3/4) +
                  geom_line(aes(x = indx, y = eigen.vals, color = Method, linetype = Method), size = 1) +
                  geom_point(aes(x = indx, y = eigen.vals, color = Method), shape = 16, size = 2.5) +
                  scale_color_manual(values = c("red", "black")) +
@@ -2820,6 +2840,7 @@ shinyServer(function(input, output) {
         plt <- ggplot(data = dat) +
                  ggtitle("Eigenvalues") +
                  ylab("Eigenvalue") +
+                 theme(aspect.ratio = 3/4) +
                  geom_line(aes(x = indx, y = eigen.vals), color = "dodgerblue2", size = 1) +
                  geom_point(aes(x = indx, y = eigen.vals), color = "dodgerblue2", shape = 5, size = 2.5) +
                  scale_x_continuous(name = "Factor Number", breaks = min(dat$indx):max(dat$indx))
@@ -2853,6 +2874,7 @@ shinyServer(function(input, output) {
         
         plt <- ggplot(data = dat, aes(x = indx, y = MD)) +
                  ggtitle(title.name) +
+                 theme(aspect.ratio = 3/4) +
                  xlab("Index") +
                  ylab("Mahalanobis Distance") +
                  geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
@@ -3035,6 +3057,7 @@ shinyServer(function(input, output) {
         plt <- ggplot(data = dat, aes(x = x, y = y)) +
                  ggtitle("Classic") +
                  xlab("Chi-Squared Quantiles") +
+                 theme(aspect.ratio = 3/4) +
                  ylab("Sorted Distances") +
                  geom_point(color = "dodgerblue2", shape = 18, size = 2.5) +
                  geom_abline(slope = 1, intercept = 0, linetype = 2)
