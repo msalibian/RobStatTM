@@ -745,4 +745,73 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
   ans
 }
 
+# The functions below are similar to those in the Robust package
 
+#' @export
+summary.covRob <- function (object, ...)
+{
+    evals <- eigen(object$cov, symmetric = TRUE, only.values = TRUE)$values
+    names(evals) <- paste("Eval.", 1:length(evals))
+    object$evals <- evals
+    object <- object[c("cov", "center", "evals", "dist")]
+    oldClass(object) <- "summary.covRob"
+    object
+}
+
+print.summary.covRob <- function (x, digits = max(3, getOption("digits") - 3), print.distance = TRUE, 
+    ...) 
+{
+    cat("Robust Estimates of Covariance: \n")
+    print(x$cov, digits = digits, ...)
+    
+    cat("\n Robust Estimates of Location: \n")
+    print(x$center, digits = digits, ...)
+    
+    cat("\nEigenvalues: \n")
+    print(x$evals, digits = digits, ...)
+    
+    if (print.distance && !is.null(x$dist)) {
+        cat("\nSquared Mahalanobis Distances: \n")
+        print(x$dist, digits = digits, ...)
+    }
+    
+    invisible(x)
+}
+
+# These were taken from the robust package
+
+#' @export
+summary.covClassic <- function (object, ...) 
+{
+    evals <- eigen(object$cov, symmetric = TRUE, only.values = TRUE)$values
+    names(evals) <- paste("Eval.", 1:length(evals))
+    object$evals <- evals
+    
+    object <- object[c("call", "cov", "center", "evals", "dist", 
+        "corr")]
+    
+    oldClass(object) <- "summary.covClassic"
+    object
+}
+
+print.summary.covClassic <- function (x, digits = max(3, getOption("digits") - 3), print.distance = TRUE, 
+    ...) 
+{
+    if (x$corr) 
+        cat("\nClassical Estimate of Correlation: \n")
+    else cat("\nClassical Estimate of Covariance: \n")
+    print(x$cov, digits = digits, ...)
+    
+    cat("\nClassical Estimate of Location: \n")
+    print(x$center, digits = digits, ...)
+    
+    cat("\nEigenvalues: \n")
+    print(x$evals, digits = digits, ...)
+    
+    if (print.distance && !is.null(x$dist)) {
+        cat("\nSquared Mahalanobis Distances: \n")
+        print(x$dist, digits = digits, ...)
+    }
+    
+    invisible(x)
+}
