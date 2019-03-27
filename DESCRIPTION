@@ -13,8 +13,8 @@ Authors@R: c(person("Matias", "Salibian-Barrera", role = c("aut", "cre"), email 
              person("Gentiane", "Haesbroeck", role="ctb", email="G.Haesbroeck@uliege.be", comment="WBYlogreg, BYlogreg")
             )
 Description: Software for the "Robust Statistics: Theory and Methods" book <http://www.wiley.com/go/maronna/robust>.
-Depends: R (>= 3.0.2)
-Imports: stats, graphics, utils, methods, DEoptimR, pyinit, rrcov, robustbase, shiny, shinyjs, PerformanceAnalytics, DT,  fit.models, ggplot2, gridExtra, robust, xts
+Depends: R (>= 3.0.2), fit.models
+Imports: stats, graphics, utils, methods, DEoptimR, pyinit, rrcov, robustbase, shiny, shinyjs, PerformanceAnalytics, DT, ggplot2, gridExtra, robust, xts
 Suggests: knitr
 LazyData: yes
 License: GPL (>= 3)
