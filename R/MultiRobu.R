@@ -177,7 +177,7 @@ dista=dista0}
   dista <- dista/ff
   
   # GSB: Feed list into object and give class
-  z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu)
+  z <- list(mu=mu, V=V, sig=sig, dista=dista, w=w, gamma=gamma, cov=V, center=mu)
   class(z) <- c("covRob")
   return(z)
 }
@@ -370,7 +370,7 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
   dista <- dista/tmp$ff
   
   # GSB: Feed list into object and give class
-  z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu)
+  z <- list(V=tmp$V, mu=mu0, dista=dista, w=w, center=mu0, cov=tmp$V)
   class(z) <- c("covRob")
   return(z)
 }
