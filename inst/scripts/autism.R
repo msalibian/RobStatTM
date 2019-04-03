@@ -49,6 +49,9 @@ AutismCompositeTau <- robustvarComp::varComprob(vsae ~ age.2 + I(age.2^2)
                                  + sicdegp2.f + age.2:sicdegp2.f + I(age.2^2):sicdegp2.f,
                                  groups = groups, data = autism.grouped, varcov = K,
                                  control=tmp.ctrl)
+# The Warning messages produced by the above function indicates a small change to the code
+# that is recommended, but the results are not effected by this Warning.
+# That code change will be made in a future release of RobStatTM
 summary(AutismCompositeTau)
 
 ## Classic S
@@ -58,6 +61,8 @@ AutismS <- robustvarComp::varComprob(vsae ~ age.2 + I(age.2^2)
                       + sicdegp2.f + age.2:sicdegp2.f + I(age.2^2):sicdegp2.f,
                       groups = groups, data = autism.grouped, varcov = K,
                       control=tmp2.ctrl)
+# The Warning message produced by the above function is a notification, and not a
+# true "warning".  This will be fixed in a future release of RobStatTM
 summary(AutismS)
 
 
