@@ -1,8 +1,6 @@
 #' @import fit.models
 
 .onLoad <- function(libname, pkgname) {
-  library.dynam("RobStatTM", package = pkgname, lib.loc = libname)
-
   ##--------------- begin {fit.models} -----------------
   requireNamespace("fit.models")
   FM.add.class <- fit.models::fmclass.add.class
@@ -12,9 +10,8 @@
   FM.add.class("lmfm", "lmrobdetMM", warn = F)
   FM.add.class("lmfm", "lmrobdetDCML", warn = F)
 
-  FM.register(fmclass = "covfm",
-              classes = c("covClassic", "covRob"),
-              validation.function = NULL)
+  FM.add.class("covfm", "covClassic", warn = F)
+  FM.add.class("covfm", "covRob", warn = F)
 
   FM.register(fmclass = "pcompfm",
               classes = c("prcomp", "prcompRob"),
@@ -24,7 +21,6 @@
   invisible()
 }
 
-.onUnload <- function (libpath) {
-  library.dynam.unload("RobStatTM", libpath)
-}
-
+#.onUnload <- function (libpath) {
+#  library.dynam.unload("RobStatTM", libpath)
+#}
