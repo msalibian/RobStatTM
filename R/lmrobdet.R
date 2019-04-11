@@ -141,10 +141,10 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
     ## check for singular fit
 
     if(getRversion() >= "3.1.0") {
-      z0 <- .lm.fit(x, y, tol = control$solve.tol)
+      z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$pivot
     } else {
-      z0 <- lm.fit(x, y, tol = control$solve.tol)
+      z0 <- lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$qr$pivot
     }
     rankQR <- z0$rank
@@ -870,10 +870,10 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
     ## check for singular fit
 
     if(getRversion() >= "3.1.0") {
-      z0 <- .lm.fit(x, y, tol = control$solve.tol)
+      z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$pivot
     } else {
-      z0 <- lm.fit(x, y, tol = control$solve.tol)
+      z0 <- lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$qr$pivot
     }
     rankQR <- z0$rank
@@ -1155,10 +1155,10 @@ lmrobM <- function(formula, data, subset, weights, na.action,
   ## check for singular fit
 
   if(getRversion() >= "3.1.0") {
-    z0 <- .lm.fit(x, y, tol = control$solve.tol)
+    z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
     piv <- z0$pivot
   } else {
-    z0 <- lm.fit(x, y, tol = control$solve.tol)
+    z0 <- lm.fit(x, y) #, tol = control$solve.tol)
     piv <- z0$qr$pivot
   }
   rankQR <- z0$rank
