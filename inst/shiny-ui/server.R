@@ -443,14 +443,14 @@ htmlText.summary.lmfm <- function(x, digits = max(3L, getOption("digits") - 3L),
   
   temp <- sapply(resid.q[1, ],
                  function(val) {
-                   paste0("<td align=\"right\"><font color=\"#FF0000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                   paste0("<td align=\"right\"><font color=\"#FF0000\">", format(signif(val, digits = digits)), "</font></td>")
                  })
   
   lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#FF0000\">", mod.names[1], "</font></td>", paste(temp, collapse = ''), '</tr>')
   
   temp <- sapply(resid.q[2, ],
                  function(val) {
-                   paste0("<td align=\"right\"><font color=\"#000000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                   paste0("<td align=\"right\"><font color=\"#000000\">", format(signif(val, digits = digits)), "</font></td>")
                  })
   
   lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#000000\">", mod.names[2], "</font></td>", paste(temp, collapse = ''), "</tr></table></div>")

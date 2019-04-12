@@ -214,7 +214,7 @@ shinyUI(navbarPage("RobStatTM",
                                    "Mod. Opt." = "modopt",
                                    "Bisquare"  = "bisquare",
                                    "Huber"     = "huber"),
-                       selected = "optimal"),
+                       selected = "bisquare"),
            
            uiOutput('locScale.eff.options')
         ),
