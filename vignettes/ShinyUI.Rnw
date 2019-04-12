@@ -275,7 +275,6 @@ methods.
 \label{f4}
 \end{figure}
 
-
 \subsection*{Fitting Linear Models}
 
 There are four linear model fitting methods to choose from in the UI: least-squares (LS),
@@ -316,8 +315,8 @@ data(mineral)
 # Send fits to fit.models
 fm <- fit.models(LS = lm(zinc ~ copper, data = mineral),
                  MM = lmrobdetMM(zinc ~ copper, data = mineral, 
-                                 control = lmrobdet.control(family = "modified.optimal",
-                                                            eff    = 0.96)))
+                                 control = lmrobdet.control(family = "modopt",
+                                                            eff    = 0.99)))
 
 # Comparison of results
 summary(fm)
