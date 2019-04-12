@@ -141,10 +141,10 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
     ## check for singular fit
 
     if(getRversion() >= "3.1.0") {
-      z0 <- .lm.fit(x, y, tol = control$solve.tol)
+      z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$pivot
     } else {
-      z0 <- lm.fit(x, y, tol = control$solve.tol)
+      z0 <- lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$qr$pivot
     }
     rankQR <- z0$rank
@@ -431,7 +431,6 @@ lmrobdet.control <- function(bb = 0.5,
 }
 
 
-
 #' @export
 print.lmrobdetMM <- function(x, digits = max(3, getOption("digits") - 3), ...)
 {
@@ -458,7 +457,6 @@ print.lmrobdetMM <- function(x, digits = max(3, getOption("digits") - 3), ...)
   cat("\n")
   invisible(x)
 }
-
 
 #' @export
 summary.lmrobdetMM <- function(object, correlation = FALSE, symbolic.cor = FALSE, ...)
@@ -508,7 +506,6 @@ summary.lmrobdetMM <- function(object, correlation = FALSE, symbolic.cor = FALSE
   ans$adj.r.squared <- object$adj.r.squared
   structure(ans, class = "summary.lmrobdetMM")
 }
-
 
 #' @export
 print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3),
@@ -870,10 +867,10 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
     ## check for singular fit
 
     if(getRversion() >= "3.1.0") {
-      z0 <- .lm.fit(x, y, tol = control$solve.tol)
+      z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$pivot
     } else {
-      z0 <- lm.fit(x, y, tol = control$solve.tol)
+      z0 <- lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$qr$pivot
     }
     rankQR <- z0$rank
@@ -1155,10 +1152,10 @@ lmrobM <- function(formula, data, subset, weights, na.action,
   ## check for singular fit
 
   if(getRversion() >= "3.1.0") {
-    z0 <- .lm.fit(x, y, tol = control$solve.tol)
+    z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
     piv <- z0$pivot
   } else {
-    z0 <- lm.fit(x, y, tol = control$solve.tol)
+    z0 <- lm.fit(x, y) #, tol = control$solve.tol)
     piv <- z0$qr$pivot
   }
   rankQR <- z0$rank
@@ -1391,31 +1388,4 @@ lmrobM.control <- function(bb = 0.5,
               rel.tol=rel.tol, mscale_tol = mscale_tol, mscale_maxit = mscale_maxit,
               trace.lev=trace.lev, mts=1000)) # mts maximum number of subsamples. Un-used, but passed (unnecessarily) to the function that performs M-iterations (lmrob..M..fit), so set here.
 }
-
-
-### The first part of lmrob()  much cut'n'paste from lm() - on purpose!
-
-
-# R CMD INSTALL --preclean --clean package-name-here
-
-
-## lmrobdet: back to basics!
-## For continuous explanatory variables:
-## the estimator is an S-initial estimator computed with
-## Pena-Yohai candidates (default) or SubSampling candidates
-## (we use the Fast-S algorithm), then we iterate an
-## M estimator, and finally report the Distance Constrained
-## Maximum Likelihood one (DCML)
-##
-## For continuous-categorical explanatory variables:
-## the estimator is an MS-estimator computed with
-## Pena-Yohai candidates (default) or SubSampling candidates
-## (we use the Fast-S algorithm), then we iterate an
-## M estimator, and finally report the Distance Constrained
-## Maximum Likelihood one (DCML)
-##
-## We also made the default convergence settings for the S less strict
-
-
-
 
