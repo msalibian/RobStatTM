@@ -4,8 +4,14 @@
 #' using deterministic starting points.
 #'
 #' This function computes MM-regression estimators
-#' computed using Pen~a-Yohai
-#' candidates (instead of subsampling ones).
+#' computed using Pen~a-Yohai candidates (instead of subsampling ones). 
+#' This function makes use of the functions \code{lmrob.fit},
+#' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and  
+#' \code{lmrob.lar}, from robustbase,
+#' along with utility functions used by these functions, 
+#' modified so as to include use of the analytic form of the
+#' optimal psi and rho functions (for the optimal psi function , see
+#' Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019)
 #'
 #' @param formula a symbolic description of the model to be fit.
 #' @param data an optional data frame, list or environment containing
@@ -733,7 +739,14 @@ our.solve <- function(a,b) {
 #'
 #' This function computes Distance Constrained Maximum Likelihood regression estimators
 #' computed using an MM-regression estimator based on Pen~a-Yohai
-#' candidates (instead of subsampling ones).
+#' candidates (instead of subsampling ones). 
+#' This function makes use of the functions \code{lmrob.fit},
+#' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and  
+#' \code{lmrob.lar}, from robustbase,
+#' along with utility functions used by these functions, 
+#' modified so as to include use of the analytic form of the
+#' optimal psi and rho functions (for the optimal psi function , see
+#' Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019)
 #'
 #' @param formula a symbolic description of the model to be fit.
 #' @param data an optional data frame, list or environment containing
@@ -1033,7 +1046,13 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 #' and uses it as a starting point to find a minimum of a
 #' re-descending M estimator. The scale is set to a quantile of the
 #' absolute residuals from the L1 estimator.
-#'
+#' This function makes use of the functions \code{lmrob.fit},
+#' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and  
+#' \code{lmrob.lar}, from robustbase,
+#' along with utility functions used by these functions, 
+#' modified so as to include use of the analytic form of the
+#' optimal psi and rho functions (for the optimal psi function , see
+#' Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019)
 #'
 #' @param formula a symbolic description of the model to be fit.
 #' @param data an optional data frame, list or environment containing
