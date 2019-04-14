@@ -400,6 +400,8 @@ shinyUI(navbarPage("RobStatTM",
                                        "Classical" = "classic",
                                        "Robust"    = "rob")),
               
+              checkboxInput("pca.standardize", "Standardize"),
+              
               actionButton("pca.display", "Results")
             ),
             

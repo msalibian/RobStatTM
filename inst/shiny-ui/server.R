@@ -3260,9 +3260,12 @@ shinyServer(function(input, output) {
     } else {
       
       values$pca.active <- TRUE
-      
       data <- values$dat.numeric[, input$pca.variables]
-    
+      
+      if (input$pca.standardize) {
+        data <- scale(data, apply(data, 2, median), apply(data, 2, mad))
+      }
+      
       if (input$pca.method == "classic") {
         values$pca.num <- 1
         
