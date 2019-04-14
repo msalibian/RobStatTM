@@ -160,7 +160,8 @@ The Shiny UI depends on the following packages:
 \item \textbf{shinyjs}
 \item \textbf{xts}
 \end{itemize}
-With the above packages all installed, and the Shiny UI application displayed, you are now ready to start using the Shiny UI.
+With the above packages all installed, just use the command ShinyUI() at the prompt, to start the Shiny UI application.
+Then you will be ready to start using the Shiny UI.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add image of the Shiny UI initial screen here %
@@ -168,7 +169,7 @@ With the above packages all installed, and the Shiny UI application displayed, y
 
 \newpage{}
 
-Figure \ref{fig:home} displays the initial screen you encounte in the Shiny UI application. This page is where you would select or upload a data set,
+Figure \ref{fig:home} displays the initial screen you encounter in the Shiny UI application. This page is where you would select or upload a data set,
 and then navigate to one of the model tabs for further analysis. The subsequent sections contain detailed instructions for each component of the Shiny UI.
 
 \begin{figure}[H]
@@ -203,10 +204,10 @@ options are available to specify the separator or escape character.
 If the data is a time series, then you
 must check the corresponding box as shown in the example. The
 first column of data must contain the date or time indices to be read
-as a time series. The format of In the example, we use the data set \textbf{hfunds.ts.csv}
+as a time series. In the example, we use the data set \textbf{hfunds.ts.csv}
 which contains returns for five hedge funds, and upload it as a time
 series. The window in the main (right) panel displays the data in
-a table like format and where you may view the returns for each date.
+a table like format, where you may view the returns for each date.
 Each column corresponds to one of the five different types of hedge funds:
 emerging markets (\textbf{EM}), Private Equity (\textbf{PE}), U.S.
 High Yield (\textbf{USHY}), Alternative Investments (\textbf{AI}),
@@ -225,7 +226,7 @@ of variables, we suggest viewing the application in \textbf{Full Screen}.
 Click on the \textbf{Location-Scale} tab to open the dialog which allows you
 to compute classical estimates for mean
 and standard deviation and/or robust estimates for location and scale
-for a single variable, comparing results when you choose to compute both classical and robust estimates.
+for a single variable, and compare results when you choose to compute both classical and robust estimates.
 
 \subsection*{Computing Location and Scale}
 
@@ -236,15 +237,15 @@ the options of \emph{Classical}, \emph{Robust}, or \emph{Both}. The
 classical and robust methods are both computed and then compared when \emph{Both} is chosen.
 Furthermore, if either \emph{Robust} or \emph{Both} are selected,
 then additional parameters for tuning the robust method will appear in the bottom of
-the side panel on the left, where default values  \textbf{Psi
+the side panel on the left, when default values  \textbf{Psi
 Function} and \textbf{Asymptotic Efficiency}. You may choose an alternate psi function
 from the Psi Function drop-down list, and can choose one of the alternate values for
 asymptotic efficiency. To compute the estimates
 and display the summary, click the \textbf{Results} button. Figure
 \ref{f3} shows an example comparing the estimates of location and
-scale for the Private Equity fund from the \textbf{hfunds.ts} data
-where we used the modified optimal score function and an asymptotic
-efficiency of 95\%. In a later version, you will be able to select
+scale for the \textbf{flour} dataset from 
+where we used the bisquare score function and an asymptotic
+efficiency of 90\%. In a later version, you will be able to select
 multiple variables to compute both the univariate location and scale
 or just the scale for each variable.
 
@@ -252,7 +253,7 @@ or just the scale for each variable.
 
 \centering
 \includegraphics[scale=0.6]{img/Location-Scale.png}\caption{Comparison of Classical and robust estimates for location and scale
-of Private Equity fund returns in \textbf{hfunds.ts}}
+for flour data}
 \label{f3}
 \end{figure}
 
@@ -302,11 +303,11 @@ for robust fits are computed using a robust covariance matrix for
 the independent variables, as an important step to ensure that those
 quantities are robust themselves (see the RobStatTM book Section 5.6 for details). Furthermore, the \emph{proportion
 of variance explained by the model}, or R\textsuperscript{2}, for
-robust fits is a robust version of classical least-squares R\textsuperscript{2}. In the current release of RobStatTM there is a bug in the R\textsuperscript{2} computation.
-In the example, we fit the formula \emph{zinc \textasciitilde{} copper}
-for the LS and MM estimators while using the modified optimal value
+robust fits is a robust version of classical least-squares R\textsuperscript{2}. 
+In the example, zinc is the dependent variable and copper is the independent variable
+for the LS and MM and for the MM estimator we are using the optimal value
 for psi with asymptotic efficiency of 99\%. The equivalent command-line
-code is
+code is provided below.
 
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
 # Load mineral data set
@@ -315,7 +316,7 @@ data(mineral)
 # Send fits to fit.models
 fm <- fit.models(LS = lm(zinc ~ copper, data = mineral),
                  MM = lmrobdetMM(zinc ~ copper, data = mineral, 
-                                 control = lmrobdet.control(family = "modopt",
+                                 control = lmrobdet.control(family = "optimal",
                                                             eff    = 0.99)))
 
 # Comparison of results
@@ -350,7 +351,6 @@ are examples of each plot:
 \label{f6}
 \end{figure}
 
-
 \subsubsection*{Response versus Fitted Values}
 
 \begin{figure}[H]
@@ -361,7 +361,6 @@ are examples of each plot:
 \label{f7}
 \end{figure}
 
-
 \subsubsection*{Normal QQ Plots of Residuals}
 
 \begin{figure}[H]
@@ -371,6 +370,14 @@ are examples of each plot:
 \label{f8}
 \end{figure}
 
+\subsubsection*{Standardized Residuals versus Robust Distances}
+
+\begin{figure}[H]
+\centering\includegraphics[scale=0.6]{img/LR_ResVsDist.png}
+\caption{LS and robust MM Plots of standardized residuals versus Mahalanobis
+distances: \textbf{mineral}}
+\label{f9}
+\end{figure}
 
 \subsubsection*{Probability Density Estimates of Residuals}
 
@@ -379,19 +386,8 @@ are examples of each plot:
 \includegraphics[scale=0.6]{img/LR_ResDens.png}
 \caption{Probability density estimates of LS and robust MM residuals:\textbf{
 mineral}}
-\label{f9}
-\end{figure}
-
-
-\subsubsection*{Standardized Residuals versus Robust Distances}
-
-\begin{figure}[H]
-\centering\includegraphics[scale=0.6]{img/LR_ResVsDist.png}
-\caption{LS and robust MM Plots of standardized residuals versus Mahalanobis
-distances: \textbf{mineral}}
 \label{f10}
 \end{figure}
-
 
 \subsubsection*{Standardized Residuals versus Index (Time)}
 
@@ -402,7 +398,6 @@ distances: \textbf{mineral}}
 \label{f11}
 \end{figure}
 
-
 \subsubsection*{Scatterplots with Overlaid Fits}
 
 \begin{figure}[H]
@@ -411,7 +406,6 @@ distances: \textbf{mineral}}
 \caption{Scatterplot of data with overlaid LS and robust MM fits: \textbf{mineral}}
 \label{f12}
 \end{figure}
-
 
 \section{Robust Covariance}
 
@@ -428,8 +422,9 @@ an estimator choice. You may select \emph{MM}, \emph{Rocke},
 or \emph{Auto} as the estimator. If \emph{Auto} is selected, then
 a Rocke-estimator is used if the number of variables is greater than
 or equal to 10, and an MM-estimator is used otherwise. Figure \ref{f13} displays the comparison
-of classical and robust covariance estimates for the some variables in the \textbf{wine}
-data set.
+of classical and robust covariance matrix and location estimates along with classical and robust
+eigenvalues associated with those covariance matrix estimate for variables in the \textbf{wine}
+dataset.
 
 \begin{figure}[H]
 \centering
@@ -439,9 +434,7 @@ data}
 \label{f13}
 \end{figure}
 
-In the example above, you see a comparison of the classical and
-robust covariance matrix estimates and their associated location estimates, along with 
-classical and robust eigenvalues associated with those covariance matrix estimates. You
+The above, along with figures \ref{f14}, \ref{f15}, and \ref{f16}, follow Example 6.2 and Figure 6.3 in Maronna et al. You
 may find it of interest run the above example with the
 choice "Covariances" changed to "Correlations". A 
 command-line equivalent to the table in Figure
@@ -450,11 +443,10 @@ command-line equivalent to the table in Figure
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
 # Load wine data
 data(wine)
-dat <- wine[c("V2", "V4", "V8", "V11", "V12")]
 
 # Use fit.models to estimate centers and covariance matrices
 cov.fm <- fit.models(Classic = covClassic(dat),
-                     Robust  = covRob(dat, type = "auto"))
+                     Robust  = covRob(wine, type = "auto"))
 
 # Comparison of results
 print(summary(cov.fm))
@@ -474,23 +466,13 @@ Covariance}: \emph{Eigenvalues}, \emph{Mahalanobis Distances}, \emph{Ellipses
 Matrix}, \emph{Distances Chi-Squared QQ Plots}. Below are examples
 of each plot:
 
-\subsubsection*{Eigenvalues}
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale = 0.6]{img/CovarianceEigen.png}
-\caption{Scree plot for classical and robust covariance estimates: \textbf{wine}}
-\label{f14}
-\end{figure}
-
-
 \subsubsection*{Mahalanobis Distances}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.5in]{img/CovarianceMd.png}\caption{Mahalanobis distances for classical and robust covariance estimates:
 \textbf{wine}}
-\label{f15}
+\label{f14}
 \end{figure}
 
 \subsubsection*{Distances Chi-Squared QQ Plot}
@@ -500,7 +482,7 @@ of each plot:
 \includegraphics[width=6.5in]{img/CovarianceChi.png}
 \caption{Classical and robust Mahalanobis distances chi-squared QQ plots:
 \textbf{wine}}
-\label{f17}
+\label{f15}
 \end{figure}
 
 \subsubsection*{Distance-Distance scatterplot}
@@ -508,8 +490,19 @@ of each plot:
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{img/CovarianceDistDist.png}
-\caption{Scatterplot of classical and robust Mahalanobis distances: \textbf{hfunds.ts}}
-\label{f18}
+\caption{Scatterplot of classical and robust Mahalanobis distances: \textbf{wine}}
+\label{f16}
+\end{figure}
+
+The following figures are from analysis using selected variables in the \textbf{wine} dataset.
+
+\subsubsection*{Eigenvalues}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale = 0.6]{img/CovarianceEigen.png}
+\caption{Scree plot for classical and robust covariance estimates: \textbf{wine}}
+\label{f17}
 \end{figure}
 
 \subsubsection*{Ellipses Matrix}
@@ -518,9 +511,9 @@ of each plot:
 \centering
 \includegraphics[scale=0.6]{img/CovarianceEllipses.png}
 \caption{Ellipses matrices with classical and robust correlation estimates:
-\textbf{hfunds.ts}. If you repeat the analysis with just three (or four) well-chosen variables,
+\textbf{wine}. If you repeat the analysis with just three (or four) well-chosen variables,
 then you will get a 3 by 3 (or 4 by 4) display.}
-\label{f16}
+\label{f18}
 \end{figure}
 
 \section{Robust PCA}
@@ -542,7 +535,7 @@ principal components of the \textbf{bus} data.
 
 \begin{figure}[H]
   \centering
-    \includegraphics[width=6.5in]{img/PcaSummary.png}
+    \includegraphics[width=6.5in]{img/PcaSummary2.png}
   \caption{Classical and robust estimates for principal components for first ten variables in the \textbf{bus}
            data set}
   \label{f19}
@@ -573,7 +566,7 @@ version, but will be added in the future.
 
 \subsection*{Improvements to the User Interface}
 
-The Shiny UI will continue to evolve as we recieve more feedback on
+The Shiny UI will continue to evolve as we receive more feedback on
 the interface and consider new ideas for it. Future versions will
 generally contain small aesthetic adjustments and not a major overhaul
 of the current interface.
