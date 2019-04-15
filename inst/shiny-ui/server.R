@@ -678,13 +678,13 @@ htmlText.summary.covfm <- function(x, digits = max(3L, getOption("digits") - 3L)
                     "<td align=\"left\"><font color=\"#FF0000\">", mod.names[1], "</font></td>")
     temp <- sapply(x[[1]]$cov[i, ],
                    function(val) {
-                     paste0("<td align=\"right\"><font color=\"#FF0000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                     paste0("<td align=\"right\"><font color=\"#FF0000\">", format(signif(val, digits = digits)), "</font></td>")
                    })
     lines <- paste0(lines, paste(temp, collapse = ''), "</tr><tr><td align=\"left\">", mod.names[2], "</td>")
     
     temp <- sapply(x[[2]]$cov[i, ],
                    function(val) {
-                     paste0("<td align=\"right\"><font color=\"#000000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                     paste0("<td align=\"right\"><font color=\"#000000\">", format(signif(val, digits = digits)), "</font></td>")
                    })
     
     lines <- paste0(lines, paste(temp, collapse = ''), "</tr>")
@@ -701,14 +701,14 @@ htmlText.summary.covfm <- function(x, digits = max(3L, getOption("digits") - 3L)
   
   temp <- sapply(x[[1]]$center,
                  function(val) {
-                   paste0("<td align=\"right\"><font color=\"#FF0000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                   paste0("<td align=\"right\"><font color=\"#FF0000\">", format(signif(val, digits = digits)), "</font></td>")
                  })
   
   lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#FF0000\">", mod.names[1], "</font></td>", paste(temp, collapse = ''), '</tr>')
   
   temp <- sapply(x[[2]]$center,
                  function(val) {
-                   paste0("<td align=\"right\"><font color=\"#000000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                   paste0("<td align=\"right\"><font color=\"#000000\">", format(signif(val, digits = digits)), "</font></td>")
                  })
   
   lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#000000\">", mod.names[2], "</font></td>", paste(temp, collapse = ''), "</tr></table></div>")
@@ -722,14 +722,14 @@ htmlText.summary.covfm <- function(x, digits = max(3L, getOption("digits") - 3L)
   
   temp <- sapply(x[[1]]$evals,
                  function(val) { 
-                   paste0("<td align=\"right\"><font color=\"#FF0000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                   paste0("<td align=\"right\"><font color=\"#FF0000\">", format(signif(val, digits = digits)), "</font></td>")
                  })
   
   lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#FF0000\">", mod.names[1], "</font></td>", paste(temp, collapse = ''), "</tr>")
   
   temp <- sapply(x[[2]]$evals,
                  function(val) { 
-                   paste0("<td align=\"right\"><font color=\"#000000\">", format(val, scientific = T, digits = 4), "</font></td>")
+                   paste0("<td align=\"right\"><font color=\"#000000\">", format(signif(val, digits = digits)), "</font></td>")
                  })
   
   lines <- paste0(lines, "<tr><td align=\"left\"><font color=\"#000000\">", mod.names[2],
