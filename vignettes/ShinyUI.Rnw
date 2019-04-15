@@ -428,7 +428,7 @@ dataset.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=6in]{img/RobustCovarianceSummary.png}
+\includegraphics[width=6in]{img/CovarianceSummary.png}
 \caption{Classical and robust covariance estimates for selected variables in \textbf{wine}
 data}
 \label{f13}
