@@ -246,7 +246,7 @@ from the Psi Function drop-down list, and can choose one of the alternate values
 asymptotic efficiency. To compute the estimates
 and display the summary, click the \textbf{Results} button. Figure
 \ref{f3} shows an example comparing the estimates of location and
-scale for the variable called V1 in the data set \textbf{flour} (which you need to load) using for for the robust estimate the bisquare score function and an asymptotic
+scale for the variable called V1 in the data set \textbf{flour} (which you need to load) using for the robust estimate the bisquare score function and an asymptotic
 efficiency of 90\%.
 
 \begin{figure}[H]
@@ -434,10 +434,10 @@ data}
 \label{f13}
 \end{figure}
 
-The above, along with figures \ref{f14}, \ref{f15}, and \ref{f16}, follow Example 6.2 and Figure 6.3 in Maronna et al. You
+The above, along with figures \ref{f14}, \ref{f15}, and \ref{f16}, correspond to Example 6.2 and Figure 6.3 in Maronna et al. You
 may find it of interest run the above example with the
 choice "Covariances" changed to "Correlations". A 
-command-line equivalent to the table in Figure
+command-line equivalent of the Shiny UI interface in Figure
 \ref{f13} is shown below
 
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
@@ -494,7 +494,7 @@ of each plot:
 \label{f16}
 \end{figure}
 
-The following figures are from analysis using selected variables in the \textbf{wine} dataset.
+Figures \ref{f17} and \ref{f18} use the variables V2, V4, V8, V11, and V12 in the \textbf{wine} dataset.
 
 \subsubsection*{Eigenvalues}
 
