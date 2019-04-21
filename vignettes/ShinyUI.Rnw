@@ -160,7 +160,7 @@ The Shiny UI depends on the following packages:
 \item \textbf{shinyjs}
 \item \textbf{xts}
 \end{itemize}
-With the above packages all installed, just use the command ShinyUI() at the prompt, to start the Shiny UI application.
+With the above packages all installed, just use the command \texttt{ShinyUI()} at the prompt, to start the Shiny UI application.
 Then you will be ready to start using the Shiny UI.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,7 +188,8 @@ a package from the list under \textbf{Library Name}, the \textbf{Select
 Dataset} input will be populated by the names of existing of datasets in that
 package. After selecting a dataset, you should click on the \textbf{Load
 Data} button to load the data into the application for further analysis,
-and the data will be displayed in a table on the right.
+and the data will be displayed in a table on the right. Figure 2 shows the
+result for the data set mineral in RobStatTM.
 
 \begin{figure}[H]
 \centering
@@ -211,7 +212,9 @@ a table like format, where you may view the returns for each date.
 Each column corresponds to one of the five different types of hedge funds:
 emerging markets (\textbf{EM}), Private Equity (\textbf{PE}), U.S.
 High Yield (\textbf{USHY}), Alternative Investments (\textbf{AI}),
-and Bond (\textbf{BND}). For datasets with a large number
+and Bond (\textbf{BND}). To find the \textbf{hfunds} dataset, first you need to type
+\texttt{find.package('RobStatTM')} in the command line to get the path to the \textbf{RobStatTM} package.
+From that location, the file is located in \textit{etc} subdirectory. For datasets with a large number
 of variables, we suggest viewing the application in \textbf{Full Screen}.
 
 \begin{figure}[th]
@@ -243,17 +246,14 @@ from the Psi Function drop-down list, and can choose one of the alternate values
 asymptotic efficiency. To compute the estimates
 and display the summary, click the \textbf{Results} button. Figure
 \ref{f3} shows an example comparing the estimates of location and
-scale for the \textbf{flour} dataset from 
-where we used the bisquare score function and an asymptotic
-efficiency of 90\%. In a later version, you will be able to select
-multiple variables to compute both the univariate location and scale
-or just the scale for each variable.
+scale for the variable called V1 in the data set \textbf{flour} (which you need to load) using for for the robust estimate the bisquare score function and an asymptotic
+efficiency of 90\%.
 
 \begin{figure}[H]
 
 \centering
 \includegraphics[scale=0.6]{img/Location-Scale.png}\caption{Comparison of Classical and robust estimates for location and scale
-for flour data}
+for \textbf{flour} dataset}
 \label{f3}
 \end{figure}
 
@@ -266,7 +266,7 @@ error of the location estimate, and the estimate for scale.
 
 The \textbf{Robust Linear Regression }tab is located under \textbf{Models}
 tab in the menu as shown in Figure \ref{f4} (all subsequent models
-are located under the \textbf{Models }tab). This section allows a
+are located under the \textbf{Models} tab). This section allows a
 simple computation and comparison of classical and robust linear regression
 methods.
 
@@ -374,7 +374,7 @@ are examples of each plot:
 
 \begin{figure}[H]
 \centering\includegraphics[scale=0.6]{img/LR_ResVsDist.png}
-\caption{LS and robust MM Plots of standardized residuals versus Mahalanobis
+\caption{LS and robust MM Plots of standardized residuals versus square-root Mahalanobis
 distances: \textbf{mineral}}
 \label{f9}
 \end{figure}
@@ -470,7 +470,7 @@ of each plot:
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=6.5in]{img/CovarianceMd.png}\caption{Mahalanobis distances for classical and robust covariance estimates:
+\includegraphics[width=6.5in]{img/CovarianceMd.png}\caption{Square-root Mahalanobis distances for classical and robust covariance estimates:
 \textbf{wine}}
 \label{f14}
 \end{figure}
@@ -480,7 +480,7 @@ of each plot:
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.5in]{img/CovarianceChi.png}
-\caption{Classical and robust Mahalanobis distances chi-squared QQ plots:
+\caption{Classical and robust square-root Mahalanobis distances chi-squared QQ plots:
 \textbf{wine}}
 \label{f15}
 \end{figure}
@@ -490,7 +490,7 @@ of each plot:
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{img/CovarianceDistDist.png}
-\caption{Scatterplot of classical and robust Mahalanobis distances: \textbf{wine}}
+\caption{Scatterplot of square-root classical and robust Mahalanobis distances: \textbf{wine}}
 \label{f16}
 \end{figure}
 
@@ -560,7 +560,7 @@ print(summary(pca.fm))
 \subsection*{Plots}
 
 Plots for principal component analysis are not available in the current
-version, but will be added in the future.
+version, and we hope to add them in a future update.
 
 \section{What's Next?}
 
@@ -571,10 +571,10 @@ the interface and consider new ideas for it. Future versions will
 generally contain small aesthetic adjustments and not a major overhaul
 of the current interface.
 
-\subsection*{Additional Components}
+\subsection*{Additional Modeling Capability}
 
-Future versions will also contain additional robust methods. Currently,
+Future versions will also contain additional robust modeling methods. Currently,
 we plan to add interfaces to robust logistic regression and robust
-time series analysis as seen in Chapters 7 and 8 of the book.
+time series analysis as discussed in Chapters 7 and 8 of the book.
 
 \end{document}
