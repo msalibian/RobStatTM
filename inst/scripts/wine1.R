@@ -13,7 +13,7 @@ p <- DM[2]
 
 #omitted data Figure 6.11
 #GSE
-set.seed(100)
+set.seed(2400)
 RR <- matrix(runif(n*p)<.2,n,p)
 X2 <- X
 for (i in 1:n) {
@@ -57,11 +57,16 @@ plot(abc, smd2, xlab="Chi square quantile", ylab="Adjusted distance quantiles", 
 abline(0,1)
 par(mfrow=c(1,1))
 
+# NOTE:  The difference between the plots made by the script above and
+# the plots in Figure 6.11 of the book are due to the use of a different
+# seed for the generation of random numbers.
+
+
 #----------------------------------------------------------
 #Analysis with independent contamination Figure 6.12
 
 #MM
-set.seed(100)
+set.seed(2400)
 out <- covRobMM(X)
 md <- out$dist
 smd <- sort(md)

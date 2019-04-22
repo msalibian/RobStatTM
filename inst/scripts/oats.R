@@ -22,7 +22,7 @@ anov2_var <- anova(oats2LS, oats2LS_var)
 anov2_block <- anova(oats2LS, oats2LS_block)
 
 ## M regressions
-cont <- lmrobM.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
 oats1M <- lmrobM(response1 ~ variety+block, control=cont, data=oats)
 oats1M_var <- lmrobM(response1 ~ block, control=cont, data=oats)
 oats1M_block <- lmrobM(response1 ~ variety, control=cont, data=oats)
