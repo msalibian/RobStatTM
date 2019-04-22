@@ -53,7 +53,7 @@
 #' \item{y}{if requested, the response vector used}
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 #'
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob} from package \code{robustbase}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \link{DCML}, \link{MMPY}, \link{SMPY}
 #'

@@ -31,5 +31,5 @@ This function is used internally and not meant to be used
 directly.
 }
 \author{
-Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+Victor Yohai, \email{victoryohai@gmail.com}
 }

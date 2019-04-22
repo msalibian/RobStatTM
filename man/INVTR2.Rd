@@ -33,5 +33,5 @@ and not meant to be used directly.
 \url{http://www.wiley.com/go/maronna/robust}
 }
 \author{
-Victor Yohai
+Victor Yohai, \email{victoryohai@gmail.com}
 }

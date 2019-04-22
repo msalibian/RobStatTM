@@ -19,7 +19,7 @@
 #' @return An unbiased version of the robust R^2 coefficient of determination.
 #'
 #' @rdname INVTR2
-#' @author Victor Yohai
+#' @author Victor Yohai, \email{victoryohai@gmail.com}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #'
 #' @export

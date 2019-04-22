@@ -12,7 +12,7 @@
 #' @return the robust final prediction error (numeric).
 #'
 #' @rdname lmrobdetMM.RFPE
-#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{lmrobdetMM}}
 #'
@@ -83,7 +83,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL)
 #' subset model, and a row for each component kept.
 #'
 #' @rdname drop1.lmrobdetMM
-#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#' @author Victor Yohai, \email{victoryohai@gmail.com},  Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{lmrobdetMM}}
 #'
@@ -197,7 +197,7 @@ drop1.lmrobdetMM <- function (object, scope, scale, keep, ...)
 #' of submodels. The names of the components of this list are the formulas that correspods to each model. 
 #'
 #' @rdname step.lmrobdetMM
-#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'

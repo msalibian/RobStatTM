@@ -44,5 +44,5 @@ directly.
 \code{\link{lmrobdetMM}}
 }
 \author{
-Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+Victor Yohai, \email{victoryohai@gmail.com},  Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 }

@@ -90,5 +90,5 @@ summary(m2)
 \link{DCML}, \link{MMPY}, \link{SMPY}
 }
 \author{
-Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob}
+Matias Salibian-Barrera, \email{matias@stat.ubc.ca}, based on \code{lmrob} from package \code{robustbase}
 }

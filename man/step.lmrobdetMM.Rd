@@ -73,5 +73,5 @@ out <- step.lmrobdetMM(obj)
 \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 }
 \author{
-Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 }

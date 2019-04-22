@@ -84,7 +84,7 @@ scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquar
 #' @return The covariance matrix estimate.
 #'
 #' @rdname cov.dcml
-#' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#' @author Victor Yohai, \email{victoryohai@gmail.com} 
 #'
 #' @export
 cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
@@ -124,15 +124,12 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 #' the argument \code{control}.
 #'
 #' @rdname MMPY
-#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @export
 MMPY <- function(X, y, control, mf) {
-   # This function will be called from lmrob, so control will be valid
-   # X will already contain a column of ones if needed
-   # Compute an MM-estimator taking as initial Pe?a Yohai
    # INPUT
    # X nxp matrix, where n is the number of observations and p the number of  columns
    # y vector of dimension  n with the responses
@@ -143,19 +140,6 @@ MMPY <- function(X, y, control, mf) {
    p <- ncol(X)
    dee <- control$bb
    if(control$corr.b) dee <- dee * (1-(p/n))
-
-#   a <- pyinit(X=X, y=y, intercept=FALSE, deltaesc=dee,
-#               cc.scale=control$tuning.chi,
-#               prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
-#               C.res = control$C.res, prop=control$prop,
-#               py.nit = control$py.nit, en.tol=control$en.tol,
-#               mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
-#               mscale.rho.fun=control$mscale.rho.fun)
-
-# Matias, I hard coded the parameters for pyinit because I wasn't sure how to handle changing
-# the rho function. We had discussed always using bisquare in pyinit.
-
-
    a <- pyinit::pyinit(x=X, y=y, intercept=FALSE, delta=dee,
                cc=1.54764,
                psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
@@ -213,7 +197,7 @@ MMPY <- function(X, y, control, mf) {
 #' \item{t0}{the mixing proportion between the least squares and robust regression estimators}
 #'
 #' @rdname DCML
-#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
@@ -265,7 +249,7 @@ DCML <- function(x, y, z, z0, control) {
 #' the argument \code{control}.
 #'
 #' @rdname SMPY
-#' @author Victor Yohai, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
+#' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
@@ -296,18 +280,6 @@ SMPY <- function(mf, y, control, split) {
   y1 <- as.vector(tmp0$residuals)
   # Now regress y1 on X1, find PY candidates
   if(control$corr.b) dee <- dee*(1-p/n)
-
-#  initial <- pyinit(intercept=FALSE, X=X1, y=y1,
-#                    deltaesc=dee, cc.scale=control$tuning.chi,
-#                    prosac=control$prosac*(1-(p/n)), clean.method=control$clean.method,
-#                    C.res = control$C.res, prop=control$prop,
-#                    py.nit = control$py.nit, en.tol=control$en.tol,
-#                    mscale.maxit = control$mscale.maxit, mscale.tol = control$mscale.tol,
-#                    mscale.rho.fun=control$mscale.rho.fun)
-
-# Matias, I hard coded the parameters for pyinit because I wasn't sure how to handle changing
-# the rho function. We had discussed always using bisquare in pyinit.
-
   initial <- pyinit::pyinit(intercept=FALSE, x=X1, y=y1,
                     delta=dee, cc=1.54764,
                     psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
@@ -380,43 +352,3 @@ SMPY <- function(mf, y, control, split) {
 }
 
 
-# splitFrame <- function (mf, x = model.matrix(mt, mf), type = c("f", "fi", "fii"))
-# {
-#   mt <- attr(mf, "terms")
-#   type <- match.arg(type)
-#   x <- as.matrix(x)
-#   p <- ncol(x)
-#   factors <- attr(mt, "factors")
-#   factor.idx <- attr(mt, "dataClasses") == "factor"
-#   if (!any(factor.idx))
-#     return(list(x1.idx = rep.int(FALSE, p), x1 = matrix(,
-#                                                         nrow(x), 0L), x2 = x))
-#   switch(type, fi = {
-#     factor.asgn <- which(factor.idx %*% factors > 0)
-#   }, fii = {
-#     factor.asgn <- numeric(0)
-#     factors.cat <- factors
-#     factors.cat[factors.cat > 0] <- 1L
-#     factors.cat[, factor.idx %*% factors == 0] <- 0L
-#     for (i in 1:ncol(factors)) {
-#       comp <- factors[, i] > 0
-#       if (any(factor.idx[comp])) {
-#         factor.asgn <- c(factor.asgn, i)
-#       } else {
-#         tmp <- colSums(factors.cat[comp, , drop = FALSE]) >=
-#           sum(comp)
-#         if (any(tmp)) {
-#           if (!all(colSums(factors[!factor.idx & !comp,
-#                                    tmp, drop = FALSE]) > 0)) factor.asgn <- c(factor.asgn,
-#                                                                               i)
-#         }
-#       }
-#     }
-#   }, f = {
-#     factor.asgn <- which(factor.idx %*% factors & !(!factor.idx) %*%
-#                            factors)
-#   }, stop("unknown split type"))
-#   x1.idx <- attr(x, "assign") %in% c(0, factor.asgn)
-#   names(x1.idx) <- colnames(x)
-#   list(x1 = x[, x1.idx, drop = FALSE], x1.idx = x1.idx, x2 = x[, !x1.idx, drop = FALSE])
-# }
