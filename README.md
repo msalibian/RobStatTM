@@ -1,22 +1,22 @@
 # RobStatTM
 
-This repository contains the companion package to the upcoming 2nd edition of
+This repository contains a development version of the companion package to the upcoming 2nd edition of
 the book [Robust Statistics: Theory and Methods](https://www.wiley.com/go/maronna/robust), by Ricardo Maronna, Doug Martin, Victor Yohai and Matias Salibian-Barrera.
 
-* The package has been submitted to CRAN and we expect it to be available there soon.
-* To install it directly from GitHub, install the `devtools` package and then use
+* The latest official version of the package is available on [CRAN](https://cran.r-project.org/package=RobStatTM). You should probably use [that version](https://cran.r-project.org/package=RobStatTM).
+* To install this "development" version use
 ```
 devtools::install_github("msalibian/RobStatTM")
 ```
 * The scripts reproducing the examples and figures in the book can be found [here](inst/scripts).
 
-### Bug reports
+#### Bug reports
 
 A bug is a reproducible problem that is caused by the code in the package.
 Good bug reports are extremely helpful. Please follow the guidelines below to submit your
 bug report.
 
-#### Guidelines for bug reports:
+##### Guidelines for bug reports:
 
 We use [GitHub issues](https://guides.github.com/features/issues/) to track and solve potential bugs in our package. When submitting your bug report please:
 
@@ -33,7 +33,7 @@ A good bug report should not require others to contact you to find more informat
 try to be as detailed as possible in your report. What is your environment? What steps will
 reproduce the issue? What outcome did you expect and what outcome did you get?
 
-##### Example:
+###### Example:
 
 > A short and descriptive bug report title
 >
@@ -49,7 +49,7 @@ reproduce the issue? What outcome did you expect and what outcome did you get?
 > causing the bug, and potential solutions.
 
 
-#### Minimal reproducible examples
+##### Minimal reproducible examples
 
 (This section is adapted from [Rob Hyndman's notes on minimal reproducible examples](https://robjhyndman.com/hyndsight/minimal-reproducible-examples/)).
 
@@ -75,6 +75,6 @@ the data can be included as part of the same text file. In
 most cases, you do not need to include all of
 your data, just a small subset that will allow the problem to be reproduced.
 
-If you randomly generate some data, use `set.seed()`.
+If you randomly generate some data, use `set.seed(somenumber)`.
 
 Please spend time adding comments so we can understand your code quickly.
