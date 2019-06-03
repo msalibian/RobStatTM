@@ -1,6 +1,30 @@
-#' Vehicle data 
+#' Vehicle data
 #'
-#' Vehicle data. More details here.
+#' The original data set contains an ensemble of shape feature extractors to the
+#' 2D silhouettes of different vehicles. The purpose is to classify a given
+#' silhouette as one of four types of vehicle, using a set of 18 features extracted
+#' from the silhouette. Here we deal with the "van" type, which has 217 cases.
+#' Description; The following features were extracted from the silhouettes.
+#' 1. compactness
+#' 2. circularity
+#' 3. distance circularity
+#' 4. radius ratio
+#' 5. principal axis aspect ratio
+#' 6. maximum length aspect ratio
+#' 7. scatter ratio
+#' 8. elongatedness
+#' 9. principal axis rectangularity
+#' 10. maximum length rectangularity
+#' 11. scaled variance along major axis
+#' 12. scaled variance along minor axis
+#' 13. scaled radius of gyration
+#' 14. skewness about major axis
+#' 15. skewness about minor axis
+#' 16. kurtosis about minor axis
+#' 17. kurtosis about major axis
+#' 18. hollows ratio
+#'
+#' Format: Numeric, 217 rows and 18 columns.
 #'
 #' @docType data
 #'
@@ -8,9 +32,7 @@
 #'
 #' @format An object of class \code{"data.frame"}.
 #'
-#' @references References go here.
-#'
-#' @source Source goes here.
+#' @source Turing Institute, Glasgow, and are available at https://archive.ics.uci.edu/ml/datasets/Statlog+(Vehicle+Silhouettes).
 #'
 #' @examples
 #' data(vehicle)

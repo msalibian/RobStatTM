@@ -6,13 +6,16 @@
 \title{Flour data}
 \format{An object of class \code{"data.frame"}.}
 \source{
-Source goes here.
+Analytical Methods Committee (1989), Robust statistics-How not to reject
+outliers, Analyst, 114, 1693-1702.
 }
 \usage{
 data(flour)
 }
 \description{
-Flour data. More details here.
+Determinations of the copper content in wholemeal flour
+(in parts per million), sorted in ascending order.
+Format: numeric vector of size 24.
 }
 \examples{
 data(flour)

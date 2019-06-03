@@ -6,13 +6,16 @@
 \title{Oats data}
 \format{An object of class \code{"data.frame"}.}
 \source{
-Source goes here.
+Scheffe, H. (1959), Analysis of Variance. New York: John Wiley.
 }
 \usage{
 data(oats)
 }
 \description{
-Oats data. More details here.
+Yield of grain for eight varieties of oats in five replications of a randomized-block experiment
+}
+\details{
+Format: Two-way ANOVA table with 8 rows and 5 columns.
 }
 \examples{
 data(oats)

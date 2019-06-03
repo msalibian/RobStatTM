@@ -1,6 +1,8 @@
-#' Biochem data 
+#' Biochem data
 #'
-#' Biochem data. More details here.
+#' Two biochemical measurements on 12 men with similar weights.
+#'
+#' Format: Numeric, 12 rows, two columns
 #'
 #' @docType data
 #'
@@ -8,9 +10,7 @@
 #'
 #' @format An object of class \code{"data.frame"}.
 #'
-#' @references References go here.
-#'
-#' @source Source goes here.
+#' @source Seber, G.A.F. (1984), Multivariate Observations. New York: John Wiley.
 #'
 #' @examples
 #' data(biochem)

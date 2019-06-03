@@ -1,6 +1,12 @@
-#' Skin data 
+#' Skin data
 #'
-#' Skin data. More details here.
+#' These data correspond to a study of the relationship between air inspiration and
+#' blood circulation in the skin.
+#'
+#' Description: The covariates are the logarithms of the volume of air inspired (log VOL)
+#' and of the inspiration rate (log RATE). The response (column 3) is the presence or
+#' absence of vasoconstriction of the skin of the digits after air inspiration. Format
+#' Numeric, 23 rows and 3 columns.
 #'
 #' @docType data
 #'
@@ -8,9 +14,8 @@
 #'
 #' @format An object of class \code{"data.frame"}.
 #'
-#' @references References go here.
-#'
-#' @source Source goes here.
+#' @source Finney, D.J. (1947), The estimation from individual records of the relationship
+#' between dose and quantal response, Biometrika, 34, 320-334.
 #'
 #' @examples
 #' data(skin)

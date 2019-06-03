@@ -6,13 +6,21 @@
 \title{Shock data}
 \format{An object of class \code{"data.frame"}.}
 \source{
-Source goes here.
+Bond, N.W. (1979), Impairment of shuttlebox avoidance-learning following repeated
+alcohol withdrawal episodes in rats, Pharmacology, Biochemistry and Behavior,
+11, 589-591.
 }
 \usage{
 data(shock)
 }
 \description{
-Shock data. More details here.
+Times recorded for a rat to go through a shuttlebox in successive attempts. If the
+time exceeded 5 seconds, the rat received an electric shock for the duration of the
+next attempt. The data are the number of shocks received and the average time for
+all attempts between shocks.
+}
+\details{
+Format: Numeric matrix with 16 rows and 2 columns
 }
 \examples{
 data(shock)

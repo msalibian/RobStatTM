@@ -1,6 +1,8 @@
-#' Flour data 
+#' Flour data
 #'
-#' Flour data. More details here.
+#' Determinations of the copper content in wholemeal flour
+#' (in parts per million), sorted in ascending order.
+#' Format: numeric vector of size 24.
 #'
 #' @docType data
 #'
@@ -10,7 +12,8 @@
 #'
 #' @references References go here.
 #'
-#' @source Source goes here.
+#' @source Analytical Methods Committee (1989), Robust statistics-How not to reject
+#' outliers, Analyst, 114, 1693-1702.
 #'
 #' @examples
 #' data(flour)

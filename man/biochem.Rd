@@ -6,18 +6,18 @@
 \title{Biochem data}
 \format{An object of class \code{"data.frame"}.}
 \source{
-Source goes here.
+Seber, G.A.F. (1984), Multivariate Observations. New York: John Wiley.
 }
 \usage{
 data(biochem)
 }
 \description{
-Biochem data. More details here.
+Two biochemical measurements on 12 men with similar weights.
+}
+\details{
+Format: Numeric, 12 rows, two columns
 }
 \examples{
 data(biochem)
-}
-\references{
-References go here.
 }
 \keyword{datasets}
