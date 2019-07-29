@@ -2,8 +2,9 @@
 #'
 #' Contents (in parts per million) of 22 chemical elements in
 #' 53 samples of rocks in Western Australia.
+#' Two columns (8 and 9) were selected for use in this book.
 #'
-#' Format: Numeric with 53 rows and 22 columns:
+#' Format: Numeric with 53 rows and 2 columns:
 #'
 #' @docType data
 #'
