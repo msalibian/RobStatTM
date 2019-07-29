@@ -4,11 +4,11 @@
 #' using deterministic starting points.
 #'
 #' This function computes MM-regression estimators
-#' computed using Pen~a-Yohai candidates (instead of subsampling ones). 
+#' computed using Pen~a-Yohai candidates (instead of subsampling ones).
 #' This function makes use of the functions \code{lmrob.fit},
-#' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and  
+#' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and
 #' \code{lmrob.lar}, from robustbase,
-#' along with utility functions used by these functions, 
+#' along with utility functions used by these functions,
 #' modified so as to include use of the analytic form of the
 #' optimal psi and rho functions (for the optimal psi function , see
 #' Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019)
@@ -81,7 +81,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-  
+
   mt <- attr(mf, "terms") # allow model.frame to update it
   y <- model.response(mf, "numeric")
   w <- as.vector(model.weights(mf))
@@ -91,7 +91,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
   if(!is.null(offset) && length(offset) != NROW(y))
     stop(gettextf("number of offsets is %d, should equal %d (number of observations)",
                   length(offset), NROW(y)), domain = NA)
-  
+
   if (is.empty.model(mt)) {
     x <- NULL
     singular.fit <- FALSE ## to avoid problems below
@@ -145,7 +145,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       y <- wts * y
     }
     ## check for singular fit
-    
+
     if(getRversion() >= "3.1.0") {
       z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$pivot
@@ -154,7 +154,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       piv <- z0$qr$pivot
     }
     rankQR <- z0$rank
-    
+
     singular.fit <- rankQR < p
     if (rankQR > 0) {
       if (singular.fit) {
@@ -238,7 +238,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       #       z$cov <- z2$cov
       #       z$fitted.values <- y - z2$residuals
       #       z$rweights <- z$loss <- NULL
-      
+
       # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
       if (singular.fit) {
         coef <- numeric(p)
@@ -300,7 +300,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
   }
   if(!is.null(offset))
     z$fitted.values <- z$fitted.values + offset
-  
+
   z$na.action <- attr(mf, "na.action")
   z$offset <- offset
   z$contrasts <- contrasts
@@ -565,7 +565,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
         coefs <- matrix(NA, length(aliased), 4, dimnames=list(cn, colnames(coefs)))
         coefs[!aliased, ] <- x$coefficients
       }
-      
+
       printCoefmat(coefs, digits = digits, signif.stars = signif.stars,
                    na.print="NA", ...)
       cat("\nRobust residual standard error:",
@@ -594,7 +594,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
       cat("Convergence in", x$iter, "IRWLS iterations\n")
     }
     cat("\n")
-    
+
     # if (!is.null(rw <- x$rweights)) {
     #   if (any(zero.w <- x$weights == 0))
     #     rw <- rw[!zero.w]
@@ -602,7 +602,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
     #     EO(nobs(x)) else EO
     #   summarizeRobWeights(rw, digits = digits, eps = eps.outlier, ...)
     # }
-    
+
   } else cat("\nNo Coefficients\n")
   invisible(x)
 }
@@ -647,10 +647,10 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' @export
 refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
                       conv=1, b, cc, family, step='M') {
-  
+
   #refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   #                     conv=1, b, cc, step='M') {
-  
+
   ## Weight function   # weight function = psi(u)/u
   #f.w <- function(u, cc) {
   #  tmp <- (1 - (u/cc)^2)^2
@@ -659,27 +659,27 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   #}
   f.w <- function(u, family, cc)
     Mwgt(x = u, cc = cc, psi = family)
-  
-  
+
+
   n <- dim(x)[1]
   # p <- dim(x)[2]
-  
+
   res <- as.vector( y - x %*% initial.beta )
-  
+
   if( missing( initial.scale ) ) {
     initial.scale <- scale <- median(abs(res))/.6745
   } else {
     scale <- initial.scale
   }
-  
+
   beta <- initial.beta
-  
-  
+
+
   converged <- FALSE
-  
+
   # lower.bound <- median(abs(res))/cc
-  
-  
+
+
   for(i in 1:k) {
     # do one step of the iterations to solve for the scale
     scale.super.old <- scale
@@ -711,11 +711,11 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
     # print(as.vector(t(x) %*% rhoprime(res/scale, cc))/n)
     # print(scale)
   }
-  
+
   # res <- as.vector( y - x %*% beta )
   # get the residuals from the last beta
   return(list(beta.rw = beta.1, scale.rw = scale, converged=converged))
-  
+
 }
 
 norm.sm <- function(x) sqrt(sum(x^2))
@@ -739,11 +739,11 @@ our.solve <- function(a,b) {
 #'
 #' This function computes Distance Constrained Maximum Likelihood regression estimators
 #' computed using an MM-regression estimator based on Pen~a-Yohai
-#' candidates (instead of subsampling ones). 
+#' candidates (instead of subsampling ones).
 #' This function makes use of the functions \code{lmrob.fit},
-#' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and  
+#' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and
 #' \code{lmrob.lar}, from robustbase,
-#' along with utility functions used by these functions, 
+#' along with utility functions used by these functions,
 #' modified so as to include use of the analytic form of the
 #' optimal psi and rho functions (for the optimal psi function , see
 #' Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019)
@@ -814,7 +814,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-  
+
   mt <- attr(mf, "terms") # allow model.frame to update it
   y <- model.response(mf, "numeric")
   w <- as.vector(model.weights(mf))
@@ -824,7 +824,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   if(!is.null(offset) && length(offset) != NROW(y))
     stop(gettextf("number of offsets is %d, should equal %d (number of observations)",
                   length(offset), NROW(y)), domain = NA)
-  
+
   if (is.empty.model(mt)) {
     x <- NULL
     singular.fit <- FALSE ## to avoid problems below
@@ -878,7 +878,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       y <- wts * y
     }
     ## check for singular fit
-    
+
     if(getRversion() >= "3.1.0") {
       z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$pivot
@@ -887,7 +887,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       piv <- z0$qr$pivot
     }
     rankQR <- z0$rank
-    
+
     singular.fit <- rankQR < p
     if (rankQR > 0) {
       if (singular.fit) {
@@ -943,7 +943,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       #       z$cov <- z2$cov
       #       z$fitted.values <- y - z2$residuals
       #       z$rweights <- z$loss <- NULL
-      
+
       # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
       if (singular.fit) {
         coef <- numeric(p)
@@ -1005,7 +1005,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   }
   if(!is.null(offset))
     z$fitted.values <- z$fitted.values + offset
-  
+
   z$na.action <- attr(mf, "na.action")
   z$offset <- offset
   z$contrasts <- contrasts
@@ -1047,9 +1047,9 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
 #' re-descending M estimator. The scale is set to a quantile of the
 #' absolute residuals from the L1 estimator.
 #' This function makes use of the functions \code{lmrob.fit},
-#' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and  
+#' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and
 #' \code{lmrob.lar}, from robustbase,
-#' along with utility functions used by these functions, 
+#' along with utility functions used by these functions,
 #' modified so as to include use of the analytic form of the
 #' optimal psi and rho functions (for the optimal psi function , see
 #' Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019)
@@ -1120,7 +1120,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-  
+
   mt <- attr(mf, "terms") # allow model.frame to update it
   y <- model.response(mf, "numeric")
   w <- as.vector(model.weights(mf))
@@ -1169,7 +1169,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     y <- wts * y
   }
   ## check for singular fit
-  
+
   if(getRversion() >= "3.1.0") {
     z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
     piv <- z0$pivot
@@ -1178,7 +1178,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     piv <- z0$qr$pivot
   }
   rankQR <- z0$rank
-  
+
   singular.fit <- rankQR < p
   if (rankQR > 0) {
     if (singular.fit) {
@@ -1255,7 +1255,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     else names(z$coefficients) <- colnames(x)
     if(!is.null(offset)) z$residuals <- y - offset
   }
-  
+
   z$na.action <- attr(mf, "na.action")
   z$offset <- offset
   z$contrasts <- contrasts
@@ -1311,18 +1311,18 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
   p <- length(object1$coeff)
   q <- length(object1$coeff) - length(object2$coeff)
   n <- length(object1$resid)
-  
+
   family1 <- object1$control$family
   family2 <- object2$control$family
   cc1 <- object1$control$tuning.psi
   cc2 <- object2$control$tuning.psi
-  
+
   same.name <- (family1 == family2)
   same.cc <- isTRUE(all.equal(cc1, cc2))
-  
+
   if(!(same.name && same.cc))
     stop("object1 and object2 do not have the same rho family")
-  
+
   s <- object1$scale
   a <- sum(rho(object2$resid/s, family=family1, cc=cc1, standardize = TRUE))
   b <- sum(rho(object1$resid/s, family=family1, cc=cc1, standardize = TRUE))
@@ -1390,7 +1390,7 @@ lmrobM.control <- function(bb = 0.5,
                            mscale_maxit = 50,
                            trace.lev = 0)
 {
-  
+
   family <- match.arg(family, choices = FAMILY.NAMES)
   if( (efficiency > .9999 ) & ( (family=='modopt') | (family=='optimal') ) ) {
     efficiency <- .9999
