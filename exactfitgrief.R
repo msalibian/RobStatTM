@@ -13,9 +13,10 @@ b0 <- lmrobM(x~y)
 library(RobStatTM)
 y <- 2:101
 x <- 1:100
+a0 <- lmrobM(y~x)
+b0 <- lmrobM(x~y)
 a <- lmrobdetMM(y~x)
 b <- lmrobdetMM(x~y)
-
 h <- lmrobdetDCML(y~x)
 w <- lmrobdetDCML(x~y)
 
