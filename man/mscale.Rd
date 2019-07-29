@@ -6,7 +6,7 @@
 \title{M-scale estimator}
 \usage{
 scaleM(u, delta = 0.5, tuning.chi = 1.547645, family = "bisquare",
-  max.it = 100, tol = 1e-06)
+  max.it = 100, tol = 1e-06, tolerancezero = .Machine$double.eps)
 }
 \arguments{
 \item{u}{vector of residuals}
@@ -23,6 +23,8 @@ options are "bisquare", "optimal" and "modopt").}
 \item{max.it}{maximum number of iterations allowed}
 
 \item{tol}{relative tolerance for convergence}
+
+\item{tolerancezero}{smallest (in absolute value) non-zero value accepted as a scale. Defaults to \code{.Machine$double.eps}}
 }
 \value{
 The scale estimate value at the last iteration or at convergence.

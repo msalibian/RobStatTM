@@ -32,6 +32,7 @@
 #' It should correspond to the family of rho functions specified in the argument \code{family}.
 #' @param tol relative tolerance for convergence
 #' @param max.it maximum number of iterations allowed
+#' @param tolerancezero smallest (in absolute value) non-zero value accepted as a scale. Defaults to \code{.Machine$double.eps}
 #'
 #' @return The scale estimate value at the last iteration or at convergence.
 #'
@@ -48,12 +49,14 @@
 #' mscale(r2)
 #' sd(r2)
 #'
-scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquare", max.it=100, tol=1e-6) {
+scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquare", 
+                             max.it=100, tol=1e-6, tolerancezero=.Machine$double.eps) {
   # M-scale of a sample u
   # tol: accuracy
   # delta: breakdown point (right side)
   # Initial
   s0 <- median(abs(u))/.6745
+  if(s0 < tolerancezero) return(0)
   err <- tol + 1
   it <- 0
   while( (err > tol) && ( it < max.it) ) {
@@ -130,50 +133,61 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 #'
 #' @export
 MMPY <- function(X, y, control, mf) {
-   # INPUT
-   # X nxp matrix, where n is the number of observations and p the number of  columns
-   # y vector of dimension  n with the responses
-   #
-   # OUTPUT
-   # outMM output of the MM estimator (lmrob) with 85% of efficiency and PY as initial
-   n <- nrow(X)
-   p <- ncol(X)
-   dee <- control$bb
-   if(control$corr.b) dee <- dee * (1-(p/n))
-   a <- pyinit::pyinit(x=X, y=y, intercept=FALSE, delta=dee,
-               cc=1.54764,
-               psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
-               resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
-               maxit = control$py_maxit, eps=control$py_eps,
-               mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
-               mscale_rho_fun="bisquare")
-   # refine the PY candidates to get something closer to an S-estimator for y ~ X1
-   kk <- dim(a$coefficients)[2]
-   best.ss <- +Inf
-
-   for(i in 1:kk) {
-     tmp <- refine.sm(x=X, y=y, initial.beta=a$coefficients[,i], initial.scale=a$objective[i],
-                      k=control$refine.PY, conv=1, b=dee, family=control$family, cc=control$tuning.chi, step='S')
-     if(tmp$scale.rw < best.ss) {
-       best.ss <- tmp$scale.rw # initial$objF[1]
-       betapy <- tmp$beta.rw # initial$initCoef[,1]
-     }
-   }
-   S.init <- list(coef=betapy, scale=best.ss)
-
-   orig.control <- control
-
-   control$psi <- control$family # tuning.psi$name
-   # control$tuning.psi <- control$tuning.psi # $cc
-
-   control$method <- 'M'
-   control$cov <- ".vcov.w"
-   control$subsampling <- 'simple'
-
-   # # lmrob() does the above when is.list(init)==TRUE, in particular:
-   outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
-   outMM$control <- orig.control
-   return(outMM)
+  # INPUT
+  # X nxp matrix, where n is the number of observations and p the number of  columns
+  # y vector of dimension  n with the responses
+  #
+  # OUTPUT
+  # outMM output of the MM estimator (lmrob) with 85% of efficiency and PY as initial
+  n <- nrow(X)
+  p <- ncol(X)
+  dee <- control$bb
+  if(control$corr.b) dee <- dee * (1-(p/n))
+  a <- pyinit::pyinit(x=X, y=y, intercept=FALSE, delta=dee,
+                      cc=1.54764,
+                      psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
+                      resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
+                      maxit = control$py_maxit, eps=control$py_eps,
+                      mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
+                      mscale_rho_fun="bisquare")
+  # refine the PY candidates to get something closer to an S-estimator for y ~ X1
+  kk <- dim(a$coefficients)[2]
+  best.ss <- +Inf
+  
+  for(i in 1:kk) {
+    tmp <- refine.sm(x=X, y=y, initial.beta=a$coefficients[,i], initial.scale=a$objective[i],
+                     k=control$refine.PY, conv=1, b=dee, family=control$family, cc=control$tuning.chi, step='S')
+    if(tmp$scale.rw < best.ss) {
+      best.ss <- tmp$scale.rw # initial$objF[1]
+      betapy <- tmp$beta.rw # initial$initCoef[,1]
+    }
+  }
+  S.init <- list(coef=betapy, scale=best.ss)
+  orig.control <- control
+  
+  control$psi <- control$family # tuning.psi$name
+  # control$tuning.psi <- control$tuning.psi # $cc
+  
+  control$method <- 'M'
+  control$cov <- ".vcov.w"
+  control$subsampling <- 'simple'
+  
+  # # lmrob() does the above when is.list(init)==TRUE, in particular:
+  outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
+  outMM$control <- orig.control
+  coefnames <- names(coef(outMM))
+  residnames <- names(resid(outMM))
+  # if weights were all zero, then return the S estimator
+  # S.resid <- as.vector(y - X %*% S.init$coef) / S.init$scale
+  # ws <- rhoprime(S.resid, family=orig.control$family, cc=orig.control$tuning.psi)
+  if(all( outMM$rweights == 0 ) ) {
+    outMM$coefficients <- as.vector(S.init$coef)
+    outMM$scale <- S.init$scale
+    names(outMM$coefficients) <- coefnames
+    outMM$residuals <- as.vector(y - X %*% S.init$coef)
+    names(outMM$residuals) <- residnames
+  }
+  return(outMM)
 }
 
 
@@ -214,6 +228,7 @@ DCML <- function(x, y, z, z0, control) {
   if(control$corr.b) dee <- dee*(1-p/n)
   si.dcml <- mscale(u=z$residuals, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
   deltas <- .3*p/n
+  print(summary(z$rweights))
   CC <- t(x * z$rweights) %*% x / sum(z$rweights)
   # print(all.equal(CC, t(x) %*% diag(z$rweights) %*% x / sum(z$rweights)))
   d <- as.numeric(crossprod(beta.R-beta.LS, CC %*% (beta.R-beta.LS)))/si.dcml^2
@@ -281,12 +296,12 @@ SMPY <- function(mf, y, control, split) {
   # Now regress y1 on X1, find PY candidates
   if(control$corr.b) dee <- dee*(1-p/n)
   initial <- pyinit::pyinit(intercept=FALSE, x=X1, y=y1,
-                    delta=dee, cc=1.54764,
-                    psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
-                    resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
-                    maxit = control$py_maxit, eps=control$py_eps,
-                    mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
-                    mscale_rho_fun="bisquare")
+                            delta=dee, cc=1.54764,
+                            psc_keep=control$psc_keep*(1-(p/n)), resid_keep_method=control$resid_keep_method,
+                            resid_keep_thresh = control$resid_keep_thresh, resid_keep_prop=control$resid_keep_prop,
+                            maxit = control$py_maxit, eps=control$py_eps,
+                            mscale_maxit = control$mscale_maxit, mscale_tol = control$mscale_tol,
+                            mscale_rho_fun="bisquare")
   # choose best candidates including factors into consideration!
   # recompute scales adjusting for Z
   dee <- control$bb
