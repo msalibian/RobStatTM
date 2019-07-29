@@ -67,9 +67,9 @@
 #' @useDynLib RobStatTM, .registration = TRUE
 #' @export
 lmrobdetMM <- function(formula, data, subset, weights, na.action,
-                   model = TRUE, x = !control$compute.rd, y = FALSE,
-                   singular.ok = TRUE, contrasts = NULL, offset = NULL,
-                   control = lmrobdet.control())
+                       model = TRUE, x = !control$compute.rd, y = FALSE,
+                       singular.ok = TRUE, contrasts = NULL, offset = NULL,
+                       control = lmrobdet.control())
 {
   ret.x <- x
   ret.y <- y
@@ -81,7 +81,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-
+  
   mt <- attr(mf, "terms") # allow model.frame to update it
   y <- model.response(mf, "numeric")
   w <- as.vector(model.weights(mf))
@@ -91,7 +91,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
   if(!is.null(offset) && length(offset) != NROW(y))
     stop(gettextf("number of offsets is %d, should equal %d (number of observations)",
                   length(offset), NROW(y)), domain = NA)
-
+  
   if (is.empty.model(mt)) {
     x <- NULL
     singular.fit <- FALSE ## to avoid problems below
@@ -145,7 +145,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       y <- wts * y
     }
     ## check for singular fit
-
+    
     if(getRversion() >= "3.1.0") {
       z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$pivot
@@ -154,7 +154,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       piv <- z0$qr$pivot
     }
     rankQR <- z0$rank
-
+    
     singular.fit <- rankQR < p
     if (rankQR > 0) {
       if (singular.fit) {
@@ -198,8 +198,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
         else 0L
         if(df.int == 1L) {
           tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
-                           initial.scale=z$scale, k=500,
-                           conv=1, family = control$family, cc = control$tuning.psi, step='M')$beta.rw)
+                                     initial.scale=z$scale, k=500,
+                                     conv=1, family = control$family, cc = control$tuning.psi, step='M')$beta.rw)
           s02 <- mean(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
         } else {
           s02 <- mean(rho(y/z$scale, family = control$family, cc=control$tuning.psi))
@@ -231,14 +231,14 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
           model.matrix(mt, mf, contrasts) else x
       if (ret.y)
         z$y <- if (!is.null(w)) model.response(mf, "numeric") else y
-#
-#       z$coefficients <- z2$coefficients
-#       z$scale <- z2$scale
-#       z$residuals <- z2$residuals
-#       z$cov <- z2$cov
-#       z$fitted.values <- y - z2$residuals
-#       z$rweights <- z$loss <- NULL
-
+      #
+      #       z$coefficients <- z2$coefficients
+      #       z$scale <- z2$scale
+      #       z$residuals <- z2$residuals
+      #       z$cov <- z2$cov
+      #       z$fitted.values <- y - z2$residuals
+      #       z$rweights <- z$loss <- NULL
+      
       # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
       if (singular.fit) {
         coef <- numeric(p)
@@ -300,7 +300,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
   }
   if(!is.null(offset))
     z$fitted.values <- z$fitted.values + offset
-
+  
   z$na.action <- attr(mf, "na.action")
   z$offset <- offset
   z$contrasts <- contrasts
@@ -412,8 +412,8 @@ lmrobdet.control <- function(bb = 0.5,
 {
   family <- match.arg(family, choices = FAMILY.NAMES)
   if( (efficiency > .9999 ) & ( (family=='modopt') | (family=='optimal') ) ) {
-      efficiency <- .9999
-      warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+    efficiency <- .9999
+    warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
   if(missing(tuning.psi))
     tuning.psi <- do.call(family, args=list(e=efficiency))
@@ -452,10 +452,10 @@ print.lmrobdetMM <- function(x, digits = max(3, getOption("digits") - 3), ...)
       } else {
         cat("Algorithm did not converge\n\n")
         # if (control$method == "S")
-          # cat("Coefficients of the *initial* S-estimator:\n")
+        # cat("Coefficients of the *initial* S-estimator:\n")
         # else
-          cat(sprintf("Coefficients of the %s-estimator:\n",
-                      control$method))
+        cat(sprintf("Coefficients of the %s-estimator:\n",
+                    control$method))
       }
     }
     print(format(cf, digits = digits), print.gap = 2, quote = FALSE)
@@ -487,10 +487,10 @@ summary.lmrobdetMM <- function(object, correlation = FALSE, symbolic.cor = FALSE
     ## where  p <- z$rank ; rdf <- z$df.residual ; Qr <- qr.lm(object)
     ans$df <- c(p, df, NCOL(object$qr$qr))
     ans$coefficients <- cbind(est, se, tval, 2 * pt(abs(tval), df, lower.tail = FALSE))
-     #   if( ans$converged)
-     #    cbind(est, se, tval, 2 * pt(abs(tval), df, lower.tail = FALSE))
-     # else
-     #   cbind(est, if(sigma <= 0) 0 else NA, NA, NA)
+    #   if( ans$converged)
+    #    cbind(est, se, tval, 2 * pt(abs(tval), df, lower.tail = FALSE))
+    # else
+    #   cbind(est, if(sigma <= 0) 0 else NA, NA, NA)
     dimnames(ans$coefficients) <- list(names(est), cf.nms)
     ans$cov <- object$cov
     if(length(object$cov) > 1L)
@@ -515,8 +515,8 @@ summary.lmrobdetMM <- function(object, correlation = FALSE, symbolic.cor = FALSE
 
 #' @export
 print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3),
-                                  symbolic.cor = x$symbolic.cor,
-                                  signif.stars = getOption("show.signif.stars"), ...)
+                                      symbolic.cor = x$symbolic.cor,
+                                      signif.stars = getOption("show.signif.stars"), ...)
 {
   cat("\nCall:\n",
       paste(deparse(x$call, width.cutoff=72), sep = "\n", collapse = "\n"),
@@ -565,7 +565,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
         coefs <- matrix(NA, length(aliased), 4, dimnames=list(cn, colnames(coefs)))
         coefs[!aliased, ] <- x$coefficients
       }
-
+      
       printCoefmat(coefs, digits = digits, signif.stars = signif.stars,
                    na.print="NA", ...)
       cat("\nRobust residual standard error:",
@@ -594,7 +594,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
       cat("Convergence in", x$iter, "IRWLS iterations\n")
     }
     cat("\n")
-
+    
     # if (!is.null(rw <- x$rweights)) {
     #   if (any(zero.w <- x$weights == 0))
     #     rw <- rw[!zero.w]
@@ -602,7 +602,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
     #     EO(nobs(x)) else EO
     #   summarizeRobWeights(rw, digits = digits, eps = eps.outlier, ...)
     # }
-
+    
   } else cat("\nNo Coefficients\n")
   invisible(x)
 }
@@ -647,10 +647,10 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' @export
 refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
                       conv=1, b, cc, family, step='M') {
-
-#refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
-#                     conv=1, b, cc, step='M') {
-
+  
+  #refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
+  #                     conv=1, b, cc, step='M') {
+  
   ## Weight function   # weight function = psi(u)/u
   #f.w <- function(u, cc) {
   #  tmp <- (1 - (u/cc)^2)^2
@@ -659,27 +659,27 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   #}
   f.w <- function(u, family, cc)
     Mwgt(x = u, cc = cc, psi = family)
-
-
+  
+  
   n <- dim(x)[1]
   # p <- dim(x)[2]
-
+  
   res <- as.vector( y - x %*% initial.beta )
-
+  
   if( missing( initial.scale ) ) {
     initial.scale <- scale <- median(abs(res))/.6745
   } else {
     scale <- initial.scale
   }
-
+  
   beta <- initial.beta
-
-
+  
+  
   converged <- FALSE
-
+  
   # lower.bound <- median(abs(res))/cc
-
-
+  
+  
   for(i in 1:k) {
     # do one step of the iterations to solve for the scale
     scale.super.old <- scale
@@ -711,11 +711,11 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
     # print(as.vector(t(x) %*% rhoprime(res/scale, cc))/n)
     # print(scale)
   }
-
+  
   # res <- as.vector( y - x %*% beta )
   # get the residuals from the last beta
   return(list(beta.rw = beta.1, scale.rw = scale, converged=converged))
-
+  
 }
 
 norm.sm <- function(x) sqrt(sum(x^2))
@@ -800,9 +800,9 @@ our.solve <- function(a,b) {
 #'
 #' @export
 lmrobdetDCML <- function(formula, data, subset, weights, na.action,
-                     model = TRUE, x = !control$compute.rd, y = FALSE,
-                     singular.ok = TRUE, contrasts = NULL, offset = NULL,
-                     control = lmrobdet.control())
+                         model = TRUE, x = !control$compute.rd, y = FALSE,
+                         singular.ok = TRUE, contrasts = NULL, offset = NULL,
+                         control = lmrobdet.control())
 {
   ret.x <- x
   ret.y <- y
@@ -814,7 +814,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-
+  
   mt <- attr(mf, "terms") # allow model.frame to update it
   y <- model.response(mf, "numeric")
   w <- as.vector(model.weights(mf))
@@ -824,7 +824,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   if(!is.null(offset) && length(offset) != NROW(y))
     stop(gettextf("number of offsets is %d, should equal %d (number of observations)",
                   length(offset), NROW(y)), domain = NA)
-
+  
   if (is.empty.model(mt)) {
     x <- NULL
     singular.fit <- FALSE ## to avoid problems below
@@ -878,7 +878,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       y <- wts * y
     }
     ## check for singular fit
-
+    
     if(getRversion() >= "3.1.0") {
       z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
       piv <- z0$pivot
@@ -887,7 +887,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       piv <- z0$qr$pivot
     }
     rankQR <- z0$rank
-
+    
     singular.fit <- rankQR < p
     if (rankQR > 0) {
       if (singular.fit) {
@@ -943,7 +943,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       #       z$cov <- z2$cov
       #       z$fitted.values <- y - z2$residuals
       #       z$rweights <- z$loss <- NULL
-
+      
       # z <- lmrob.fit(x, y, control, init=init, mf = mf) #-> ./lmrob.MM.R
       if (singular.fit) {
         coef <- numeric(p)
@@ -1005,7 +1005,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
   }
   if(!is.null(offset))
     z$fitted.values <- z$fitted.values + offset
-
+  
   z$na.action <- attr(mf, "na.action")
   z$offset <- offset
   z$contrasts <- contrasts
@@ -1120,7 +1120,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
   mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   mf <- eval(mf, parent.frame())
-
+  
   mt <- attr(mf, "terms") # allow model.frame to update it
   y <- model.response(mf, "numeric")
   w <- as.vector(model.weights(mf))
@@ -1169,7 +1169,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     y <- wts * y
   }
   ## check for singular fit
-
+  
   if(getRversion() >= "3.1.0") {
     z0 <- .lm.fit(x, y) #, tol = control$solve.tol)
     piv <- z0$pivot
@@ -1178,7 +1178,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     piv <- z0$qr$pivot
   }
   rankQR <- z0$rank
-
+  
   singular.fit <- rankQR < p
   if (rankQR > 0) {
     if (singular.fit) {
@@ -1221,27 +1221,29 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     z$control <- control
     z$control$method <- oldz.control$method
     z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
-    r.squared <- adj.r.squared <- 0
-    # if(control$family == 'bisquare') {
-    s2 <- mean(rho(z$resid/z$scale, family = control$family, cc=control$tuning.psi))
-    if( p != attr(mt, "intercept") ) {
-      df.int <- if (attr(mt, "intercept"))
-        1L
-      else 0L
-      if(df.int == 1L) {
-        tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
-                                   initial.scale=z$scale, k=500,
-                                   conv=1, family = control$family, cc = control$tuning.psi, step='M')$beta.rw)
-        s02 <- mean(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
-      } else {
-        s02 <- mean(rho(y/z$scale, family = control$family, cc=control$tuning.psi))
+    r.squared <- adj.r.squared <- NA
+    if(z$scale > .Machine$double.eps) {
+      # if(control$family == 'bisquare') {
+      s2 <- mean(rho(z$resid/z$scale, family = control$family, cc=control$tuning.psi))
+      if( p != attr(mt, "intercept") ) {
+        df.int <- if (attr(mt, "intercept"))
+          1L
+        else 0L
+        if(df.int == 1L) {
+          tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
+                                     initial.scale=z$scale, k=500,
+                                     conv=1, family = control$family, cc = control$tuning.psi, step='M')$beta.rw)
+          s02 <- mean(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
+        } else {
+          s02 <- mean(rho(y/z$scale, family = control$family, cc=control$tuning.psi))
+        }
+        r.squared <- INVTR2( (s02 - s2)/(s02*(1-s2)), control$family, control$tuning.psi)
+        adj.r.squared <- ((n-1)/(n-p))*r.squared -(p-1)/(n-p) # ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
       }
-      r.squared <- INVTR2( (s02 - s2)/(s02*(1-s2)), control$family, control$tuning.psi)
-      adj.r.squared <- ((n-1)/(n-p))*r.squared -(p-1)/(n-p) # ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
+      # }
+      z$r.squared <- r.squared
+      z$adj.r.squared <- adj.r.squared
     }
-    # }
-    z$r.squared <- r.squared
-    z$adj.r.squared <- adj.r.squared
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
               else rep.int(as.numeric(NA), p),
@@ -1253,7 +1255,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
     else names(z$coefficients) <- colnames(x)
     if(!is.null(offset)) z$residuals <- y - offset
   }
-
+  
   z$na.action <- attr(mf, "na.action")
   z$offset <- offset
   z$contrasts <- contrasts
@@ -1309,18 +1311,18 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
   p <- length(object1$coeff)
   q <- length(object1$coeff) - length(object2$coeff)
   n <- length(object1$resid)
-
+  
   family1 <- object1$control$family
   family2 <- object2$control$family
   cc1 <- object1$control$tuning.psi
   cc2 <- object2$control$tuning.psi
-
+  
   same.name <- (family1 == family2)
   same.cc <- isTRUE(all.equal(cc1, cc2))
-
+  
   if(!(same.name && same.cc))
     stop("object1 and object2 do not have the same rho family")
-
+  
   s <- object1$scale
   a <- sum(rho(object2$resid/s, family=family1, cc=cc1, standardize = TRUE))
   b <- sum(rho(object1$resid/s, family=family1, cc=cc1, standardize = TRUE))
@@ -1388,7 +1390,7 @@ lmrobM.control <- function(bb = 0.5,
                            mscale_maxit = 50,
                            trace.lev = 0)
 {
-
+  
   family <- match.arg(family, choices = FAMILY.NAMES)
   if( (efficiency > .9999 ) & ( (family=='modopt') | (family=='optimal') ) ) {
     efficiency <- .9999
