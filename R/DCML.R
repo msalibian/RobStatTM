@@ -49,7 +49,7 @@
 #' mscale(r2)
 #' sd(r2)
 #'
-scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquare", 
+scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquare",
                              max.it=100, tol=1e-6, tolerancezero=.Machine$double.eps) {
   # M-scale of a sample u
   # tol: accuracy
@@ -87,7 +87,7 @@ scaleM <- mscale <- function(u, delta=0.5, tuning.chi=1.547645, family ="bisquar
 #' @return The covariance matrix estimate.
 #'
 #' @rdname cov.dcml
-#' @author Victor Yohai, \email{victoryohai@gmail.com} 
+#' @author Victor Yohai, \email{victoryohai@gmail.com}
 #'
 #' @export
 cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
@@ -153,7 +153,7 @@ MMPY <- function(X, y, control, mf) {
   # refine the PY candidates to get something closer to an S-estimator for y ~ X1
   kk <- dim(a$coefficients)[2]
   best.ss <- +Inf
-  
+
   for(i in 1:kk) {
     tmp <- refine.sm(x=X, y=y, initial.beta=a$coefficients[,i], initial.scale=a$objective[i],
                      k=control$refine.PY, conv=1, b=dee, family=control$family, cc=control$tuning.chi, step='S')
@@ -164,14 +164,14 @@ MMPY <- function(X, y, control, mf) {
   }
   S.init <- list(coef=betapy, scale=best.ss)
   orig.control <- control
-  
+
   control$psi <- control$family # tuning.psi$name
   # control$tuning.psi <- control$tuning.psi # $cc
-  
+
   control$method <- 'M'
   control$cov <- ".vcov.w"
   control$subsampling <- 'simple'
-  
+
   # # lmrob() does the above when is.list(init)==TRUE, in particular:
   outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
   outMM$control <- orig.control
@@ -228,7 +228,6 @@ DCML <- function(x, y, z, z0, control) {
   if(control$corr.b) dee <- dee*(1-p/n)
   si.dcml <- mscale(u=z$residuals, tol = control$mscale_tol, delta=dee, tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
   deltas <- .3*p/n
-  print(summary(z$rweights))
   CC <- t(x * z$rweights) %*% x / sum(z$rweights)
   # print(all.equal(CC, t(x) %*% diag(z$rweights) %*% x / sum(z$rweights)))
   d <- as.numeric(crossprod(beta.R-beta.LS, CC %*% (beta.R-beta.LS)))/si.dcml^2
