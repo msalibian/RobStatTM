@@ -72,9 +72,9 @@ and uses it as a starting point to find a minimum of a
 re-descending M estimator. The scale is set to a quantile of the
 absolute residuals from the L1 estimator.
 This function makes use of the functions \code{lmrob.fit},
-\code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and  
+\code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and
 \code{lmrob.lar}, from robustbase,
-along with utility functions used by these functions, 
+along with utility functions used by these functions,
 modified so as to include use of the analytic form of the
 optimal psi and rho functions (for the optimal psi function , see
 Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019)

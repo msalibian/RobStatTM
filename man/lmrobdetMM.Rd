@@ -67,11 +67,11 @@ using deterministic starting points.
 }
 \details{
 This function computes MM-regression estimators
-computed using Pen~a-Yohai candidates (instead of subsampling ones). 
+computed using Pen~a-Yohai candidates (instead of subsampling ones).
 This function makes use of the functions \code{lmrob.fit},
-\code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and  
+\code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and
 \code{lmrob.lar}, from robustbase,
-along with utility functions used by these functions, 
+along with utility functions used by these functions,
 modified so as to include use of the analytic form of the
 optimal psi and rho functions (for the optimal psi function , see
 Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019)
