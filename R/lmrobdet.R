@@ -189,7 +189,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
       z$scale.S <- z$scale
       z$scale <- mscale(u=z$resid, tol = control$mscale_tol, delta=control$bb*(1-p/length(z$resid)), tuning.chi=control$tuning.chi, family=control$family, max.it = control$mscale_maxit)
       # compute robust R^2
-      r.squared <- adj.r.squared <- 0
+      r.squared <- adj.r.squared <- NA
+      if(z$scale > .Machine$double.eps) {
       # if(control$family == 'bisquare') {
       s2 <- mean(rho(z$resid/z$scale, family = control$family, cc=control$tuning.psi))
       if( p != attr(mt, "intercept") ) {
@@ -206,6 +207,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
         }
         r.squared <- INVTR2( (s02 - s2)/(s02*(1-s2)), control$family, control$tuning.psi)
         adj.r.squared <- ((n-1)/(n-p))*r.squared -(p-1)/(n-p) # ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
+      }
       }
       # }
       z$r.squared <- r.squared
@@ -570,7 +572,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
                    na.print="NA", ...)
       cat("\nRobust residual standard error:",
           format(signif(x$scale, digits)),"\n")
-      if (!is.null(x$r.squared) && x$df[1] != attr(x$terms, "intercept")) {
+      if (!is.null(x$r.squared) && !is.na(x$r.squared) && x$df[1] != attr(x$terms, "intercept")) {
         cat("Multiple R-squared: ", formatC(x$r.squared, digits = digits))
         cat(",\tAdjusted R-squared: ", formatC(x$adj.r.squared, digits = digits),
             "\n")
@@ -647,10 +649,10 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' @export
 refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
                       conv=1, b, cc, family, step='M') {
-
+  
   #refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   #                     conv=1, b, cc, step='M') {
-
+  
   ## Weight function   # weight function = psi(u)/u
   #f.w <- function(u, cc) {
   #  tmp <- (1 - (u/cc)^2)^2
@@ -659,63 +661,65 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   #}
   f.w <- function(u, family, cc)
     Mwgt(x = u, cc = cc, psi = family)
-
-
+  
+  
   n <- dim(x)[1]
   # p <- dim(x)[2]
-
+  
   res <- as.vector( y - x %*% initial.beta )
-
+  
   if( missing( initial.scale ) ) {
     initial.scale <- scale <- median(abs(res))/.6745
   } else {
     scale <- initial.scale
   }
-
+  
   beta <- initial.beta
-
-
+  
+  
   converged <- FALSE
-
+  
   # lower.bound <- median(abs(res))/cc
-
-
-  for(i in 1:k) {
-    # do one step of the iterations to solve for the scale
-    scale.super.old <- scale
-    #lower.bound <- median(abs(res))/1.56
-    if(step=='S') {
-      scale <- sqrt( scale^2 * mean( rho( res / scale, family = family, cc = cc ) ) / b     )
-      # scale <- mscale(res, tol=1e-7, delta=b, max.it=500, tuning.chi=cc)
-    }
-    # now do one step of IRWLS with the "improved scale"
-    weights <- f.w( res/scale, family = family, cc = cc )
-    # W <- matrix(weights, n, p)
-    xw <- x * sqrt(weights) # sqrt(W)
-    yw <- y *   sqrt(weights)
-    beta.1 <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
-    if(any(is.na(beta.1))) {
-      beta.1 <- initial.beta
-      scale <- initial.scale
-      break
-    }
-    if( (conv==1) ) {
-      # check for convergence
-      if( norm.sm( beta - beta.1 ) / norm.sm(beta) < 1e-7 ) { # magic number alert!!!
-        converged <- TRUE
+  
+  if( scale == 0) {
+    beta.1 <- initial.beta
+    scale <- initial.scale
+  } else {
+    for(i in 1:k) {
+      # do one step of the iterations to solve for the scale
+      scale.super.old <- scale
+      #lower.bound <- median(abs(res))/1.56
+      if(step=='S') {
+        scale <- sqrt( scale^2 * mean( rho( res / scale, family = family, cc = cc ) ) / b     )
+        # scale <- mscale(res, tol=1e-7, delta=b, max.it=500, tuning.chi=cc)
+      }
+      # now do one step of IRWLS with the "improved scale"
+      weights <- f.w( res/scale, family = family, cc = cc )
+      # W <- matrix(weights, n, p)
+      xw <- x * sqrt(weights) # sqrt(W)
+      yw <- y *   sqrt(weights)
+      beta.1 <- our.solve( t(xw) %*% xw ,t(xw) %*% yw )
+      if(any(is.na(beta.1))) {
+        beta.1 <- initial.beta
+        scale <- initial.scale
         break
       }
+      if( (conv==1) ) {
+        # check for convergence
+        if( norm.sm( beta - beta.1 ) / norm.sm(beta) < 1e-7 ) { # magic number alert!!!
+          converged <- TRUE
+          break
+        }
+      }
+      res <- as.vector( y - x %*% beta.1 )
+      beta <- beta.1
+      # print(as.vector(t(x) %*% rhoprime(res/scale, cc))/n)
+      # print(scale)
     }
-    res <- as.vector( y - x %*% beta.1 )
-    beta <- beta.1
-    # print(as.vector(t(x) %*% rhoprime(res/scale, cc))/n)
-    # print(scale)
   }
-
   # res <- as.vector( y - x %*% beta )
   # get the residuals from the last beta
   return(list(beta.rw = beta.1, scale.rw = scale, converged=converged))
-
 }
 
 norm.sm <- function(x) sqrt(sum(x^2))
@@ -1241,9 +1245,9 @@ lmrobM <- function(formula, data, subset, weights, na.action,
         adj.r.squared <- ((n-1)/(n-p))*r.squared -(p-1)/(n-p) # ( s02/(n-1) - s2/(n-z$rank) ) / (s02/(n-1)) # n-p? p.193
       }
       # }
+    }
       z$r.squared <- r.squared
       z$adj.r.squared <- adj.r.squared
-    }
   } else { ## rank 0
     z <- list(coefficients = if (is.matrix(y)) matrix(NA,p,ncol(y))
               else rep.int(as.numeric(NA), p),
