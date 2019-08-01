@@ -196,6 +196,7 @@ drop1.lmrobdetMM <- function (object, scope, scale, keep, ...)
 #' If \code{whole.path == TRUE} a list is returned containing the RFPE of each model on the sequence
 #' of submodels. The names of the components of this list are the formulas that correspods to each model. 
 #'
+#' @aliases step.lmrobdetMM step.lmrobdet
 #' @rdname step.lmrobdetMM
 #' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
@@ -214,8 +215,8 @@ drop1.lmrobdetMM <- function (object, scope, scale, keep, ...)
 #' obj <- lmrobdetMM(y ~ ., data=Z, control=cont)
 #' out <- step.lmrobdetMM(obj)
 #'
-#' @export
-step.lmrobdetMM <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
+#' @export step.lmrobdetMM step.lmrobdet
+step.lmrobdet <- step.lmrobdetMM <- function (object, scope, direction = c("both", "backward", "forward"), trace = TRUE,
                         keep = NULL, steps = 1000, whole.path=FALSE)
 {
   # object.MM <- object$MM
