@@ -8,9 +8,9 @@
 #' of variables is greater than or equal to 10, and an MM-estimator with a
 #' SHR rho function (as implemented in \code{\link{covRobMM}}) otherwise.
 #'
-#' @export MultiRobu covRob
-#' @aliases MultiRobu covRob
-#' @rdname MultiRobu
+#' @export Multirobu covRob
+#' @aliases Multirobu covRob
+#' @rdname Multirobu
 #'
 #' @param X a data matrix with observations in rows.
 #' @param type a string indicating which estimator to compute. Valid options
@@ -40,7 +40,7 @@
 #' round(tmp$cov[1:10, 1:10], 3)
 #' tmp$mu
 #'
-covRob <- MultiRobu <- function(X, type="auto", maxit=50, tol=1e-4)  {
+covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4)  {
 if (type=="auto") {
   p=dim(X)[2]
   if (p<10) {type="MM"
@@ -52,7 +52,7 @@ if (type=="auto") {
  } else {resu=MMultiSHR(X, maxit=maxit, tolpar=tol)  #MM
  }
   mu=resu$mu; V=resu$V
-  
+
   # Feed list into object and give class
   z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu)
   class(z) <- c("covRob")
@@ -175,7 +175,7 @@ dista=dista0}
   V <- tmp$V
   ff <- tmp$ff
   dista <- dista/ff
-  
+
   # GSB: Feed list into object and give class
   z <- list(mu=mu, V=V, sig=sig, dista=dista, w=w, gamma=gamma, cov=V, center=mu)
   class(z) <- c("covRob")
@@ -368,7 +368,7 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4) {
   }
   tmp <- scalemat(V0=V0, dis=dista, weight='X');
   dista <- dista/tmp$ff
-  
+
   # GSB: Feed list into object and give class
   z <- list(V=tmp$V, mu=mu0, dista=dista, w=w, center=mu0, cov=tmp$V)
   class(z) <- c("covRob")
@@ -758,60 +758,60 @@ summary.covRob <- function (object, ...)
     object
 }
 
-print.summary.covRob <- function (x, digits = max(3, getOption("digits") - 3), print.distance = TRUE, 
-    ...) 
+print.summary.covRob <- function (x, digits = max(3, getOption("digits") - 3), print.distance = TRUE,
+    ...)
 {
     cat("Robust Estimates of Covariance: \n")
     print(x$cov, digits = digits, ...)
-    
+
     cat("\n Robust Estimates of Location: \n")
     print(x$center, digits = digits, ...)
-    
+
     cat("\nEigenvalues: \n")
     print(x$evals, digits = digits, ...)
-    
+
     if (print.distance && !is.null(x$dist)) {
         cat("\nSquared Mahalanobis Distances: \n")
         print(x$dist, digits = digits, ...)
     }
-    
+
     invisible(x)
 }
 
 # These were taken from the robust package
 
 #' @export
-summary.covClassic <- function (object, ...) 
+summary.covClassic <- function (object, ...)
 {
     evals <- eigen(object$cov, symmetric = TRUE, only.values = TRUE)$values
     names(evals) <- paste("Eval.", 1:length(evals))
     object$evals <- evals
-    
-    object <- object[c("call", "cov", "center", "evals", "dist", 
+
+    object <- object[c("call", "cov", "center", "evals", "dist",
         "corr")]
-    
+
     oldClass(object) <- "summary.covClassic"
     object
 }
 
-print.summary.covClassic <- function (x, digits = max(3, getOption("digits") - 3), print.distance = TRUE, 
-    ...) 
+print.summary.covClassic <- function (x, digits = max(3, getOption("digits") - 3), print.distance = TRUE,
+    ...)
 {
-    if (x$corr) 
+    if (x$corr)
         cat("\nClassical Estimate of Correlation: \n")
     else cat("\nClassical Estimate of Covariance: \n")
     print(x$cov, digits = digits, ...)
-    
+
     cat("\nClassical Estimate of Location: \n")
     print(x$center, digits = digits, ...)
-    
+
     cat("\nEigenvalues: \n")
     print(x$evals, digits = digits, ...)
-    
+
     if (print.distance && !is.null(x$dist)) {
         cat("\nSquared Mahalanobis Distances: \n")
         print(x$dist, digits = digits, ...)
     }
-    
+
     invisible(x)
 }
