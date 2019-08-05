@@ -924,7 +924,9 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
                     df.residual=z$df.residual, iter=z$iter, rweights = z$rweights)
       # DCML
       # LS is already computed in z0
-      z <- DCML(x=x, y=y, z=z, z0=z0, control=control)
+      # if MMPY or SMPY return an exact fit then do not run DCML
+      if(z$scale > .Machine$double.eps) 
+        z <- DCML(x=x, y=y, z=z, z0=z0, control=control)
       z$rank <- z.tmp$rank
       z$converged <- z.tmp$converged
       z$qr <- z.tmp$qr
