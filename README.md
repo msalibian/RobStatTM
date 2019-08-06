@@ -4,11 +4,11 @@ This repository contains a development version of the companion package to the u
 the book [Robust Statistics: Theory and Methods](https://www.wiley.com/go/maronna/robust), by Ricardo Maronna, Doug Martin, Victor Yohai and Matias Salibian-Barrera.
 
 * The latest official version of the package is available on [CRAN](https://cran.r-project.org/package=RobStatTM). You should probably use [that version](https://cran.r-project.org/package=RobStatTM).
-* To install this "development" version use
+* To install the "development" version on GitHub use 
 ```
 devtools::install_github("msalibian/RobStatTM")
 ```
-* The scripts reproducing the examples and figures in the book can be found [here](inst/scripts).
+* The scripts reproducing the examples and figures in the book can be found in the folder `inst/scripts`.
 
 #### Bug reports
 
