@@ -6,7 +6,7 @@
 \title{Rocke's robust multivariate location and scatter estimator}
 \usage{
 covRobRocke(X, initial = "K", maxsteps = 5, propmin = 2, qs = 2,
-  maxit = 50, tol = 1e-04)
+  maxit = 50, tol = 1e-04, cor = FALSE)
 }
 \arguments{
 \item{X}{a data matrix with observations in rows.}
@@ -24,14 +24,16 @@ be at least p (the number of columns of X) times propmin.}
 
 \item{maxit}{Maximum number of iterations.}
 
-\item{tol}{Tolerance to decide converngence.#'}
+\item{tol}{Tolerance to decide converngence.}
+
+\item{cor}{A logical value. If \code{TRUE} a correlation matrix is returned. Defaults to \code{FALSE}.}
 }
 \value{
 A list with class \dQuote{covRob} containing the following elements:
 \item{mu}{The location estimate}
-\item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
+\item{V}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution}
 \item{center}{The location estimate. Same as \code{mu} above.}
-\item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+\item{cov}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
 \item{dista}{Robust Mahalanobis distances}
 \item{w}{weights}
 \item{gamma}{Final value of the constant gamma that regulates the efficiency}

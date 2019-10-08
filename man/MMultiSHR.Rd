@@ -5,21 +5,23 @@
 \alias{MMultiSHR}
 \title{MM robust multivariate location and scatter estimator}
 \usage{
-covRobMM(X, maxit = 50, tolpar = 1e-04)
+covRobMM(X, maxit = 50, tolpar = 1e-04, cor = FALSE)
 }
 \arguments{
 \item{X}{a data matrix with observations in rows.}
 
 \item{maxit}{Maximum number of iterations.}
 
-\item{tolpar}{Tolerance to decide converngence.#'}
+\item{tolpar}{Tolerance to decide converngence.}
+
+\item{cor}{A logical value. If \code{TRUE} a correlation matrix is returned. Defaults to \code{FALSE}.}
 }
 \value{
 A list with class \dQuote{covRob} containing the following elements
 \item{mu}{The location estimate}
-\item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
+\item{V}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution}
 \item{center}{The location estimate. Same as \code{mu} above.}
-\item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+\item{cov}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
 \item{dista}{Robust Mahalanobis distances}
 }
 \description{
