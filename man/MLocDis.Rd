@@ -5,7 +5,7 @@
 \alias{MLocDis}
 \title{Robust univariate location and scale M-estimators}
 \usage{
-locScaleM(x, psi = "bisquare", eff = 0.9, maxit = 50, tol = 1e-04)
+locScaleM(x, psi = "modopt", eff = 0.95, maxit = 50, tol = 1e-04)
 }
 \arguments{
 \item{x}{a vector of univariate observations}
@@ -13,8 +13,8 @@ locScaleM(x, psi = "bisquare", eff = 0.9, maxit = 50, tol = 1e-04)
 \item{psi}{a string indicating which score function to use. Valid options are "bisquare", "huber",
 "optimal" and "modopt".}
 
-\item{eff}{desired asymptotic efficiency. Valid options are 0.85, 0.9 (default) and 0.95 when
-\code{psi} = "bisquare" or "huber", and 0.85, 0.9 (default), 0.95 and 0.99 when
+\item{eff}{desired asymptotic efficiency. Valid options are 0.85, 0.9 and 0.95 (default) when
+\code{psi} = "bisquare" or "huber", and 0.85, 0.9, 0.95 (default) and 0.99 when
 \code{psi} = "optimal" or "modopt".}
 
 \item{maxit}{maximum number of iterations allowed.}

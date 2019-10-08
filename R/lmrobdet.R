@@ -351,7 +351,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
 #' Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
 #' can be constructed using the functions \link{bisquare}, \link{modopt} and \link{optimal}.
-#' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.
+#' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.95.
 #' @param max.it maximum number of IRWLS iterations for the MM-estimator
 #' @param refine.tol relative covergence tolerance for the S-estimator
 #' @param rel.tol relative covergence tolerance for the IRWLS iterations for the MM-estimator
@@ -361,7 +361,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
 #' @param family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
-#' the current valid options.
+#' the current valid options. Defaults to "modopt".
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied
 #' to the M-scale parameter \code{bb}.
 #' @param split.type determines how categorical and continuous variables are split. See
@@ -397,8 +397,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #'
 #' @export
 lmrobdet.control <- function(bb = 0.5,
-                             efficiency = 0.99,
-                             family = 'optimal',
+                             efficiency = 0.95,
+                             family = 'modopt',
                              tuning.psi,
                              tuning.chi,
                              compute.rd = FALSE,
@@ -649,10 +649,10 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' @export
 refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
                       conv=1, b, cc, family, step='M') {
-  
+
   #refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   #                     conv=1, b, cc, step='M') {
-  
+
   ## Weight function   # weight function = psi(u)/u
   #f.w <- function(u, cc) {
   #  tmp <- (1 - (u/cc)^2)^2
@@ -661,26 +661,26 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   #}
   f.w <- function(u, family, cc)
     Mwgt(x = u, cc = cc, psi = family)
-  
-  
+
+
   n <- dim(x)[1]
   # p <- dim(x)[2]
-  
+
   res <- as.vector( y - x %*% initial.beta )
-  
+
   if( missing( initial.scale ) ) {
     initial.scale <- scale <- median(abs(res))/.6745
   } else {
     scale <- initial.scale
   }
-  
+
   beta <- initial.beta
-  
-  
+
+
   converged <- FALSE
-  
+
   # lower.bound <- median(abs(res))/cc
-  
+
   if( scale == 0) {
     beta.1 <- initial.beta
     scale <- initial.scale
@@ -925,7 +925,7 @@ lmrobdetDCML <- function(formula, data, subset, weights, na.action,
       # DCML
       # LS is already computed in z0
       # if MMPY or SMPY return an exact fit then do not run DCML
-      if(z$scale > .Machine$double.eps) 
+      if(z$scale > .Machine$double.eps)
         z <- DCML(x=x, y=y, z=z, z0=z0, control=control)
       z$rank <- z.tmp$rank
       z$converged <- z.tmp$converged

@@ -11,8 +11,8 @@
 #' @param x a vector of univariate observations
 #' @param psi a string indicating which score function to use. Valid options are "bisquare", "huber",
 #' "optimal" and "modopt".
-#' @param eff desired asymptotic efficiency. Valid options are 0.85, 0.9 (default) and 0.95 when
-#' \code{psi} = "bisquare" or "huber", and 0.85, 0.9 (default), 0.95 and 0.99 when
+#' @param eff desired asymptotic efficiency. Valid options are 0.85, 0.9 and 0.95 (default) when
+#' \code{psi} = "bisquare" or "huber", and 0.85, 0.9, 0.95 (default) and 0.99 when
 #' \code{psi} = "optimal" or "modopt".
 #' @param maxit maximum number of iterations allowed.
 #' @param tol tolerance to decide convergence of the iterative algorithm.
@@ -25,7 +25,7 @@
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
 #' @references \url{http://www.wiley.com/go/maronna/robust}
-#' 
+#'
 #' @examples
 #' set.seed(123)
 #' r <- rnorm(150, sd=1.5)
@@ -35,7 +35,7 @@
 #' r2 <- c(rnorm(135, sd=1.5), rnorm(15, mean=-10, sd=.5))
 #' locScaleM(r2)
 #'
-locScaleM <- MLocDis <- function(x, psi="bisquare", eff=0.9, maxit=50, tol=1.e-4) {
+locScaleM <- MLocDis <- function(x, psi="modopt", eff=0.95, maxit=50, tol=1.e-4) {
   kpsi <- switch(psi, bisquare = 1, huber = 2, optimal = 3, modopt = 4, 5)
   # if (psi=="bisquare") kpsi=1
   # if (psi=="huber") kpsi=2

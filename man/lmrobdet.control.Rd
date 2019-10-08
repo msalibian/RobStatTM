@@ -4,7 +4,7 @@
 \alias{lmrobdet.control}
 \title{Tuning parameters for lmrobdetMM and lmrobdetDCML}
 \usage{
-lmrobdet.control(bb = 0.5, efficiency = 0.99, family = "optimal",
+lmrobdet.control(bb = 0.5, efficiency = 0.95, family = "modopt",
   tuning.psi, tuning.chi, compute.rd = FALSE, corr.b = TRUE,
   split.type = "f", initial = "S", max.it = 100,
   refine.tol = 1e-07, rel.tol = 1e-07, refine.PY = 10,
@@ -18,11 +18,11 @@ lmrobdet.control(bb = 0.5, efficiency = 0.99, family = "optimal",
 determines the robusness (breakdown point) of the resulting MM-estimator, which is
 \code{bb}. Defaults to 0.5.}
 
-\item{efficiency}{desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.}
+\item{efficiency}{desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.95.}
 
 \item{family}{string specifying the name of the family of loss function to be used (current valid
 options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
-the current valid options.}
+the current valid options. Defaults to "modopt".}
 
 \item{tuning.psi}{tuning parameters for the regression M-estimator computed with a rho function
 as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
