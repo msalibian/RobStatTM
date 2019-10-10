@@ -5,7 +5,7 @@
 \alias{Multirobu}
 \title{Robust multivariate location and scatter estimators}
 \usage{
-covRob(X, type = "auto", maxit = 50, tol = 1e-04)
+covRob(X, type = "auto", maxit = 50, tol = 1e-04, cor = FALSE)
 }
 \arguments{
 \item{X}{a data matrix with observations in rows.}
@@ -18,6 +18,8 @@ of variables is greater than or equal to 10, and "MM" otherwise.}
 \item{maxit}{Maximum number of iterations, defaults to 50.}
 
 \item{tol}{Tolerance for convergence, defaults to 1e-4.}
+
+\item{cor}{A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.}
 }
 \value{
 A list with class \dQuote{covClassic} with the following components:
@@ -25,6 +27,7 @@ A list with class \dQuote{covClassic} with the following components:
 \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
 \item{center}{The location estimate. Same as \code{mu} above.}
 \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+\item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 \item{dist}{Robust Mahalanobis distances}
 }
 \description{

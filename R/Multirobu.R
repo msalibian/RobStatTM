@@ -19,12 +19,14 @@
 #' of variables is greater than or equal to 10, and "MM" otherwise.
 #' @param maxit Maximum number of iterations, defaults to 50.
 #' @param tol Tolerance for convergence, defaults to 1e-4.
+#' @param cor A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.
 #'
 #' @return A list with class \dQuote{covClassic} with the following components:
 #' \item{mu}{The location estimate}
 #' \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
 #' \item{center}{The location estimate. Same as \code{mu} above.}
 #' \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+#' \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dist}{Robust Mahalanobis distances}
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
@@ -40,7 +42,7 @@
 #' round(tmp$cov[1:10, 1:10], 3)
 #' tmp$mu
 #'
-covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4)  {
+covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4, cor=FALSE)  {
 if (type=="auto") {
   p=dim(X)[2]
   if (p<10) {type="MM"
@@ -48,13 +50,13 @@ if (type=="auto") {
 }
 
  if (type=="Rocke") {
-   resu=RockeMulti(X, maxit=maxit, tol=tol)
- } else {resu=MMultiSHR(X, maxit=maxit, tolpar=tol)  #MM
+   resu=RockeMulti(X, maxit=maxit, tol=tol, cor=cor)
+ } else {resu=MMultiSHR(X, maxit=maxit, tolpar=tol, cor=cor)  #MM
  }
   mu=resu$mu; V=resu$V
 
   # Feed list into object and give class
-  z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu)
+  z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu, cor=resu$cor)
   class(z) <- c("covRob")
   return(z)
 }
@@ -79,16 +81,17 @@ if (type=="auto") {
 #' @param qs Tuning paramater for Rocke's loss functions.
 #' @param maxit Maximum number of iterations.
 #' @param tol Tolerance to decide converngence.
-#' @param cor A logical value. If \code{TRUE} a correlation matrix is returned. Defaults to \code{FALSE}.
+#' @param cor A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.
 #'
 #' @return A list with class \dQuote{covRob} containing the following elements:
 #' \item{mu}{The location estimate}
 #' \item{V}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution}
 #' \item{center}{The location estimate. Same as \code{mu} above.}
-#' \item{cov}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
-#' \item{dista}{Robust Mahalanobis distances}
+#' \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+#' \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
+#' \item{dista}{Robust Mahalanobis distances.}
 #' \item{w}{weights}
-#' \item{gamma}{Final value of the constant gamma that regulates the efficiency}
+#' \item{gamma}{Final value of the constant gamma that regulates the efficiency.}
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
@@ -179,9 +182,11 @@ dista=dista0}
 
   # GSB: Feed list into object and give class
 
-  if(cor) V <- cov2cor(V)
+  if(cor) {
+    cor.mat <- cov2cor(V)
+  } else cor.mat <- NULL
 
-  z <- list(mu=mu, V=V, sig=sig, dista=dista, w=w, gamma=gamma, cov=V, center=mu)
+  z <- list(mu=mu, V=V, sig=sig, dista=dista, w=w, gamma=gamma, cov=V, center=mu, cor=cor.mat)
   class(z) <- c("covRob")
   return(z)
 }
@@ -318,13 +323,14 @@ rhoinv <- function(x)
 #' @param X a data matrix with observations in rows.
 #' @param maxit Maximum number of iterations.
 #' @param tolpar Tolerance to decide converngence.
-#' @param cor A logical value. If \code{TRUE} a correlation matrix is returned. Defaults to \code{FALSE}.
+#' @param cor A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.
 #'
 #' @return A list with class \dQuote{covRob} containing the following elements
 #' \item{mu}{The location estimate}
 #' \item{V}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution}
 #' \item{center}{The location estimate. Same as \code{mu} above.}
-#' \item{cov}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+#' \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+#' \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dista}{Robust Mahalanobis distances}
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
@@ -376,9 +382,11 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, cor=FALSE) {
 
   # GSB: Feed list into object and give class
 
-  if(cor) tmp$V <- cov2cor(tmp$V)
+  if(cor) {
+    cor.mat <- cov2cor(tmp$V)
+  } else cor.mat <- NULL
 
-  z <- list(V=tmp$V, mu=mu0, dista=dista, w=w, center=mu0, cov=tmp$V)
+  z <- list(V=tmp$V, mu=mu0, dista=dista, w=w, center=mu0, cov=V, cor=cor.mat)
   class(z) <- c("covRob")
   return(z)
 }

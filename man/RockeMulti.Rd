@@ -26,17 +26,18 @@ be at least p (the number of columns of X) times propmin.}
 
 \item{tol}{Tolerance to decide converngence.}
 
-\item{cor}{A logical value. If \code{TRUE} a correlation matrix is returned. Defaults to \code{FALSE}.}
+\item{cor}{A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.}
 }
 \value{
 A list with class \dQuote{covRob} containing the following elements:
 \item{mu}{The location estimate}
 \item{V}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution}
 \item{center}{The location estimate. Same as \code{mu} above.}
-\item{cov}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
-\item{dista}{Robust Mahalanobis distances}
+\item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+\item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
+\item{dista}{Robust Mahalanobis distances.}
 \item{w}{weights}
-\item{gamma}{Final value of the constant gamma that regulates the efficiency}
+\item{gamma}{Final value of the constant gamma that regulates the efficiency.}
 }
 \description{
 This function computes Rocke's robust estimator for multivariate location and scatter.
