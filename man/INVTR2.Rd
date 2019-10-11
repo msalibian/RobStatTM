@@ -10,23 +10,23 @@ INVTR2(RR2, family, cc)
 \item{RR2}{the proportional difference in loss functions (a naive robust R^2 coefficient).}
 
 \item{family}{family string specifying the name of the family of loss function to be used (current valid
-options are "bisquare", "optimal" and "modopt").}
+options are "bisquare", "opt" and "mopt").}
 
 \item{cc}{tuning parameters to be computed according to efficiency and / or breakdown
-considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
-and \link{optimal}.}
+considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
+and \link{opt}.}
 }
 \value{
 An unbiased version of the robust R^2 coefficient of determination.
 }
 \description{
 This function computes a robust version of the R^2 coefficient of determination.
-It is used internally by \code{\link{lmrobdetMM}}, 
+It is used internally by \code{\link{lmrobdetMM}},
 and not meant to be used directly.
 }
 \details{
-This function computes a robust version of the R^2 coefficient. 
-It is used internally by \code{\link{lmrobdetMM}}, 
+This function computes a robust version of the R^2 coefficient.
+It is used internally by \code{\link{lmrobdetMM}},
 and not meant to be used directly.
 }
 \references{

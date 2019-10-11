@@ -1,19 +1,19 @@
 #' Robust R^2 coefficient of determination
 #'
 #' This function computes a robust version of the R^2 coefficient of determination.
-#' It is used internally by \code{\link{lmrobdetMM}}, 
+#' It is used internally by \code{\link{lmrobdetMM}},
 #' and not meant to be used directly.
 #'
-#' This function computes a robust version of the R^2 coefficient. 
-#' It is used internally by \code{\link{lmrobdetMM}}, 
+#' This function computes a robust version of the R^2 coefficient.
+#' It is used internally by \code{\link{lmrobdetMM}},
 #' and not meant to be used directly.
 #'
 #' @param RR2 the proportional difference in loss functions (a naive robust R^2 coefficient).
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modopt").
+#' options are "bisquare", "opt" and "mopt").
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown
-#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
-#' and \link{optimal}.
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
+#' and \link{opt}.
 
 #'
 #' @return An unbiased version of the robust R^2 coefficient of determination.
@@ -24,15 +24,15 @@
 #'
 #' @export
 INVTR2 <- function(RR2, family, cc) {
-  
+
   hh <- function(v, family, cc, z) return( rho(v/z, family=family, cc)*dnorm(v) )
-  
+
   TR2 <- function(R2, family, cc) {
     a <- Erhobic(family, cc, 1)
     b <- Erhobic(family, cc, sqrt(1-R2))
     return( (b-a)/ (b*(1-a)) )
   }
-  
+
   # compute E(rho(u,cc)), rho is the bisquare function
   Erhobic <- function(family, cc, zz) {
     if( family == 'bisquare') {
@@ -47,7 +47,7 @@ INVTR2 <- function(RR2, family, cc) {
     }
     return( ee )
   }
-  
+
   ff <- function(x, y, family, cc) return( TR2(x, family, cc) - y )
   aa <- TR2(.99999, family, cc)
   bb <- TR2(.00001, family, cc)

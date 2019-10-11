@@ -350,7 +350,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
 #' the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
 #' Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
-#' can be constructed using the functions \link{bisquare}, \link{modopt} and \link{optimal}.
+#' can be constructed using the functions \link{bisquare}, \link{mopt} and \link{opt}.
 #' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.95.
 #' @param max.it maximum number of IRWLS iterations for the MM-estimator
 #' @param refine.tol relative covergence tolerance for the S-estimator
@@ -360,8 +360,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param trace.lev positive values (increasingly) provide details on the progress of the MM-algorithm
 #' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
 #' @param family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
-#' the current valid options. Defaults to "modopt".
+#' options are "bisquare", "opt" and "mopt"). Incomplete entries will be matched to
+#' the current valid options. Defaults to "mopt".
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied
 #' to the M-scale parameter \code{bb}.
 #' @param split.type determines how categorical and continuous variables are split. See
@@ -398,7 +398,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @export
 lmrobdet.control <- function(bb = 0.5,
                              efficiency = 0.95,
-                             family = 'modopt',
+                             family = 'mopt',
                              tuning.psi,
                              tuning.chi,
                              compute.rd = FALSE,
@@ -413,9 +413,9 @@ lmrobdet.control <- function(bb = 0.5,
                              mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = 'bisquare')
 {
   family <- match.arg(family, choices = FAMILY.NAMES)
-  if( (efficiency > .9999 ) & ( (family=='modopt') | (family=='optimal') ) ) {
+  if( (efficiency > .9999 ) & ( (family=='mopt') | (family=='opt') ) ) {
     efficiency <- .9999
-    warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+    warning("Current implementation of \'opt\' or \'mopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
   if(missing(tuning.psi))
     tuning.psi <- do.call(family, args=list(e=efficiency))
@@ -635,7 +635,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' @param b tuning constant for the M-scale estimator, used if iterations are for an S-estimator.
 #' @param cc tuning constant for the rho function.
 #' @param family string specifying the name of the family of loss function to be used (current
-#' valid options are "bisquare", "optimal" and "modopt")
+#' valid options are "bisquare", "opt" and "mopt")
 #' @param step a string indicating whether the iterations are to compute an S-estiamator
 #' ('S') or an M-estimator ('M')
 #'
@@ -1365,7 +1365,7 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 #' as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
 #' the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
 #' Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
-#' can be constructed using the functions \link{bisquare}, \link{modopt} and \link{optimal}.
+#' can be constructed using the functions \link{bisquare}, \link{mopt} and \link{opt}.
 #' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.
 #' @param max.it maximum number of IRWLS iterations for the M-estimator
 #' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}}.
@@ -1373,7 +1373,7 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 #' @param rel.tol relative covergence tolerance for the IRWLS iterations for the M-estimator
 #' @param trace.lev positive values (increasingly) provide details on the progress of the M-algorithm
 #' @param family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
+#' options are "bisquare", "opt" and "mopt"). Incomplete entries will be matched to
 #' the current valid options.
 #'
 #' @return A list with the necessary tuning parameters.
@@ -1389,7 +1389,7 @@ lmrobLinTest <- rob.linear.test <- function(object1, object2)
 #' @export
 lmrobM.control <- function(bb = 0.5,
                            efficiency = 0.99,
-                           family = 'optimal',
+                           family = 'opt',
                            tuning.chi, tuning.psi,
                            max.it = 100, rel.tol = 1e-7,
                            mscale_tol = 1e-06,
@@ -1398,9 +1398,9 @@ lmrobM.control <- function(bb = 0.5,
 {
 
   family <- match.arg(family, choices = FAMILY.NAMES)
-  if( (efficiency > .9999 ) & ( (family=='modopt') | (family=='optimal') ) ) {
+  if( (efficiency > .9999 ) & ( (family=='mopt') | (family=='opt') ) ) {
     efficiency <- .9999
-    warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+    warning("Current implementation of \'opt\' or \'mopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
   if(missing(tuning.psi))
     tuning.psi <- do.call(family, args=list(e=efficiency))

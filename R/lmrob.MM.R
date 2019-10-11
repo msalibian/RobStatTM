@@ -1,4 +1,4 @@
-.Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'optimal', 'hampel', 'ggw', 'modopt')
+.Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'opt', 'hampel', 'ggw', 'mopt')
 
 .Mpsi.M.names <- c('huber') ## .M: the monotone ones:
 
@@ -24,14 +24,14 @@
     , 'welsh' = 2.11
     , 'ggw' = c(-0.5, 1.5, .95, NA) ## (min{slope}, b ,  eff, bp)
     , 'lqq' = c(-0.5, 1.5, .95, NA) ## (min{slope}, b/c, eff, bp)
-    , 'optimal' = c(a = 0.01317965,
+    , 'opt' = c(a = 0.01317965,
                     lower = 0.03305454,
                     upper = 3.003281,
                     c = 1.0,
                     "Psi_Opt(lower)" = -0.0005459033,
                     "rho(Inf)" = 3.331370)
     , 'hampel' = c(1.5, 3.5, 8) * 0.9016085 ## a, b, r
-    , 'modopt' = c(a = 0.01316352,
+    , 'mopt' = c(a = 0.01316352,
                              normConst = 1.05753107,
                              upper = 3.00373940,
                              c = 1.0,
@@ -52,14 +52,14 @@
     , 'welsh' = 0.5773502
     , 'ggw' = c(-0.5, 1.5, NA, .50) ## (min{slope}, b ,  eff, bp)
     , 'lqq' = c(-0.5, 1.5, NA, .50) ## (min{slope}, b/c, eff, bp)
-    , 'optimal' = c(a = 0.01317965,
+    , 'opt' = c(a = 0.01317965,
                     lower = 0.03305454,
                     upper = 3.003281,
                     c = 0.2618571,
                     "Psi_Opt(lower)" = -0.0005459033,
                     "rho(Inf)" = 3.331370)
     , 'hampel' = c(1.5, 3.5, 8) * 0.2119163 ## a, b, r
-    , 'modopt' = c(a = 0.01316352,
+    , 'mopt' = c(a = 0.01316352,
                              normConst = 1.05753107,
                              upper = 3.00373940,
                              c = 0.38124404,
@@ -362,7 +362,7 @@ globalVariables("r", add=TRUE) ## below and in other lmrob.E() expressions
                 switch(psi,
                        bisquare = 1.0526317574,
                        welsh    = 1.0526704649,
-                       optimal  = 1.0526419204,
+                       opt  = 1.0526419204,
                        hampel   = 1.0526016980,
                        lqq      = 1.0526365291,
                        stop(':.vcov.w: unsupported psi function'))
@@ -413,7 +413,7 @@ globalVariables("r", add=TRUE) ## below and in other lmrob.E() expressions
                 else lmrob.E(r*psi(r), ctrl)^2 ## more accurate than psi'(r)
             } else if (isTRUE(all.equal(c.psi, .Mpsi.tuning.default(psi))))
                 switch(psi,
-                       bisquare = 0.5742327, welsh = 0.5445068, optimal = 0.8598825,
+                       bisquare = 0.5742327, welsh = 0.5445068, opt = 0.8598825,
                        hampel = 0.6775217, lqq = 0.6883393,
                        stop(':.vcov.w: unsupported psi for "hybrid" correction factor'))
             else lmrob.E(r*psi(r), ctrl)^2 ## more accurate than psi'(r)
@@ -803,7 +803,7 @@ lmrob.tau <- function(obj, x=obj$x, control = obj$control, h, fast = TRUE)
         c.psi <- control$tuning.psi
         tfact <- tcorr <- NA
         switch(control$psi,
-               optimal = if (isTRUE(all.equal(c.psi, 1.060158))) {
+               opt = if (isTRUE(all.equal(c.psi, 1.060158))) {
                    tfact <- 0.94735878
                    tcorr <- -0.09444537
                },
@@ -946,9 +946,9 @@ hatvalues.lmrob <- function(model, ...)
 {
     psi <- .regularize.Mpsi(psi, redescending=FALSE)
     i <- match(psi, c(
-	'huber', 'bisquare', 'welsh', 'optimal',
+	'huber', 'bisquare', 'welsh', 'opt',
 	## 0	    1	        2	 3
-	'hampel', 'ggw', 'lqq', 'modopt'
+	'hampel', 'ggw', 'lqq', 'mopt'
 	## 4	    5	   6      7
 	))
     if(is.na(i)) stop("internal logic error in psi() function name: ", psi,
@@ -999,12 +999,12 @@ hatvalues.lmrob <- function(model, ...)
                if (length(cc) != 3)
                    stop('Coef. for Hampel psi function not of length 3')
            },
-           'optimal' = {
+           'opt' = {
                ## just check length of coefficients
                if (length(cc) != 6)
                    stop('Coef. for Optimal psi function not of length 6')
            },
-           'modopt' = {
+           'mopt' = {
                ## just check length of coefficients
                if (length(cc) != 6)
                    stop('Coef. for Modified Optimal psi function not of length 6')

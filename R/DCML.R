@@ -26,9 +26,9 @@
 #' @param u vector of residuals
 #' @param delta the right hand side of the M-scale equation
 #' @param family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modopt").
+#' options are "bisquare", "opt" and "mopt").
 #' @param tuning.chi the tuning object for the rho function as returned
-#' by \code{\link{lmrobdet.control}}, \link{bisquare}, \link{modopt} or \link{optimal}.
+#' by \code{\link{lmrobdet.control}}, \link{bisquare}, \link{mopt} or \link{opt}.
 #' It should correspond to the family of rho functions specified in the argument \code{family}.
 #' @param tol relative tolerance for convergence
 #' @param max.it maximum number of iterations allowed

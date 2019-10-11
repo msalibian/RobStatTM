@@ -4,7 +4,7 @@
 \alias{lmrobM.control}
 \title{Tuning parameters for lmrobM}
 \usage{
-lmrobM.control(bb = 0.5, efficiency = 0.99, family = "optimal",
+lmrobM.control(bb = 0.5, efficiency = 0.99, family = "opt",
   tuning.chi, tuning.psi, max.it = 100, rel.tol = 1e-07,
   mscale_tol = 1e-06, mscale_maxit = 50, trace.lev = 0)
 }
@@ -15,7 +15,7 @@ scale estimator. Defaults to 0.5.}
 \item{efficiency}{desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.85.}
 
 \item{family}{string specifying the name of the family of loss function to be used (current valid
-options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
+options are "bisquare", "opt" and "mopt"). Incomplete entries will be matched to
 the current valid options.}
 
 \item{tuning.chi}{tuning constant for the function used to compute the M-scale
@@ -26,7 +26,7 @@ the value of \code{bb} according to the family of rho functions specified in \co
 as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
 the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
 Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
-can be constructed using the functions \link{bisquare}, \link{modopt} and \link{optimal}.}
+can be constructed using the functions \link{bisquare}, \link{mopt} and \link{opt}.}
 
 \item{max.it}{maximum number of IRWLS iterations for the M-estimator}
 

@@ -27,7 +27,7 @@ or to force running k steps (0)}
 \item{cc}{tuning constant for the rho function.}
 
 \item{family}{string specifying the name of the family of loss function to be used (current
-valid options are "bisquare", "optimal" and "modopt")}
+valid options are "bisquare", "opt" and "mopt")}
 
 \item{step}{a string indicating whether the iterations are to compute an S-estiamator
 ('S') or an M-estimator ('M')}

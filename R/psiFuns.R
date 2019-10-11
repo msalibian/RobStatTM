@@ -1,7 +1,7 @@
 # The supported rho families.
 
-#FAMILY.NAMES <- c("bisquare", "ggw", "hampel", "huber", "lqq", "modopt", "optimal", "welsh")
-FAMILY.NAMES <- c("bisquare", "modopt", "optimal")
+#FAMILY.NAMES <- c("bisquare", "ggw", "hampel", "huber", "lqq", "mopt", "opt", "welsh")
+FAMILY.NAMES <- c("bisquare", "mopt", "opt")
 
 
 #' Tuning parameter the rho loss functions
@@ -48,17 +48,17 @@ bisquare <- function(e) #, breakdown.point)
 #'
 #' @examples
 #' # Tuning parameters for an 85%-efficient M-estimator at a Gaussian model
-#' optimal(.85)
+#' opt(.85)
 #'
 #' @export
-optimal <- function(e)
+opt <- function(e)
 {
   if( e > .9999) {
     e <- .9999
-    warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+    warning("Current implementation of \'opt\' or \'mopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
-  a <- findTuningConstFromGaussianEfficiency(e, "optimal")
-  cc <- c(a, psiSupportFromTuningConst(a, "optimal"), 1.0)
+  a <- findTuningConstFromGaussianEfficiency(e, "opt")
+  cc <- c(a, psiSupportFromTuningConst(a, "opt"), 1.0)
   cc[5] <- Psi_optimal(cc[2], cc[1])
   cc[6] <- Psi_optimal(cc[3], cc[1]) - cc[5]
   names(cc) <- c("a", "lower", "upper", "c", "Psi(lower)", "rho(Inf)")
@@ -84,17 +84,17 @@ optimal <- function(e)
 #'
 #' @examples
 #' # Tuning parameters for an 85%-efficient M-estimator at a Gaussian model
-#' modopt(.85)
+#' mopt(.85)
 #'
 #' @export
-modopt <- function(e)
+mopt <- function(e)
 {
   if( e > .9999) {
     e <- .9999
-    warning("Current implementation of \'optimal\' or \'modopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
+    warning("Current implementation of \'opt\' or \'mopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
-  a <- findTuningConstFromGaussianEfficiency(e, "modopt")
-  cc <- c(a, DNORM1 / (DNORM1 - a), psiSupportFromTuningConst(a, "modopt")[2], 1.0)
+  a <- findTuningConstFromGaussianEfficiency(e, "mopt")
+  cc <- c(a, DNORM1 / (DNORM1 - a), psiSupportFromTuningConst(a, "mopt")[2], 1.0)
   cc[5] <- Psi_optimal(1.0, cc[1])
   cc[6] <- (0.5 + cc[2] * (Psi_optimal(cc[3], cc[1]) - cc[5]))
   names(cc) <- c("a", "normConst", "upper", "c", "Psi(1)", "rho(Inf)")
@@ -112,10 +112,10 @@ modopt <- function(e)
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modopt").
+#' options are "bisquare", "opt" and "mopt").
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown
-#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
-#' and \link{optimal}.
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
+#' and \link{opt}.
 #' @param standardize logical value determining whether the rho function is to be
 #' standardized so that its maximum value is 1. See \link{Mpsi}.
 #'
@@ -128,7 +128,7 @@ modopt <- function(e)
 #' # Evaluate rho tuned for 85% efficiency
 #' rho(u=1.1, family='bisquare', cc=bisquare(.85))
 #' # Evaluate rho tuned for 50% breakdown
-#' rho(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
+#' rho(u=1.1, family='opt', cc=lmrobdet.control(bb=.5, family='opt')$tuning.chi)
 #'
 #' @export
 rho <- function(u, family=" bisquare", cc, standardize = TRUE)
@@ -146,10 +146,10 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modopt").
+#' options are "bisquare", "opt" and "mopt").
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown
-#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
-#' and \link{optimal}.
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
+#' and \link{opt}.
 #' @param standardize logical value determining whether the rho function is to be
 #' standardized so that its maximum value is 1. See \link{Mpsi}.
 #'
@@ -162,7 +162,7 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 #' # Evaluate the derivative of a rho function tuned for 85% efficiency
 #' rhoprime(u=1.1, family='bisquare', cc=bisquare(.85))
 #' # Evaluate the derivative of a rho function tuned for 50% breakdown
-#' rhoprime(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
+#' rhoprime(u=1.1, family='opt', cc=lmrobdet.control(bb=.5, family='opt')$tuning.chi)
 #'
 #' @export
 rhoprime <- function(u, family, cc, standardize = FALSE)
@@ -180,10 +180,10 @@ rhoprime <- function(u, family, cc, standardize = FALSE)
 #'
 #' @param u point or vector at which rho is to be evaluated
 #' @param family family string specifying the name of the family of loss function to be used (current valid
-#' options are "bisquare", "optimal" and "modopt").
+#' options are "bisquare", "opt" and "mopt").
 #' @param cc tuning parameters to be computed according to efficiency and / or breakdown
-#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
-#' and \link{optimal}.
+#' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
+#' and \link{opt}.
 #' @param standardize logical value determining whether the rho function is to be
 #' standardized so that its maximum value is 1. See \link{Mpsi}.
 #'
@@ -196,7 +196,7 @@ rhoprime <- function(u, family, cc, standardize = FALSE)
 #' # Evaluate the 2nd derivative of a rho function tuned for 85% efficiency
 #' rhoprime2(u=1.1, family='bisquare', cc=bisquare(.85))
 #' # Evaluate the 2nd derivative of a rho function tuned for 50% breakdown
-#' rhoprime2(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
+#' rhoprime2(u=1.1, family='opt', cc=lmrobdet.control(bb=.5, family='opt')$tuning.chi)
 #'
 #' @export
 rhoprime2 <- function(u, family, cc, standardize = FALSE)

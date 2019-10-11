@@ -4,7 +4,7 @@
 \alias{lmrobdet.control}
 \title{Tuning parameters for lmrobdetMM and lmrobdetDCML}
 \usage{
-lmrobdet.control(bb = 0.5, efficiency = 0.95, family = "modopt",
+lmrobdet.control(bb = 0.5, efficiency = 0.95, family = "mopt",
   tuning.psi, tuning.chi, compute.rd = FALSE, corr.b = TRUE,
   split.type = "f", initial = "S", max.it = 100,
   refine.tol = 1e-07, rel.tol = 1e-07, refine.PY = 10,
@@ -21,14 +21,14 @@ determines the robusness (breakdown point) of the resulting MM-estimator, which 
 \item{efficiency}{desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.95.}
 
 \item{family}{string specifying the name of the family of loss function to be used (current valid
-options are "bisquare", "optimal" and "modopt"). Incomplete entries will be matched to
-the current valid options. Defaults to "modopt".}
+options are "bisquare", "opt" and "mopt"). Incomplete entries will be matched to
+the current valid options. Defaults to "mopt".}
 
 \item{tuning.psi}{tuning parameters for the regression M-estimator computed with a rho function
 as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
 the value of \code{efficiency} according to the family of rho functions specified in \code{family}.
 Appropriate values for \code{tuning.psi} for a given desired efficiency for Gaussian errors
-can be constructed using the functions \link{bisquare}, \link{modopt} and \link{optimal}.}
+can be constructed using the functions \link{bisquare}, \link{mopt} and \link{opt}.}
 
 \item{tuning.chi}{tuning constant for the function used to compute the M-scale
 used for the initial S-estimator. If missing, it is computed inside \code{lmrobdet.control} to match

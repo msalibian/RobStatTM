@@ -10,11 +10,11 @@ rho(u, family = " bisquare", cc, standardize = TRUE)
 \item{u}{point or vector at which rho is to be evaluated}
 
 \item{family}{family string specifying the name of the family of loss function to be used (current valid
-options are "bisquare", "optimal" and "modopt").}
+options are "bisquare", "opt" and "mopt").}
 
 \item{cc}{tuning parameters to be computed according to efficiency and / or breakdown
-considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
-and \link{optimal}.}
+considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
+and \link{opt}.}
 
 \item{standardize}{logical value determining whether the rho function is to be
 standardized so that its maximum value is 1. See \link{Mpsi}.}
@@ -32,7 +32,7 @@ and modified optimal loss functions.
 # Evaluate rho tuned for 85\% efficiency
 rho(u=1.1, family='bisquare', cc=bisquare(.85))
 # Evaluate rho tuned for 50\% breakdown
-rho(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
+rho(u=1.1, family='opt', cc=lmrobdet.control(bb=.5, family='opt')$tuning.chi)
 
 }
 \author{

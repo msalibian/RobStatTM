@@ -10,11 +10,11 @@ rhoprime2(u, family, cc, standardize = FALSE)
 \item{u}{point or vector at which rho is to be evaluated}
 
 \item{family}{family string specifying the name of the family of loss function to be used (current valid
-options are "bisquare", "optimal" and "modopt").}
+options are "bisquare", "opt" and "mopt").}
 
 \item{cc}{tuning parameters to be computed according to efficiency and / or breakdown
-considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{modopt}
-and \link{optimal}.}
+considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
+and \link{opt}.}
 
 \item{standardize}{logical value determining whether the rho function is to be
 standardized so that its maximum value is 1. See \link{Mpsi}.}
@@ -29,7 +29,7 @@ The second derivative of the rho function
 # Evaluate the 2nd derivative of a rho function tuned for 85\% efficiency
 rhoprime2(u=1.1, family='bisquare', cc=bisquare(.85))
 # Evaluate the 2nd derivative of a rho function tuned for 50\% breakdown
-rhoprime2(u=1.1, family='optimal', cc=lmrobdet.control(bb=.5, family='optimal')$tuning.chi)
+rhoprime2(u=1.1, family='opt', cc=lmrobdet.control(bb=.5, family='opt')$tuning.chi)
 
 }
 \author{
