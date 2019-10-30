@@ -21,12 +21,7 @@ determines the robusness (breakdown point) of the resulting MM-estimator, which 
 \item{efficiency}{desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.95.}
 
 \item{family}{string specifying the name of the family of loss function to be used (current valid
-options are "bisquare", "opt" and "mopt"). Incomplete entries will be matched to the current valid options. Defaults to "mopt".
-"opt" refers to the optimal psi function defined in Section 5.8.1. of the 
-book Robust Statistics: Theory and Methods (with R) by Maronna, Martin, Yohai and Salibian-Barrera,
-"mopt" is a modified  version of the optimal psi function to make it 
-strictly increasing close to 0, and to make the corresponding weight function 
-non-increasing near 0.}
+options are "bisquare", "opt" and "mopt"). Incomplete entries will be matched to the current valid options. Defaults to "mopt".}
 
 \item{tuning.psi}{tuning parameters for the regression M-estimator computed with a rho function
 as specified with argument \code{family}. If missing, it is computed inside \code{lmrobdet.control} to match
@@ -91,6 +86,14 @@ A list with the necessary tuning parameters.
 This function sets tuning parameters for the MM estimator implemented in \code{lmrobdetMM} and
 the Distance Constrained Maximum Likelihood regression estimators
 computed by \code{lmrobdetDCML}.
+}
+\details{
+The argument \code{family} specifies the name of the family of loss function to be used. Current valid
+options are "bisquare", "opt" and "mopt"--"opt" refers to the optimal psi function defined in Section 5.8.1. of the
+book Robust Statistics: Theory and Methods (with R) by Maronna, Martin, Yohai and Salibian-Barrera,
+"mopt" is a modified  version of the optimal psi function to make it
+strictly increasing close to 0, and to make the corresponding weight function
+non-increasing near 0.
 }
 \examples{
 data(coleman, package='robustbase')

@@ -361,11 +361,6 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param compute.rd logical value indicating whether robust leverage distances need to be computed.
 #' @param family string specifying the name of the family of loss function to be used (current valid
 #' options are "bisquare", "opt" and "mopt"). Incomplete entries will be matched to the current valid options. Defaults to "mopt".
-#' "opt" refers to the optimal psi function defined in Section 5.8.1. of the 
-#' book Robust Statistics: Theory and Methods (with R) by Maronna, Martin, Yohai and Salibian-Barrera,
-#' "mopt" is a modified  version of the optimal psi function to make it 
-#' strictly increasing close to 0, and to make the corresponding weight function 
-#' non-increasing near 0. 
 #' @param corr.b logical value indicating whether a finite-sample correction should be applied
 #' to the M-scale parameter \code{bb}.
 #' @param split.type determines how categorical and continuous variables are split. See
@@ -388,6 +383,13 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' @param mscale_rho_fun String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.
 #'
 #' @return A list with the necessary tuning parameters.
+#'
+#' @details The argument \code{family} specifies the name of the family of loss function to be used. Current valid
+#' options are "bisquare", "opt" and "mopt"--"opt" refers to the optimal psi function defined in Section 5.8.1. of the
+#' book Robust Statistics: Theory and Methods (with R) by Maronna, Martin, Yohai and Salibian-Barrera,
+#' "mopt" is a modified  version of the optimal psi function to make it
+#' strictly increasing close to 0, and to make the corresponding weight function
+#' non-increasing near 0.
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
