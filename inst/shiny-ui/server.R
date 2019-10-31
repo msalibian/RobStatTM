@@ -1024,10 +1024,10 @@ shinyServer(function(input, output) {
   })
   
   output$locScale.eff.options <- renderUI({
-    if (any(input$locScale.psi == c("modopt", "optimal"))) {
+    if (any(input$locScale.psi == c("mopt", "opt"))) {
       radioButtons("locScale.eff", "Asymptotic Efficiency",
                             choices  = c("0.85" = 0.85, "0.9" = 0.9, "0.95" = 0.95, "0.99" = 0.99),
-                            selected = 0.99)
+                            selected = 0.95)
     } else {
       radioButtons("locScale.eff", "Asymptotic Efficiency",
                             choices  = c("0.85" = 0.85, "0.9" = 0.9, "0.95" = 0.95),
@@ -1289,11 +1289,11 @@ shinyServer(function(input, output) {
             
             selectInput("linRegress.family", "Family",
                         choices = c("Bisquare" = "bisquare",
-                                    "Opt."      = "optimal",
-                                    "Mod. Opt." = "modopt"),
-                        selected = "optimal"),
+                                    "Opt."      = "opt",
+                                    "Mod. Opt." = "mopt"),
+                        selected = "mopt"),
             
-            numericInput("linRegress.eff", "Efficiency", value = 0.99, min = 0.80, max = 0.99, step = 0.01)
+            numericInput("linRegress.eff", "Efficiency", value = 0.95, min = 0.80, max = 0.99, step = 0.01)
           )
         } else {
           tabPanel("",
@@ -1303,11 +1303,11 @@ shinyServer(function(input, output) {
             
             selectInput("linRegress.family", "Family",
                         choices = c("Bi-square" = "bisquare",
-                                    "Opt."      = "optimal",
-                                    "Mod. Opt." = "modopt"),
-                        selected = "optimal"),
+                                    "Opt."      = "opt",
+                                    "Mod. Opt." = "mopt"),
+                        selected = "mopt"),
             
-            numericInput("linRegress.eff", "Efficiency", value = 0.99, min = 0.80, max = 0.99, step = 0.01)
+            numericInput("linRegress.eff", "Efficiency", value = 0.95, min = 0.80, max = 0.99, step = 0.01)
           )
         }
       } else {
@@ -1318,11 +1318,11 @@ shinyServer(function(input, output) {
           
           selectInput("linRegress.family", "Family",
                       choices = c("Bi-square" = "bisquare",
-                                  "Opt."      = "optimal",
-                                  "Mod. Opt." = "modopt"),
-                      selected = "optimal"),
+                                  "Opt."      = "opt",
+                                  "Mod. Opt." = "mopt"),
+                      selected = "mopt"),
           
-          numericInput("linRegress.eff", "Efficiency", value = 0.99, min = 0.80, max = 0.99, step = 0.01)
+          numericInput("linRegress.eff", "Efficiency", value = 0.95, min = 0.80, max = 0.99, step = 0.01)
         )
       }
     }
@@ -1337,11 +1337,11 @@ shinyServer(function(input, output) {
         
         selectInput("linRegress.family2", "Family",
                     choices = c("Bi-square" = "bisquare",
-                                "Opt."      = "optimal",
-                                "Mod. Opt." = "modopt"),
-                    selected = "optimal"),
+                                "Opt."      = "opt",
+                                "Mod. Opt." = "mopt"),
+                    selected = "mopt"),
         
-        numericInput("linRegress.eff2", "Efficiency", value = 0.99, min = 0.80, max = 0.99, step = 0.01)
+        numericInput("linRegress.eff2", "Efficiency", value = 0.95, min = 0.80, max = 0.99, step = 0.01)
       )
     }
   })
