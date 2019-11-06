@@ -1011,6 +1011,18 @@ shinyServer(function(input, output) {
 ## Location/Scale ##
 ####################
   
+  output$locScale.dataset <- renderUI({
+    if (is.null(dim(values$dat))) {
+      disabled(textInput("locScale.dataset", "Dataset", "NA"))
+    } else {
+      fluidRow(
+        disabled(textInput("locScale.dataset", "Dataset", input$dataset)),
+        
+        actionButton("locScale.changeData", "Change Data")
+      )
+    }
+  })
+  
     # Render variable input list
   output$locScale.select.variable <- renderUI({
     # If there is no data, do nothing
@@ -1038,7 +1050,7 @@ shinyServer(function(input, output) {
   # On-click, find the estimators and create string object of results
   contents_estimators <- eventReactive(input$locScale.display, {
     if (is.null(dim(values$dat))) {
-        return(paste0("<font color=\"#FF0000\"><b>", "ERROR: No data loaded!", "</b><font>"))
+      return(paste0("<font color=\"#FF0000\"><b>", "ERROR: No data loaded!", "</b><font>"))
     }
     
     data <- as.numeric(values$dat[, input$locScale.variable])
@@ -1112,6 +1124,18 @@ shinyServer(function(input, output) {
 #######################
 
   ## Running Regression ##
+  
+  output$linRegress.dataset <- renderUI({
+    if (is.null(dim(values$dat))) {
+      disabled(textInput("linRegress.dataset", "Dataset", "NA"))
+    } else {
+      fluidRow(
+        disabled(textInput("linRegress.dataset", "Dataset", input$dataset)),
+        
+        actionButton("linRegress.changeData", "Change Data")
+      )
+    }
+  })
   
   values$linRegress.methods <- c("LS", "M", "MM", "DCML")
   values$linRegress.functions  <- c("lm", "lmrobM", "lmrobdetMM", "lmrobdetDCML")
@@ -2360,6 +2384,18 @@ shinyServer(function(input, output) {
 ## Covariance ##
 ################
   
+  output$covariance.dataset <- renderUI({
+    if (is.null(dim(values$dat))) {
+      disabled(textInput("covariance.dataset", "Dataset", "NA"))
+    } else {
+      fluidRow(
+        disabled(textInput("covariance.dataset", "Dataset", input$dataset)),
+        
+        actionButton("covariance.changeData", "Change Data")
+      )
+    }
+  })
+  
   output$covariance.select.variables <- renderUI({
     if (is.null(dim(values$dat))) {
       return("")
@@ -3233,6 +3269,18 @@ shinyServer(function(input, output) {
 ## PCA ##
 #########################
   
+  output$pca.dataset <- renderUI({
+    if (is.null(dim(values$dat))) {
+      disabled(textInput("pca.dataset", "Dataset", "NA"))
+    } else {
+      fluidRow(
+        disabled(textInput("pca.dataset", "Dataset", input$dataset)),
+        
+        actionButton("pca.changeData", "Change Data")
+      )
+    }
+  })
+  
   output$pca.select.variables <- renderUI({
     if (is.null(dim(values$dat))) {
       return("")
@@ -3384,6 +3432,26 @@ shinyServer(function(input, output) {
   #     }
   #   }
   # })
+  
+  observeEvent(input$locScale.changeData, {
+     updateTabsetPanel(session  = getDefaultReactiveDomain(), "main",
+                       selected = "data")
+  })
+  
+  observeEvent(input$linRegress.changeData, {
+    updateTabsetPanel(session  = getDefaultReactiveDomain(), "main",
+                      selected = "data")
+  })
+  
+  observeEvent(input$covariance.changeData, {
+    updateTabsetPanel(session  = getDefaultReactiveDomain(), "main",
+                      selected = "data")
+  })
+  
+  observeEvent(input$pca.changeData, {
+    updateTabsetPanel(session  = getDefaultReactiveDomain(), "main",
+                      selected = "data")
+  })
   
   # Reset all windows once new data set is loaded
   observeEvent(input$display.table, {

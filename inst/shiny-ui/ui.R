@@ -108,11 +108,11 @@ JS.onCall <-
 pkgs <- c("datasets", "RobStatTM", "robustbase", "PerformanceAnalytics")
 
 # Define UI for Shiny Application
-shinyUI(navbarPage("RobStatTM",
+shinyUI(navbarPage("RobStatTM", id = "main",
   
   # Tab to choose a data set
   
-  tabPanel("Data",
+  tabPanel(title = "Data", value = "data",
     sidebarLayout(
       sidebarPanel(
         tags$head(tags$style(HTML(CSS.format1))),
@@ -190,6 +190,11 @@ shinyUI(navbarPage("RobStatTM",
         tags$head(tags$script(HTML(JS.log10))),
         tags$head(tags$script(HTML(JS.onCall))),
         
+        # Display dataset
+        uiOutput("locScale.dataset"),
+        
+        hr(),
+        
         # Renders selection of univariate vectors chosen from
         # dataset
         uiOutput("locScale.select.variable"),
@@ -251,6 +256,9 @@ shinyUI(navbarPage("RobStatTM",
               tags$head(tags$style(HTML("hr {border-top: 1px solid #000000;}"))),
               tags$head(tags$script(HTML(JS.log10))),
               tags$head(tags$script(HTML(JS.onCall))),
+              
+              # Display dataset
+              uiOutput("linRegress.dataset"),
               
               checkboxInput("linRegress.second.method", "Add Second Method", value = FALSE),
               
@@ -318,6 +326,9 @@ shinyUI(navbarPage("RobStatTM",
           sidebarLayout(
             sidebarPanel(
               tags$head(tags$style(HTML(CSS.format1))),
+              
+              # Display dataset
+              uiOutput("covariance.dataset"),
               
               uiOutput("covariance.select.variables"),
               
@@ -392,6 +403,9 @@ shinyUI(navbarPage("RobStatTM",
           sidebarLayout(
             sidebarPanel(
               tags$head(tags$style(HTML(CSS.format1))),
+              
+              # Display dataset
+              uiOutput("pca.dataset"),
               
               uiOutput("pca.select.variables"),
               
