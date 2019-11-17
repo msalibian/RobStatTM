@@ -115,8 +115,9 @@
 \makeatother
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
+%\SweaveOpts{concordance=TRUE}
 
-<<include=FALSE>>=
+<<include=FALSE, echo=FALSE>>=
   library(knitr)
   opts_chunk$set(concordance=TRUE)
 @
@@ -153,15 +154,17 @@ The Shiny UI depends on the following packages:
 \item \textbf{grid}
 \item \textbf{gridExtra}
 \item \textbf{gtools}
-\item \textbf{PerformanceAnalytics}
-\item \textbf{robust}
-\item \textbf{robustbase}
 \item \textbf{shiny}
 \item \textbf{shinyjs}
 \item \textbf{xts}
 \end{itemize}
-With the above packages all installed, just use the command \texttt{ShinyUI()} at the prompt, to start the Shiny UI application.
-Then you will be ready to start using the Shiny UI.
+With the above packages all installed, start the Shiny UI interface with the single line of code:
+
+<<include=TRUE, echo=TRUE, eval=FALSE>>=
+ShinyUI()
+@
+
+This opens the Shiny user interface, enabling you to import data, and use functions in RobStatTM to fit models and analyze results.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add image of the Shiny UI initial screen here %
@@ -169,8 +172,7 @@ Then you will be ready to start using the Shiny UI.
 
 \newpage{}
 
-Figure \ref{fig:home} displays the initial screen you encounter in the Shiny UI application. This page is where you would select or upload a data set,
-and then navigate to one of the model tabs for further analysis. The subsequent sections contain detailed instructions for each component of the Shiny UI.
+Figure \ref{fig:home} displays the initial form of the Shiny user interface window. The dialog in this window is where you would select or upload a data set, and then navigate to one of the model tabs for further analysis. The subsequent sections contain detailed instructions for the functionality of each component the Shiny UI.
 
 \begin{figure}[H]
 \centering
@@ -181,15 +183,13 @@ and then navigate to one of the model tabs for further analysis. The subsequent 
 
 \section{Loading Data}
 
-Data may be loaded into the Shiny UI from an existing R package or
-upload a csv file to the application by selecting either ``R Package''
+You may load the data into the Shiny UI from an existing R package, or upload a csv file, by selecting from an ``R Package'',
 or ``Upload'' as shown in Figure \ref{f1}. Once you select
 a package from the list under \textbf{Library Name}, the \textbf{Select
 Dataset} input will be populated by the names of existing of datasets in that
 package. After selecting a dataset, you should click on the \textbf{Load
 Data} button to load the data into the application for further analysis,
-and the data will be displayed in a table on the right. Figure 2 shows the
-result for the data set mineral in RobStatTM.
+and the data will be displayed in a table on the right. Select the data set \textbf{mineral} in the dropdown \textbf{Select Dataset} and click on \textbf{Load Data}. Then you will get the data display result shown in Figure \ref{f1}.
 
 \begin{figure}[H]
 \centering
@@ -198,24 +198,22 @@ result for the data set mineral in RobStatTM.
 \label{f1}
 \end{figure}
 
-Figure \ref{f2} shows the options for uploading a csv file to the
-application. Since some csv files do not have the default format
+Figure \ref{f2} shows the options for uploading a csv file for analysis with RobStatTM. Since some csv files do not have the default format
 (comma-delimited values, double quote escape character), advanced
 options are available to specify the separator or escape character.
 If the data is a time series, then you
 must check the corresponding box as shown in the example. The
 first column of data must contain the date or time indices to be read
-as a time series. In the example, we use the data set \textbf{hfunds.ts.csv}
+as a time series. For this tutorial, we use the data set \textbf{hfunds.ts.csv}
 which contains returns for five hedge funds, and upload it as a time
-series. The window in the main (right) panel displays the data in
+series (You may upload your own dataset to help follow along). The window in the main (right) panel displays the data in
 a table like format, where you may view the returns for each date.
 Each column corresponds to one of the five different types of hedge funds:
 emerging markets (\textbf{EM}), Private Equity (\textbf{PE}), U.S.
 High Yield (\textbf{USHY}), Alternative Investments (\textbf{AI}),
 and Bond (\textbf{BND}). To find the \textbf{hfunds} dataset, first you need to type
 \texttt{find.package('RobStatTM')} in the command line to get the path to the \textbf{RobStatTM} package.
-From that location, the file is located in \textit{etc} subdirectory. For datasets with a large number
-of variables, we suggest viewing the application in \textbf{Full Screen}.
+From that location, the file is located in \textit{etc} subdirectory. For data sets with a large number of variables, you can view the data in full screen mode.
 
 \begin{figure}[th]
 \centering
@@ -230,30 +228,24 @@ Click on the \textbf{Location-Scale} tab to open the dialog which allows you
 to compute classical estimates for mean
 and standard deviation and/or robust estimates for location and scale
 for a single variable, and compare results when you choose to compute both classical and robust estimates.
+The Shiny UI interfaces with the \texttt{locScaleM()} function in
+\textbf{RobStatTM} to compute robust estimates of location and scale.
 
 \subsection*{Computing Location and Scale}
 
-The Shiny UI interfaces with the \texttt{locScaleM()} function in
-\textbf{RobStatTM} to compute robust estimates of location and scale.
-Select a \textbf{Variable} and choose a \textbf{Method} from
+To use the Location-Scale dialog, you first select a \textbf{Variable} for whatever dataset you loaded, and then choose a \textbf{Method} from
 the options of \emph{Classical}, \emph{Robust}, or \emph{Both}. The
 classical and robust methods are both computed and then compared when \emph{Both} is chosen.
 Furthermore, if either \emph{Robust} or \emph{Both} are selected,
-then additional parameters for tuning the robust method will appear in the bottom of
-the side panel on the left, when default values  \textbf{Psi
-Function} and \textbf{Asymptotic Efficiency}. You may choose an alternate psi function
-from the Psi Function drop-down list, and can choose one of the alternate values for
-asymptotic efficiency. To compute the estimates
-and display the summary, click the \textbf{Results} button. Figure
-\ref{f3} shows an example comparing the estimates of location and
-scale for the variable called V1 in the data set \textbf{flour} (which you need to load) using for the robust estimate the bisquare score function and an asymptotic
-efficiency of 90\%.
+then drop-down lists for $\rho$ and $\psi$ and asymptotic efficiency choices appear, with defaults "mopt" (modified optimal) and 0.95, respectively. To compute the estimates
+and display the summary, you will click on the \textbf{Results} button. Figure
+\ref{f3} shows an example where you first load the data set flour using the method explained in Section 2, select the variable V1, and click on Results, thereby using the default values of  Rho and Psi, and asymptotic efficiency.
 
 \begin{figure}[H]
 
 \centering
 \includegraphics[scale=0.6]{img/Location-Scale.png}\caption{Comparison of Classical and robust estimates for location and scale
-for \textbf{flour} dataset}
+for the \textbf{flour} dataset}
 \label{f3}
 \end{figure}
 
@@ -264,11 +256,9 @@ error of the location estimate, and the estimate for scale.
 
 \section{Robust Linear Regression}
 
-The \textbf{Robust Linear Regression }tab is located under \textbf{Models}
+Click on the \textbf{Robust Linear Regression} tab, located under the \textbf{Models}
 tab in the menu as shown in Figure \ref{f4} (all subsequent models
-are located under the \textbf{Models} tab). This section allows a
-simple computation and comparison of classical and robust linear regression
-methods.
+are located under the \textbf{Models} tab). We now show how to do a computation and comparison of classical and robust linear regression model fits, using the mineral data set in the RobStatTM package that we showed you how to load in Section 2.
 
 \begin{figure}[H]
 \centering
@@ -279,7 +269,7 @@ methods.
 \subsection*{Fitting Linear Models}
 
 There are four linear model fitting methods to choose from in the UI: least-squares (LS),
-M, MM, and distance constrained maximum-likelihood (DCML). You have
+M, MM, and distance constrained maximum-likelihood (DCML). The Shiny UI provides an interface to the implementation of these methods through the \texttt{lm()} function in the \textbf{stats} package and the \texttt{lmrobM()}, \texttt{lmrobdetMM()}, and \texttt{lmrobdetDCML()} functions in \textbf{RobStatTM}. You have
 the option to compare any two models by checking the \textbf{Add Second Method}
 box and selecting inputs for a second model. In Figure \ref{f5},
 the classical least-squares (LS) and robust MM regression methods are being
@@ -304,10 +294,9 @@ the independent variables, as an important step to ensure that those
 quantities are robust themselves (see the RobStatTM book Section 5.6 for details). Furthermore, the \emph{proportion
 of variance explained by the model}, or R\textsuperscript{2}, for
 robust fits is a robust version of classical least-squares R\textsuperscript{2}. 
-In the example, zinc is the dependent variable and copper is the independent variable
-for the LS and MM and for the MM estimator we are using the optimal value
-for psi with asymptotic efficiency of 99\%. The equivalent command-line
-code is provided below.
+To run this example, you have to make zinc is the dependent variable and copper is the independent variable
+for the LS and MM estimators. The default "moopt" choice
+for rho and psi, with the default asymptotic efficiency of 95\% is used for the MM estimate. The equivalent command-line code for obtaining the results in the right hand side of Figure \ref{f5} is provided below.
 
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
 # Load mineral data set
@@ -316,8 +305,8 @@ data(mineral)
 # Send fits to fit.models
 fm <- fit.models(LS = lm(zinc ~ copper, data = mineral),
                  MM = lmrobdetMM(zinc ~ copper, data = mineral, 
-                                 control = lmrobdet.control(family = "optimal",
-                                                            eff    = 0.99)))
+                                 control = lmrobdet.control(family = "mopt",
+                                                            eff    = 0.95)))
 
 # Comparison of results
 summary(fm)
@@ -328,8 +317,8 @@ summary(fm)
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{img/LR_PlotOpts.png}
-\caption{Linear Regression plotting options }
-\label{fig:linRegPlotOpts}
+\caption{Linear Regression plotting options}
+\label{linRegPlotOpts}
 \end{figure}
 
 After fitting a linear regression model, or a pair of such models, you
@@ -338,9 +327,9 @@ tab. In the side-panel, you may choose from the following selection:
 \emph{Residuals v. Fit}, \emph{Response v. Fit}, \emph{Residuals Normal
 QQ Plot}, \emph{Estimated Residual Density}, \emph{Std. Residuals v. Robust Distances},
 \emph{Std. Residuals v. Index (or Time in the case of time series data)}, and \emph{Scatter
-with Overlaid Fits}. Note the \emph{Scatter with Overlaid Fits} plot
+with Overlaid Fits}. Note that the \emph{Scatter with Overlaid Fits} plot
 is only available in the case of two univariate regressions. The following
-are examples of each plot:
+figures show each of the plots selected in the dialog of Figure \ref{linRegPlotOpts}
 
 \subsubsection*{Residuals versus Fitted Values}
 
@@ -410,16 +399,13 @@ mineral}}
 \section{Robust Covariance}
 
 The Shiny UI allows you to use the \textbf{RobStatTM} functions \textbf{covClassic()} and \textbf{covRob()}.
-First off, since the methods used in \textbf{RobStatTM} only allow
-for numeric data, the options for \textbf{Variables} are limited to
-those with numeric values only. You may choose to compute classical
-estimates of covariance/correlation, robust estimates of covariance/correlation,
-or both using the \textbf{Method} allows you to choose either the classical
+Since these two methods only work numeric data, the options for \textbf{Variables} are limited to
+those with numeric values only. Note that the options in the \textbf{Method} group allows you to choose either the classical
 method alone, the robust method alone, or use the default of both methods,
 which is highly recommended. If \emph{Robust}, or \emph{Both}
 is chosen, then you use the Robust Covariance Estimator drop-down list to make
 an estimator choice. You may select \emph{MM}, \emph{Rocke},
-or \emph{Auto} as the estimator. If \emph{Auto} is selected, then
+or \emph{Auto} as the estimator. If you use the default choice \emph{Auto}, then
 a Rocke-estimator is used if the number of variables is greater than
 or equal to 10, and an MM-estimator is used otherwise. Figure \ref{f13} displays the comparison
 of classical and robust covariance matrix and location estimates along with classical and robust
@@ -434,10 +420,7 @@ data}
 \label{f13}
 \end{figure}
 
-The above, along with figures \ref{f14}, \ref{f15}, and \ref{f16}, correspond to Example 6.2 and Figure 6.3 in Maronna et al. You
-may find it of interest run the above example with the
-choice "Covariances" changed to "Correlations". A 
-command-line equivalent of the Shiny UI interface in Figure
+A command-line equivalent of the Shiny UI interface in Figure
 \ref{f13} is shown below
 
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
@@ -445,11 +428,11 @@ command-line equivalent of the Shiny UI interface in Figure
 data(wine)
 
 # Use fit.models to estimate centers and covariance matrices
-cov.fm <- fit.models(Classic = covClassic(dat),
+cov.fm <- fit.models(Classic = covClassic(wine),
                      Robust  = covRob(wine, type = "auto"))
 
 # Comparison of results
-print(summary(cov.fm))
+summary(cov.fm)
 @
 
 \subsection*{Plots}
@@ -470,8 +453,8 @@ of each plot:
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=6.5in]{img/CovarianceMd.png}\caption{Square-root Mahalanobis distances for classical and robust covariance estimates:
-\textbf{wine}}
+\includegraphics[width=6.5in]{img/CovarianceMd.png}\caption{Square-root Mahalanobis distances for classical and robust covariance estimates for the
+\textbf{wine} data.}
 \label{f14}
 \end{figure}
 
@@ -480,8 +463,7 @@ of each plot:
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.5in]{img/CovarianceChi.png}
-\caption{Classical and robust square-root Mahalanobis distances chi-squared QQ plots:
-\textbf{wine}}
+\caption{Classical and robust square-root Mahalanobis distances chi-squared QQ plots for the \textbf{wine} data.}
 \label{f15}
 \end{figure}
 
@@ -490,18 +472,18 @@ of each plot:
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{img/CovarianceDistDist.png}
-\caption{Scatterplot of square-root classical and robust Mahalanobis distances: \textbf{wine}}
+\caption{Scatterplot of square-root classical and robust Mahalanobis distances for the \textbf{wine} data.}
 \label{f16}
 \end{figure}
 
-Figures \ref{f17} and \ref{f18} use the variables V2, V4, V8, V11, and V12 in the \textbf{wine} dataset.
+Figures \ref{f17} and \ref{f18} use the variables V2, V4, V8, V11, and V12 in the \textbf{wine} dataset, which were chosen due to their low correlation with each other and to reduce the dimensionality of the dataset.
 
 \subsubsection*{Eigenvalues}
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale = 0.6]{img/CovarianceEigen.png}
-\caption{Scree plot for classical and robust covariance estimates: \textbf{wine}}
+\caption{Scree plot for classical and robust covariance estimates for the \textbf{wine} data.}
 \label{f17}
 \end{figure}
 
@@ -510,11 +492,12 @@ Figures \ref{f17} and \ref{f18} use the variables V2, V4, V8, V11, and V12 in th
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{img/CovarianceEllipses.png}
-\caption{Ellipses matrices with classical and robust correlation estimates:
-\textbf{wine}. If you repeat the analysis with just three (or four) well-chosen variables,
+\caption{Ellipses matrices with classical and robust correlation estimatesfor the \textbf{wine} data.. If you repeat the analysis with just three (or four) variables,
 then you will get a 3 by 3 (or 4 by 4) display.}
 \label{f18}
 \end{figure}
+
+Figures \ref{f13}, \ref{f14}, \ref{f15}, and \ref{f16} above correspond to Example 6.2 and Figure 6.3 in Maronna et al. You may find it of interest run the above example with the choice "Covariances" changed to "Correlations". 
 
 \section{Robust PCA}
 
@@ -541,7 +524,7 @@ principal components of the \textbf{bus} data.
   \label{f19}
 \end{figure}
 
-The command-line equivalent to the example from Figure \ref{f19}
+The command-line equivalent to the example in Figure \ref{f19}
 is:
 
 <<include=TRUE, echo=TRUE, eval=FALSE>>=
@@ -549,11 +532,11 @@ is:
 data(bus)
 
 # Use fit.models to estimate principal components
-pca.fm <- fit.models(Classic = prcomp(bus[, 1:10]),
-                     Robust  = prcompRob(bus[, 1:10]))
+pca.fm <- fit.models(Classic = prcomp(bus),
+                     Robust  = prcompRob(bus))
 
 # Comparison of results
-print(summary(pca.fm))
+summary(pca.fm)
 @
 
 
@@ -566,15 +549,7 @@ version, and we hope to add them in a future update.
 
 \subsection*{Improvements to the User Interface}
 
-The Shiny UI will continue to evolve as we receive more feedback on
-the interface and consider new ideas for it. Future versions will
-generally contain small aesthetic adjustments and not a major overhaul
-of the current interface.
-
-\subsection*{Additional Modeling Capability}
-
-Future versions will also contain additional robust modeling methods. Currently,
-we plan to add interfaces to robust logistic regression and robust
-time series analysis as discussed in Chapters 7 and 8 of the book.
+We hope to evolve the Shiny UI as we receive feedback on
+the interface and consider new ideas for it.
 
 \end{document}
