@@ -214,7 +214,7 @@ shinyUI(navbarPage("RobStatTM", id = "main",
         
         conditionalPanel("input['locScale.method'] != 'classic'",
                          
-           selectInput("locScale.psi", "Score Function (Psi)",
+           selectInput("locScale.psi", "Rho and Psi Functions",
                        choices = c("Opt."      = "opt",
                                    "Mod. Opt." = "mopt",
                                    "Bisquare"  = "bisquare",

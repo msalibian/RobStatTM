@@ -9,8 +9,7 @@
 
 options(warn = -1L, scipen = -1L)
 
-pkgs <- c("DT", "fit.models", "ggplot2", "grid", "gridExtra", "gtools",
-          "PerformanceAnalytics", "robust", "robustbase", "shiny", "xts")
+pkgs <- c("DT", "fit.models", "ggplot2", "grid", "gridExtra", "gtools",  "shiny", "xts")
 
 missing.packages <- pkgs[sapply(pkgs, function(p) { length(find.package(p, quiet = T)) == 0 })]
 if (length(missing.packages) > 0) {
@@ -1309,7 +1308,7 @@ shinyServer(function(input, output) {
           tabPanel("",
             tags$hr(),
             
-            h4("Robust Controls 1"),
+            h4("Robust Regression Choices"),
             
             selectInput("linRegress.family", "Family",
                         choices = c("Bisquare" = "bisquare",
@@ -1323,7 +1322,7 @@ shinyServer(function(input, output) {
           tabPanel("",
             tags$hr(),
             
-            h4("Robust Controls"),
+            h4("Robust Regression Choices"),
             
             selectInput("linRegress.family", "Family",
                         choices = c("Bi-square" = "bisquare",
@@ -1338,7 +1337,7 @@ shinyServer(function(input, output) {
         tabPanel("",
           tags$hr(),
           
-          h4("Robust Controls"),
+          h4("Robust Regression Choices"),
           
           selectInput("linRegress.family", "Family",
                       choices = c("Bi-square" = "bisquare",
@@ -1357,7 +1356,7 @@ shinyServer(function(input, output) {
       tabPanel("",
         tags$hr(),
         
-        h4("Robust Controls 2"),
+        h4("Robust Regression Choices"),
         
         selectInput("linRegress.family2", "Family",
                     choices = c("Bi-square" = "bisquare",
