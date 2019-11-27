@@ -1017,7 +1017,7 @@ shinyServer(function(input, output) {
       fluidRow(
         disabled(textInput("locScale.dataset", "Dataset", input$dataset)),
         
-        actionButton("locScale.changeData", "Change Data")
+        actionButton("locScale.changeData", "Choose Data")
       )
     }
   })
