@@ -1521,8 +1521,6 @@ double wgt_modOpt(double x, const double c[])
   *   c[4]: Psi_opt(1.0, c)
   *   c[5]: rho_modOpt(Inf) when c[3] = 1
   */
-
-  double y = 0.0;
   
   x = fabs(x) / c[3];
 
@@ -1531,15 +1529,8 @@ double wgt_modOpt(double x, const double c[])
 
   if(x >= c[2])
     return(0.0);
-
-  y = c[1] * (1.0 - c[0] / (x * dnorm(x, 0.0, 1.0, 0)));
   
-  /* 
-   * Short term fix: don't return nagative weights. Better: make sure that
-   * computed support interval is in true support interval.
-   */
-  
-  return(y < 0.0 ? 0.0 : y);
+  return(c[1] * (1.0 - c[0] / (x * dnorm(x, 0.0, 1.0, 0))));
 }
 
 /*============================================================================*/
