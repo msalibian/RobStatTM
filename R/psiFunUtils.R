@@ -88,15 +88,51 @@ Psi_optimal <- function(x, a)
   0.5 * x^2 - a * pi * .Call(R_erfi, x / sqrt(2), PACKAGE='RobStatTM')
 
 
-psiSupportFromTuningConst_optimal <- function(a)
+A_MAX <- 0.2419707
+
+g <- function(x, a) x * dnorm(x) - a
+
+
+psiSupportFromTuningConst_optimal <- function(a, tol = 1e-8)
 {
-  u <- 0.77957 - 0.33349 * log(a)
-  # fam <- list(name = "optimal", cc = c(a, 1e-9, Inf, 1.0, NA, NA))
-  fam <- 'opt'
-  cc <- c(a, 1e-9, Inf, 1.0, NA, NA)
-  lower <- uniroot(f = rhoprime, interval = c(1e-6, u), family = fam, cc = cc, check.conv = TRUE, tol = 1e-8)$root
-  upper <- uniroot(f = rhoprime, interval = c(u, 1.5*u), family = fam, cc = cc, check.conv = TRUE, tol = 1e-8)$root
-  c(lower, upper)
+  if(a > 0.0 && a < A_MAX) {
+    lower <- uniroot(f = g, interval = c(0.0, 1.0), a = a, check.conv = TRUE, tol = tol)
+
+    if(lower$f.root < 0.0) {
+      x <- seq(lower$root, lower$root + lower$estim.prec, length = 100)
+      y <- g(x, a)
+      i <- min(which(y >= 0.0))
+      if(length(i)) {
+        lower$root <- x[i]
+        lower$f.root <- y[i]
+      }
+      else {
+        warning("psi is negative at computed endpoint")
+      }
+    }
+
+    upper <- uniroot(f = g, interval = c(1.0, 5.0), a = a, extendInt = "downX", check.conv = TRUE, tol = tol)
+
+    if(upper$f.root < 0.0) {
+      x <- seq(upper$root - upper$estim.prec, upper$root, length = 100)
+      y <- g(x, a)
+      i <- max(which(y >= 0.0))
+      if(length(i)) {
+        upper$root <- x[i]
+        upper$f.root <- y[i]
+      }
+      else {
+        warning("psi is negative at computed endpoint")
+      }
+    }
+
+    return(c(lower$root, upper$root))
+  }
+
+  if(a == 0.0)
+    return(c(0.0, Inf))
+  
+  c(NA_real_, NA_real_)
 }
 
 
@@ -115,15 +151,33 @@ findTuningConstFromGaussianEfficiency_optimal <- function(e, interval = c(1e-6, 
 
 ########## modopt ##########
 
+# Same g as optimal
+# g <- function(x, a) x * dnorm(x) - a
 
-psiSupportFromTuningConst_modopt <- function(a)
+psiSupportFromTuningConst_modopt <- function(a, tol = 1e-8)
 {
-  u <- 0.77957 - 0.33349 * log(a)
-  # fam <- list(name = "modopt", cc = c(a, 1e-9, Inf, 1.0, 0.0, 0.0))
-  fam <- 'mopt'
-  cc <- c(a, 1e-9, Inf, 1.0, 0.0, 0.0)
-  upper <- uniroot(f = rhoprime, interval = c(u, 1.5*u), family = fam, cc = cc, check.conv = TRUE, tol = 1e-8)$root
-  c(0.0, upper)
+  if(a > 0.0 && a < A_MAX) {
+    upper <- uniroot(f = g, interval = c(1.0, 5.0), a = a, extendInt = "downX", check.conv = TRUE, tol = tol)
+
+    if(upper$f.root < 0.0) {
+      x <- seq(upper$root - upper$estim.prec, upper$root, length = 100)
+      y <- g(x, a)
+      i <- max(which(y >= 0.0))
+      if(length(i)) {
+        upper$root <- x[i]
+        upper$f.root <- y[i]
+      }
+      else {
+        warning("psi is negative at computed endpoint")
+      }
+    }
+    return(c(0.0, upper$root))
+  }
+  
+  if(a == 0.0)
+    return(c(0.0, Inf))
+  
+  c(NA_real_, NA_real_)
 }
 
 

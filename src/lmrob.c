@@ -1521,7 +1521,7 @@ double wgt_modOpt(double x, const double c[])
   *   c[4]: Psi_opt(1.0, c)
   *   c[5]: rho_modOpt(Inf) when c[3] = 1
   */
-
+  
   x = fabs(x) / c[3];
 
   if(x <= 1.0)
@@ -1529,7 +1529,7 @@ double wgt_modOpt(double x, const double c[])
 
   if(x >= c[2])
     return(0.0);
-
+  
   return(c[1] * (1.0 - c[0] / (x * dnorm(x, 0.0, 1.0, 0))));
 }
 

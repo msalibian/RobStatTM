@@ -1,10 +1,10 @@
 # RobStatTM
 
-This repository contains a development version of the companion package to the upcoming 2nd edition of
+This repository contains a development version of the companion package to the 2nd edition of
 the book [Robust Statistics: Theory and Methods](https://www.wiley.com/go/maronna/robust), by Ricardo Maronna, Doug Martin, Victor Yohai and Matias Salibian-Barrera.
 
 * The latest official version of the package is available on [CRAN](https://cran.r-project.org/package=RobStatTM). You should probably use [that version](https://cran.r-project.org/package=RobStatTM).
-* To install the "development" version on GitHub use 
+* To install the "development" version on GitHub, use 
 ```
 devtools::install_github("msalibian/RobStatTM")
 ```
@@ -12,18 +12,9 @@ devtools::install_github("msalibian/RobStatTM")
 
 #### Bug reports
 
-A bug is a reproducible problem that is caused by the code in the package.
-Good bug reports are extremely helpful. Please follow the guidelines below to submit your
-bug report.
-
-##### Guidelines for bug reports:
-
 We use [GitHub issues](https://guides.github.com/features/issues/) to track and solve potential bugs in our package. When submitting your bug report please:
 
-1. Use our package's [GitHub issue search](https://github.com/msalibian/RobStatTM/issues) to check
-whether your issue / bug has already been reported.
-
-2. Check if your issue / bug has been fixed by trying to reproduce it using the latest version of the package.
+1. Check if your issue / bug has been fixed by trying to reproduce it using the latest version of the package.
 
 3. Isolate the problem by creating a **minimal reproducible example** (see below)
 
