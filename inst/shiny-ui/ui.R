@@ -215,10 +215,10 @@ shinyUI(navbarPage("RobStatTM", id = "main",
         conditionalPanel("input['locScale.method'] != 'classic'",
                          
            selectInput("locScale.psi", "Rho and Psi Functions",
-                       choices = c("Opt."      = "opt",
-                                   "Mod. Opt." = "mopt",
-                                   "Bisquare"  = "bisquare",
-                                   "Huber"     = "huber"),
+                       choices = c("opt"      = "opt",
+                                   "mopt" = "mopt",
+                                   "bisquare"  = "bisquare",
+                                   "huber"     = "huber"),
                        selected = "mopt"),
            
            uiOutput('locScale.eff.options')
@@ -243,9 +243,7 @@ shinyUI(navbarPage("RobStatTM", id = "main",
     ## Linear Regression ##
     tabPanel("Robust Linear Regression",
     h3("Robust Linear Regression"),
-    helpText("Calculate the robust coefficients of several factors using any robust
-             method andcompare to another robust regression or the least-squares
-             equivalent."),
+    helpText("Calculate linear regression coefficients using a robust regression, and compare them to the coefficients of a least squares regression, or another robust regression."),
       tabsetPanel(id = "linear.tabs", type = "tabs",
                   
         # Model selection

@@ -943,7 +943,7 @@ shinyServer(function(input, output) {
                                quote  = input$quote,
                                numerals = "allow.loss")
                     },
-                    error = function(cond) {
+                      error = function(cond) {
                       message("There appears to be an error. Try checking the format of the CSV file.")
                       message("Here's the original error message:")
                       message(cond)
@@ -1311,9 +1311,9 @@ shinyServer(function(input, output) {
             h4("Robust Regression Choices"),
             
             selectInput("linRegress.family", "Family",
-                        choices = c("Bisquare" = "bisquare",
-                                    "Opt."      = "opt",
-                                    "Mod. Opt." = "mopt"),
+                        choices = c("bisquare" = "bisquare",
+                                    "opt"      = "opt",
+                                    "mopt" = "mopt"),
                         selected = "mopt"),
             
             numericInput("linRegress.eff", "Efficiency", value = 0.95, min = 0.80, max = 0.99, step = 0.01)
@@ -1325,9 +1325,9 @@ shinyServer(function(input, output) {
             h4("Robust Regression Choices"),
             
             selectInput("linRegress.family", "Family",
-                        choices = c("Bi-square" = "bisquare",
-                                    "Opt."      = "opt",
-                                    "Mod. Opt." = "mopt"),
+                        choices = c("bisquare" = "bisquare",
+                                    "opt"      = "opt",
+                                    "mopt" = "mopt"),
                         selected = "mopt"),
             
             numericInput("linRegress.eff", "Efficiency", value = 0.95, min = 0.80, max = 0.99, step = 0.01)
@@ -1340,9 +1340,9 @@ shinyServer(function(input, output) {
           h4("Robust Regression Choices"),
           
           selectInput("linRegress.family", "Family",
-                      choices = c("Bi-square" = "bisquare",
-                                  "Opt."      = "opt",
-                                  "Mod. Opt." = "mopt"),
+                      choices = c("bisquare" = "bisquare",
+                                  "opt"      = "opt",
+                                  "mopt" = "mopt"),
                       selected = "mopt"),
           
           numericInput("linRegress.eff", "Efficiency", value = 0.95, min = 0.80, max = 0.99, step = 0.01)
@@ -1359,9 +1359,9 @@ shinyServer(function(input, output) {
         h4("Robust Regression Choices"),
         
         selectInput("linRegress.family2", "Family",
-                    choices = c("Bi-square" = "bisquare",
-                                "Opt."      = "opt",
-                                "Mod. Opt." = "mopt"),
+                    choices = c("bisquare" = "bisquare",
+                                "opt"      = "opt",
+                                "mopt" = "mopt"),
                     selected = "mopt"),
         
         numericInput("linRegress.eff2", "Efficiency", value = 0.95, min = 0.80, max = 0.99, step = 0.01)
@@ -1374,15 +1374,19 @@ shinyServer(function(input, output) {
       output$linRegress.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: No data loaded!", "</b><font>"))
       })
-    } else if (any(is.null(input$linRegress.independent) || is.null(input$linRegress.dependent))) {
+      return()
+    } else if (any(length(input$linRegress.independent) == 0 || length(input$linRegress.dependent) == 0)) {
       output$linRegress.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", "ERROR: Missing independent variables! Please add at least one.", "</b><font>"))
       })
+      return()
     } else if (!is.numeric(values$dat[, input$linRegress.dependent])) {
       output$linRegress.results <- renderText({
         return(paste0("<font color=\"#FF0000\"><b>", invalid_response(), "</b><font>"))
       })
+      return()
     }
+    
       
     if (input$linRegress.second.method) {
       
@@ -1482,6 +1486,10 @@ shinyServer(function(input, output) {
   })
   
   observeEvent(input$linRegress.display.plots, {
+    if (is.null(dim(values$dat))) {
+      return()
+    }
+    
     values$linRegress.plots.active <- T
     
     plots <- vector(mode = "list")
@@ -1598,6 +1606,8 @@ shinyServer(function(input, output) {
     
     # Standardized residuals vs. robust distances
     if (input$linRegress.resid.dist == T) {
+      
+      
       i <- i + 1
       
       title.name <- ifelse(any(class(fit) == "lm"), values$linRegress.models[1], paste("Robust", values$linRegress.models[1]))
