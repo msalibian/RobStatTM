@@ -1131,7 +1131,7 @@ shinyServer(function(input, output) {
       fluidRow(
         disabled(textInput("linRegress.dataset", "Dataset", input$dataset)),
         
-        actionButton("linRegress.changeData", "choose data")
+        actionButton("linRegress.changeData", "Choose Data")
       )
     }
   })
@@ -2400,7 +2400,7 @@ shinyServer(function(input, output) {
       fluidRow(
         disabled(textInput("covariance.dataset", "Dataset", input$dataset)),
         
-        actionButton("covariance.changeData", "choose data")
+        actionButton("covariance.changeData", "Choose Data")
       )
     }
   })
@@ -3285,7 +3285,7 @@ shinyServer(function(input, output) {
       fluidRow(
         disabled(textInput("pca.dataset", "Dataset", input$dataset)),
         
-        actionButton("pca.changeData", "choose data")
+        actionButton("pca.changeData", "Choose Data")
       )
     }
   })
