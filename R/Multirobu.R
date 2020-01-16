@@ -56,7 +56,7 @@ if (type=="auto") {
   mu=resu$mu; V=resu$V
 
   # Feed list into object and give class
-  z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu, cor=resu$cor)
+  z <- list(mu=mu, V=V, dist=mahalanobis(X,mu,V), cov=V, center=mu, cor=resu$cor, corr=resu$cor)
   class(z) <- c("covRob")
   return(z)
 }
