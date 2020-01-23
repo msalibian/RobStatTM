@@ -386,7 +386,7 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, cor=FALSE) {
     cor.mat <- cov2cor(tmp$V)
   } else cor.mat <- NULL
 
-  z <- list(V=tmp$V, mu=mu0, dista=dista, w=w, center=mu0, cov=V, cor=cor.mat)
+  z <- list(V=tmp$V, mu=mu0, dista=dista, w=w, center=mu0, cov=tmp$V, cor=cor.mat)
   class(z) <- c("covRob")
   return(z)
 }
