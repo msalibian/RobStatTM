@@ -1,0 +1,3662 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass extarticle
+\begin_preamble
+%%%%%%%%%%%%%%%%%%%% book.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% sample root file for the chapters of your "monograph"
+%
+% Use this file as a template for your own input.
+%
+%%%%%%%%%%%%%%%% Springer-Verlag %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% RECOMMENDED %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% choose options for [] as required from the list
+% in the Reference Guide
+
+
+\usepackage[bottom]{footmisc}% places footnotes at page bottom
+
+\usepackage[style=authoryear,natbib=true,firstinits=true,backend=biber]{biblatex}
+
+\setlength{\bibitemsep}{0.5\baselineskip}
+\DeclareNameAlias{sortname}{last-first}
+
+\addbibresource{inflFncs.bib}
+\renewcommand\cite{\citet}
+
+%\renewcommand*{\nameyeardelim}{\addspace}
+%\renewbibmacro{in:}{}
+
+\usepackage{txfonts}
+\usepackage{upgreek}
+\end_preamble
+\use_default_options true
+\begin_modules
+theorems-ams
+knitr
+\end_modules
+\maintain_unincluded_children false
+\begin_local_layout
+Provides natbib 1
+\end_local_layout
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command biber
+\index_command default
+\float_placement H
+\paperfontsize 11
+\spacing onehalf
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 2
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 0
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
+\biblio_options style
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<include=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(knitr)
+\end_layout
+
+\begin_layout Plain Layout
+
+opts_chunk$set(
+\end_layout
+
+\begin_layout Plain Layout
+
+	keep.source=TRUE,
+\end_layout
+
+\begin_layout Plain Layout
+
+	tidy=TRUE,
+\end_layout
+
+\begin_layout Plain Layout
+
+	message=FALSE, 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.path='Plots/', 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.align='center', 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.width=4, 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.height=3, 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.keep='last',
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.show='hide',
+\end_layout
+
+\begin_layout Plain Layout
+
+	dev.args=list(pointsize=10),
+\end_layout
+
+\begin_layout Plain Layout
+
+	tidy.opts=list(width.cutoff=40),
+\end_layout
+
+\begin_layout Plain Layout
+
+	cache=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+options(width=70)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+RobStatTM Package Vignette 
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+Ricardo A.
+ Maronna, R.
+ Douglas Martin, Victor J.
+ Yohai, Matias Salibian-Barrera
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace vfill
+\end_inset
+
+
+\end_layout
+
+\begin_layout Abstract
+The RobStatTM R package is a companion to the book 
+\emph on
+Robust Statistics:Theory and Methods
+\emph default
+ (
+\emph on
+with R
+\emph default
+) by the authors of this document.
+ The purpose of this vignette is to guide you on how to use the R scripts,
+ and related data sets, in the package that replicate examples in the book.
+ The vignette also includes instructions on how to use the 
+\family typewriter
+fit.models
+\family default
+ function in RobStatTM to compare different regression model fits such as
+ least squares versus robust fits, and compare different covariance matrix
+ estimates such as classical and robust covariance matrix estimates.
+ A short section on convergence of robust estimation algorithms is also
+ included
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+The RobStatTM Scripts and Data Sets
+\end_layout
+
+\begin_layout Standard
+The first column of Table 1 below lists the numbering of the examples in
+ the book, and the second column contains the names in the book of the correspon
+ding R scripts.
+ The third and fourth columns provide the names of data sets used by the
+ scripts.
+ Some of the R scripts in the table make use of packages other than RobStatTM,
+ for either accessing data, or for using certain R functions, and such packages
+ are listed in the fifth column of the table.
+ In order to run those scripts, you need to have already installed those
+ package(s) from CRAN (https://cran.r-project.org/).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="23" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="left" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+EXAMPLE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+NAME
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+RobStatTM  DATA
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+OTHER  DATA
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+OTHER PACKAGES REQUIRED
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+4.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+shock.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+shock
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+quantreg
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+4.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+oats.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+oats
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+5.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+mineral.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+mineral
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+quantreg
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+5.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+wood.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+wood
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+robustbase
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+5.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+step.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+made up data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+5.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+algae.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+algae
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+5.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+ExactFit.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+synthetic data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+6.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+biochem.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+biochem
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+6.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+wine.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+wine
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+6.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+vehicle.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+vehicle
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+rrcov
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+6.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+bus.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+bus
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+6.5-6.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+wine1.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+wine
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+GSE
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+6.7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+autism.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+autism
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+WWGbook, robustvarComp, nlme
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+7.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+leukemia.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+leuk.dat
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+robust
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+7.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+skin.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+skin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+7.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+epilepsy.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+breslow.dat
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+robust
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+8.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+ar1.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+synthetic data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+robustarima
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+8.2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+ar3.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+synthetic data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+robustarima
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+8.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+identAR2.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+synthetic data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+robustarima
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+8.4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+identMA1.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+synthetic data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+robustarima
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+8.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+MA1-AO.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+synthetic data
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+robustarima
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+8.6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+resex.R
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+resex
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+robustarima
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+R Scripts and Data in the 
+\family typewriter
+RobStatTM
+\family default
+ R Package
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We note that the script 
+\family typewriter
+flour.R,
+\family default
+ and the data set 
+\family typewriter
+flour
+\family default
+ used by the script, contained in RobStatTM but not listed in the above
+ table are for Example 1.1, Figure 2.1, and Table 2.4 of the book.
+ Furthermore, the data set 
+\family typewriter
+neuralgia
+\family default
+ contained in 
+\family typewriter
+RobStatTM
+\family default
+ but not listed in the table above, is used only in Problem 7.1 of the book.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Accessing the Example R Scripts in Your Installed RobStatTM
+\end_layout
+
+\begin_layout Standard
+In case you have not already installed RobStatTM, install it with the command:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE,echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+install.packages(
+\begin_inset Quotes eld
+\end_inset
+
+RobStatTM
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With RobStatTM installed, load it in your current R session with:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(
+\begin_inset Quotes eld
+\end_inset
+
+RobStatTM
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to access the example R scripts, you need to find your installed
+ RobStatTM “scripts” folder, which is one of several RobStatTM package folders.
+ You can find the location of the scripts folder on your computer by using
+ the function 
+\family typewriter
+system.file()
+\family default
+ as follows: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE, echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+system.file(
+\begin_inset Quotes eld
+\end_inset
+
+scripts
+\begin_inset Quotes erd
+\end_inset
+
+, package = 
+\begin_inset Quotes eld
+\end_inset
+
+RobStatTM
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\bar under
+NOTE
+\bar default
+: Copy/paste of the above line does not typically work, so you should type
+ it in.
+ The result of using this command will depend upon your computer.
+ For example, in the case of a particular computer running Windows 10, the
+ result is:
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[1] "C:/Users/Doug/Documents/R/win-library/3.4/RobStatTM/scripts"
+\end_layout
+
+\begin_layout Standard
+Then you just need to navigate to the 
+\family typewriter
+scripts
+\family default
+ folder, where you will see all of the example R scripts, with the same
+ name they are given in the book, i.e., the name in the NAME column of Table
+ 1.
+ You should then copy/paste any script, or all the scripts, to some other
+ location on your computer where you want to run them.
+ 
+\end_layout
+
+\begin_layout Subsection
+Loading Data Sets Provided in RobStatTM
+\end_layout
+
+\begin_layout Standard
+To load any data set that is in RobStatTM, just use the 
+\family typewriter
+data()
+\family default
+ function with the data set name.
+ For example, in the case of the 
+\family typewriter
+shock
+\family default
+ data set: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data(shock)
+\end_layout
+
+\begin_layout Plain Layout
+
+head(shock,2)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Installing Other Packages Needed for Data or Functions Access
+\end_layout
+
+\begin_layout Standard
+You will notice in the table on the previous page that there is a column
+ named OTHER PACKAGES REQUIRED.
+ The other package is required for accessing a data set in the package,
+ or for using an R function in the package, or both.
+ In the case of any example R script that requires another package for one
+ of those reasons, you need to have installed the package before running
+ the script.
+ You could do this on a case by case basis, but it may be easier to just
+ be sure and install all the packages in the OTHER PACKAGES REQUIRED once
+ and for all.
+ You can do this quite easily from RStudio.
+\end_layout
+
+\begin_layout Subsection
+Loading Data Sets Provided in Another Package
+\end_layout
+
+\begin_layout Standard
+To load a data set that is in another package that you have already installed
+ in your R (but have not loaded, and in fact should not load) you use the
+ 
+\family typewriter
+data()
+\family default
+ function with an optional argument that specifies the package the data
+ is in.
+ For example, in the case of the wood data set that is in the robustbase
+ package: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data(wood, package = "robustbase")
+\end_layout
+
+\begin_layout Plain Layout
+
+head(wood,1) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that the above use of 
+\family typewriter
+data()
+\family default
+ does not result in loading the named package, and this is the recommended
+ way to load data in another package.
+ The reason for not first loading another package with 
+\family typewriter
+library()
+\family default
+, and then using the 
+\family typewriter
+data()
+\family default
+ function, is that the result of loading a package can result in problematic
+ masking of functions in RobStatTM.
+\end_layout
+
+\begin_layout Subsection
+Using Functions from Another Installed Package without Loading the Package
+\end_layout
+
+\begin_layout Standard
+When a script requires a function from a package other than RobStatTM, the
+ other package needs to have been already installed.
+ However, in order to avoid masking problems mentioned above, the script
+ does not load the library, and instead uses that standard package referencing
+ mechanism “
+\family typewriter
+::
+\family default
+”.
+ For example, you can use the function 
+\family typewriter
+rq
+\family default
+ in the 
+\family typewriter
+quantreg
+\family default
+ package to do an L1 (least absolute deviation regression) fit of 
+\family typewriter
+zinc
+\family default
+ to 
+\family typewriter
+copper
+\family default
+ in the 
+\family typewriter
+mineral
+\family default
+ data set with the code below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+minerall1 <- quantreg::rq(zinc ~ copper, data=mineral)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Differences Between the Example R Scripts Results and the Book Examples
+\end_layout
+
+\begin_layout Standard
+There are a number of example R scripts where part of the output, either
+ pure numerical values or numerical values in plots, is not exactly the
+ same as in the book examples.
+ Scripts where this is the case include oats.R (different p-values, Figure
+ 4.4), mineral.R (Figures 5.3, 5.5, 5.6), wood.R (Figures 5.10, 5.11), algae.R (Figure
+ 5.14, 5.15), wine.R (Figure 6.11).
+ This is because the final code for some of the scripts is different from
+ the code used for the book examples, and the scripts code is usually improved
+ in some way.
+ Typically, the conclusions drawn from the figures, concerning which data
+ points are outliers, and same for the book figures and the figures produced
+ by the example scripts.
+ 
+\end_layout
+
+\begin_layout Subsection
+Running the Example Scripts
+\end_layout
+
+\begin_layout Standard
+We recommend running all the example scripts, and especially the Table 1
+ Examples 5.1, 5.2, 5.3, 5.4, 5.5, which reflect our recent recommendation to
+ use 
+\family typewriter
+family = 
+\begin_inset Quotes eld
+\end_inset
+
+mopt
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+, with 
+\family typewriter
+efficiency = 0.95
+\family default
+ for the robust regression function 
+\family typewriter
+lmrobdetMM
+\family default
+.
+\end_layout
+
+\begin_layout Section
+Using the 
+\family typewriter
+fit.models
+\family default
+ Function
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+fit.models
+\family default
+ function in RobStatTM allows you to compare two different model estimates,
+ such as model estimates with different variables, and especially classical
+ versus robust model estimates.
+ As such 
+\family typewriter
+fit.models
+\family default
+ is a very useful function, and we illustrate its use in the next two subsection
+s for: (1) classical versus robust linear regression model fits, and (2)
+ classical versus robust covariance matrix estimates.
+\end_layout
+
+\begin_layout Subsection
+Robust Versus Least Squares Fits of Linear Regression Models
+\end_layout
+
+\begin_layout Standard
+The code below use the functions 
+\family typewriter
+lm
+\family default
+ and 
+\family typewriter
+lmrobdetMM
+\family default
+ to compute and compare least squares (LS) and robust fits of the 
+\family typewriter
+zinc
+\family default
+ data to the 
+\family typewriter
+copper
+\family default
+ data in the 
+\family typewriter
+minerals
+\family default
+ data set.
+ You will note that the object created by 
+\family typewriter
+fit.models
+\family default
+ has the class 
+\family typewriter
+lmfm
+\family default
+, where the 
+\begin_inset Quotes eld
+\end_inset
+
+lm
+\begin_inset Quotes erd
+\end_inset
+
+ stands for linear model and the 
+\begin_inset Quotes eld
+\end_inset
+
+fm
+\begin_inset Quotes erd
+\end_inset
+
+ stands for fitted models.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+LSfit <- lm(zinc ~ copper, data = mineral)
+\end_layout
+
+\begin_layout Plain Layout
+
+control <- lmrobdet.control(family = "mopt",eff = 0.95)
+\end_layout
+
+\begin_layout Plain Layout
+
+robfit <- lmrobdetMM(zinc ~ copper, control = control, data = mineral)
+\end_layout
+
+\begin_layout Plain Layout
+
+fmLSrob <- fit.models(LSfit,robfit)
+\end_layout
+
+\begin_layout Plain Layout
+
+class(fmLSrob)
+\end_layout
+
+\begin_layout Plain Layout
+
+summary(fmLSrob)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The function 
+\family typewriter
+summary
+\family default
+ used above is a generic function in R, which calls a 
+\emph on
+method
+\emph default
+ function appropriate for the object class of its argument, and in this
+ case the method is called 
+\family typewriter
+summary.lmfm
+\family default
+.
+ You can view the help file for 
+\family typewriter
+summary.lmfm
+\family default
+ with the code line:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+help(summary.lmfm)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Likewise, when applied to an object of class 
+\family typewriter
+lmfm
+\family default
+, the generic 
+\family typewriter
+plot
+\family default
+ function in R calls a 
+\family typewriter
+plot.lmfm method
+\family default
+ function, whose behavior is described the help file obtained with the following
+ code line:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+help(plot.lmfm)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If you try the above code line, you will find out that the 
+\family typewriter
+plot.lmfm
+\family default
+ method allows you to create the following 10 different types of plots:
+\end_layout
+
+\begin_layout Enumerate
+(not used)
+\end_layout
+
+\begin_layout Enumerate
+Normal QQ Plot of Residuals,
+\end_layout
+
+\begin_layout Enumerate
+Kernel Density Estimate of Residuals,
+\end_layout
+
+\begin_layout Enumerate
+Residuals vs.
+ Mahalanobis Distance,
+\end_layout
+
+\begin_layout Enumerate
+Residuals vs.
+ Fitted Values,
+\end_layout
+
+\begin_layout Enumerate
+Scale-Location,
+\end_layout
+
+\begin_layout Enumerate
+Response vs.
+ Fitted Values,
+\end_layout
+
+\begin_layout Enumerate
+Residuals vs.
+ Index (Time),
+\end_layout
+
+\begin_layout Enumerate
+Overlaid Normal QQ Plot of Residuals,
+\end_layout
+
+\begin_layout Enumerate
+Overlaid Kernel Density Estimate of Residuals,
+\end_layout
+
+\begin_layout Enumerate
+Scatter Plot with Overlaid Fits (for simple linear regression models).
+\end_layout
+
+\begin_layout Standard
+You can create any single one of the plots, or any subgroup of the 10 plots,
+ through appropriate use of the generic function 
+\family typewriter
+plot
+\family default
+ with an lmfm object argument.
+ To see how this may be done, first look at the following code line and
+ its results: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+args(plot.lmfm)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It follows that if you use 
+\family typewriter
+plot(fmLSrob)
+\family default
+ in RStudio, you will get plot types 5, 2, 6, 4 in that order in the Plots
+ window by pressing the Enter key four times in RStudio Console right after
+ the Console text line 
+\family typewriter
+Hit <Return> to see next plot
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+The following code will create the scatter plots with overlaid LS and Robust
+ line fits shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: scatterPlotFits"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmLSrob,which.plots = 11)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/.png
+	lyxscale 10
+	scale 110
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Scatter Plot of Zinc versus Copper with LS and Robust Line Fits
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: scatterPlotFits"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The following code will create the LS and Robust fits Normal QQ Plots of
+ residuals shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: qqplotResiduals"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/qqplotResiduals.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmLSrob,which.plots = 2)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/qqplotResiduals.png
+	lyxscale 10
+	scale 110
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Normal QQ Plots of LS and Robust Fits Residuals
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: qqplotResiduals"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Robust versus Classical Covariance Matrices
+\end_layout
+
+\begin_layout Standard
+You can also use 
+\family typewriter
+fit.models
+\family default
+ function for comparing two different covariance matrix estimates, and we
+ show below by example one way to do so for classical and robust covariance
+ matrix estimates, where the classical covariance matrix is computed with
+ the function 
+\family typewriter
+covClassic
+\family default
+ in RobStatTM and the robust covariance matrix is computed with the function
+ 
+\family typewriter
+covRob
+\family default
+ in RobStatTM.
+ We note that 
+\family typewriter
+covRob
+\family default
+ by default automatically choose an 
+\begin_inset Quotes eld
+\end_inset
+
+MM
+\begin_inset Quotes erd
+\end_inset
+
+ type estimate if the the number of variables is less than 10, and computes
+ a 
+\begin_inset Quotes eld
+\end_inset
+
+Rocke
+\begin_inset Quotes erd
+\end_inset
+
+ type estimate if the number of variables is 10 or greater.
+ See 
+\family typewriter
+covRob
+\family default
+ help file for more details, including how to set 
+\family typewriter
+type = 
+\begin_inset Quotes eld
+\end_inset
+
+MM
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ or
+\family typewriter
+ type = 
+\begin_inset Quotes eld
+\end_inset
+
+Rocke
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ in case you want to over-ride the automatic choice.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+It is also possible to use the functions 
+\family typewriter
+covRobMM
+\family default
+ and 
+\family typewriter
+covRobRocke
+\family default
+ directly by name.
+ However, in the current release of 
+\family typewriter
+RobStatTM
+\family default
+ the ellipses plot below does not work in that case.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The code below illustrate how to computed the separate classic and robust
+ fits inside the 
+\family typewriter
+fit.models
+\family default
+ function, rather than prior to use of 
+\family typewriter
+fit.models
+\family default
+.
+ And since the number of variables is 5, the choice 
+\family typewriter
+
+\begin_inset Quotes eld
+\end_inset
+
+MM
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ is automatically made.
+ You see below that the class of 
+\family typewriter
+cov.fm
+\family default
+ is 
+\family typewriter
+covfm
+\family default
+, and the summary method (
+\family typewriter
+summary.covfm
+\family default
+) prints groups together the elements of the classic and robust covariance
+ matrix elements, the location estimates, and the eigenvalues.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,warning = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(robust)  # This is only needed until the package fit.models is updated
+ in CRAN
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data(wine)
+\end_layout
+
+\begin_layout Plain Layout
+
+wine5 <- wine[,1:5]
+\end_layout
+
+\begin_layout Plain Layout
+
+cov.fm <- fit.models(Classic = covClassic(wine5),Robust = covRob(wine5,type
+ = 
+\begin_inset Quotes eld
+\end_inset
+
+auto
+\begin_inset Quotes erd
+\end_inset
+
+))
+\end_layout
+
+\begin_layout Plain Layout
+
+class(cov.fm)
+\end_layout
+
+\begin_layout Plain Layout
+
+summary(cov.fm)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can see the names of cov.fm object, and the names of the Classic and
+ Robust components of the cov.fm object with the following code lines:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+names(cov.fm)
+\end_layout
+
+\begin_layout Plain Layout
+
+names(cov.fm$Classic)
+\end_layout
+
+\begin_layout Plain Layout
+
+names(cov.fm$Robust)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to see what plot methods are available for a cov.fm object, take
+ a look at the help file with:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T, eval = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+help(plot.covfm)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This shows that there are four types of plots, numbered 2, 3, 4, 5, that
+ compare classic and robust co variance matrix properties as follows:
+\end_layout
+
+\begin_layout Enumerate
+(not used)
+\end_layout
+
+\begin_layout Enumerate
+Eigenvalues of Covariance Estimate
+\end_layout
+
+\begin_layout Enumerate
+Sqrt of Mahalanobis Distances
+\end_layout
+
+\begin_layout Enumerate
+Ellipses Matrix
+\end_layout
+
+\begin_layout Enumerate
+Distance - Distance Plot
+\end_layout
+
+\begin_layout Standard
+Figures 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: eigenvalues"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: distances"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: ellipses"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: distanceDistance"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ below are produced by the code lines preceding them.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/eigenvalues.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(cov.fm,which.plot = 2)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/eigenvalues.png
+	lyxscale 10
+	scale 110
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Classic Versus Robust Eigenvalues
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: eigenvalues"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/distances.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(cov.fm,which.plot = 3)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/distances.png
+	lyxscale 10
+	scale 110
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Classic versus Robust Mahalanobis Distances
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: distances"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/ellipses.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(cov.fm,which.plot = 4)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/ellipses.png
+	lyxscale 10
+	scale 110
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Robust versus Classic Correlations Ellipses
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: ellipses"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/distanceDistance.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(cov.fm,which.plot = 5)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/distanceDistance.png
+	lyxscale 10
+	scale 110
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Robust versus Classic Mahalanobis Distances
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: distanceDistance"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Convergence of Algorithms for Computing Robust Estimates
+\end_layout
+
+\begin_layout Standard
+RobStatTM contains sophisticated optimization algorithms for computing robust
+ estimates, and convergence of the algorithms is determined by certain parameter
+s.
+ For example for the 
+\family typewriter
+lmrobM
+\family default
+ and 
+\family typewriter
+lmrobdetMM
+\family default
+ functions, the convergence parameters are set with the functions 
+\family typewriter
+lmrobM.control
+\family default
+ and 
+\family typewriter
+lmrobdet.control
+\family default
+, respectively, which contain a number of parameters that have default settings.
+ For example, 
+\family typewriter
+max.it
+\family default
+ with default value 
+\family typewriter
+max.it = 100
+\family default
+, determines the maximum number of iterations of an iterated weighted least
+ square (IRWLS) algorithm, and 
+\family typewriter
+rel.tol
+\family default
+ with a default value 
+\family typewriter
+rel.tol = 1e-07
+\family default
+, determines a relative change threshold.
+ See the book Section 4.5.2 for the algorithm used by 
+\family typewriter
+lmrobM
+\family default
+, including the relative change being measured, where step 4.3 uses for 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ the value of 
+\family typewriter
+rel.tol
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+When a RobStatTM function gives a warning message, for example
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\color red
+M-step did NOT converge.
+ Returning unconverged lm-estimate
+\end_layout
+
+\begin_layout Standard
+it does not mean that the estimate is necessarily bad, it is just that the
+ algorithm has not converged given the default values of 
+\family typewriter
+rel.tol
+\family default
+ and 
+\family typewriter
+max.it
+\family default
+, and the estimate is usually (but not always) quite viable.
+ Our recommendation is that when such a warning occurs, one should adjust
+ the parameter 
+\family typewriter
+rel.tol
+\family default
+ downward, and/or adjust the parameter 
+\family typewriter
+max.it
+\family default
+ upward.
+\end_layout
+
+\end_body
+\end_document
