@@ -1,5 +1,5 @@
 # ExactFit.R
-# EXAMPLE 5.5  
+# EXAMPLE 5.5
 
 library(RobStatTM)
 set.seed(1003)
@@ -15,6 +15,7 @@ x <- c(x1,x2)
 y <- c(y1,y2)
 out1 <- lm(y~x) # LSE
 out2 <- lmrobdetMM(y~x)  #MM
+# lmrobdetMM uses the default family = "mopt" and efficiency = .95
 
 plot(y ~ x, pch=19, col='gray30')
 abline(out1, lwd=3, col='blue3')

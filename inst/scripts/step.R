@@ -1,5 +1,5 @@
 # step.R
-# EXAMPLE 5.3  
+# EXAMPLE 5.3
 
 # NOTE:  The sequence of models in Table 5.2 of the book is correct,
 # but the RFPE values are wrong, and the ones computed below are correct.
@@ -7,6 +7,10 @@
 library(RobStatTM)
 
 cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+
+# We now recommend to use family "mopt" with efficiency = .95 as defaults
+# Using those defaults in the line above results in slightly different RFPE
+# numbers in the object out, but results in the same model selection
 
 set.seed(300)
 X <- matrix(rnorm(50*6), 50, 6)

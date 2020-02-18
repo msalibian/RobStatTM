@@ -1,5 +1,5 @@
 # mineral.R
-# EXAMPLE 5.1  
+# EXAMPLE 5.1
 # Figures 5.1 - 5.7
 # Table 5.1
 
@@ -7,6 +7,15 @@ library(RobStatTM)
 
 data(mineral)
 cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+
+# We now recommend to use family "mopt" with efficiency = .95 as defaults,
+# and these are now the defaults in lmrobdet.control().
+# Using these defaults in  the code line above produces following good results:
+# Decreases slope of ROB line in Figure 5.4 (less influence by outliers)
+# Just makes outlier 15 larger in Figure 5.5 (quite reasonable)
+# Just makes outlier 15 larger in Figure 5.6 (quite reasonable)
+# In Figure 5.7 the smaller LS and robust residuals are closer to one another
+# and some of the larger LS residuals are larger
 
 #LS fit
 mineralls <- lm(zinc ~  copper, data=mineral)

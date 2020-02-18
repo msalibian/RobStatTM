@@ -1,15 +1,18 @@
 # wood.R
-# EXAMPLE 5.2  
+# EXAMPLE 5.2
 # Figures 5.8 - 5.12
 # wood data from robustbase
 
 # N.B. The 4 figures produced by the code below are very similar to Figures
-# 5.8 - 5.12 in the book, except the vertical scales are different due to 
+# 5.8 - 5.12 in the book, except the vertical scales are different due to
 # the use of the plot method
 
 library(RobStatTM)
 data(wood, package='robustbase')
 cont <- lmrobdet.control(bb = 0.5, efficiency = 0.85, family = "bisquare")
+
+# We now recommend to use family "mopt" with efficiency = .95 as defaults
+# Using those  results in almost no change in Figures 5.11-5.12
 
 #MM fit
 woodMM <- lmrobdetMM(y ~ ., data=wood, control=cont)
