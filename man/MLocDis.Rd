@@ -5,7 +5,8 @@
 \alias{MLocDis}
 \title{Robust univariate location and scale M-estimators}
 \usage{
-locScaleM(x, psi = "mopt", eff = 0.95, maxit = 50, tol = 1e-04)
+locScaleM(x, psi = "mopt", eff = 0.95, maxit = 50, tol = 1e-04,
+  na.rm = FALSE)
 }
 \arguments{
 \item{x}{a vector of univariate observations}
@@ -20,6 +21,9 @@ locScaleM(x, psi = "mopt", eff = 0.95, maxit = 50, tol = 1e-04)
 \item{maxit}{maximum number of iterations allowed.}
 
 \item{tol}{tolerance to decide convergence of the iterative algorithm.}
+
+\item{na.rm}{a logical value indicating whether \code{NA} values should be stripped before
+the computation proceeds. Defaults to \code{FALSE}}
 }
 \value{
 A list with the following components:

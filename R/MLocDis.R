@@ -16,6 +16,8 @@
 #' \code{psi} = "opt" or "mopt".
 #' @param maxit maximum number of iterations allowed.
 #' @param tol tolerance to decide convergence of the iterative algorithm.
+#' @param na.rm	a logical value indicating whether \code{NA} values should be stripped before
+#' the computation proceeds. Defaults to \code{FALSE}
 #'
 #' @return A list with the following components:
 #' \item{mu}{The location estimate}
@@ -35,12 +37,19 @@
 #' r2 <- c(rnorm(135, sd=1.5), rnorm(15, mean=-10, sd=.5))
 #' locScaleM(r2)
 #'
-locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4) {
+locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4, na.rm = FALSE) {
   kpsi <- switch(psi, bisquare = 1, huber = 2, opt = 3, mopt = 4, 5)
   # if (psi=="bisquare") kpsi=1
   # if (psi=="huber") kpsi=2
   # } else {print(c(psi, " No such psi")); kpsi=0
   # }
+  # Next 6 lines taken from mean.default()
+  if (!is.numeric(x)) {
+    warning("argument is not numeric: returning NA")
+    return(NA_real_)
+  }
+  if (na.rm)
+    x <- x[!is.na(x)]
   if(kpsi == 5) stop(paste0(psi, ' - No such rho function'))
   if(kpsi %in% c(1, 2)) { # Start of Ricardo's code
     kBis=c(3.44, 3.88, 4.685)
