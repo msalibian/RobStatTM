@@ -18,9 +18,9 @@ Authors@R: c(person("Matias", "Salibian-Barrera", role = c("cre"), email = "mati
 Description: Companion package for the book: "Robust Statistics: Theory and Methods, second edition", <http://www.wiley.com/go/maronna/robust>.  This package contains code that implements the robust estimators discussed in the recent second edition of the book above, as well as the scripts reproducing all the examples in the book.
 Depends: R (>= 3.5.0), fit.models
 Imports: stats, graphics, utils, methods, DEoptimR, pyinit, rrcov, robustbase, shiny, shinyjs, PerformanceAnalytics, DT, ggplot2, gridExtra, xts
-Suggests: knitr
+Suggests: knitr, R.rsp
 LazyData: yes
 License: GPL (>= 3)
 RoxygenNote: 6.1.1
 Encoding: UTF-8
-VignetteBuilder: knitr
+VignetteBuilder: knitr, R.rsp
