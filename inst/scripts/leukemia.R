@@ -41,7 +41,12 @@ legend(x="topleft",legend=c("weighted M","maximum likelihood"), pch=c(1,2))
 leukBY <- logregBY(Xleuk, yleuk, intercept=1)
 
 #cubif fit
-leukCUBIF <- robust::glmRob(formula = y ~ wbc + ag, family = binomial, data = leuk.dat, fit.method = "cubif")
+ufact <- 1.1
+ctrl <-  robcbi::cubinf.control(ufact=ufact)
+yy <- leuk.dat$y
+XX <- cbind(rep(1, length(yy)), leuk.dat$wbc, leuk.dat$ag)
+leukCUBIF <- robcbi::cubinf(XX, yy, family=binomial(), null.dev = FALSE, control=ctrl)
+
 
 #weighted ML fit
 leukWML <- logregWML(Xleuk, yleuk, intercept=1)

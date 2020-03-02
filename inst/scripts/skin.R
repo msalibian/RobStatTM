@@ -37,7 +37,12 @@ legend(x="topleft", legend=c("weighted M","maximum likelihood"), pch=c(1,2))
 skinBY <- logregBY(Xskin, yskin, intercept=1)
 
 #cubif fit
-skinCUBIF <- robust::glmRob(formula =vasoconst~logVOL+logRATE, family = binomial, data = skin, fit.method = "cubif")
+ufact <- 1.1
+ctrl <-  robcbi::cubinf.control(ufact=ufact)
+yy <- skin$vasoconst
+XX <- cbind(rep(1, length(yy)), skin$logVOL, skin$logRATE)
+skinCUBIF <- robcbi::cubinf(XX, yy, family=binomial(), null.dev = FALSE, control=ctrl)
+
 
 # weighted ML fit
 skinWML <- logregWML(Xskin, yskin, intercept=1)
