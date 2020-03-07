@@ -3,7 +3,7 @@
 # Breslow data
 
 library(RobStatTM)
-data(breslow.dat, package='robust')
+data(breslow.dat) 
 
 
 #CUBIF Estimator

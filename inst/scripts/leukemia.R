@@ -7,7 +7,7 @@
 library(RobStatTM)
 
 # Must install robust
-data(leuk.dat, package='robust')
+data(leuk.dat) 
 
 Xleuk <-as.matrix( leuk.dat[, 1:2] )
 yleuk <- leuk.dat$y
