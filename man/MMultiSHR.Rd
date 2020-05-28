@@ -5,7 +5,7 @@
 \alias{MMultiSHR}
 \title{MM robust multivariate location and scatter estimator}
 \usage{
-covRobMM(X, maxit = 50, tolpar = 1e-04, cor = FALSE)
+covRobMM(X, maxit = 50, tolpar = 1e-04, corr = FALSE)
 }
 \arguments{
 \item{X}{a data matrix with observations in rows.}
@@ -14,16 +14,17 @@ covRobMM(X, maxit = 50, tolpar = 1e-04, cor = FALSE)
 
 \item{tolpar}{Tolerance to decide converngence.}
 
-\item{cor}{A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.}
+\item{corr}{A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.}
 }
 \value{
 A list with class \dQuote{covRob} containing the following elements
-\item{mu}{The location estimate}
-\item{V}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution}
 \item{center}{The location estimate. Same as \code{mu} above.}
 \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
 \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
-\item{dista}{Robust Mahalanobis distances}
+\item{dist}{Robust Mahalanobis distances}
+\item{weights}{weights}
+\item{mu}{The location estimate}
+\item{V}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution}
 }
 \description{
 This function computes an MM robust estimator for multivariate location and scatter with the "SHR" loss function.
