@@ -18,12 +18,12 @@ covRobMM(X, maxit = 50, tolpar = 1e-04, corr = FALSE)
 }
 \value{
 A list with class \dQuote{covRob} containing the following elements
-\item{center}{The location estimate. Same as \code{mu} above.}
+\item{center}{The location estimate.}
 \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
 \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 \item{dist}{Robust Mahalanobis distances}
-\item{weights}{weights}
-\item{mu}{The location estimate}
+\item{wts}{weights}
+\item{mu}{The location estimate. Same as \code{center} above.}
 \item{V}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution}
 }
 \description{

@@ -22,12 +22,13 @@
 #' @param corr A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.
 #'
 #' @return A list with class \dQuote{covClassic} with the following components:
-#' \item{center}{The location estimate. Same as \code{mu} above.}
-#' \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+#' \item{center}{The location estimate.}
+#' \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution.}
 #' \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dist}{Robust Mahalanobis distances}
-#' \item{mu}{The location estimate}
-#' \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
+#' \item{wts}{weights}
+#' \item{mu}{The location estimate. Same as \code{center} above.}
+#' \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{cov} above.}
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
@@ -56,7 +57,7 @@ if (type=="auto") {
   mu=resu$mu; V=resu$V
 
   # Feed list into object and give class
-  z <- list(center=mu, cov=V, cor=resu$cor, dist=mahalanobis(X,mu,V), mu=mu, V=V, corr=FALSE)
+  z <- list(center=mu, cov=V, cor=resu$cor, dist=mahalanobis(X,mu,V), wts = resu$wts, mu=mu, V=V, corr=FALSE)
   class(z) <- c("covRob")
   return(z)
 }
@@ -84,13 +85,13 @@ if (type=="auto") {
 #' @param corr A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.
 #'
 #' @return A list with class \dQuote{covRob} containing the following elements:
-#' \item{center}{The location estimate. Same as \code{mu} above.}
-#' \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+#' \item{center}{The location estimate.}
+#' \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution.}
 #' \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dist}{Robust Mahalanobis distances.}
-#' \item{weights}{weights}
-#' \item{mu}{The location estimate}
-#' \item{V}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution}
+#' \item{wts}{weights}
+#' \item{mu}{The location estimate. Same as \code{center} above.}
+#' \item{V}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution.  Same as \code{cov} above.}
 #' \item{sig}{sig}
 #' \item{gamma}{Final value of the constant gamma that regulates the efficiency.}
 #'
@@ -187,7 +188,7 @@ dista=dista0}
     cor.mat <- cov2cor(V)
   } else cor.mat <- NULL
 
-  z <- list(center=mu, cov=V, cor=cor.mat, dist=dista, weights=w, mu=mu, V=V, sig=sig, gamma=gamma)
+  z <- list(center=mu, cov=V, cor=cor.mat, dist=dista, wts=w, mu=mu, V=V, sig=sig, gamma=gamma)
   class(z) <- c("covRob")
   return(z)
 }
@@ -327,12 +328,12 @@ rhoinv <- function(x)
 #' @param corr A logical value. If \code{TRUE} a correlation matrix is included in the element \code{cor} of the returned object. Defaults to \code{FALSE}.
 #'
 #' @return A list with class \dQuote{covRob} containing the following elements
-#' \item{center}{The location estimate. Same as \code{mu} above.}
+#' \item{center}{The location estimate.}
 #' \item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
 #' \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dist}{Robust Mahalanobis distances}
-#' \item{weights}{weights}
-#' \item{mu}{The location estimate}
+#' \item{wts}{weights}
+#' \item{mu}{The location estimate. Same as \code{center} above.}
 #' \item{V}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution}
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
@@ -388,7 +389,7 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, corr=FALSE) {
     cor.mat <- cov2cor(tmp$V)
   } else cor.mat <- NULL
 
-  z <- list(center=mu0, cov=tmp$V, cor=cor.mat, dist=dista, weights=w, mu=mu0, V=tmp$V)
+  z <- list(center=mu0, cov=tmp$V, cor=cor.mat, dist=dista, wts=w, mu=mu0, V=tmp$V)
   class(z) <- c("covRob")
   return(z)
 }
@@ -704,8 +705,8 @@ rhoinv <- function(x)
 #'
 #' @return a list with class \dQuote{covClassic} containing the following elements:
 #' \item{call}{an image of the call that produced the object with all the arguments named.}
-#' \item{cov}{a numeric matrix containing the estimate of the covariance/correlation matrix.}
 #' \item{center}{a numeric vector containing the estimate of the location vector.}
+#' \item{cov}{a numeric matrix containing the estimate of the covariance/correlation matrix.}
 #' \item{dist}{a numeric vector containing the squared Mahalanobis distances. Only present if \code{distance = TRUE} in the \code{call}.}
 #' \item{corr}{a logical flag.  If \code{corr = TRUE} then \code{cov}
 #' contains an estimate of the correlation matrix of \code{x}.}
@@ -758,7 +759,7 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
   if(distance)
     names(dist) <- rowNames
 
-  ans <- list(call = the.call, cov = covmat, center = center, dist = dist, corr = corr)
+  ans <- list(call = the.call, center = center, cov = covmat, dist = dist, corr = corr)
   oldClass(ans) <- c("covClassic")
   ans
 }

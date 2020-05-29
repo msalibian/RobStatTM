@@ -23,12 +23,13 @@ of variables is greater than or equal to 10, and "MM" otherwise.}
 }
 \value{
 A list with class \dQuote{covClassic} with the following components:
-\item{center}{The location estimate. Same as \code{mu} above.}
-\item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{V} above.}
+\item{center}{The location estimate.}
+\item{cov}{The scatter matrix estimate, scaled for consistency at the normal distribution.}
 \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 \item{dist}{Robust Mahalanobis distances}
-\item{mu}{The location estimate}
-\item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution}
+\item{wts}{weights}
+\item{mu}{The location estimate. Same as \code{center} above.}
+\item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{cov} above.}
 }
 \description{
 This function computes robust estimators for multivariate location and scatter.
