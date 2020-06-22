@@ -57,7 +57,7 @@ if (type=="auto") {
   mu=resu$mu; V=resu$V
 
   # Feed list into object and give class
-  z <- list(center=mu, cov=V, cor=resu$cor, dist=mahalanobis(X,mu,V), wts = resu$wts, mu=mu, V=V, corr=FALSE)
+  z <- list(center=mu, cov=V, cor=resu$cor, dist=mahalanobis(X,mu,V), wts = resu$wts, mu=mu, V=V)
   class(z) <- c("covRob")
   return(z)
 }
@@ -704,12 +704,11 @@ rhoinv <- function(x)
 #' @param unbiased a logical flag. If \code{TRUE} the unbiased estimator is returned (computed with denominator equal to \code{n-1}), else the MLE (computed with denominator equal to \code{n}) is returned.
 #'
 #' @return a list with class \dQuote{covClassic} containing the following elements:
-#' \item{call}{an image of the call that produced the object with all the arguments named.}
 #' \item{center}{a numeric vector containing the estimate of the location vector.}
-#' \item{cov}{a numeric matrix containing the estimate of the covariance/correlation matrix.}
+#' \item{cov}{a numeric matrix containing the estimate of the covariance matrix.}
+#' \item{cor}{a numeric matrix containing the estimate of the correlation matrix if the argument \code{corr = TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dist}{a numeric vector containing the squared Mahalanobis distances. Only present if \code{distance = TRUE} in the \code{call}.}
-#' \item{corr}{a logical flag.  If \code{corr = TRUE} then \code{cov}
-#' contains an estimate of the correlation matrix of \code{x}.}
+#' \item{call}{an image of the call that produced the object with all the arguments named.}
 #'
 #' @note Originally, and in S-PLUS, this function was called \code{cov}; it has
 #' been renamed, as that did mask the function in the standard package \pkg{stats}.
@@ -750,7 +749,9 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
 
   if(corr) {
     std <- sqrt(diag(covmat))
-    covmat <- covmat / (std %o% std)
+    cormat <- covmat / (std %o% std)
+  } else { 
+    cormat <- NULL
   }
 
   dimnames(covmat) <- list(colNames, colNames)
@@ -759,7 +760,7 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
   if(distance)
     names(dist) <- rowNames
 
-  ans <- list(call = the.call, center = center, cov = covmat, dist = dist, corr = corr)
+  ans <- list(center = center, cov = covmat, cor=cormat, dist = dist, call = the.call)
   oldClass(ans) <- c("covClassic")
   ans
 }
