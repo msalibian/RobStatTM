@@ -4,7 +4,7 @@
 \alias{lmrobdetMM.RFPE}
 \title{Robust Final Prediction Error}
 \usage{
-lmrobdetMM.RFPE(object, scale = NULL)
+lmrobdetMM.RFPE(object, scale = NULL, bothVals = FALSE)
 }
 \arguments{
 \item{object}{the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdetMM}}.}
@@ -12,9 +12,13 @@ lmrobdetMM.RFPE(object, scale = NULL)
 \item{scale}{a numeric value specifying the scale estimate used to compute the RFPE. Usually this 
 should be the scale estimate from an encompassing model. If \code{NULL}, the scale estimate in 
 \code{object} is used.}
+
+\item{bothVals}{a logical value: if \code{TRUE} the function returns the two terms of the RFPE expression separately (equation 
+(5.39) in the reference book); otherwise, the value of RFPE is returned.}
 }
 \value{
-the robust final prediction error (numeric).
+If the argument \code{bothVals} is \code{FALSE}, the robust final prediction error (numeric). Otherwise,
+the two terms of the RFPE expression are returned in a numeric vector.
 }
 \description{
 This function computes the robust Final Prediction Errors (RFPE) for a robust regression fit using M-estimates.

@@ -6,16 +6,19 @@
 #' @param scale a numeric value specifying the scale estimate used to compute the RFPE. Usually this 
 #' should be the scale estimate from an encompassing model. If \code{NULL}, the scale estimate in 
 #' \code{object} is used. 
+#' @param bothVals a logical value: if \code{TRUE} the function returns the two terms of the RFPE expression separately (equation 
+#' (5.39) in the reference book); otherwise, the value of RFPE is returned. 
 #'
-#' @return the robust final prediction error (numeric).
-#'
+#' @return If the argument \code{bothVals} is \code{FALSE}, the robust final prediction error (numeric). Otherwise,
+#' the two terms of the RFPE expression are returned in a numeric vector.
+#' 
 #' @rdname lmrobdetMM.RFPE
 #' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #' @references \url{http://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{lmrobdetMM}}
 #'
 #' @export
-lmrobdetMM.RFPE <- function(object, scale = NULL)
+lmrobdetMM.RFPE <- function(object, scale = NULL, bothVals = FALSE)
 {
   if (!object$converged)
     warning("The algorithm did not converge, inference is not recommended.")
@@ -33,7 +36,11 @@ lmrobdetMM.RFPE <- function(object, scale = NULL)
   b2 <- p * mean(rhoprime(u=res, family = object$control$family, cc = object$control$tuning.psi, standardize=TRUE)^2)
   d2 <- mean(rhoprime2(u=res, family = object$control$family, cc = object$control$tuning.psi, standardize=TRUE))
   if (d2 <= 0) return(NA)
-  return( (a2 + b2/d2/length(res)) ) # (a + b/d)*6 / tun^2 )
+  if(!bothVals) {
+    return( (a2 + b2/d2/length(res)) ) # (a + b/d)*6 / tun^2 )
+  } else {
+    return( c(a2, b2/d2/length(res)) )
+  }
 }
 
 
