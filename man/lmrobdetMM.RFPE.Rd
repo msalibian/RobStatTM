@@ -18,7 +18,7 @@ should be the scale estimate from an encompassing model. If \code{NULL}, the sca
 }
 \value{
 If the argument \code{bothVals} is \code{FALSE}, the robust final prediction error (numeric). Otherwise,
-the two terms of the RFPE expression are returned in a numeric vector.
+the two terms of the RFPE expression are returned separately in a list.
 }
 \description{
 This function computes the robust Final Prediction Errors (RFPE) for a robust regression fit using M-estimates.

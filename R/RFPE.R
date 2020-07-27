@@ -10,7 +10,7 @@
 #' (5.39) in the reference book); otherwise, the value of RFPE is returned. 
 #'
 #' @return If the argument \code{bothVals} is \code{FALSE}, the robust final prediction error (numeric). Otherwise,
-#' the two terms of the RFPE expression are returned in a numeric vector.
+#' the two terms of the RFPE expression are returned separately in a list.
 #' 
 #' @rdname lmrobdetMM.RFPE
 #' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
@@ -39,7 +39,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL, bothVals = FALSE)
   if(!bothVals) {
     return( (a2 + b2/d2/length(res)) ) # (a + b/d)*6 / tun^2 )
   } else {
-    return( c(a2, b2/d2/length(res)) )
+    return( list(a2, b2/d2/length(res)) )
   }
 }
 
