@@ -44,6 +44,7 @@
 #' tmp$mu
 #'
 covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4, corr=FALSE)  {
+  cl <- match.call()
 if (type=="auto") {
   p=dim(X)[2]
   if (p<10) {type="MM"
@@ -57,7 +58,8 @@ if (type=="auto") {
   mu=resu$mu; V=resu$V
 
   # Feed list into object and give class
-  z <- list(center=mu, cov=V, cor=resu$cor, dist=mahalanobis(X,mu,V), wts = resu$wts, mu=mu, V=V)
+  z <- list(center=mu, cov=V, cor=resu$cor, dist=mahalanobis(X,mu,V), 
+            wts = resu$wts, call=cl, mu=mu, V=V)
   class(z) <- c("covRob")
   return(z)
 }
@@ -109,6 +111,7 @@ if (type=="auto") {
 #'
 covRobRocke <- RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=2, maxit=50, tol=1e-4, corr=FALSE)
 {
+  cl <- match.call()
   d <- dim(X)
   n <- d[1]
   p <- d[2]
@@ -188,7 +191,8 @@ dista=dista0}
     cor.mat <- cov2cor(V)
   } else cor.mat <- NULL
 
-  z <- list(center=mu, cov=V, cor=cor.mat, dist=dista, wts=w, mu=mu, V=V, sig=sig, gamma=gamma)
+  z <- list(center=mu, cov=V, cor=cor.mat, dist=dista, wts=w, call = cl, 
+            mu=mu, V=V, sig=sig, gamma=gamma)
   class(z) <- c("covRob")
   return(z)
 }
@@ -349,6 +353,7 @@ rhoinv <- function(x)
 #' tmp$mu
 #'
 covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, corr=FALSE) {
+  cl <- match.call()
   d <- dim(X)
   n <- d[1]; p <- d[2]
   delta <- 0.5*(1-p/n) #max. breakdown
@@ -389,7 +394,8 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, corr=FALSE) {
     cor.mat <- cov2cor(tmp$V)
   } else cor.mat <- NULL
 
-  z <- list(center=mu0, cov=tmp$V, cor=cor.mat, dist=dista, wts=w, mu=mu0, V=tmp$V)
+  z <- list(center=mu0, cov=tmp$V, cor=cor.mat, dist=dista, wts=w, 
+            call = cl, mu=mu0, V=tmp$V)
   class(z) <- c("covRob")
   return(z)
 }
@@ -761,7 +767,8 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
     names(dist) <- rowNames
 
   ans <- list(center = center, cov = covmat, cor=cormat, dist = dist, call = the.call)
-  oldClass(ans) <- c("covClassic")
+  # oldClass(ans) <- c("covClassic")
+  class(ans) <- c("covClassic")
   ans
 }
 
@@ -770,32 +777,45 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
 #' @export
 summary.covRob <- function (object, ...)
 {
+  if( is.null(object$cor) ) {
     evals <- eigen(object$cov, symmetric = TRUE, only.values = TRUE)$values
     names(evals) <- paste("Eval.", 1:length(evals))
     object$evals <- evals
-    object <- object[c("cov", "center", "evals", "dist")]
-    oldClass(object) <- "summary.covRob"
-    object
+    object <- object[c("call", "cov", "center", "evals", "dist")]
+  } else {
+    evals <- eigen(object$cor, symmetric = TRUE, only.values = TRUE)$values
+    names(evals) <- paste("Eval.", 1:length(evals))
+    object$evals <- evals
+    object <- object[c("call", "cor", "center", "evals")]
+  }
+  # oldClass(object) <- "summary.covRob"
+  class(object) <- "summary.covRob"
+  object
 }
 
+#' @export
 print.summary.covRob <- function (x, digits = max(3, getOption("digits") - 3), print.distance = TRUE,
-    ...)
-{
+    ...) {
+  if( is.null(x$cor) ) {
     cat("Robust Estimates of Covariance: \n")
     print(x$cov, digits = digits, ...)
-
-    cat("\n Robust Estimates of Location: \n")
-    print(x$center, digits = digits, ...)
-
-    cat("\nEigenvalues: \n")
-    print(x$evals, digits = digits, ...)
-
-    if (print.distance && !is.null(x$dist)) {
-        cat("\nSquared Mahalanobis Distances: \n")
-        print(x$dist, digits = digits, ...)
-    }
-
-    invisible(x)
+  } else {
+    cat("Robust Estimates of Correlation: \n")
+    print(x$cor, digits = digits, ...)
+  }
+  
+  cat("\n Robust Estimates of Location: \n")
+  print(x$center, digits = digits, ...)
+  
+  cat("\nEigenvalues: \n")
+  print(x$evals, digits = digits, ...)
+  
+  if (print.distance && !is.null(x$dist)) {
+    cat("\nSquared Mahalanobis Distances: \n")
+    print(x$dist, digits = digits, ...)
+  }
+  
+  invisible(x)
 }
 
 # These were taken from the robust package
@@ -803,24 +823,38 @@ print.summary.covRob <- function (x, digits = max(3, getOption("digits") - 3), p
 #' @export
 summary.covClassic <- function (object, ...)
 {
+  if( is.null(object$cor) ) {
     evals <- eigen(object$cov, symmetric = TRUE, only.values = TRUE)$values
     names(evals) <- paste("Eval.", 1:length(evals))
     object$evals <- evals
-
-    object <- object[c("call", "cov", "center", "evals", "dist",
-        "corr")]
-
-    oldClass(object) <- "summary.covClassic"
+    object <- object[c("call", "cov", "center", "evals", "dist")]
+  } else {
+    evals <- eigen(object$cor, symmetric = TRUE, only.values = TRUE)$values
+    names(evals) <- paste("Eval.", 1:length(evals))
+    object$evals <- evals
+    object <- object[c("call", "cor", "center", "evals")]
+  }
+    # oldClass(object) <- "summary.covClassic"
+    class(object) <- "summary.covClassic"
     object
 }
 
+#' @export
 print.summary.covClassic <- function (x, digits = max(3, getOption("digits") - 3), print.distance = TRUE,
     ...)
 {
-    if (x$corr)
-        cat("\nClassical Estimate of Correlation: \n")
-    else cat("\nClassical Estimate of Covariance: \n")
+  if( is.null(x$cor) ) {
+    cat("Classical Estimates of Covariance: \n")
     print(x$cov, digits = digits, ...)
+  } else {
+    cat("Classical Estimates of Correlation: \n")
+    print(x$cor, digits = digits, ...)
+  }
+    # 
+    # if (x$corr)
+    #     cat("\nClassical Estimate of Correlation: \n")
+    # else cat("\nClassical Estimate of Covariance: \n")
+    # print(x$cov, digits = digits, ...)
 
     cat("\nClassical Estimate of Location: \n")
     print(x$center, digits = digits, ...)

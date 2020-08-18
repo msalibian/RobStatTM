@@ -3,6 +3,8 @@
 S3method(drop1,lmrobdetMM)
 S3method(print,lmrobdetMM)
 S3method(print,prcompRob)
+S3method(print,summary.covClassic)
+S3method(print,summary.covRob)
 S3method(print,summary.lmrobdetMM)
 S3method(print,summary.prcompRob)
 S3method(summary,covClassic)
