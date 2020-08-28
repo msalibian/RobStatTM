@@ -5,4 +5,5 @@
 ^\.Rproj\.user$
 vignettes/VignetteRobStatTM.lyx
 vignettes/VignetteRobStatTM.R
+^README\.*
 
