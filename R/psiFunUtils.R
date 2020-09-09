@@ -6,6 +6,7 @@ psiSupportFromTuningConst <- function(a, family.name)
 
   switch(family.name,
     bisquare = c(0, a[1]),
+    huber = c(0, +Inf), 
     mopt = psiSupportFromTuningConst_modopt(a[1]),
     opt = psiSupportFromTuningConst_optimal(a[1])
   )
