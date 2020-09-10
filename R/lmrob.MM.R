@@ -12,6 +12,7 @@
 		  ## otherwise keep
 		  psi)
     nms <- if(redescending) .Mpsi.R.names else .Mpsi.names
+    # nms <- .Mpsi.names
     if (is.na(i <- pmatch(psi, nms)))
 	stop(gettextf("'psi' should be one of %s", paste(dQuote(nms), collapse=", ")),
 	     domain = NA)
@@ -75,7 +76,7 @@
 
 
 lmrob.control <-
-    function(setting, seed = NULL, nResample = 500,
+    function(seed = NULL, nResample = 500,
 	     tuning.chi = NULL, bb = 0.5,
 	     tuning.psi = NULL, max.it = 50,
 	     groups = 5, n.group = 400, k.fast.s = 1, best.r.s = 2,
@@ -100,29 +101,31 @@ lmrob.control <-
              ...)
 {
     p.ok <- missing(psi) # if(p.ok) psi does not need regularization
-    if (!missing(setting)) {
-        if (setting %in% c('KS2011', 'KS2014')) {
-            if (missing(method)) method <- 'SMDM'
-	    psi <- if(p.ok) 'lqq' else .regularize.Mpsi(psi) ; p.ok <- TRUE
-            if (missing(max.it)) max.it <- 500
-            if (missing(k.max)) k.max <- 2000
-            if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
-            if (setting == 'KS2014') {
-                if (missing(best.r.s)) best.r.s <- 20
-                if (missing(k.fast.s)) k.fast.s <- 2
-                if (missing(nResample)) nResample <- 1000
-            }
-        } else {
-            warning("Unknown setting '", setting, "'. Using defaults.")
-        }
-    } else {
-	if(p.ok && grepl('D', method)) psi <- 'lqq'
-	if (missing(cov) || is.null(cov))
-	    cov <- if(method %in% c('SM', 'MM')) ".vcov.avar1" else ".vcov.w"
-    }
+#     if (!missing(setting)) {
+#         if (setting %in% c('KS2011', 'KS2014')) {
+#             if (missing(method)) method <- 'SMDM'
+# 	    psi <- if(p.ok) 'lqq' else .regularize.Mpsi(psi) ; p.ok <- TRUE
+#             if (missing(max.it)) max.it <- 500
+#             if (missing(k.max)) k.max <- 2000
+#             if (missing(cov) || is.null(cov)) cov <- '.vcov.w'
+#             if (setting == 'KS2014') {
+#                 if (missing(best.r.s)) best.r.s <- 20
+#                 if (missing(k.fast.s)) k.fast.s <- 2
+#                 if (missing(nResample)) nResample <- 1000
+#             }
+#         } else {
+#             warning("Unknown setting '", setting, "'. Using defaults.")
+#         }
+#     } else {
+# 	if(p.ok && grepl('D', method)) psi <- 'lqq'
+# 	if (missing(cov) || is.null(cov))
+# 	    cov <- if(method %in% c('SM', 'MM')) ".vcov.avar1" else ".vcov.w"
+#     }
+    if (missing(cov) || is.null(cov))
+      cov <- if(method %in% c('SM', 'MM')) ".vcov.avar1" else ".vcov.w"
     if(!p.ok) psi <- .regularize.Mpsi(psi)
     subsampling <- match.arg(subsampling)
-
+    
     ## in ggw, lqq:  if tuning.{psi|chi}  are non-standard, calculate coefficients:
     compute.const <- (psi %in% c('ggw', 'lqq'))
 
@@ -136,7 +139,7 @@ lmrob.control <-
     else if(compute.const)
 	tuning.psi <- .psi.const(tuning.psi, psi)
 
-    c(list(setting = if (missing(setting)) NULL else setting,
+    c(list(setting = NULL, #setting = if (missing(setting)) NULL else setting,
            seed = as.integer(seed), nResample=nResample, psi=psi,
            tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
            max.it=max.it, groups=groups, n.group=n.group,
