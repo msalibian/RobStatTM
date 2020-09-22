@@ -786,7 +786,7 @@ summary.covRob <- function (object, ...)
     evals <- eigen(object$cor, symmetric = TRUE, only.values = TRUE)$values
     names(evals) <- paste("Eval.", 1:length(evals))
     object$evals <- evals
-    object <- object[c("call", "cor", "center", "evals")]
+    object <- object[c("call", "cov", "cor", "center", "evals")]
   }
   # oldClass(object) <- "summary.covRob"
   class(object) <- "summary.covRob"
@@ -832,7 +832,7 @@ summary.covClassic <- function (object, ...)
     evals <- eigen(object$cor, symmetric = TRUE, only.values = TRUE)$values
     names(evals) <- paste("Eval.", 1:length(evals))
     object$evals <- evals
-    object <- object[c("call", "cor", "center", "evals")]
+    object <- object[c("call", "cov", "cor", "center", "evals")]
   }
     # oldClass(object) <- "summary.covClassic"
     class(object) <- "summary.covClassic"
