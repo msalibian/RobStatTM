@@ -1298,8 +1298,8 @@ lmrobM <- function(formula, data, subset, weights, na.action,
 #' @aliases rob.linear.test lmrobLinTest
 #' @rdname rob.linear.test
 #'
-#' @param object1 an \code{lmrob} object with the fit corresponding to the complete model
-#' @param object2 an \code{lmrob} object with the fit corresponding to the model
+#' @param object1 an \code{lmrobdetMM} or \code{lmrobM} object with the fit corresponding to the complete model
+#' @param object2 an \code{lmrobdetMM} or \code{lmrobM} object with the fit corresponding to the model
 #' restricted under the null linear hypothesis.
 #'
 #' @return A list with the following components: c("test","chisq.pvalue","f.pvalue","df")

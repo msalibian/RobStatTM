@@ -8,9 +8,9 @@
 lmrobLinTest(object1, object2)
 }
 \arguments{
-\item{object1}{an \code{lmrob} object with the fit corresponding to the complete model}
+\item{object1}{an \code{lmrobdetMM} or \code{lmrobM} object with the fit corresponding to the complete model}
 
-\item{object2}{an \code{lmrob} object with the fit corresponding to the model
+\item{object2}{an \code{lmrobdetMM} or \code{lmrobM} object with the fit corresponding to the model
 restricted under the null linear hypothesis.}
 }
 \value{
