@@ -4,8 +4,18 @@
 \alias{refine.sm}
 \title{IRWLS iterations for S- or M-estimators}
 \usage{
-refine.sm(x, y, initial.beta, initial.scale, k = 50, conv = 1, b, cc,
-  family, step = "M")
+refine.sm(
+  x,
+  y,
+  initial.beta,
+  initial.scale,
+  k = 50,
+  conv = 1,
+  b,
+  cc,
+  family,
+  step = "M"
+)
 }
 \arguments{
 \item{x}{design matrix}

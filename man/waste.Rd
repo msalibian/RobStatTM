@@ -4,7 +4,9 @@
 \name{waste}
 \alias{waste}
 \title{Waste data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Golueke, C.G. and McGauhey, P.H. (1970), Comprehensive Studies of
 Solid Waste Management, US Department of Health, Education and Welfare, Public

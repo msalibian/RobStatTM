@@ -4,7 +4,9 @@
 \name{biochem}
 \alias{biochem}
 \title{Biochem data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Seber, G.A.F. (1984), Multivariate Observations. New York: John Wiley.
 }

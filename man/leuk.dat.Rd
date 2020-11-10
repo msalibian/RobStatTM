@@ -4,7 +4,9 @@
 \name{leuk.dat}
 \alias{leuk.dat}
 \title{Leukemia Data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Cook, R.D. and Weisberg, S. (1982). Residuals and Influence in Regression, Chapman
 and Hall; Johnson, W. (1985), Influence measures for logistic regression: another point of

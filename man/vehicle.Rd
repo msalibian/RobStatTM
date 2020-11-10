@@ -4,7 +4,9 @@
 \name{vehicle}
 \alias{vehicle}
 \title{Vehicle data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Turing Institute, Glasgow, and are available at https://archive.ics.uci.edu/ml/datasets/Statlog+(Vehicle+Silhouettes).
 }

@@ -5,8 +5,7 @@
 \alias{MLocDis}
 \title{Robust univariate location and scale M-estimators}
 \usage{
-locScaleM(x, psi = "mopt", eff = 0.95, maxit = 50, tol = 1e-04,
-  na.rm = FALSE)
+locScaleM(x, psi = "mopt", eff = 0.95, maxit = 50, tol = 1e-04, na.rm = FALSE)
 }
 \arguments{
 \item{x}{a vector of univariate observations}

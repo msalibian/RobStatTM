@@ -5,8 +5,16 @@
 \alias{RockeMulti}
 \title{Rocke's robust multivariate location and scatter estimator}
 \usage{
-covRobRocke(X, initial = "K", maxsteps = 5, propmin = 2, qs = 2,
-  maxit = 50, tol = 1e-04, corr = FALSE)
+covRobRocke(
+  X,
+  initial = "K",
+  maxsteps = 5,
+  propmin = 2,
+  qs = 2,
+  maxit = 50,
+  tol = 1e-04,
+  corr = FALSE
+)
 }
 \arguments{
 \item{X}{a data matrix with observations in rows.}

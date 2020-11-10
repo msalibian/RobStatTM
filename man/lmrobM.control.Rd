@@ -4,9 +4,18 @@
 \alias{lmrobM.control}
 \title{Tuning parameters for lmrobM}
 \usage{
-lmrobM.control(bb = 0.5, efficiency = 0.99, family = "opt",
-  tuning.chi, tuning.psi, max.it = 100, rel.tol = 1e-07,
-  mscale_tol = 1e-06, mscale_maxit = 50, trace.lev = 0)
+lmrobM.control(
+  bb = 0.5,
+  efficiency = 0.99,
+  family = "opt",
+  tuning.chi,
+  tuning.psi,
+  max.it = 100,
+  rel.tol = 1e-07,
+  mscale_tol = 1e-06,
+  mscale_maxit = 50,
+  trace.lev = 0
+)
 }
 \arguments{
 \item{bb}{tuning constant (between 0 and 1/2) for the M-scale used to compute the residual

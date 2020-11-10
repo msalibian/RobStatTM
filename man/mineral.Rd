@@ -4,7 +4,9 @@
 \name{mineral}
 \alias{mineral}
 \title{Mineral data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Smith, R.E., Campbell, N.A. and Lichfield, A. (1984), Multivariate
 statistical techniques applied to pisolitic laterite geochemistry at Golden Grove,

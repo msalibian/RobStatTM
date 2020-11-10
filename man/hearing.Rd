@@ -4,7 +4,9 @@
 \name{hearing}
 \alias{hearing}
 \title{Hearing data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Roberts, J. and Cohrssen, J. (1968), Hearing
 levels of adults, US National Center for Health Statistics Publications,

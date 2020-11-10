@@ -4,9 +4,20 @@
 \alias{lmrobdetDCML}
 \title{Robust Distance Constrained Maximum Likelihood estimators for linear regression}
 \usage{
-lmrobdetDCML(formula, data, subset, weights, na.action, model = TRUE,
-  x = !control$compute.rd, y = FALSE, singular.ok = TRUE,
-  contrasts = NULL, offset = NULL, control = lmrobdet.control())
+lmrobdetDCML(
+  formula,
+  data,
+  subset,
+  weights,
+  na.action,
+  model = TRUE,
+  x = !control$compute.rd,
+  y = FALSE,
+  singular.ok = TRUE,
+  contrasts = NULL,
+  offset = NULL,
+  control = lmrobdet.control()
+)
 }
 \arguments{
 \item{formula}{a symbolic description of the model to be fit.}

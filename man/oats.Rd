@@ -4,7 +4,9 @@
 \name{oats}
 \alias{oats}
 \title{Oats data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Scheffe, H. (1959), Analysis of Variance. New York: John Wiley.
 }

@@ -4,7 +4,9 @@
 \name{stackloss}
 \alias{stackloss}
 \title{Stackloss data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Brownlee, K.A. (1965), Statistical Theory and Methodology in Science and
 Engineering, 2nd Edition, New York: John Wiley & Sons, Inc.

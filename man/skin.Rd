@@ -4,7 +4,9 @@
 \name{skin}
 \alias{skin}
 \title{Skin data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Finney, D.J. (1947), The estimation from individual records of the relationship
 between dose and quantal response, Biometrika, 34, 320-334.

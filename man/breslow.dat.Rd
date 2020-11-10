@@ -4,7 +4,9 @@
 \name{breslow.dat}
 \alias{breslow.dat}
 \title{Breslow Data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Breslow, N. E., and Clayton, D. G. (1993), "Approximate 
 Inference in Generalized Linear Mixed Models," Journal of the 
@@ -40,7 +42,7 @@ the treatment: a factor with levels placebo and progabide;
 \code{Ysum}: an integer value, the sum of Y1, Y2, Y3 and Y4;
 \code{sumY}: an integer value, the sum of Y1, Y2, Y3 and Y4;
 \code{Age10}: a numeric value, Age divided by 10; \code{Base4}:
-a numeric value, Base divided by 4.
+a numeric value, Base divided by 4. 
 
 Format: Numeric, 59 rows and 12 columns.
 }

@@ -5,8 +5,7 @@
 \alias{BYlogreg}
 \title{Bianco and Yohai estimator for logistic regression}
 \usage{
-logregBY(x0, y, intercept = 1, const = 0.5, kmax = 1000,
-  maxhalf = 10)
+logregBY(x0, y, intercept = 1, const = 0.5, kmax = 1000, maxhalf = 10)
 }
 \arguments{
 \item{x0}{matrix of explanatory variables;}

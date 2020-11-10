@@ -5,8 +5,15 @@
 \alias{mscale}
 \title{M-scale estimator}
 \usage{
-scaleM(u, delta = 0.5, tuning.chi = 1.547645, family = "bisquare",
-  max.it = 100, tol = 1e-06, tolerancezero = .Machine$double.eps)
+scaleM(
+  u,
+  delta = 0.5,
+  tuning.chi = 1.547645,
+  family = "bisquare",
+  max.it = 100,
+  tol = 1e-06,
+  tolerancezero = .Machine$double.eps
+)
 }
 \arguments{
 \item{u}{vector of residuals}

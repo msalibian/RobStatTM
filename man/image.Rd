@@ -4,7 +4,9 @@
 \name{image}
 \alias{image}
 \title{Image data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Source: Frery, A. (2005), Personal communication.
 }

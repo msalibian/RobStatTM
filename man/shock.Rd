@@ -4,7 +4,9 @@
 \name{shock}
 \alias{shock}
 \title{Shock data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Bond, N.W. (1979), Impairment of shuttlebox avoidance-learning following repeated
 alcohol withdrawal episodes in rats, Pharmacology, Biochemistry and Behavior,

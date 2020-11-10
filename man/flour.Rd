@@ -4,7 +4,9 @@
 \name{flour}
 \alias{flour}
 \title{Flour data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Analytical Methods Committee (1989), Robust statistics-How not to reject
 outliers, Analyst, 114, 1693-1702.

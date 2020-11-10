@@ -4,7 +4,9 @@
 \name{bus}
 \alias{bus}
 \title{Bus data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Hettich, S. and Bay, S.D. (1999), The UCI KDD Archive http://kdd.ics.uci.edu.
 Irvine, CA: University of California, Department of Information and Computer Science.

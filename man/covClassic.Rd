@@ -4,8 +4,14 @@
 \alias{covClassic}
 \title{Classical Covariance Estimation}
 \usage{
-covClassic(data, corr = FALSE, center = TRUE, distance = TRUE,
-  na.action = na.fail, unbiased = TRUE)
+covClassic(
+  data,
+  corr = FALSE,
+  center = TRUE,
+  distance = TRUE,
+  na.action = na.fail,
+  unbiased = TRUE
+)
 }
 \arguments{
 \item{data}{a numeric matrix or data frame containing the data.}

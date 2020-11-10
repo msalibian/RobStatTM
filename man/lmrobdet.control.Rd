@@ -4,14 +4,32 @@
 \alias{lmrobdet.control}
 \title{Tuning parameters for lmrobdetMM and lmrobdetDCML}
 \usage{
-lmrobdet.control(bb = 0.5, efficiency = 0.95, family = "mopt",
-  tuning.psi, tuning.chi, compute.rd = FALSE, corr.b = TRUE,
-  split.type = "f", initial = "S", max.it = 100,
-  refine.tol = 1e-07, rel.tol = 1e-07, refine.PY = 10,
-  solve.tol = 1e-07, trace.lev = 0, psc_keep = 0.5,
-  resid_keep_method = "threshold", resid_keep_thresh = 2,
-  resid_keep_prop = 0.2, py_maxit = 20, py_eps = 1e-05,
-  mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = "bisquare")
+lmrobdet.control(
+  bb = 0.5,
+  efficiency = 0.95,
+  family = "mopt",
+  tuning.psi,
+  tuning.chi,
+  compute.rd = FALSE,
+  corr.b = TRUE,
+  split.type = "f",
+  initial = "S",
+  max.it = 100,
+  refine.tol = 1e-07,
+  rel.tol = 1e-07,
+  refine.PY = 10,
+  solve.tol = 1e-07,
+  trace.lev = 0,
+  psc_keep = 0.5,
+  resid_keep_method = "threshold",
+  resid_keep_thresh = 2,
+  resid_keep_prop = 0.2,
+  py_maxit = 20,
+  py_eps = 1e-05,
+  mscale_maxit = 50,
+  mscale_tol = 1e-06,
+  mscale_rho_fun = "bisquare"
+)
 }
 \arguments{
 \item{bb}{tuning constant (between 0 and 1/2) for the M-scale used to compute the initial S-estimator. It

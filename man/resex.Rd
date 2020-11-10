@@ -4,7 +4,9 @@
 \name{resex}
 \alias{resex}
 \title{Resex data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Source Engineering, 2nd. Edition, New York, John Wiley.
 }

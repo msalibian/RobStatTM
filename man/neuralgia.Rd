@@ -4,7 +4,9 @@
 \name{neuralgia}
 \alias{neuralgia}
 \title{Neuralgia data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Source goes here.
 }

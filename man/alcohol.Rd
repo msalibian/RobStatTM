@@ -4,7 +4,9 @@
 \name{alcohol}
 \alias{alcohol}
 \title{Alcohol data}
-\format{An object of class \code{"data.frame"}.}
+\format{
+An object of class \code{"data.frame"}.
+}
 \source{
 Romanelli, G.P., Martino, C.M. and Castro, E.A. (2001), Modeling the
 solubility of aliphatic alcohols via molecular descriptors, Journal of the Chemical
