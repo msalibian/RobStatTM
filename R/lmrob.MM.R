@@ -1192,7 +1192,7 @@ MrhoInf <- function(cc, psi) {
 
 
 lmrob.rweights <- function(resid, scale, cc, psi, eps = 16 * .Machine$double.eps) {
-    if (scale == 0) { ## exact fit
+  if (scale == 0) { ## exact fit
 	m <- max(ar <- abs(resid))
 	if(m == 0) numeric(seq_len(ar)) else
 	as.numeric(ar < eps * m)# 1 iff res ~= 0

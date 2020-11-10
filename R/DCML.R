@@ -173,13 +173,26 @@ MMPY <- function(X, y, control, mf) {
   control$subsampling <- 'simple'
 
   # # lmrob() does the above when is.list(init)==TRUE, in particular:
-  outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
-  outMM$control <- orig.control
-  coefnames <- names(coef(outMM))
-  residnames <- names(resid(outMM))
-  # if weights were all zero, then return the S estimator
-  # S.resid <- as.vector(y - X %*% S.init$coef) / S.init$scale
-  # ws <- rhoprime(S.resid, family=orig.control$family, cc=orig.control$tuning.psi)
+  if(S.init$scale > 0) {
+    outMM <- lmrob.fit(X, y, control, init=S.init, mf=mf)
+    outMM$control <- orig.control
+    coefnames <- names(coef(outMM))
+    residnames <- names(resid(outMM))
+    # if weights were all zero, then return the S estimator
+    # S.resid <- as.vector(y - X %*% S.init$coef) / S.init$scale
+    # ws <- rhoprime(S.resid, family=orig.control$family, cc=orig.control$tuning.psi)
+  } else {
+    outMM <- list(coefficients = S.init$coef, scale = S.init$scale)
+    outMM$fitted.values <- as.vector(X %*% S.init$coef) # y - b$y # y = fitted + res
+    outMM$residuals <- setNames(y - outMM$fitted.values, rownames(X))
+    names(outMM$coefficients) <- colnames(X)
+    ## robustness weights
+    outMM$rweights <- lmrob.rweights(outMM$residuals, 
+                                     outMM$scale, 
+                                     control$tuning.chi, 
+                                     control$psi)
+    outMM$converged <- FALSE
+  }
   if(all( outMM$rweights == 0 ) ) {
     outMM$coefficients <- as.vector(S.init$coef)
     outMM$scale <- S.init$scale
