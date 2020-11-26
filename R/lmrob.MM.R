@@ -49,6 +49,7 @@
 
 .Mchi.tuning.defaults <- list(
     ## Here, psi must be redescending! -> 'huber' not possible
+    # 'huber' = 1.345, 
     'bisquare' = 1.54764
     , 'welsh' = 0.5773502
     , 'ggw' = c(-0.5, 1.5, NA, .50) ## (min{slope}, b ,  eff, bp)
