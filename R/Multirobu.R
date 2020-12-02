@@ -111,58 +111,55 @@ if (type=="auto") {
 #'
 covRobRocke <- RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=2, maxit=50, tol=1e-4, corr=FALSE)
 {
+  # Henceforth 'eq' refers to equation numbers in Maronna et al.(2019)
   cl <- match.call()
   d <- dim(X)
   n <- d[1]
   p <- d[2]
-
-
-  gamma0 <- consRocke(p=p, n=n, initial )$gamma # tuning constant
-  if(initial=='K')
-{  out=KurtSDNew(X)
-   mu0=out$center; V0=out$cova
-   V0=V0/(det(V0)^(1/p))
-dista0=mahalanobis(X,mu0,V0)
-dista=dista0}
-
-if(initial=='mve')
-{out=fastmve(X)
-
-mu0=out$center
+  gamma0 <- consRocke(p=p, n=n, initial )$gamma # gamma in eq. (6.40)
+  if(initial=='K') {  #KSD start
+    out=KurtSDNew(X)
+    mu0=out$center
+    V0=out$cova
+    V0=V0/(det(V0)^(1/p))
+    dista0=mahalanobis(X,mu0,V0)
+    dista=dista0
+  }
+  if(initial=='mve') { #MVE start
+    out=fastmve(X)
+    mu0=out$center
     V0=out$cov
-   V0=V0/(det(V0)^(1/p))
-dista0=mahalanobis(X,mu0,V0)
-dista=dista0}
-
-
+    V0=V0/(det(V0)^(1/p))
+    dista0=mahalanobis(X,mu0,V0)
+    dista=dista0
+  }
   delta <- (1-p/n)/2 # max breakdown
-  #gamma0 <- consRocke(p,n,'K')$gamma
-  sig <- MScalRocke(x=dista, gamma=gamma0, q=qs, delta=delta) #Inicializar
-  # %Buscar gama que asegure que al menos p*propmin elementos tengan w>0
+  # Compute M-scale in eq. (6.29)
+  sig <- MScalRocke(x=dista, gamma=gamma0, q=qs, delta=delta) 
   didi <- dista / sig
   dife <- sort( abs( didi - 1) )
+  # If the number of observations with positive weights is less
+  # than propmin*p, then enlarge gamma to avoid instability
   gg <- min( dife[ (1:n) >= (propmin*p) ] )
   gamma <- max(gg, gamma0)
-#print(gamma)
   sig0 <- MScalRocke(x=dista, gamma=gamma, delta=delta, q=qs)
-
   iter <- 0
   difpar <- difsig <- +Inf
   while( ( ( (difsig > tol) | (difpar > tol) ) &
            (iter < maxit) ) & (difsig > 0) ) {
     iter <- iter + 1
     w <- WRoTru(tt=dista/sig, gamma=gamma, q=qs)
-    mu <- colMeans( X * w ) / mean(w) # as.vector( t(w) %*% X ) / sum(w)
+    mu <- colMeans( X * w ) / mean(w) 
     Xcen <- scale(X, center=mu, scale=FALSE)
     V <- t(Xcen) %*% (Xcen * w) / n;
     V <- V / ( det(V)^(1/p) )
     dista <- mahalanobis(x=X, center=mu, cov=V)
 
-    sig <- MScalRocke(x=dista, gamma=gamma, delta=delta, q=qs)
-    # %Si no desciende, hacer Line search
+    sig <- MScalRocke(x=dista, gamma=gamma, delta=delta, q=qs) #Recompute scale
     step <- 0
     delgrad <- 1
     while( (sig > sig0) & (step < maxsteps) ) {
+      # If needed, perform linear search
       delgrad <- delgrad / 2
       step <- step + 1
       mu <- delgrad * mu + (1 - delgrad)*mu0
@@ -184,13 +181,9 @@ dista=dista0}
   V <- tmp$V
   ff <- tmp$ff
   dista <- dista/ff
-
-  # GSB: Feed list into object and give class
-
   if(corr) {
     cor.mat <- cov2cor(V)
   } else cor.mat <- NULL
-
   z <- list(center=mu, cov=V, cor=cor.mat, dist=dista, wts=w, call = cl, 
             mu=mu, V=V, sig=sig, gamma=gamma)
   class(z) <- c("covRob")
@@ -198,7 +191,8 @@ dista=dista0}
 }
 
 consRocke <- function(p, n, initial) {
-  if(initial=='M') {
+  # The constants in Section 6.10.4 of Maronna et al. (2019)
+  if (initial == "mve") { 
     beta <- c(-5.4358, -0.50303, 0.4214)
   } else {
     beta <- c(-6.1357, -1.0078, 0.81564)
