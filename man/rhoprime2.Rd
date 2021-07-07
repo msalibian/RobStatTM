@@ -4,7 +4,7 @@
 \alias{rhoprime2}
 \title{The second derivative of the rho function}
 \usage{
-rhoprime2(u, family, cc, standardize = FALSE)
+rhoprime2(u, family, cc, standardize = TRUE)
 }
 \arguments{
 \item{u}{point or vector at which rho is to be evaluated}
