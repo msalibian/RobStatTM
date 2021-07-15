@@ -191,7 +191,7 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 #' rhoprime(u=1.1, family='opt', cc=lmrobdet.control(bb=.5, family='opt')$tuning.chi)
 #'
 #' @export
-rhoprime <- function(u, family, cc, standardize = TRUE)
+rhoprime <- function(u, family, cc, standardize = FALSE)
 {
   family.name <- match.arg(family, choices = FAMILY.NAMES)
 
@@ -225,7 +225,7 @@ rhoprime <- function(u, family, cc, standardize = TRUE)
 #' rhoprime2(u=1.1, family='opt', cc=lmrobdet.control(bb=.5, family='opt')$tuning.chi)
 #'
 #' @export
-rhoprime2 <- function(u, family, cc, standardize = TRUE)
+rhoprime2 <- function(u, family, cc, standardize = FALSE)
 {
   family.name <- match.arg(family, choices = FAMILY.NAMES)
 
