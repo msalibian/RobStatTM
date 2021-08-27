@@ -55,8 +55,9 @@ instead or as well, and if both are specified their sum is used.}
 \value{
 A list with the following components:
 \item{coefficients}{The estimated vector of regression coefficients}
-\item{scale}{The estimated scale of the residuals}
+\item{scale}{The robust residual M-scale estimate using the final residuals from the converged iterated weighted least square (IRWLS) algorithm final estimate}
 \item{residuals}{The vector of residuals associated with the robust fit}
+\item{loss}{Value of the objective function at the final MM-estimator}
 \item{converged}{Logical value indicating whether IRWLS iterations for the MM-estimator have converged}
 \item{iter}{Number of IRWLS iterations for the MM-estimator}
 \item{rweights}{Robustness weights for the MM-estimator}
@@ -64,12 +65,18 @@ A list with the following components:
 \item{rank}{Numeric rank of the fitted linear model}
 \item{cov}{The estimated covariance matrix of the regression estimates}
 \item{df.residual}{The residual degrees of freedom}
+\item{degree.freedom}{The residual degrees of freedom}
+\item{scale.S}{Minimum robust scale associated with the preliminary highly robust but inefficient S-estimator.}
+\item{r.squared}{The robust multiple correlation coefficient}
+\item{adj.r.squared}{The adjusted robust multiple correlation coefficient taking into account the degrees of freedom of each term}
 \item{contrasts}{(only where relevant) the contrasts used}
 \item{xlevels}{(only where relevant) a record of the levels of the factors used in fitting}
 \item{call}{the matched call}
 \item{model}{if requested, the model frame used}
 \item{x}{if requested, the model matrix used}
 \item{y}{if requested, the response vector used}
+\item{terms}{The \link{terms} object used.}
+\item{assign}{Used to separate continuous from categorical columns in the design matrix}
 \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 }
 \description{
