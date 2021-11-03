@@ -44,12 +44,18 @@
    - Code clean up: removed all subroutines that were unused.
 */
 
+#define USE_FC_LEN_T
+#include <Rconfig.h>
 #include <Rmath.h>
 #include <complex.h>
 
 #include <R_ext/BLAS.h>
 #include <R_ext/Applic.h>
 #include <R_ext/Lapack.h>
+
+#ifndef FCONE
+# define FCONE
+#endif
 
 #include "RobStatTM.h"
 //-> <R.h>, <Rinternals.h>  -> XLENGTH, R_xlen_t
@@ -210,7 +216,7 @@ void zero_mat(double **a, int n, int m);
 #define INIT_WLS(_X_, _y_, _n_, _p_)                            \
     /* Determine optimal block size for work array*/            \
     F77_CALL(dgels)("N", &_n_, &_p_, &one, _X_, &_n_, _y_,      \
-		    &_n_, &work0, &lwork, &info);               \
+		    &_n_, &work0, &lwork, &info FCONE);               \
     if (info) {                                                 \
 	warning(" Problem determining optimal block size, using minimum"); \
 	lwork = 2*_p_;                                          \
@@ -245,7 +251,7 @@ void zero_mat(double **a, int n, int m);
     }                                                           \
     /* solve weighted least squares problem */                  \
     F77_CALL(dgels)("N", &_n_, &_p_, &one, _x_, &_n_, _y_,      \
-		    &_n_, work, &lwork, &info);                 \
+		    &_n_, work, &lwork, &info FCONE);                 \
     if (info) {					                \
 	if (info < 0) {                                         \
 	    CLEANUP_WLS;					\
@@ -293,7 +299,7 @@ void zero_mat(double **a, int n, int m);
         /* scale _X_ */                                         \
         char equed;         					\
 	F77_CALL(dlaqge)(&_n_, &_p_, Xe, &_n_, Dr, Dc, &rowcnd,	\
-			 &colcnd, &amax, &equed);		\
+			 &colcnd, &amax, &equed FCONE);		\
         rowequ = equed == 'B' || equed == 'R';                  \
 	colequ = equed == 'B' || equed == 'C';                  \
     }
@@ -446,7 +452,7 @@ void R_lmrob_M_S(double *X1, double *X2, double *y, double *res,
     if (*orthogonalize) {
 	/* t1 = ot1 + b1 - oT2 %*% b2 */
 	for(int i=0; i < p1; i++) t1[i] = ot1[i] + b1[i];
-	F77_CALL(dgemv)("N", &p1, &p2, &dmone, oT2, &p1, b2, &one, &done, t1, &one);
+	F77_CALL(dgemv)("N", &p1, &p2, &dmone, oT2, &p1, b2, &one, &done, t1, &one FCONE);
 	COPY(t1, b1, p1);
 	/* restore x2 */
 	COPY(X2, x2, n*p2);
@@ -454,8 +460,8 @@ void R_lmrob_M_S(double *X1, double *X2, double *y, double *res,
 
     /* update / calculate residuals */
     COPY(y, res, n);
-    F77_CALL(dgemv)("N", &n, &p1, &dmone, X1, &n, b1, &one, &done, res, &one);
-    F77_CALL(dgemv)("N", &n, &p2, &dmone, X2, &n, b2, &one, &done, res, &one);
+    F77_CALL(dgemv)("N", &n, &p1, &dmone, X1, &n, b1, &one, &done, res, &one FCONE);
+    F77_CALL(dgemv)("N", &n, &p2, &dmone, X2, &n, b2, &one, &done, res, &one FCONE);
 
     /* STEP 4: Descent procedure */
     if (*descent) {
@@ -1615,7 +1621,7 @@ Rboolean rwls(const double X[], const double y[], int n, int p,
     COPY(i_estimate, beta0, p);
     /* calculate residuals */
     COPY(y, resid, n);
-    F77_CALL(dgemv)("N", &n, &p, &dmone, X, &n, beta0, &one, &done, resid, &one);
+    F77_CALL(dgemv)("N", &n, &p, &dmone, X, &n, beta0, &one, &done, resid, &one FCONE);
 
     /* main loop */
     while(!converged &&	 ++iterations < *max_it) {
@@ -1628,7 +1634,7 @@ Rboolean rwls(const double X[], const double y[], int n, int p,
 	COPY(wy, estimate, p);
 	/* calculate residuals */
 	COPY(y, resid, n);
-	F77_CALL(dgemv)("N", &n, &p, &dmone, X, &n, estimate, &one, &done, resid, &one);
+	F77_CALL(dgemv)("N", &n, &p, &dmone, X, &n, estimate, &one, &done, resid, &one FCONE);
 	if(trace_lev >= 3) {
 	    /* get the residuals and loss for the new estimate */
 	    *loss = sum_rho_sc(resid,scale,n,0,rho_c,ipsi);
@@ -2216,7 +2222,7 @@ int refine_fast_s(const double X[], double *wx, const double y[], double *wy,
 
     /* calculate residuals */
     COPY(y, res, n);
-    F77_CALL(dgemv)("N", &n, &p, &dmone, X, &n, beta_cand, &one, &done, res, &one);
+    F77_CALL(dgemv)("N", &n, &p, &dmone, X, &n, beta_cand, &one, &done, res, &one FCONE);
     for(j=0; j < n; j++) {
 	if( fabs(res[j]) < EPS_SCALE )
 	    zeroes++;
@@ -2255,7 +2261,7 @@ int refine_fast_s(const double X[], double *wx, const double y[], double *wy,
 	}
 	/* calculate residuals */
 	COPY(y, res, n);
-	F77_CALL(dgemv)("N", &n, &p, &dmone, X, &n, beta_ref, &one, &done, res, &one);
+	F77_CALL(dgemv)("N", &n, &p, &dmone, X, &n, beta_ref, &one, &done, res, &one FCONE);
 	COPY(beta_ref, beta_cand, p);
     } /* for(i = 0; i < kk ) */
 
@@ -2308,7 +2314,7 @@ void m_s_subsample(double *X1, double *y, int n, int p1, int p2,
 	}
 	/* calculate partial residuals */
 	COPY(y, y_tilde, n);
-        F77_CALL(dgemv)("N", &n, &p2, &dmone, x2, &n, t2, &one, &done, y_tilde, &one);
+        F77_CALL(dgemv)("N", &n, &p2, &dmone, x2, &n, t2, &one, &done, y_tilde, &one FCONE);
 	/* STEP 3: Obtain L1-estimate of b1 */
 	COPY(X1, x1, n*p1);
 	F77_CALL(rllarsbi)(x1, y_tilde, &n, &p1, &n, &n, &rel_tol,
@@ -2401,7 +2407,7 @@ Rboolean m_s_descent(double *X1, double *X2, double *y,
 	/* y_tilde = y - x1 %*% t1 */
 	COPY(y, y_tilde, n);
 	COPY(X1, x1, n*p1);
-	F77_CALL(dgemv)("N", &n, &p1, &dmone, x1, &n, t1, &one, &done, y_tilde, &one);
+	F77_CALL(dgemv)("N", &n, &p1, &dmone, x1, &n, t1, &one, &done, y_tilde, &one FCONE);
 	/* compute weights */
 	get_weights_rhop(res2, sc, n, rrhoc, ipsi, weights);
 	/* solve weighted least squares problem */
@@ -2409,7 +2415,7 @@ Rboolean m_s_descent(double *X1, double *X2, double *y,
 	COPY(y_tilde, t2, p2);
         /* get (intermediate) residuals */
 	COPY(y, res2, n);
-	F77_CALL(dgemv)("N", &n, &p2, &dmone, X2, &n, t2, &one, &done, res2, &one);
+	F77_CALL(dgemv)("N", &n, &p2, &dmone, X2, &n, t2, &one, &done, res2, &one FCONE);
 	/* STEP 2: Obtain L1-estimate of b1 */
 	COPY(res2, y_tilde, n);
 	F77_CALL(rllarsbi)(x1, y_tilde, &n, &p1, &n, &n, &rel_tol,
@@ -2557,7 +2563,7 @@ Start:
 	    } else {
 		for(k=0;k<j;k++) U(k,j) = xt(k, j);
 		/* z = solve(lu[0:(j-1), 0:(j-1)], xt[0:(j-1), j]) */
-		F77_CALL(dtrsv)("L", "N", "U", &j, lu, &m, u(0, j), &one);
+		F77_CALL(dtrsv)("L", "N", "U", &j, lu, &m, u(0, j), &one FCONE FCONE FCONE);
 		/* Rprintf("Step %d: z = ", j);  */
 		/* for(i=0; i < j; i++) Rprintf("%lf ",U(i, j)); */
 		/* Rprintf("\n"); */
@@ -2623,8 +2629,8 @@ Start:
       /* scale y ( = beta ) */
       if (rowequ) for(k=0;k<m;k++) beta[k] *= Dr[idc[k]];
       /* solve U\tr L\tr \beta = y[subsample] */
-      F77_CALL(dtrsv)("U", "T", "N", &m, lu, &m, beta, &one);
-      F77_CALL(dtrsv)("L", "T", "U", &m, lu, &m, beta, &one);
+      F77_CALL(dtrsv)("U", "T", "N", &m, lu, &m, beta, &one FCONE FCONE FCONE);
+      F77_CALL(dtrsv)("L", "T", "U", &m, lu, &m, beta, &one FCONE FCONE FCONE);
       /* scale the solution */
       if (colequ) for(k=0;k<m;k++) beta[k] *= Dc[idr[k]];
       /* undo pivoting */
