@@ -1,0 +1,2185 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass extarticle
+\begin_preamble
+%%%%%%%%%%%%%%%%%%%% book.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% sample root file for the chapters of your "monograph"
+%
+% Use this file as a template for your own input.
+%
+%%%%%%%%%%%%%%%% Springer-Verlag %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% RECOMMENDED %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% choose options for [] as required from the list
+% in the Reference Guide
+
+
+\usepackage[bottom]{footmisc}% places footnotes at page bottom
+
+\usepackage[style=authoryear,natbib=true,firstinits=true,backend=biber]{biblatex}
+
+\setlength{\bibitemsep}{0.5\baselineskip}
+\DeclareNameAlias{sortname}{last-first}
+
+\addbibresource{inflFncs.bib}
+\renewcommand\cite{\citet}
+
+%\renewcommand*{\nameyeardelim}{\addspace}
+%\renewbibmacro{in:}{}
+
+\usepackage{txfonts}
+\usepackage{upgreek}
+\end_preamble
+\use_default_options true
+\begin_modules
+theorems-ams
+knitr
+\end_modules
+\maintain_unincluded_children false
+\begin_local_layout
+Provides natbib 1
+\end_local_layout
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command biber
+\index_command default
+\float_placement H
+\paperfontsize 11
+\spacing onehalf
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 2
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 0
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
+\biblio_options style
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<include=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(knitr)
+\end_layout
+
+\begin_layout Plain Layout
+
+opts_chunk$set(
+\end_layout
+
+\begin_layout Plain Layout
+
+	keep.source=TRUE,
+\end_layout
+
+\begin_layout Plain Layout
+
+	tidy=TRUE,
+\end_layout
+
+\begin_layout Plain Layout
+
+	message=FALSE, 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.path='Plots/', 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.align='center', 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.width=4, 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.height=3, 
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.keep='last',
+\end_layout
+
+\begin_layout Plain Layout
+
+	fig.show='hide',
+\end_layout
+
+\begin_layout Plain Layout
+
+	dev.args=list(pointsize=10),
+\end_layout
+
+\begin_layout Plain Layout
+
+	tidy.opts=list(width.cutoff=40),
+\end_layout
+
+\begin_layout Plain Layout
+
+	cache=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+options(width=70)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+Using the fit.models Package with RobStatTM 
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+R.
+ Douglas Martin
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+The fit.models Package and Function
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+fit.models
+\family default
+ function was originally developed in 2000 by Kjell Konis for the R package
+ 
+\family sans
+robust
+\family default
+, where it was accessible via both the command line and graphical user interface.
+ Subsequently Konis developed the 
+\family sans
+fit.models
+\family default
+ package currently available on CRAN (https://cran.r-project.org/web/packages/fit.m
+odels/index.html) where the Reference manual document fit.models.pdf is available.
+ Here we show how to use the function 
+\family typewriter
+fit.models
+\family default
+ with the 
+\family sans
+RobStatTM
+\family default
+ package function 
+\family typewriter
+lmrobdetMM
+\family default
+ to compare least squares and robust regression estimates, and with the
+ function 
+\family typewriter
+covRob
+\family default
+ to compare classical and robust covariance and correlation matrix estimates.
+\end_layout
+
+\begin_layout Standard
+To get started in using the 
+\family typewriter
+fit.models
+\family default
+ function, you first need to install 
+\family sans
+fit.models
+\family default
+ with
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE,echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+install.packages(
+\begin_inset Quotes eld
+\end_inset
+
+fit.models
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and load both the 
+\family sans
+RobStatTM
+\family default
+ package and the 
+\family sans
+fit.models
+\family default
+ package with:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,warning = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(RobStatTM)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(
+\begin_inset Quotes eld
+\end_inset
+
+fit.models
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The code for this vignette is provided in the R script 
+\family typewriter
+fit.modelsRobStatTM.R
+\family default
+ that is included with other example scripts installed in the RobStatTM
+ “scripts” folder, which is one of several RobStatTM package folders.
+ You can find the location of the scripts folder on your computer by using
+ the function 
+\family typewriter
+system.file()
+\family default
+ as follows: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE, echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+system.file(
+\begin_inset Quotes eld
+\end_inset
+
+scripts
+\begin_inset Quotes erd
+\end_inset
+
+, package = 
+\begin_inset Quotes eld
+\end_inset
+
+RobStatTM
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\bar under
+NOTE
+\bar default
+: Copy/paste of the above line does not typically work, so you should type
+ it in.
+ The result of using this command will depend upon your computer.
+ For example, in the case of a particular computer running Windows 10, the
+ result is:
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+[1] "C:/R/R-4.0.3/library/RobStatTM/scripts"
+\end_layout
+
+\begin_layout Standard
+Then you just need to navigate to the 
+\family typewriter
+scripts
+\family default
+ folder, where you will find the 
+\family typewriter
+fit.models.vignette.R
+\family default
+ script among all the other example R scripts.
+ You should then copy/paste this script (and any others you might one to
+ try out), to some other location on your computer where you want to run
+ them.
+ 
+\end_layout
+
+\begin_layout Section
+Robust Versus Least Squares Fits of Linear Regression Models
+\end_layout
+
+\begin_layout Standard
+The code below uses the functions 
+\family typewriter
+lm
+\family default
+ and 
+\family typewriter
+lmrobdetMM
+\family default
+ to compute and compare least squares (LS) and robust fits of the 
+\family typewriter
+zinc
+\family default
+ data to the 
+\family typewriter
+copper
+\family default
+ data in the 
+\family typewriter
+minerals
+\family default
+ data set.
+ In order to use the 
+\family typewriter
+fit.models
+\family default
+ function with 
+\family typewriter
+lmrobdetMM
+\family default
+, you first have to register 
+\family typewriter
+lmrobdetMM
+\family default
+ as a function in the 
+\family sans
+fit.models
+\family default
+ 
+\family typewriter
+lmfm
+\family default
+ class of functions, where the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+lm
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+ stands for linear model and the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+fm
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+ stands for fitted models.
+ You do so with the 
+\family typewriter
+fmclass.add.class
+\family default
+ function:
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+See the function 
+\family typewriter
+fmclass.register
+\family default
+ in the Reference manual provided with the 
+\family sans
+fit.models
+\family default
+ CRAN package.
+
+\family typewriter
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,results = 'hide'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+fmclass.add.class("lmfm","lmrobdetMM")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The following code first creates the 
+\family typewriter
+LSfit
+\family default
+ and 
+\family typewriter
+robfit
+\family default
+ fitted model objects, and then the 
+\family typewriter
+fmLSrob
+\family default
+ fitted models object that contains both of the fitted model objects.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The choices 
+\family typewriter
+
+\begin_inset Quotes eld
+\end_inset
+
+mopt
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ and 
+\family typewriter
+0.95
+\family default
+ for the 
+\family typewriter
+lmrobdet.control
+\family default
+ for the 
+\family typewriter
+family
+\family default
+ and 
+\family typewriter
+eff
+\family default
+ options are actually the default values, and we show them here just to
+ indicate that you can make other choices as described in the corresponding
+ RobStatTM Reference manual description.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+LSfit <- lm(zinc ~ copper, data = mineral)
+\end_layout
+
+\begin_layout Plain Layout
+
+control <- lmrobdet.control(family = "mopt",eff = 0.95)
+\end_layout
+
+\begin_layout Plain Layout
+
+# The choices 
+\begin_inset Quotes eld
+\end_inset
+
+mopt
+\begin_inset Quotes erd
+\end_inset
+
+ and 0.95 are defaults
+\end_layout
+
+\begin_layout Plain Layout
+
+robfit <- lmrobdetMM(zinc ~ copper, control = control, data = mineral)
+\end_layout
+
+\begin_layout Plain Layout
+
+fmLSrob <- fit.models(LSfit,robfit)
+\end_layout
+
+\begin_layout Plain Layout
+
+class(fmLSrob)
+\end_layout
+
+\begin_layout Plain Layout
+
+names(fmLSrob)
+\end_layout
+
+\begin_layout Plain Layout
+
+round(coef(fmLSrob),3)
+\end_layout
+
+\begin_layout Plain Layout
+
+summary(fmLSrob)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that the object created by 
+\family typewriter
+fit.models
+\family default
+ has the specific class 
+\family typewriter
+lmfm
+\family default
+ of the general 
+\family typewriter
+fit.models
+\family default
+ class, and also that the names 
+\family typewriter
+LSfit
+\family default
+ and 
+\family typewriter
+robfit
+\family default
+ of the 
+\family typewriter
+fmLSrob
+\family default
+ object are what one would expect.
+ Also, the 
+\family typewriter
+coef
+\family default
+ extractor function is very handy for a first quick look at the comparative
+ LS and robust coefficient estimates.
+ 
+\end_layout
+
+\begin_layout Standard
+When applied to 
+\family typewriter
+fmLSrob
+\family default
+, the generic R function 
+\family typewriter
+summary
+\family default
+ function produces a convenient display of the LS and robust fits results
+ that facilitates easy comparison of the results on an item by item basis.
+ Note that the generic 
+\family typewriter
+summary
+\family default
+ calls a 
+\emph on
+method
+\emph default
+ function appropriate for the object class of its argument, and in this
+ case the method function is 
+\family typewriter
+summary.lmfm
+\family default
+.
+ You can view the help file for 
+\family typewriter
+summary.lmfm
+\family default
+ with the code line:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+help(summary.lmfm)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Likewise, when applied to an object of class 
+\family typewriter
+lmfm
+\family default
+, the generic 
+\family typewriter
+plot
+\family default
+ function in R calls a 
+\family typewriter
+plot.lmfm method
+\family default
+ function, whose behavior is described in the help file obtained with the
+ following code line:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+help(plot.lmfm)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The help file for the 
+\family typewriter
+plot.lmfm
+\family default
+ method informs you that you can create the following 10 different types
+ of plots:
+\end_layout
+
+\begin_layout Enumerate
+Normal QQ Plot of Residuals
+\end_layout
+
+\begin_layout Enumerate
+Kernel Density Estimate of Residuals
+\end_layout
+
+\begin_layout Enumerate
+Residuals vs.
+ Mahalanobis Distances
+\end_layout
+
+\begin_layout Enumerate
+Residuals vs.
+ Fitted Values
+\end_layout
+
+\begin_layout Enumerate
+Square Root of Residuals vs.
+ Fitted Values
+\end_layout
+
+\begin_layout Enumerate
+Response vs.
+ Fitted Values
+\end_layout
+
+\begin_layout Enumerate
+Residuals vs.
+ Index (Time)
+\end_layout
+
+\begin_layout Enumerate
+Overlaid Normal QQ Plot of Residuals
+\end_layout
+
+\begin_layout Enumerate
+Overlaid Kernel Density Estimate of Residuals
+\end_layout
+
+\begin_layout Enumerate
+Scatter Plot with Overlaid Fits (for simple linear regression models).
+\end_layout
+
+\begin_layout Standard
+Using the the generic function 
+\family typewriter
+plot
+\family default
+ with argument 
+\family typewriter
+fmLSrob
+\family default
+ as follows
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmLSrob)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+results in an interactive display in the RStudio console with the line
+\end_layout
+
+\begin_layout Standard
+> 
+\color blue
+Hit <Return> to see next plot:
+\end_layout
+
+\begin_layout Standard
+and you can sequentially display of each of the above 10 plots in the above
+ order.
+ However, if you want to interactively select which plots to view in any
+ order at in the RStudio console, then use:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmLSrob,which.plots = 
+\begin_inset Quotes eld
+\end_inset
+
+ask
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Also, you can create any one of the 10 plot types by using the 
+\family typewriter
+which.plots
+\family default
+ argument of 
+\family typewriter
+plot
+\family default
+ function.
+ For example, you can create a scatterplot of the zinc versus copper variables
+ in the mineral data, with LS and robust straight line fits as shown in
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: robustAndLSlineFits"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, by using:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/robustAndLSlineFits.png", width = 5, height = 5, units
+ = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmLSrob,which.plots = 10)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/robustAndLSlineFits.png
+	lyxscale 10
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Scatter Plot of Zinc versus Copper with LS and Robust Line Fits
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: robustAndLSlineFits"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The following code line creates the Residuals versus Index plot shown in
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: residualVsIndex"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/residualVsIndex.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmLSrob,which.plots = 7)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/residualVsIndex.png
+	lyxscale 10
+	scale 80
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Residuals versus Observation Index
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: residualVsIndex"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The following code line creates the side-by-side normal QQplots of of the
+ regression residuals shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: residualVsIndex"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/qqplotResiduals.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmLSrob,which.plots = 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/qqplotResiduals.png
+	lyxscale 10
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Normal QQ Plots of LS and Robust Fits Residuals
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: qqplotResiduals"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If you want to examine any subset of size twe or larger of the 10 plot types
+ listed above you can easily do so, for example as follows for the two plot
+ types Residuals vs.
+ Mahalanobis Distances and Residuals vs.
+ Fitted Values:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmLSrob, which.plots = c(3,4))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this case you step through the two plots interactively in the RStudio
+ console.
+\end_layout
+
+\begin_layout Standard
+It turns out that if you want to create any of the 10 plot types discussed
+ above for just a single fitted model object, you can do so.
+ For example, try the following code lines:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+fmLSonly <- fit.models(LSfit)
+\end_layout
+
+\begin_layout Plain Layout
+
+class(fmLSonly)
+\end_layout
+
+\begin_layout Plain Layout
+
+names(fmLSonly)
+\end_layout
+
+\begin_layout Plain Layout
+
+coef(fmLSonly)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmLSonly, which.plots = "ask")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Robust versus Classical Covariance Matrices
+\end_layout
+
+\begin_layout Standard
+You can also use 
+\family typewriter
+fit.models
+\family default
+ function for comparing two different covariance matrix estimates, and we
+ show below how to do so for classical and robust covariance matrix estimates,
+ where the classical covariance matrix is computed with the function 
+\family typewriter
+covClassic
+\family default
+ in RobStatTM and the robust covariance matrix is computed with the function
+ 
+\family typewriter
+covRob
+\family default
+ in RobStatTM.
+ We note that 
+\family typewriter
+covRob
+\family default
+ by default automatically chooses 
+\family typewriter
+covRobMM
+\family default
+ estimate if the the number of variables is less than 10, and chooses the
+ 
+\family typewriter
+covRobRocke
+\family default
+ estimate if the number of variables is 10 or greater.
+ See the 
+\family typewriter
+covRob
+\family default
+ help file for more details, including how to set 
+\family typewriter
+type = 
+\begin_inset Quotes eld
+\end_inset
+
+MM
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ or
+\family typewriter
+ type = 
+\begin_inset Quotes eld
+\end_inset
+
+Rocke
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ in case you want to over-ride the automatic choice.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+It is also possible to use the functions 
+\family typewriter
+covRobMM
+\family default
+ and 
+\family typewriter
+covRobRocke
+\family default
+ directly by name.
+ However, in the current release of 
+\family typewriter
+RobStatTM
+\family default
+ the ellipses plot below does not work in that case.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The code below illustrate how to computed the separate classic and robust
+ fits inside the 
+\family typewriter
+fit.models
+\family default
+ function, rather than prior to use of 
+\family typewriter
+fit.models
+\family default
+.
+ And since the number of variables is 3, the choice 
+\family typewriter
+
+\begin_inset Quotes eld
+\end_inset
+
+MM
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ is automatically made.
+ You see below that the class of 
+\family typewriter
+fmCovClassicRob
+\family default
+ is 
+\family typewriter
+covfm
+\family default
+, and the summary method (
+\family typewriter
+summary.covfm
+\family default
+) prints groups together the elements of the classic and robust covariance
+ matrix elements, the location estimates, and the eigenvalues.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data(wine)
+\end_layout
+
+\begin_layout Plain Layout
+
+wine5 <- wine[,1:3]
+\end_layout
+
+\begin_layout Plain Layout
+
+fmCovClassicRob <- fit.models(Classic = covClassic(wine5),Robust = covRob(wine5,t
+ype = 
+\begin_inset Quotes eld
+\end_inset
+
+auto
+\begin_inset Quotes erd
+\end_inset
+
+))
+\end_layout
+
+\begin_layout Plain Layout
+
+class(fmCovClassicRob)
+\end_layout
+
+\begin_layout Plain Layout
+
+summary(fmCovClassicRob)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+NOTE: The functions 
+\family typewriter
+covClassic
+\family default
+ and 
+\family typewriter
+covRob
+\family default
+ both have an argument 
+\family typewriter
+corr,
+\family default
+ which is set to the default value 
+\family typewriter
+corr = FALSE
+\family default
+.
+ But you can also change it to 
+\family typewriter
+corr = TRUE
+\family default
+, and we recommend running the last 4 lines in the above code using 
+\family typewriter
+corr = TRUE
+\family default
+ and note what happens when the last line is executed.
+\end_layout
+
+\begin_layout Standard
+You can see the names of fmCovClassicRob object, and the names of the Classic
+ and Robust components of the fmCovClassicRob object with the following
+ code lines:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+names(fmCovClassicRob)
+\end_layout
+
+\begin_layout Plain Layout
+
+names(fmCovClassicRob$Classic)
+\end_layout
+
+\begin_layout Plain Layout
+
+names(fmCovClassicRob$Robust)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to see what plot methods are available for a 
+\family typewriter
+fmCovClassicRob
+\family default
+ object, read the help file displayed with:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T, eval = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+help(plot.covfm)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The help file shows that use of the 
+\family typewriter
+plot
+\family default
+ function on a covariance matrix fit.models object such as 
+\family typewriter
+fmCovClassicRob
+\family default
+ creates the following four types of plots based on covClassic and covRob
+ covariance matrix estimates:
+\end_layout
+
+\begin_layout Enumerate
+Mahalanobis Distances
+\end_layout
+
+\begin_layout Enumerate
+Ellipses Matrix
+\end_layout
+
+\begin_layout Enumerate
+Screeplot (eigenvalues of covariance matrix
+\end_layout
+
+\begin_layout Enumerate
+Distance–Distance Plot
+\end_layout
+
+\begin_layout Standard
+Figures 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: distances"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: ellipses"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: eigenvalues"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig: distanceDistance"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ below are produced by the code lines preceding them.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/distances.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmCovClassicRob,which.plot = 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/distances.png
+	lyxscale 10
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Robust versus Classic Mahalanobis Distances
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: distances"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/ellipses.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmCovClassicRob,which.plot = 2)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/ellipses.png
+	lyxscale 10
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Robust versus Classic Correlations Ellipses
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: ellipses"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/eigenvalues.png", width = 4, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmCovClassicRob,which.plot = 3)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/eigenvalues.png
+	lyxscale 10
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Classic Versus Robust Eigenvalues
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: eigenvalues"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = 2,results = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+png(file = "Plots/distanceDistance.png", width = 6, height = 4, units = "in",
+\end_layout
+
+\begin_layout Plain Layout
+
+   pointsize = 6, res = 600)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmCovClassicRob,which.plot = 4)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Plots/distanceDistance.png
+	lyxscale 10
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Robust Distances versus Classic Distances
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig: distanceDistance"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The method function 
+\family typewriter
+plot.covfm
+\family default
+ also allows you to print a summary and make any one of the four plot types
+ when the covfm object contains just one covariance matrix estimate, as
+ you can confirm by running the following code:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+fmCovRob <- fit.models(covRob(wine3))
+\end_layout
+
+\begin_layout Plain Layout
+
+summary(fmCovRob)
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(fmCovRob,which.plots = 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+
+\series bold
+Fine Tuning the fit.models Plots
+\end_layout
+
+\begin_layout Plain Layout
+You can fine tune the fit.models plots by modifying the special functions
+ that are used to make the plots.
+ A display of the names of the function in the fit.models package is obtained
+ with the code line:
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = T,eval = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ls(
+\begin_inset Quotes eld
+\end_inset
+
+package:fit.models
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+For example, the function
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
