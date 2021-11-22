@@ -10,7 +10,9 @@
 #' (5.39) in the reference book); otherwise, the value of RFPE is returned. 
 #'
 #' @return If the argument \code{bothVals} is \code{FALSE}, the robust final prediction error (numeric). Otherwise,
-#' the two terms of the RFPE expression are returned separately in a list.
+#' the two terms of the RFPE expression in equation (5.39), Section 5.6.2 of Maronna
+#' et al. (2019), \url{http://www.wiley.com/go/maronna/robust}, are returned separately 
+#' in a list.
 #' 
 #' @rdname lmrobdetMM.RFPE
 #' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}

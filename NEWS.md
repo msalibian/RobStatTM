@@ -29,7 +29,9 @@ in the object returned by `covClassic`
 This was not correct. The function can be used directly.
 
 - `lmrobdetMM.RFPE` now includes the argument `bothVals`. If set to `TRUE` the function returns
-two numbers, that when added together yield the estimated robust prediction errors. 
+a list with the two terms that added together equal the RFPE (see equation (5.39) in Section
+5.6.2 of the book "Robust Statistics: Theory and Methods (with R)". 
+If `bothVals` is `FALSE` then the function returns a scalar with the RPFE value. 
 
 - Objects returned by `covClassic` and `covRob` now include an element `call` with the
 matched called to the corresponding function. 
