@@ -27,6 +27,7 @@
 #' \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dist}{Robust Mahalanobis distances}
 #' \item{wts}{weights}
+#' \item{call}{an image of the call that produced the object with all the arguments named. The matched call.}
 #' \item{mu}{The location estimate. Same as \code{center} above.}
 #' \item{V}{The scatter matrix estimate, scaled for consistency at the normal distribution. Same as \code{cov} above.}
 #'
@@ -92,6 +93,7 @@ if (type=="auto") {
 #' \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dist}{Robust Mahalanobis distances.}
 #' \item{wts}{weights}
+#' \item{call}{an image of the call that produced the object with all the arguments named. The matched call.}
 #' \item{mu}{The location estimate. Same as \code{center} above.}
 #' \item{V}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution.  Same as \code{cov} above.}
 #' \item{sig}{sig}
@@ -331,6 +333,7 @@ rhoinv <- function(x)
 #' \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dist}{Robust Mahalanobis distances}
 #' \item{wts}{weights}
+#' \item{call}{an image of the call that produced the object with all the arguments named. The matched call.}
 #' \item{mu}{The location estimate. Same as \code{center} above.}
 #' \item{V}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution}
 #'
@@ -708,7 +711,7 @@ rhoinv <- function(x)
 #' \item{cov}{a numeric matrix containing the estimate of the covariance matrix.}
 #' \item{cor}{a numeric matrix containing the estimate of the correlation matrix if the argument \code{corr = TRUE}. Otherwise it is set to \code{NULL}.}
 #' \item{dist}{a numeric vector containing the squared Mahalanobis distances. Only present if \code{distance = TRUE} in the \code{call}.}
-#' \item{call}{an image of the call that produced the object with all the arguments named.}
+#' \item{call}{an image of the call that produced the object with all the arguments named. The matched call.}
 #'
 #' @note Originally, and in S-PLUS, this function was called \code{cov}; it has
 #' been renamed, as that did mask the function in the standard package \pkg{stats}.

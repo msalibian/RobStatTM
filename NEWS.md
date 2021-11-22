@@ -33,8 +33,9 @@ a list with the two terms that added together equal the RFPE (see equation (5.39
 5.6.2 of the book "Robust Statistics: Theory and Methods (with R)". 
 If `bothVals` is `FALSE` then the function returns a scalar with the RPFE value. 
 
-- Objects returned by `covClassic` and `covRob` now include an element `call` with the
-matched called to the corresponding function. 
+- Objects returned by `covClassic` and `covRob` now include an element `call` with 
+an image of the call that produced the object with all the arguments named (the 
+matched call).
 
 - The function `lmrobLinTest` has been renamed to `lmrobdetLinTest`
 

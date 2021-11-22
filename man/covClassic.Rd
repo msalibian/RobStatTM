@@ -32,7 +32,7 @@ a list with class \dQuote{covClassic} containing the following elements:
 \item{cov}{a numeric matrix containing the estimate of the covariance matrix.}
 \item{cor}{a numeric matrix containing the estimate of the correlation matrix if the argument \code{corr = TRUE}. Otherwise it is set to \code{NULL}.}
 \item{dist}{a numeric vector containing the squared Mahalanobis distances. Only present if \code{distance = TRUE} in the \code{call}.}
-\item{call}{an image of the call that produced the object with all the arguments named.}
+\item{call}{an image of the call that produced the object with all the arguments named. The matched call.}
 }
 \description{
 Compute an estimate of the covariance/correlation matrix and location

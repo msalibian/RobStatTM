@@ -43,6 +43,7 @@ A list with class \dQuote{covRob} containing the following elements:
 \item{cor}{The correlation matrix estimate, if the argument \code{cor} equals \code{TRUE}. Otherwise it is set to \code{NULL}.}
 \item{dist}{Robust Mahalanobis distances.}
 \item{wts}{weights}
+\item{call}{an image of the call that produced the object with all the arguments named. The matched call.}
 \item{mu}{The location estimate. Same as \code{center} above.}
 \item{V}{The scatter (or correlation) matrix estimate, scaled for consistency at the normal distribution.  Same as \code{cov} above.}
 \item{sig}{sig}
