@@ -12,7 +12,7 @@
 #' @return If the argument \code{bothVals} is \code{FALSE}, the robust final prediction error (numeric). Otherwise,
 #' the two terms of the RFPE expression in equation (5.39), Section 5.6.2 of Maronna
 #' et al. (2019), \url{http://www.wiley.com/go/maronna/robust}, are returned separately 
-#' in a list.
+#' in a list with components named \code{minMM} and \code{penaltyRFPE}
 #' 
 #' @rdname lmrobdetMM.RFPE
 #' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
@@ -41,7 +41,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL, bothVals = FALSE)
   if(!bothVals) {
     return( (a2 + b2/d2/length(res)) ) # (a + b/d)*6 / tun^2 )
   } else {
-    return( list(a2, b2/d2/length(res)) )
+    return( list(minMM=a2, penaltyRFPE=b2/d2/length(res)) )
   }
 }
 
