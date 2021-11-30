@@ -1,4 +1,4 @@
-# Version 1.0.3:
+# Version 1.0.3 (November 2021)
 
 - The Shiny User Interface capability has been removed, and correspondingly the
 Shiny Interface to RobStatTM Vignette has also been removed. The reason for 
@@ -29,7 +29,7 @@ in the object returned by `covClassic`
 This was not correct. The function can be used directly.
 
 - `lmrobdetMM.RFPE` now includes the argument `bothVals`. If set to `TRUE` the 
-function returns a list with the two terms (named `minMM` and `penaltyRFPE`)
+function returns a list with the two terms (named `minRhoMM` and `penaltyRFPE`)
 that added together equal the RFPE (see equation (5.39) in Section
 5.6.2 of the book "Robust Statistics: Theory and Methods (with R)". 
 If `bothVals` is `FALSE` then the function returns a scalar with the RPFE value. 
