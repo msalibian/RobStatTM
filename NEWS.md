@@ -1,3 +1,9 @@
+# Version 1.0.4
+
+- For the function `lmrobdetMM.RFPE`, when the argument `bothVals` is set 
+to `TRUE`, the names of the first element in the returned list has been
+changed to `minRhoMM.C` (from `minRhoMM`).
+
 # Version 1.0.3 (November 2021)
 
 - The Shiny User Interface capability has been removed, and correspondingly the

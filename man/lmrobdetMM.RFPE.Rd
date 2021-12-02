@@ -20,7 +20,7 @@ should be the scale estimate from an encompassing model. If \code{NULL}, the sca
 If the argument \code{bothVals} is \code{FALSE}, the robust final prediction error (numeric). Otherwise,
 the two terms of the RFPE expression in equation (5.39), Section 5.6.2 of Maronna
 et al. (2019), \url{http://www.wiley.com/go/maronna/robust}, are returned separately 
-in a list with components named \code{minRhoMM} and \code{penaltyRFPE}
+in a list with components named \code{minRhoMM.C} and \code{penaltyRFPE}
 }
 \description{
 This function computes the robust Final Prediction Errors (RFPE) for a robust regression fit using M-estimates.
