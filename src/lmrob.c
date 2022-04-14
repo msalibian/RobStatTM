@@ -1234,7 +1234,7 @@ double rho_ggw(double x, const double k[])
     else { // k[0] == 0; k[1:4] = (a, b, c, rho(Inf)) =  "general parameters"
 	// calculate integral
 	x = fabs(x);
-	double a = 0., epsabs = R_pow(DOUBLE_EPSILON, 0.25), result, abserr;
+	double a = 0., epsabs = R_pow(DBL_EPSILON, 0.25), result, abserr;
 	int neval, ier, last, limit = 100, lenw = 4 * limit;
 	int   *iwork =    (int *) R_alloc(limit, sizeof(int));
 	double *work = (double *) R_alloc(lenw,  sizeof(double));
