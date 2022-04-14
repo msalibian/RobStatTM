@@ -1,3 +1,8 @@
+# Version 1.0.5
+
+- Replace legacy S-compatibility deprecated macros DOUBLE_* in 
+R_ext/Constants.h (included by R.h) by the standard C99 constants
+
 # Version 1.0.4
 
 - For the function `lmrobdetMM.RFPE`, when the argument `bothVals` is set 
