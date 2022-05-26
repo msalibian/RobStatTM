@@ -1,3 +1,8 @@
+# Version 1.0.6
+
+- locScaleM produces a warning and returns 0 for the estimated scale when more 
+than half of the input values are equal to each other. 
+
 # Version 1.0.5
 
 - Replace legacy S-compatibility deprecated macros DOUBLE_* in 
