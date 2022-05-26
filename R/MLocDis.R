@@ -89,8 +89,10 @@ locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4, n
       mu0 <- median(x)
       sig0 <- mad(x)
       if(sig0 < 1.e-10) {
-        mu <- 0.0
-        sigma <- 0.0
+        resu <- list(mu = mu0, std.mu = 0, disper = 0)
+        wrn <- paste0(sum( x == median(x) ), ' elements in the input vector (out of ', length(x), ') are equal to ', median(x))
+        warning(wrn)
+        return(resu)
       }
       else {
         dife <- 1.e10
