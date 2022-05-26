@@ -1329,7 +1329,7 @@ lmrobdetLinTest <- rob.linear.test <- function(object1, object2)
 {
   if( (class(object1)[1] != 'lmrobdetMM') | 
       (class(object2)[1] != 'lmrobdetMM') ) 
-    stop('This test only applies to MM regression fits.')
+    stop('This test only applies to M or MM regression fits.')
   
   p <- length(object1$coeff)
   q <- length(object1$coeff) - length(object2$coeff)
