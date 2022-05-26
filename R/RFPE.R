@@ -27,6 +27,8 @@
 #' @export
 lmrobdetMM.RFPE <- function(object, scale = NULL, bothVals = FALSE)
 {
+  if( class(object)[1] != 'lmrobdetMM') 
+    stop('RFPE should only be calculated with MM regression estimators')
   if (!object$converged)
     warning("The algorithm did not converge, inference is not recommended.")
   # ocm <- tolower(object$control$method)
