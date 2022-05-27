@@ -7,7 +7,7 @@
 lmrobdetMM.RFPE(object, scale = NULL, bothVals = FALSE)
 }
 \arguments{
-\item{object}{an object of class \code{\link{lmrobdetMM}}.}
+\item{object}{an object of class \code{lmrobdetMM} or \code{lmrobM}.}
 
 \item{scale}{a numeric value specifying the scale estimate used to compute the RFPE. Usually this 
 should be the scale estimate from an encompassing model. If \code{NULL}, the scale estimate in 

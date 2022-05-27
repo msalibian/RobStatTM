@@ -2,7 +2,7 @@
 #'
 #' This function computes the robust Final Prediction Errors (RFPE) for a robust regression fit using M-estimates.
 #'
-#' @param object an object of class \code{\link{lmrobdetMM}}.
+#' @param object an object of class \code{lmrobdetMM} or \code{lmrobM}.
 #' @param scale a numeric value specifying the scale estimate used to compute the RFPE. Usually this 
 #' should be the scale estimate from an encompassing model. If \code{NULL}, the scale estimate in 
 #' \code{object} is used. 
@@ -27,8 +27,9 @@
 #' @export
 lmrobdetMM.RFPE <- function(object, scale = NULL, bothVals = FALSE)
 {
-  if( class(object)[1] != 'lmrobdetMM') 
-    stop('RFPE should only be calculated with MM regression estimators')
+  if( (class(object)[1] != 'lmrobdetMM') & 
+      (class(object)[1] != 'lmrobM') )
+    stop('RFPE should only be calculated for M or MM regression fits.')
   if (!object$converged)
     warning("The algorithm did not converge, inference is not recommended.")
   # ocm <- tolower(object$control$method)

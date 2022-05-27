@@ -1327,8 +1327,11 @@ lmrobM <- function(formula, data, subset, weights, na.action,
 #'
 lmrobdetLinTest <- rob.linear.test <- function(object1, object2)
 {
-  if( (class(object1)[1] != 'lmrobdetMM') | 
-      (class(object2)[1] != 'lmrobdetMM') ) 
+  tmp1 <- ( ('lmrobdetMM' %in% class(object1)[1] ) | 
+              ('lmrobM' %in% class(object1)[1] ) )
+  tmp2 <- ( ('lmrobdetMM' %in% class(object2)[1] ) | 
+              ('lmrobM' %in% class(object2)[1] ) )
+  if( !( tmp1 & tmp2) )
     stop('This test only applies to M or MM regression fits.')
   
   p <- length(object1$coeff)
