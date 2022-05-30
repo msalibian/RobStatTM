@@ -62,7 +62,14 @@ locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4, n
     if (kpsi>0 & keff>0) {
       ktun=kk[kpsi, keff]
       mu0=median(x); sig0=mad(x)
-      if (sig0<1.e-10) {mu=0; sigma=0
+      if (sig0<1.e-10) {
+          resu <- list(mu = mu0, std.mu = 0, disper = 0)
+          num.rep <- sum( x == median(x) )
+          perc.rep <- num.rep / length(x)
+          wrn <- paste0(num.rep, ' elements ', round(perc.rep*100, 1), '% in the input vector are equal to ', median(x), '.')
+          wrn <- paste0(wrn, ' If percent is 50% or greater, the values of std.mu and disper will be 0, and user may wish to apply locScaleM to data with tied values removed.')
+          warning(wrn)
+          return(resu)
       } else { #initialize
         dife=1.e10; iter=0
         while (dife>tol & iter<maxit) {
