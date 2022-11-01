@@ -1,4 +1,4 @@
-.Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'opt', 'hampel', 'ggw', 'mopt')
+.Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'opt', 'hampel', 'ggw', 'mopt', 'optV0', 'moptV0')
 
 .Mpsi.M.names <- c('huber') ## .M: the monotone ones:
 
@@ -1012,7 +1012,17 @@ hatvalues.lmrob <- function(model, ...)
                ## just check length of coefficients
                if (length(cc) != 6)
                    stop('Coef. for Modified Optimal psi function not of length 6')
-           }, {
+           }, 
+			 'optV0' = {
+			   ## just check length of coefficients
+			   if (length(cc) != 6)
+			     stop('Coef. for Optimal psi function not of length 6')
+			 },
+			 'moptV0' = {
+			   ## just check length of coefficients
+			   if (length(cc) != 6)
+			     stop('Coef. for Modified Optimal psi function not of length 6')
+			 }, {
                ## otherwise: should have length 1
                if (length(cc) != 1)
                    stop('Coef. for psi function ', psi,' not of length 1')

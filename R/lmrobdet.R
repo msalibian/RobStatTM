@@ -426,7 +426,8 @@ lmrobdet.control <- function(bb = 0.5,
                              mscale_maxit = 50, mscale_tol = 1e-06, mscale_rho_fun = 'bisquare')
 {
   family <- match.arg(family, choices = FAMILY.NAMES)
-  if( (efficiency > .9999 ) & ( (family=='mopt') | (family=='opt') ) ) {
+  if( (efficiency > .9999 ) & 
+      ( (family=='mopt') | (family=='opt') | (family=='moptV0') | (family=='optV0') ) ) {
     efficiency <- .9999
     warning("Current implementation of \'opt\' or \'mopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
