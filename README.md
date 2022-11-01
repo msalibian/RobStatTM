@@ -1,5 +1,7 @@
 # RobStatTM
 
+# [Nov 1 2022] The package in this repository may not work until further notice. Please use the latest official version of the package, which is available on [CRAN](https://cran.r-project.org/package=RobStatTM)
+
 This repository contains a development version of the companion package to the 2nd edition of
 the book [Robust Statistics: Theory and Methods](https://www.wiley.com/go/maronna/robust), by Ricardo Maronna, Doug Martin, Victor Yohai and Matias Salibian-Barrera.
 
