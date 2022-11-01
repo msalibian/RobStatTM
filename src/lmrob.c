@@ -656,6 +656,9 @@ double rho_inf(const double k[], int ipsi) {
     case 6: // LQQ aka 'lin psip'
 	return (k[2]*k[1]*(3*k[1]+2*k[0]) + (k[0]+k[1])*(k[0]+k[1])) / (6.*(k[2]-1.)); break;
     case 7: return(k[3] * k[3] * k[5]); break;
+    case 8: return(PHIONE / (PHIONE - k[0]) * k[3] * k[3] * k[5]); // Optimalv0
+    case 9: return(k[3] * k[3] * k[5]); break; // Modified Optimalv0
+      
     }
 } // rho_inf()
 
@@ -707,6 +710,8 @@ double rho(double x, const double c[], int ipsi)
     case 6: return(rho_lqq(x, c)); // LQQ := Linear-Quadratic-Quadratic
 	// was LGW := "lin psip" := piecewise linear psi'()
     case 7: return(rho_modOpt(x, c)); // Modified Optimal
+    case 8: return(rho_opt(x, c)); // Optimalv0
+    case 9: return(rho_modOpt(x, c)); // Modified Optimalv0
     }
 }
 
@@ -726,6 +731,8 @@ double psi(double x, const double c[], int ipsi)
     case 5: return(psi_ggw(x, c)); // GGW
     case 6: return(psi_lqq(x, c)); // LQQ (piecewise linear psi')
     case 7: return(psi_modOpt(x, c)); // Modified Optimal
+    case 8: return(psi_opt(x, c)); // Optimalv0
+    case 9: return(psi_modOpt(x, c)); // Modified Optimalv0
     }
 }
 
@@ -745,6 +752,8 @@ double psip(double x, const double c[], int ipsi)
     case 5: return(psip_ggw(x, c)); // GGW
     case 6: return(psip_lqq(x, c)); // LQQ (piecewise linear psi')
     case 7: return(psip_modOpt(x, c)); // Modified Optimal
+    case 8: return(psip_opt(x, c)); // Optimalv0
+    case 9: return(psip_modOpt(x, c)); // Modified Optimalv0
     }
 }
 

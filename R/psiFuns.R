@@ -1,7 +1,7 @@
 # The supported rho families.
 
 #FAMILY.NAMES <- c("bisquare", "ggw", "hampel", "huber", "lqq", "mopt", "opt", "welsh")
-FAMILY.NAMES <- c("bisquare", "mopt", "opt", "moptV0", "optV0", "huber")
+FAMILY.NAMES <- c("bisquare", "mopt", "opt", "moptv0", "optv0", "huber")
 
 #' Tuning parameter the rho loss functions
 #'
@@ -74,17 +74,17 @@ bisquare <- function(e) #, breakdown.point)
 #'
 #' @examples
 #' # Tuning parameters for an 85%-efficient M-estimator at a Gaussian model
-#' optV0(.85)
+#' optv0(.85)
 #'
 #' @export
-optV0 <- function(e)
+optv0 <- function(e)
 {
   if( e > .9999) {
     e <- .9999
     warning("Current implementation of \'opt\' or \'mopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
-  a <- findTuningConstFromGaussianEfficiency(e, "opt")
-  cc <- c(a, psiSupportFromTuningConst(a, "opt"), 1.0)
+  a <- findTuningConstFromGaussianEfficiency(e, "optv0")
+  cc <- c(a, psiSupportFromTuningConst(a, "optv0"), 1.0)
   cc[5] <- Psi_optimal(cc[2], cc[1])
   cc[6] <- Psi_optimal(cc[3], cc[1]) - cc[5]
   names(cc) <- c("a", "lower", "upper", "c", "Psi(lower)", "rho(Inf)")
@@ -119,11 +119,12 @@ opt <- function(e)
     warning("Current implementation of \'opt\' or \'mopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
   a <- findTuningConstFromGaussianEfficiency(e, "opt")
-  cc <- c(a, psiSupportFromTuningConst(a, "opt"), 1.0)
-  cc[5] <- Psi_optimal(cc[2], cc[1])
-  cc[6] <- Psi_optimal(cc[3], cc[1]) - cc[5]
-  names(cc) <- c("a", "lower", "upper", "c", "Psi(lower)", "rho(Inf)")
-  cc
+  # cc <- c(a, psiSupportFromTuningConst(a, "opt"), 1.0)
+  # cc[5] <- Psi_optimal(cc[2], cc[1])
+  # cc[6] <- Psi_optimal(cc[3], cc[1]) - cc[5]
+  # names(cc) <- c("a", "lower", "upper", "c", "Psi(lower)", "rho(Inf)")
+  # cc
+  a
 }
 
 
@@ -146,10 +147,10 @@ opt <- function(e)
 #'
 #' @examples
 #' # Tuning parameters for an 85%-efficient M-estimator at a Gaussian model
-#' moptV0(.85)
+#' moptv0(.85)
 #'
 #' @export
-moptV0 <- function(e)
+moptv0 <- function(e)
 {
   if( e > .9999) {
     e <- .9999

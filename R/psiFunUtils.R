@@ -9,8 +9,8 @@ psiSupportFromTuningConst <- function(a, family.name)
     huber = c(0, +Inf), 
     mopt = psiSupportFromTuningConst_modopt(a[1]),
     opt = psiSupportFromTuningConst_optimal(a[1]),
-    moptV0 = psiSupportFromTuningConst_modoptV0(a[1]),
-    optV0 = psiSupportFromTuningConst_optimalV0(a[1])
+    moptv0 = psiSupportFromTuningConst_modoptv0(a[1]),
+    optv0 = psiSupportFromTuningConst_optimalv0(a[1])
   )
 }
 
@@ -47,8 +47,8 @@ findTuningConstFromGaussianEfficiency <- function(e, family.name)
   switch(family.name,
     opt = findTuningConstFromGaussianEfficiency_optimal(e),
     mopt = findTuningConstFromGaussianEfficiency_modopt(e),
-    optV0 = findTuningConstFromGaussianEfficiency_optimalV0(e),
-    moptV0 = findTuningConstFromGaussianEfficiency_modoptV0(e),
+    optv0 = findTuningConstFromGaussianEfficiency_optimalv0(e),
+    moptv0 = findTuningConstFromGaussianEfficiency_modoptv0(e),
     {
       obj <- function(a, family, e) {
         cc <-  c('c' = a)
@@ -89,7 +89,7 @@ adjustTuningVectorForBreakdownPoint <- function(family, cc, breakdown.point = 0.
 
 ########## optimal ##########
 
-Psi_optimalV0 <- function(x, a)
+Psi_optimalv0 <- function(x, a)
   0.5 * x^2 - a * pi * .Call(R_erfi, x / sqrt(2), PACKAGE='RobStatTM')
 
 Psi_optimal <- function(x, a)
@@ -101,7 +101,7 @@ A_MAX <- 0.2419707
 g <- function(x, a) x * dnorm(x) - a
 
 
-psiSupportFromTuningConst_optimalV0 <- function(a, tol = 1e-8)
+psiSupportFromTuningConst_optimalv0 <- function(a, tol = 1e-8)
 {
   if(a > 0.0 && a < A_MAX) {
     lower <- uniroot(f = g, interval = c(0.0, 1.0), a = a, check.conv = TRUE, tol = tol)
@@ -189,23 +189,44 @@ psiSupportFromTuningConst_optimal <- function(a, tol = 1e-8)
 
 findTuningConstFromGaussianEfficiency_optimal <- function(e, interval = c(1e-6, 0.2255))
 {
-  obj <- function(a, e) {
-    sup <- psiSupportFromTuningConst(a, "opt")
-    # fam <- list(name = "optimal", cc = c(a, sup, 1.0, NA, NA))
-    fam <- 'opt'
-    cc <- c(a, sup, 1.0, NA, NA)
-    e - computeGaussianEfficiencyFromFamily(fam, cc, psiSupport = sup)
-  }
-
-  uniroot(obj, interval = interval, e = e, check.conv = TRUE, tol = 1e-8)$root
+  param <- optv0(e) #findTuningConstFromGaussianEfficiency_optimalv0(e=eff)
+  a <- as.vector(param[2])
+  b <- as.vector(param[3])
+  x <- seq(a, b, .001)
+  y <- rhoprime(u=x, family='optv0', cc=param, standardize=TRUE)
+  x1 <- x
+  x3 <- x^3
+  x5 <- x^5 
+  x7 <- x^7
+  d <- lm(y~ x1+x3+x5+x7, x=TRUE)
+  beta <- coef(d)
+  R <- rbind(c(1, a, a^3, a^5, a^7), c(1, b, b^3, b^5, b^7))
+  X <- d$x
+  V <- solve(t(X)%*%X)
+  ccoef <- as.vector( beta - V %*% t(R) %*% solve( R %*% V %*% t(R)) %*% R %*% beta )
+  u1 <- (ccoef[1]*a+(ccoef[2]*(a^2)/2) +(ccoef[3]*(a^4)/4)+(ccoef[4]*(a^6)/6)+(ccoef[5]*(a^8)/8)) 
+  u2 <- (ccoef[1]*b+(ccoef[2]*(b^2)/2) +(ccoef[3]*(b^4)/4)+(ccoef[4]*(b^6)/6)+(ccoef[5]*(b^8)/8)) 
+  # out <- list(coef=ccoef, a=a, b=b, u1=u1, u2=u2)
+  out <- c(param, c(ccoef), a, b, u1, u2)
+  names(out) <- c(names(param), c('p1', 'p2', 'p3', 'p4', 'p5', 'lop', 'upp', 'u1', 'u2'))
+  out
+  #   obj <- function(a, e) {
+  #   sup <- psiSupportFromTuningConst(a, "opt")
+  #   # fam <- list(name = "optimal", cc = c(a, sup, 1.0, NA, NA))
+  #   fam <- 'opt'
+  #   cc <- c(a, sup, 1.0, NA, NA)
+  #   e - computeGaussianEfficiencyFromFamily(fam, cc, psiSupport = sup)
+  # }
+  # 
+  # uniroot(obj, interval = interval, e = e, check.conv = TRUE, tol = 1e-8)$root
 }
 
-findTuningConstFromGaussianEfficiency_optimalV0 <- function(e, interval = c(1e-6, 0.2255))
+findTuningConstFromGaussianEfficiency_optimalv0 <- function(e, interval = c(1e-6, 0.2255))
 {
   obj <- function(a, e) {
-    sup <- psiSupportFromTuningConst(a, "optV0")
+    sup <- psiSupportFromTuningConst(a, "optv0")
     # fam <- list(name = "optimal", cc = c(a, sup, 1.0, NA, NA))
-    fam <- 'opt'
+    fam <- 'optv0'
     cc <- c(a, sup, 1.0, NA, NA)
     e - computeGaussianEfficiencyFromFamily(fam, cc, psiSupport = sup)
   }
@@ -245,7 +266,7 @@ psiSupportFromTuningConst_modopt <- function(a, tol = 1e-8)
   c(NA_real_, NA_real_)
 }
 
-psiSupportFromTuningConst_modoptV0 <- function(a, tol = 1e-8)
+psiSupportFromTuningConst_modoptv0 <- function(a, tol = 1e-8)
 {
   if(a > 0.0 && a < A_MAX) {
     upper <- uniroot(f = g, interval = c(1.0, 5.0), a = a, extendInt = "downX", check.conv = TRUE, tol = tol)
@@ -285,12 +306,12 @@ findTuningConstFromGaussianEfficiency_modopt <- function(e, interval = c(1e-6, 0
   uniroot(obj, interval = interval, e = e, check.conv = TRUE, tol = 1e-8)$root
 }
 
-findTuningConstFromGaussianEfficiency_modoptV0 <- function(e, interval = c(1e-6, 0.2255))
+findTuningConstFromGaussianEfficiency_modoptv0 <- function(e, interval = c(1e-6, 0.2255))
 {
   obj <- function(a, e) {
-    sup <- psiSupportFromTuningConst(a, "moptV0")
+    sup <- psiSupportFromTuningConst(a, "moptv0")
     # fam <- list(name = "modopt", cc = c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA))
-    fam <- 'moptV0'
+    fam <- 'moptv0'
     cc <- c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA)
     e - computeGaussianEfficiencyFromFamily(fam, cc, psiSupport = sup)
   }

@@ -1,4 +1,4 @@
-.Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'opt', 'hampel', 'ggw', 'mopt', 'optV0', 'moptV0')
+.Mpsi.R.names <- c('bisquare', 'lqq', 'welsh', 'opt', 'hampel', 'ggw', 'mopt', 'optv0', 'moptv0')
 
 .Mpsi.M.names <- c('huber') ## .M: the monotone ones:
 
@@ -25,19 +25,40 @@
     , 'welsh' = 2.11
     , 'ggw' = c(-0.5, 1.5, .95, NA) ## (min{slope}, b ,  eff, bp)
     , 'lqq' = c(-0.5, 1.5, .95, NA) ## (min{slope}, b/c, eff, bp)
-    , 'opt' = c(a = 0.01317965,
-                    lower = 0.03305454,
-                    upper = 3.003281,
-                    c = 1.0,
-                    "Psi_Opt(lower)" = -0.0005459033,
-                    "rho(Inf)" = 3.331370)
+    , 'opt' = c(a = 0.01317965, 
+                lower = 0.0330545361, 
+                upper = 3.0032809058, 
+                c = 1.0, 
+                "Psi_Opt(lower)" = -0.0005459033, 
+                "rho(Inf)" = 3.3313697802, 
+                p1 = -0.0104368977, 
+                p2 = 0.3157778511, 
+                p3 = -0.0274957016, 
+                p4 = 0.0078039757, 
+                p5 = -0.0009528411, 
+                lop = 0.0330545361, 
+                upp = 3.0032809058, 
+                u1 = -0.0001724852, 
+                u2 = 0.9996474329 )
     , 'hampel' = c(1.5, 3.5, 8) * 0.9016085 ## a, b, r
     , 'mopt' = c(a = 0.01316352,
-                             normConst = 1.05753107,
-                             upper = 3.00373940,
-                             c = 1.0,
-                             "Psi_Opt(1)" = 0.46057111,
-                             "rho(Inf)" = 3.53690811)
+                  normConst = 1.05753107,
+                  upper = 3.00373940,
+                  c = 1.0,
+                  "Psi_Opt(1)" = 0.46057111,
+                  "rho(Inf)" = 3.53690811)
+    , 'optv0' = c(a = 0.01317965,
+                  lower = 0.03305454,
+                  upper = 3.003281,
+                  c = 1.0,
+                  "Psi_Opt(lower)" = -0.0005459033,
+                  "rho(Inf)" = 3.331370), 
+    'moptv0' = c(a = 0.01316352,
+                 normConst = 1.05753107,
+                 upper = 3.00373940,
+                 c = 0.38124404,
+                 "Psi_Opt(1)" = 0.46057111,
+                 "rho(Inf)" = 3.53690811)
     )
 
 .Mpsi.tuning.default <- function(psi) {
@@ -54,20 +75,42 @@
     , 'welsh' = 0.5773502
     , 'ggw' = c(-0.5, 1.5, NA, .50) ## (min{slope}, b ,  eff, bp)
     , 'lqq' = c(-0.5, 1.5, NA, .50) ## (min{slope}, b/c, eff, bp)
-    , 'opt' = c(a = 0.01317965,
+    , 'optv0' = c(a = 0.01317965,
                     lower = 0.03305454,
                     upper = 3.003281,
                     c = 0.2618571,
                     "Psi_Opt(lower)" = -0.0005459033,
                     "rho(Inf)" = 3.331370)
     , 'hampel' = c(1.5, 3.5, 8) * 0.2119163 ## a, b, r
-    , 'mopt' = c(a = 0.01316352,
+    , 'moptv0' = c(a = 0.01316352,
                              normConst = 1.05753107,
                              upper = 3.00373940,
                              c = 0.38124404,
                              "Psi_Opt(1)" = 0.46057111,
                              "rho(Inf)" = 3.53690811)
+    , 'opt' = c(a = 0.01317965, 
+                lower = 0.0330545361, 
+                upper = 3.0032809058, 
+                c = 0.2618571, 
+                "Psi_Opt(lower)" = -0.0005459033, 
+                "rho(Inf)" = 3.3313697802, 
+                p1 = -0.0104368977, 
+                p2 = 0.3157778511, 
+                p3 = -0.0274957016, 
+                p4 = 0.0078039757, 
+                p5 = -0.0009528411, 
+                lop = 0.0330545361, 
+                upp = 3.0032809058, 
+                u1 = -0.0001724852, 
+                u2 = 0.9996474329 )
+    , 'mopt' = c(a = 0.01316352,
+                   normConst = 1.05753107,
+                   upper = 3.00373940,
+                   c = 0.38124404,
+                   "Psi_Opt(1)" = 0.46057111,
+                   "rho(Inf)" = 3.53690811)
     )
+
 .Mchi.tuning.default <- function(psi) {
     if(is.null(p <- .Mchi.tuning.defaults[[psi]]))
 	stop(gettextf("invalid 'psi'=%s; possibly use .regularize.Mpsi(%s)",
@@ -551,7 +594,7 @@ lmrob..M..fit <- function (x = obj$x, y = obj$y, beta.initial = obj$coef,
         y <- model.response(obj$model, "numeric")
     # Only optimal and modified.optimal have more than 4 tuning constants
     stopifnot(length(y) == n,
-              length(c.psi) > 0, c.psi[-5] >= 0,
+              length(c.psi) > 0, # c.psi[-5] >= 0, (polynomial approx has neg coeffients)
               scale >= 0, length(beta.initial) == p)
 
     ret <- .C(R_lmrob_MM,
@@ -952,8 +995,8 @@ hatvalues.lmrob <- function(model, ...)
     i <- match(psi, c(
 	'huber', 'bisquare', 'welsh', 'opt',
 	## 0	    1	        2	 3
-	'hampel', 'ggw', 'lqq', 'mopt'
-	## 4	    5	   6      7
+	'hampel', 'ggw', 'lqq', 'mopt', 'optv0', 'moptv0'
+	## 4	    5	   6      7       8          9
 	))
     if(is.na(i)) stop("internal logic error in psi() function name: ", psi,
 		      "  Please report!")
@@ -1005,23 +1048,23 @@ hatvalues.lmrob <- function(model, ...)
            },
            'opt' = {
                ## just check length of coefficients
-               if (length(cc) != 6)
-                   stop('Coef. for Optimal psi function not of length 6')
+               if (length(cc) != 15)
+                   stop('Coef. for Optimal psi function not of length 15')
            },
            'mopt' = {
                ## just check length of coefficients
                if (length(cc) != 6)
                    stop('Coef. for Modified Optimal psi function not of length 6')
            }, 
-			 'optV0' = {
+			 'optv0' = {
 			   ## just check length of coefficients
 			   if (length(cc) != 6)
-			     stop('Coef. for Optimal psi function not of length 6')
+			     stop('Coef. for Optimalv0 psi function not of length 6')
 			 },
-			 'moptV0' = {
+			 'moptv0' = {
 			   ## just check length of coefficients
 			   if (length(cc) != 6)
-			     stop('Coef. for Modified Optimal psi function not of length 6')
+			     stop('Coef. for Modified Optimalv0 psi function not of length 6')
 			 }, {
                ## otherwise: should have length 1
                if (length(cc) != 1)
