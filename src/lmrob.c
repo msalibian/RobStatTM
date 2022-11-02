@@ -1013,7 +1013,7 @@ double rho_opt(double x, const double c[])
    *   c[6:10]: polynomial coefficients
    *   c[11:12]: endpoints of support (for x > 0)
    *   c[13]: rescaling parameter, 1.0 yields poly optimal psi
-   *   c[14], c[15]: reference points (max value is c[16] - c[15])
+   *   c[14], c[15]: reference points (max value is c[15] - c[14])
    */
   
   x = fabs(x) / c[13];
