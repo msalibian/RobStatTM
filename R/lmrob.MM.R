@@ -1005,73 +1005,73 @@ hatvalues.lmrob <- function(model, ...)
 
 .psi.conv.cc <- function(psi, cc)
 {
-    if (!is.character(psi) || length(psi) != 1)
-        stop("argument 'psi' must be a string (denoting a psi function)")
-    if(!is.numeric(cc))
-        stop("tuning constant 'cc' is not numeric")
-
-    ## "FIXME": For (ggw, lqq) this is much related to  .psi.const() below
-    switch(tolower(psi),
-           'ggw' = {
-               ## Input: 4 parameters, (minimal slope, b, efficiency, breakdown point) _or_ c(0, a,b,c, m.rho)
-               ## Output 'k': either k in {1:6} or  k = c(0, k[2:5])
-
-               ## prespecified 6 cases all treated in C ( ../src/lmrob.c ) :
-               if (     isTRUE(all.equal(cc, c(-.5, 1  , 0.95, NA)))) return(1)
-               else if (isTRUE(all.equal(cc, c(-.5, 1  , 0.85, NA)))) return(2)
-               else if (isTRUE(all.equal(cc, c(-.5, 1. , NA, 0.5)))) return(3)
-               else if (isTRUE(all.equal(cc, c(-.5, 1.5, 0.95, NA)))) return(4)
-               else if (isTRUE(all.equal(cc, c(-.5, 1.5, 0.85, NA)))) return(5)
-               else if (isTRUE(all.equal(cc, c(-.5, 1.5, NA, 0.5)))) return(6)
-               else if (length(cc) == 5 && cc[1] == 0 ||
-                        (length(cc <- attr(cc, 'constants')) == 5 && cc[1] == 0))
-                   return(cc)
-               else stop('Coefficients for ',psi,' function incorrectly specified.\n',
-			 'Use c(minimal slope, b, efficiency, breakdown point) or c(0, a,b,c, max_rho).')
-           },
-           'lqq' = {
-               ## Input: 4 parameters, (minimal slope, b/c, efficiency, breakdown point) _or_ (b, c, s) [length 3]
-               ## Output: k[1:3] = (b, c, s)
-               if (isTRUE(all.equal(cc, c(-.5, 1.5, 0.95, NA))))
-                   return(c(1.4734061, 0.9822707, 1.5))
-               else if (isTRUE(all.equal(cc, c(-.5, 1.5, NA, 0.5))))
-                   return(c(0.4015457, 0.2676971, 1.5))
-               else if (length(cc) == 3 || length(cc <- attr(cc, 'constants')) == 3)
-                   return(cc)
-               else stop('Coefficients for ',psi,' function incorrectly specified.\n',
-                         'Use c(minimal slope, b, efficiency, breakdown point) [2 cases only] or  c(b, c, s)')
-           },
-           'hampel' = {
-               ## just check length of coefficients
-               if (length(cc) != 3)
-                   stop('Coef. for Hampel psi function not of length 3')
-           },
-           'opt' = {
-               ## just check length of coefficients
-               if (length(cc) != 15)
-                   stop('Coef. for Optimal psi function not of length 15')
-           },
-           'mopt' = {
-               ## just check length of coefficients
-               if (length(cc) != 6)
-                   stop('Coef. for Modified Optimal psi function not of length 6')
-           }, 
-			 'optv0' = {
-			   ## just check length of coefficients
-			   if (length(cc) != 6)
-			     stop('Coef. for Optimalv0 psi function not of length 6')
-			 },
-			 'moptv0' = {
-			   ## just check length of coefficients
-			   if (length(cc) != 6)
-			     stop('Coef. for Modified Optimalv0 psi function not of length 6')
-			 }, {
-               ## otherwise: should have length 1
-               if (length(cc) != 1)
-                   stop('Coef. for psi function ', psi,' not of length 1')
-           })
-
-    return(cc)
+  if (!is.character(psi) || length(psi) != 1)
+    stop("argument 'psi' must be a string (denoting a psi function)")
+  if(!is.numeric(cc))
+    stop("tuning constant 'cc' is not numeric")
+  
+  ## "FIXME": For (ggw, lqq) this is much related to  .psi.const() below
+  switch(tolower(psi),
+         'ggw' = {
+           ## Input: 4 parameters, (minimal slope, b, efficiency, breakdown point) _or_ c(0, a,b,c, m.rho)
+           ## Output 'k': either k in {1:6} or  k = c(0, k[2:5])
+           
+           ## prespecified 6 cases all treated in C ( ../src/lmrob.c ) :
+           if (     isTRUE(all.equal(cc, c(-.5, 1  , 0.95, NA)))) return(1)
+           else if (isTRUE(all.equal(cc, c(-.5, 1  , 0.85, NA)))) return(2)
+           else if (isTRUE(all.equal(cc, c(-.5, 1. , NA, 0.5)))) return(3)
+           else if (isTRUE(all.equal(cc, c(-.5, 1.5, 0.95, NA)))) return(4)
+           else if (isTRUE(all.equal(cc, c(-.5, 1.5, 0.85, NA)))) return(5)
+           else if (isTRUE(all.equal(cc, c(-.5, 1.5, NA, 0.5)))) return(6)
+           else if (length(cc) == 5 && cc[1] == 0 ||
+                    (length(cc <- attr(cc, 'constants')) == 5 && cc[1] == 0))
+             return(cc)
+           else stop('Coefficients for ',psi,' function incorrectly specified.\n',
+                     'Use c(minimal slope, b, efficiency, breakdown point) or c(0, a,b,c, max_rho).')
+         },
+         'lqq' = {
+           ## Input: 4 parameters, (minimal slope, b/c, efficiency, breakdown point) _or_ (b, c, s) [length 3]
+           ## Output: k[1:3] = (b, c, s)
+           if (isTRUE(all.equal(cc, c(-.5, 1.5, 0.95, NA))))
+             return(c(1.4734061, 0.9822707, 1.5))
+           else if (isTRUE(all.equal(cc, c(-.5, 1.5, NA, 0.5))))
+             return(c(0.4015457, 0.2676971, 1.5))
+           else if (length(cc) == 3 || length(cc <- attr(cc, 'constants')) == 3)
+             return(cc)
+           else stop('Coefficients for ',psi,' function incorrectly specified.\n',
+                     'Use c(minimal slope, b, efficiency, breakdown point) [2 cases only] or  c(b, c, s)')
+         },
+         'hampel' = {
+           ## just check length of coefficients
+           if (length(cc) != 3)
+             stop('Coef. for Hampel psi function not of length 3')
+         },
+         'opt' = {
+           ## just check length of coefficients
+           if (length(cc) != 16)
+             stop('Coef. for Optimal psi function not of length 16')
+         },
+         'mopt' = {
+           ## just check length of coefficients
+           if (length(cc) != 6)
+             stop('Coef. for Modified Optimal psi function not of length 6')
+         }, 
+         'optv0' = {
+           ## just check length of coefficients
+           if (length(cc) != 6)
+             stop('Coef. for Optimalv0 psi function not of length 6')
+         },
+         'moptv0' = {
+           ## just check length of coefficients
+           if (length(cc) != 6)
+             stop('Coef. for Modified Optimalv0 psi function not of length 6')
+         }, {
+           ## otherwise: should have length 1
+           if (length(cc) != 1)
+             stop('Coef. for psi function ', psi,' not of length 1')
+         })
+  
+  return(cc)
 }
 
 .psi.ggw.mxs <- function(a, b, c, tol = .Machine$double.eps^0.25) {
