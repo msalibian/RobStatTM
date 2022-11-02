@@ -131,6 +131,8 @@ double psi_opt(double x, const double c[]);
 double psip_opt(double x, const double c[]);
 double wgt_opt(double x, const double c[]);
 
+double rho_optv0(double x, const double c[]);
+
 double rho_hmpl(double x, const double c[]);
 double psi_hmpl(double x, const double c[]);
 double psip_hmpl(double x, const double c[]);
@@ -153,6 +155,8 @@ double rho_modOpt(double x, const double c[]);
 double psi_modOpt(double x, const double c[]);
 double psip_modOpt(double x, const double c[]);
 double wgt_modOpt(double x, const double c[]);
+
+double rho_modOptv0(double x, const double c[]);
 
 double sum_rho_sc(const double r[], double scale, int n, int p,
 		  const double c[], int ipsi);
@@ -640,7 +644,7 @@ double rho_inf(const double k[], int ipsi) {
     case 0: return(R_PosInf); // huber
     case 1: return(c*c/6.); // biweight
     case 2: return(c*c); // GaussWeight / "Welsh"
-    case 3: return(PHIONE / (PHIONE - k[0]) * k[3] * k[3] * k[5]); // Optimal
+    case 3: return(k[16] - k[15]); // Optimal poly
     case 4: return(0.5*k[0]*(k[1]+k[2]-k[0])); // Hampel
     case 5: // GGW (Generalized Gauss Weight)
 	switch((int)c) {
@@ -655,7 +659,7 @@ double rho_inf(const double k[], int ipsi) {
 	};
     case 6: // LQQ aka 'lin psip'
 	return (k[2]*k[1]*(3*k[1]+2*k[0]) + (k[0]+k[1])*(k[0]+k[1])) / (6.*(k[2]-1.)); break;
-    case 7: return(k[3] * k[3] * k[5]); break;
+    case 7: return(k[3] * k[3] * k[5]); break; // Modified optimal poly
     case 8: return(PHIONE / (PHIONE - k[0]) * k[3] * k[3] * k[5]); // Optimalv0
     case 9: return(k[3] * k[3] * k[5]); break; // Modified Optimalv0
       
@@ -704,14 +708,14 @@ double rho(double x, const double c[], int ipsi)
     case 0: return(rho_huber(x, c)); // huber
     case 1: return(rho_biwgt(x, c)); // biweight
     case 2: return(rho_gwgt(x, c)); // GaussWeight / "Welsh"
-    case 3: return(rho_opt(x, c)); // Optimal
+    case 3: return(rho_opt(x, c)); // Optimal poly
     case 4: return(rho_hmpl(x, c)); // Hampel
     case 5: return(rho_ggw(x, c)); // GGW (Generalized Gauss Weight)
     case 6: return(rho_lqq(x, c)); // LQQ := Linear-Quadratic-Quadratic
 	// was LGW := "lin psip" := piecewise linear psi'()
-    case 7: return(rho_modOpt(x, c)); // Modified Optimal
-    case 8: return(rho_opt(x, c)); // Optimalv0
-    case 9: return(rho_modOpt(x, c)); // Modified Optimalv0
+    case 7: return(rho_modOpt(x, c)); // Modified Optimal poly
+    case 8: return(rho_optv0(x, c)); // Optimalv0
+    case 9: return(rho_modOptv0(x, c)); // Modified Optimalv0
     }
 }
 
@@ -726,11 +730,11 @@ double psi(double x, const double c[], int ipsi)
     case 0: return(psi_huber(x, c)); // huber
     case 1: return(psi_biwgt(x, c)); // biweight
     case 2: return(psi_gwgt(x, c)); // GaussWeight / "Welsh"
-    case 3: return(psi_opt(x, c)); // Optimal
+    case 3: return(psi_opt(x, c)); // Optimal poly
     case 4: return(psi_hmpl(x, c)); // Hampel
     case 5: return(psi_ggw(x, c)); // GGW
     case 6: return(psi_lqq(x, c)); // LQQ (piecewise linear psi')
-    case 7: return(psi_modOpt(x, c)); // Modified Optimal
+    case 7: return(psi_modOpt(x, c)); // Modified Optimal poly
     case 8: return(psi_opt(x, c)); // Optimalv0
     case 9: return(psi_modOpt(x, c)); // Modified Optimalv0
     }
@@ -747,11 +751,11 @@ double psip(double x, const double c[], int ipsi)
     case 0: return(psip_huber(x, c)); // huber
     case 1: return(psip_biwgt(x, c)); // biweight
     case 2: return(psip_gwgt(x, c)); // GaussWeight / "Welsh"
-    case 3: return(psip_opt(x, c)); // Optimal
+    case 3: return(psip_opt(x, c)); // Optimal poly
     case 4: return(psip_hmpl(x, c)); // Hampel
     case 5: return(psip_ggw(x, c)); // GGW
     case 6: return(psip_lqq(x, c)); // LQQ (piecewise linear psi')
-    case 7: return(psip_modOpt(x, c)); // Modified Optimal
+    case 7: return(psip_modOpt(x, c)); // Modified Optimal poly
     case 8: return(psip_opt(x, c)); // Optimalv0
     case 9: return(psip_modOpt(x, c)); // Modified Optimalv0
     }
@@ -789,11 +793,14 @@ double wgt(double x, const double c[], int ipsi)
     case 0: return(wgt_huber(x, c)); // huber
     case 1: return(wgt_biwgt(x, c)); // biweight
     case 2: return(wgt_gwgt(x, c)); // GaussWeight / "Welsh"
-    case 3: return(wgt_opt(x, c)); // Optimal
+    case 3: return(wgt_opt(x, c)); // Optimal  poly
     case 4: return(wgt_hmpl(x, c)); // Hampel
     case 5: return(wgt_ggw(x, c)); // GGW
     case 6: return(wgt_lqq(x, c)); // LQQ (piecewise linear psi')
-    case 7: return(wgt_modOpt(x, c)); // Modified Optimal
+    case 7: return(wgt_modOpt(x, c)); // Modified Optimal  poly
+    case 8: return(wgt_opt(x, c)); // Optimal 
+    case 9: return(wgt_modOpt(x, c)); // Modified Optimal
+      
     }
 }
 
@@ -969,27 +976,61 @@ double Psi_opt(double x, const double c[])
   return(0.5 * x * x - c[0] * M_PI * creal(erfi((double complex) (M_SQRT1_2 * x))));
 }
 
-double rho_opt(double x, const double c[])
+double rho_optv0(double x, const double c[])
 {
- /*
-  * c[] contains 6 values:
-  *   c[0]: tuning constant a
-  *   c[1] & c[2]: endpoints of support interval calculated from a (x > 0)
-  *   c[3]: rescaling parameter; 1.0 gives definition of optimal psi
-  *   c[4]: Psi_opt(c[1], c)
-  *   c[5]: rho_opt(Inf) when c[3] = 1
-  */
-
+  /*
+   * c[] contains 6 values:
+   *   c[0]: tuning constant a
+   *   c[1] & c[2]: endpoints of support interval calculated from a (x > 0)
+   *   c[3]: rescaling parameter; 1.0 gives definition of optimal psi
+   *   c[4]: Psi_opt(c[1], c)
+   *   c[5]: rho_opt(Inf) when c[3] = 1
+   */
+  
   x = fabs(x) / c[3];
-
+  
   if(x <= c[1])
     return(0.0);
-
+  
   if(x >= c[2])
     return(1.0);
-
+  
   return((Psi_opt(x, c) - c[4]) / c[5]);
 }
+
+
+
+
+double rho_opt(double x, const double c[])
+{
+  /*
+   * c[] contains 16 values:
+   *   c[0]: tuning constant a
+   *   c[1] & c[2]: endpoints of support interval calculated from a (x > 0)
+   *   c[3]: rescaling parameter; 1.0 gives definition of optimal psi
+   *   c[4]: Psi_opt(c[1], c)
+   *   c[5]: rho_opt(Inf) when c[3] = 1
+   *   c[6:10]: polynomial coefficients
+   *   c[11:12]: endpoints of support (for x > 0)
+   *   c[13]: rescaling parameter, 1.0 yields poly optimal psi
+   *   c[14], c[15]: reference points (max value is c[16] - c[15])
+   */
+  
+  x = fabs(x) / c[13];
+  
+  if(x <= c[11])
+    return(0.0);
+  
+  if(x >= c[12])
+    return(c[15]-c[14]);
+  
+  double x2 = x * x;
+  
+  double u3 = c[6] * x + c[7] * x2 / 2.0 + c[8] * x2 * x2 / 4.0 + c[9] * x2 * x2 * x2 / 6 + c[10] * x2 * x2 * x2 * x2 / 8;
+  
+  return(u3 - c[14]);  
+}
+
 
 double psi_opt(double x, const double c[])
 {
@@ -1475,6 +1516,31 @@ double rho_modOpt(double x, const double c[])
 
   return((0.5 + c[1] * (Psi_opt(x, c) - c[4])) / c[5]);
 }
+
+double rho_modOptv0(double x, const double c[])
+{
+  /*
+   * c[] contains 6 values:
+   *   c[0]: tuning constant a
+   *   c[1]: dnorm(1) / (dnorm(1) - a)
+   *   c[2]: upper endpoint of optimal support interval
+   *   c[3]: rescaling parameter; 1.0 gives definition of modified optimal psi
+   *   c[4]: Psi_opt(1.0, c)
+   *   c[5]: rho_modOpt(Inf) when c[3] = 1
+   */
+  
+  x = fabs(x) / c[3];
+  
+  if(x < 1.0)
+    return((0.5 * x * x) / c[5]);
+  
+  if(x > c[2])
+    return(1.0);
+  
+  return((0.5 + c[1] * (Psi_opt(x, c) - c[4])) / c[5]);
+}
+
+
 
 double psi_modOpt(double x, const double c[])
 {
