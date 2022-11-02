@@ -644,7 +644,7 @@ double rho_inf(const double k[], int ipsi) {
     case 0: return(R_PosInf); // huber
     case 1: return(c*c/6.); // biweight
     case 2: return(c*c); // GaussWeight / "Welsh"
-    case 3: return(k[16] - k[15]); // Optimal poly
+    case 3: return(PHIONE / (PHIONE - k[0]) * k[3] * k[3] * k[5]); // Optimal poly (same as optimal original)
     case 4: return(0.5*k[0]*(k[1]+k[2]-k[0])); // Hampel
     case 5: // GGW (Generalized Gauss Weight)
 	switch((int)c) {
