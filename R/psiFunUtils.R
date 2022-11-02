@@ -76,12 +76,19 @@ adjustTuningVectorForBreakdownPoint <- function(family, cc, breakdown.point = 0.
 {
   g <- function(v, family, cc, breakdown.point) {
     # family$cc["c"] <- v
-    cc["c"] <- v
+    if( (family == 'opt') | (family == 'mopt') )
+      cc["c"] <- cc["c2"] <- v
+    else
+      cc["c"] <- v
     findBreakdownPoint(family, cc=cc) - breakdown.point
   }
 
   # family$cc["c"] <-
-  cc["c"] <- uniroot(g, c(1e-5, 1e5), family = family, cc=cc, breakdown.point = breakdown.point, tol = 1e-8)$root
+  tmp <- uniroot(g, c(1e-5, 1e5), family = family, cc=cc, breakdown.point = breakdown.point, tol = 1e-8)$root
+  if( (family == 'opt') | (family == 'mopt') )
+    cc["c"] <- cc["c2"] <- tmp
+  else
+    cc["c"] <- tmp
   return(cc)
 }
 
@@ -207,8 +214,8 @@ findTuningConstFromGaussianEfficiency_optimal <- function(e, interval = c(1e-6, 
   u1 <- (ccoef[1]*a+(ccoef[2]*(a^2)/2) +(ccoef[3]*(a^4)/4)+(ccoef[4]*(a^6)/6)+(ccoef[5]*(a^8)/8)) 
   u2 <- (ccoef[1]*b+(ccoef[2]*(b^2)/2) +(ccoef[3]*(b^4)/4)+(ccoef[4]*(b^6)/6)+(ccoef[5]*(b^8)/8)) 
   # out <- list(coef=ccoef, a=a, b=b, u1=u1, u2=u2)
-  out <- c(param, c(ccoef), a, b, u1, u2)
-  names(out) <- c(names(param), c('p1', 'p2', 'p3', 'p4', 'p5', 'lop', 'upp', 'u1', 'u2'))
+  out <- c(param, c(ccoef), a, b, 1.0, u1, u2)
+  names(out) <- c(names(param), c('p1', 'p2', 'p3', 'p4', 'p5', 'lop', 'upp', 'c2', 'u1', 'u2'))
   out
   #   obj <- function(a, e) {
   #   sup <- psiSupportFromTuningConst(a, "opt")
