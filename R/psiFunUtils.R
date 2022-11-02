@@ -76,7 +76,7 @@ adjustTuningVectorForBreakdownPoint <- function(family, cc, breakdown.point = 0.
 {
   g <- function(v, family, cc, breakdown.point) {
     # family$cc["c"] <- v
-    if( (family == 'opt') | (family == 'mopt') )
+    if( (family == 'opt') ) # | (family == 'mopt') )
       cc["c"] <- cc["c2"] <- v
     else
       cc["c"] <- v
@@ -85,7 +85,7 @@ adjustTuningVectorForBreakdownPoint <- function(family, cc, breakdown.point = 0.
 
   # family$cc["c"] <-
   tmp <- uniroot(g, c(1e-5, 1e5), family = family, cc=cc, breakdown.point = breakdown.point, tol = 1e-8)$root
-  if( (family == 'opt') | (family == 'mopt') )
+  if( (family == 'opt') ) # | (family == 'mopt') )
     cc["c"] <- cc["c2"] <- tmp
   else
     cc["c"] <- tmp
