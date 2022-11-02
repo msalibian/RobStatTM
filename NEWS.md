@@ -1,3 +1,8 @@
+# Version 1.0.7
+
+- The opt and mopt loss functions are now calculated using polynomials. Their
+derivatives are still computed using an analytical expression. 
+
 # Version 1.0.6
 
 - locScaleM produces a warning and returns 0 for the estimated scale when more 
