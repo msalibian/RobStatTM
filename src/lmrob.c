@@ -730,11 +730,11 @@ double psi(double x, const double c[], int ipsi)
     case 0: return(psi_huber(x, c)); // huber
     case 1: return(psi_biwgt(x, c)); // biweight
     case 2: return(psi_gwgt(x, c)); // GaussWeight / "Welsh"
-    case 3: return(psi_opt(x, c)); // Optimal poly
+    case 3: return(psi_opt(x, c)); // Optimal poly same as optimal
     case 4: return(psi_hmpl(x, c)); // Hampel
     case 5: return(psi_ggw(x, c)); // GGW
     case 6: return(psi_lqq(x, c)); // LQQ (piecewise linear psi')
-    case 7: return(psi_modOpt(x, c)); // Modified Optimal poly
+    case 7: return(psi_modOpt(x, c)); // Modified Optimal poly same as modopt
     case 8: return(psi_opt(x, c)); // Optimalv0
     case 9: return(psi_modOpt(x, c)); // Modified Optimalv0
     }
@@ -751,11 +751,11 @@ double psip(double x, const double c[], int ipsi)
     case 0: return(psip_huber(x, c)); // huber
     case 1: return(psip_biwgt(x, c)); // biweight
     case 2: return(psip_gwgt(x, c)); // GaussWeight / "Welsh"
-    case 3: return(psip_opt(x, c)); // Optimal poly
+    case 3: return(psip_opt(x, c)); // Optimal poly same as optimal
     case 4: return(psip_hmpl(x, c)); // Hampel
     case 5: return(psip_ggw(x, c)); // GGW
     case 6: return(psip_lqq(x, c)); // LQQ (piecewise linear psi')
-    case 7: return(psip_modOpt(x, c)); // Modified Optimal poly
+    case 7: return(psip_modOpt(x, c)); // Modified Optimal poly same as modopt
     case 8: return(psip_opt(x, c)); // Optimalv0
     case 9: return(psip_modOpt(x, c)); // Modified Optimalv0
     }
@@ -793,11 +793,11 @@ double wgt(double x, const double c[], int ipsi)
     case 0: return(wgt_huber(x, c)); // huber
     case 1: return(wgt_biwgt(x, c)); // biweight
     case 2: return(wgt_gwgt(x, c)); // GaussWeight / "Welsh"
-    case 3: return(wgt_opt(x, c)); // Optimal  poly
+    case 3: return(wgt_opt(x, c)); // Optimal  poly same as optimal
     case 4: return(wgt_hmpl(x, c)); // Hampel
     case 5: return(wgt_ggw(x, c)); // GGW
     case 6: return(wgt_lqq(x, c)); // LQQ (piecewise linear psi')
-    case 7: return(wgt_modOpt(x, c)); // Modified Optimal  poly
+    case 7: return(wgt_modOpt(x, c)); // Modified Optimal poly same as modopt
     case 8: return(wgt_opt(x, c)); // Optimal 
     case 9: return(wgt_modOpt(x, c)); // Modified Optimal
       
