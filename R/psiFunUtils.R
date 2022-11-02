@@ -77,7 +77,7 @@ adjustTuningVectorForBreakdownPoint <- function(family, cc, breakdown.point = 0.
   g <- function(v, family, cc, breakdown.point) {
     # family$cc["c"] <- v
     if( (family == 'opt') ) # | (family == 'mopt') )
-      cc["c"] <- cc["c2"] <- v
+      cc["c2"] <- v
     else
       cc["c"] <- v
     findBreakdownPoint(family, cc=cc) - breakdown.point

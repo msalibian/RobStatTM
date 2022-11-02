@@ -436,7 +436,13 @@ lmrobdet.control <- function(bb = 0.5,
   if( (length(tuning.psi) == 1) & is.null(names(tuning.psi)) )
     tuning.psi <- c( 'c' = tuning.psi )
   if(missing(tuning.chi))
+    if( (family == 'opt') ) { 
+      tuning.chiv0 <- adjustTuningVectorForBreakdownPoint(family='optv0', cc=tuning.psi[1:6], breakdown.point = bb)
+      tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
+      tuning.chi['c'] <- tuning.chiv0['c']
+    } else {
     tuning.chi <- adjustTuningVectorForBreakdownPoint(family=family, cc=tuning.psi, breakdown.point = bb)
+    }
   return(list(family=family, # psi=psi,
               tuning.chi=tuning.chi, bb=bb, tuning.psi=tuning.psi,
               max.it=max.it,
