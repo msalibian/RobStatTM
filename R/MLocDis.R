@@ -38,7 +38,7 @@
 #' locScaleM(r2)
 #'
 locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4, na.rm = FALSE) {
-  kpsi <- switch(psi, bisquare = 1, huber = 2, opt = 3, mopt = 4, 5)
+  kpsi <- switch(psi, bisquare = 1, huber = 2, opt = 3, mopt = 4, optv0 = 5, moptv0 = 6, 7)
   # if (psi=="bisquare") kpsi=1
   # if (psi=="huber") kpsi=2
   # } else {print(c(psi, " No such psi")); kpsi=0
@@ -50,7 +50,7 @@ locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4, n
   }
   if (na.rm)
     x <- x[!is.na(x)]
-  if(kpsi == 5) stop(paste0(psi, ' - No such rho function'))
+  if(kpsi == 7) stop(paste0(psi, ' - No such rho function'))
   if(kpsi %in% c(1, 2)) { # Start of Ricardo's code
     kBis=c(3.44, 3.88, 4.685)
     kHub=c(0.732, 0.981, 1.34)
@@ -63,13 +63,13 @@ locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4, n
       ktun=kk[kpsi, keff]
       mu0=median(x); sig0=mad(x)
       if (sig0<1.e-10) {
-          resu <- list(mu = mu0, std.mu = 0, disper = 0)
-          num.rep <- sum( x == median(x) )
-          perc.rep <- num.rep / length(x)
-          wrn <- paste0(num.rep, ' elements ', round(perc.rep*100, 1), '% in the input vector are equal to ', median(x), '.')
-          wrn <- paste0(wrn, ' If percent is 50% or greater, the values of std.mu and disper will be 0, and user may wish to apply locScaleM to data with tied values removed.')
-          warning(wrn)
-          return(resu)
+        resu <- list(mu = mu0, std.mu = 0, disper = 0)
+        num.rep <- sum( x == median(x) )
+        perc.rep <- num.rep / length(x)
+        wrn <- paste0(num.rep, ' elements ', round(perc.rep*100, 1), '% in the input vector are equal to ', median(x), '.')
+        wrn <- paste0(wrn, ' If percent is 50% or greater, the values of std.mu and disper will be 0, and user may wish to apply locScaleM to data with tied values removed.')
+        warning(wrn)
+        return(resu)
       } else { #initialize
         dife=1.e10; iter=0
         while (dife>tol & iter<maxit) {
@@ -122,10 +122,14 @@ locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4, n
       b <- mean(rhoprime2(resi, family, cc))
       sigmu <- sqrt(sig0^2 * a / (n*b^2))
       f <- function(u, family, cc) {
-        cc["c"] <- u
+        if( (family == "opt") | (family == "mopt") ) {
+          cc["c2"] <- u } else { cc["c"] <- u }
         integrate(function(x, fam, cc) rho(x, fam, cc) * dnorm(x), -Inf, Inf, fam = family, cc = cc)$value - 0.5
       }
-      cc["c"] <- uniroot(f, c(0.01, 10), family = family, cc = cc)$root
+      
+      tmpc <- uniroot(f, c(0.01, 10), family = family, cc = cc)$root
+      if( (family == "opt") | (family == "mopt") ) {
+        cc["c2"] <- tmpc } else { cc["c"] <- tmpc }
       scat <- mscale(x - mu, delta = 0.5, tuning.chi = cc, family = family)
       resu <- list(mu = mu, std.mu = sigmu, disper = scat)
     } else { print(c(eff, " No such eff"))
