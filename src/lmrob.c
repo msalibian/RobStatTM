@@ -1026,7 +1026,7 @@ double rho_opt(double x, const double c[])
   
   double x2 = x * x;
   
-  double u3 = c[6] * x + c[7] * x2 / 2.0 + c[8] * x2 * x2 / 4.0 + c[9] * x2 * x2 * x2 / 6 + c[10] * x2 * x2 * x2 * x2 / 8;
+  double u3 = c[6] * x + c[7] * x2 / 2.0 + c[8] * x2 * x2 / 4.0 + c[9] * x2 * x2 * x2 / 6.0 + c[10] * x2 * x2 * x2 * x2 / 8.0;
   
   return(u3 - c[14]);  
 }
@@ -1519,7 +1519,7 @@ double rho_modOpt(double x, const double c[])
   
   double x2 = x * x;
   
-  double u3 = c[6] * x + c[7] * x2 / 2.0 + c[8] * x2 * x2 / 4.0 + c[9] * x2 * x2 * x2 / 6 + c[10] * x2 * x2 * x2 * x2 / 8;
+  double u3 = c[6] * x + c[7] * x2 / 2.0 + c[8] * x2 * x2 / 4.0 + c[9] * x2 * x2 * x2 / 6.0 + c[10] * x2 * x2 * x2 * x2 / 8.0;
   
   return(u3 - c[14]);  
 }
