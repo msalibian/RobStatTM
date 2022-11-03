@@ -156,8 +156,8 @@ moptv0 <- function(e)
     e <- .9999
     warning("Current implementation of \'opt\' or \'mopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
-  a <- findTuningConstFromGaussianEfficiency(e, "mopt")
-  cc <- c(a, DNORM1 / (DNORM1 - a), psiSupportFromTuningConst(a, "mopt")[2], 1.0)
+  a <- findTuningConstFromGaussianEfficiency(e, "moptv0")
+  cc <- c(a, DNORM1 / (DNORM1 - a), psiSupportFromTuningConst(a, "moptv0")[2], 1.0)
   cc[5] <- Psi_optimal(1.0, cc[1])
   cc[6] <- (0.5 + cc[2] * (Psi_optimal(cc[3], cc[1]) - cc[5]))
   names(cc) <- c("a", "normConst", "upper", "c", "Psi(1)", "rho(Inf)")
@@ -192,11 +192,7 @@ mopt <- function(e)
     warning("Current implementation of \'opt\' or \'mopt\' only allows efficiencies up to 99.99%. Efficiency set to 99.99% for this call.")
   }
   a <- findTuningConstFromGaussianEfficiency(e, "mopt")
-  cc <- c(a, DNORM1 / (DNORM1 - a), psiSupportFromTuningConst(a, "mopt")[2], 1.0)
-  cc[5] <- Psi_optimal(1.0, cc[1])
-  cc[6] <- (0.5 + cc[2] * (Psi_optimal(cc[3], cc[1]) - cc[5]))
-  names(cc) <- c("a", "normConst", "upper", "c", "Psi(1)", "rho(Inf)")
-  cc
+  a
 }
 
 

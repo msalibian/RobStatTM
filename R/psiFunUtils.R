@@ -76,7 +76,7 @@ adjustTuningVectorForBreakdownPoint <- function(family, cc, breakdown.point = 0.
 {
   g <- function(v, family, cc, breakdown.point) {
     # family$cc["c"] <- v
-    if( (family == 'opt') ) # | (family == 'mopt') )
+    if( (family == 'opt') | (family == 'mopt') )
       cc["c2"] <- v
     else
       cc["c"] <- v
@@ -85,8 +85,8 @@ adjustTuningVectorForBreakdownPoint <- function(family, cc, breakdown.point = 0.
 
   # family$cc["c"] <-
   tmp <- uniroot(g, c(1e-5, 1e5), family = family, cc=cc, breakdown.point = breakdown.point, tol = 1e-8)$root
-  if( (family == 'opt') ) # | (family == 'mopt') )
-    cc["c"] <- cc["c2"] <- tmp
+  if( (family == 'opt') | (family == 'mopt') )
+    cc["c2"] <- tmp
   else
     cc["c"] <- tmp
   return(cc)
@@ -302,15 +302,27 @@ psiSupportFromTuningConst_modoptv0 <- function(a, tol = 1e-8)
 
 findTuningConstFromGaussianEfficiency_modopt <- function(e, interval = c(1e-6, 0.2255))
 {
-  obj <- function(a, e) {
-    sup <- psiSupportFromTuningConst(a, "mopt")
-    # fam <- list(name = "modopt", cc = c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA))
-    fam <- 'mopt'
-    cc <- c(a, DNORM1 / (DNORM1 - a), sup[2], 1.0, NA, NA)
-    e - computeGaussianEfficiencyFromFamily(fam, cc, psiSupport = sup)
-  }
-
-  uniroot(obj, interval = interval, e = e, check.conv = TRUE, tol = 1e-8)$root
+  param <- moptv0(e) #findTuningConstFromGaussianEfficiency_optimalv0(e=eff)
+  a <- 0.0
+  b <- as.vector(param[3])
+  x <- seq(a, b, .001)
+  y <- rhoprime(u=x, family='moptv0', cc=param, standardize=TRUE)
+  x1 <- x
+  x3 <- x^3
+  x5 <- x^5 
+  x7 <- x^7
+  d <- lm(y~ x1+x3+x5+x7, x=TRUE)
+  beta <- coef(d)
+  R <- rbind(c(1, a, a^3, a^5, a^7), c(1, b, b^3, b^5, b^7))
+  X <- d$x
+  V <- solve(t(X)%*%X)
+  ccoef <- as.vector( beta - V %*% t(R) %*% solve( R %*% V %*% t(R)) %*% R %*% beta )
+  u1 <- (ccoef[1]*a+(ccoef[2]*(a^2)/2) +(ccoef[3]*(a^4)/4)+(ccoef[4]*(a^6)/6)+(ccoef[5]*(a^8)/8)) 
+  u2 <- (ccoef[1]*b+(ccoef[2]*(b^2)/2) +(ccoef[3]*(b^4)/4)+(ccoef[4]*(b^6)/6)+(ccoef[5]*(b^8)/8)) 
+  # out <- list(coef=ccoef, a=a, b=b, u1=u1, u2=u2)
+  out <- c(param, c(ccoef), a, b, 1.0, u1, u2)
+  names(out) <- c(names(param), c('p1', 'p2', 'p3', 'p4', 'p5', 'lop', 'upp', 'c2', 'u1', 'u2'))
+  out
 }
 
 findTuningConstFromGaussianEfficiency_modoptv0 <- function(e, interval = c(1e-6, 0.2255))

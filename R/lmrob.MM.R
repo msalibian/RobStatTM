@@ -1055,7 +1055,7 @@ hatvalues.lmrob <- function(model, ...)
          },
          'mopt' = {
            ## just check length of coefficients
-           if (length(cc) != 6)
+           if (length(cc) != 16)
              stop('Coef. for Modified Optimal psi function not of length 6')
          }, 
          'optv0' = {

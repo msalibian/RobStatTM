@@ -1496,25 +1496,32 @@ double wgt_lqq (double x, const double k[])
 
 double rho_modOpt(double x, const double c[])
 {
- /*
-  * c[] contains 6 values:
-  *   c[0]: tuning constant a
-  *   c[1]: dnorm(1) / (dnorm(1) - a)
-  *   c[2]: upper endpoint of optimal support interval
-  *   c[3]: rescaling parameter; 1.0 gives definition of modified optimal psi
-  *   c[4]: Psi_opt(1.0, c)
-  *   c[5]: rho_modOpt(Inf) when c[3] = 1
-  */
-
-  x = fabs(x) / c[3];
-
-  if(x < 1.0)
-    return((0.5 * x * x) / c[5]);
-
-  if(x > c[2])
-    return(1.0);
-
-  return((0.5 + c[1] * (Psi_opt(x, c) - c[4])) / c[5]);
+  /*
+   * c[] contains 16 values:
+   *   c[0]: tuning constant a
+   *   c[1] & c[2]: endpoints of support interval calculated from a (x > 0)
+   *   c[3]: rescaling parameter; 1.0 gives definition of optimal psi
+   *   c[4]: Psi_opt(c[1], c)
+   *   c[5]: rho_opt(Inf) when c[3] = 1
+   *   c[6:10]: polynomial coefficients
+   *   c[11:12]: endpoints of support (for x > 0)
+   *   c[13]: rescaling parameter, 1.0 yields poly optimal psi
+   *   c[14], c[15]: reference points (max value is c[15] - c[14])
+   */
+  
+  x = fabs(x) / c[13];
+  
+  if(x <= c[11])
+    return(0.0);
+  
+  if(x >= c[12])
+    return(c[15]-c[14]);
+  
+  double x2 = x * x;
+  
+  double u3 = c[6] * x + c[7] * x2 / 2.0 + c[8] * x2 * x2 / 4.0 + c[9] * x2 * x2 * x2 / 6 + c[10] * x2 * x2 * x2 * x2 / 8;
+  
+  return(u3 - c[14]);  
 }
 
 double rho_modOptv0(double x, const double c[])
