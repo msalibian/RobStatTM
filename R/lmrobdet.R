@@ -207,7 +207,8 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
         if(df.int == 1L) {
           tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
                                      initial.scale=z$scale, k=500,
-                                     conv=1, family = control$family, cc = control$tuning.psi, step='M')$beta.rw)
+                                     conv=1, family = control$family, cc = control$tuning.psi, step='M',
+                                     tol = control$refine.tol)$beta.rw)
           s02 <- mean(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
         } else {
           s02 <- mean(rho(y/z$scale, family = control$family, cc=control$tuning.psi))
@@ -661,8 +662,9 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' @param cc tuning constant for the rho function.
 #' @param family string specifying the name of the family of loss function to be used (current
 #' valid options are "bisquare", "opt" and "mopt")
-#' @param step a string indicating whether the iterations are to compute an S-estiamator
+#' @param step a string indicating whether the iterations are to compute an S-estimator
 #' ('S') or an M-estimator ('M')
+#' @param tol tolerance to detect convergence (relative difference of consecutive vectors of parameters)
 #'
 #' @return A list with the following components:
 #' \item{beta.rw}{The updated vector of regression coefficients}
@@ -673,7 +675,7 @@ print.summary.lmrobdetMM <- function (x, digits = max(3, getOption("digits") - 3
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}.
 #' @export
 refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
-                      conv=1, b, cc, family, step='M') {
+                      conv=1, b, cc, family, step='M', tol) {
 
   #refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   #                     conv=1, b, cc, step='M') {
@@ -687,7 +689,8 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   f.w <- function(u, family, cc)
     Mwgt(x = u, cc = cc, psi = family)
 
-
+  norm.sm <- function(x) sqrt(sum(x^2))
+  
   n <- dim(x)[1]
   # p <- dim(x)[2]
 
@@ -731,7 +734,7 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
       }
       if( (conv==1) ) {
         # check for convergence
-        if( norm.sm( beta - beta.1 ) / norm.sm(beta) < 1e-7 ) { # magic number alert!!!
+        if( norm.sm( beta - beta.1 ) / norm.sm(beta) < tol ) { 
           converged <- TRUE
           break
         }
@@ -744,10 +747,9 @@ refine.sm <- function(x, y, initial.beta, initial.scale, k=50,
   }
   # res <- as.vector( y - x %*% beta )
   # get the residuals from the last beta
-  return(list(beta.rw = beta.1, scale.rw = scale, converged=converged))
+  return(list(beta.rw = beta.1, scale.rw = scale, converged=converged,
+              iterations = i))
 }
-
-norm.sm <- function(x) sqrt(sum(x^2))
 
 
 
@@ -1263,7 +1265,8 @@ lmrobM <- function(formula, data, subset, weights, na.action,
         if(df.int == 1L) {
           tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
                                      initial.scale=z$scale, k=500,
-                                     conv=1, family = control$family, cc = control$tuning.psi, step='M')$beta.rw)
+                                     conv=1, family = control$family, cc = control$tuning.psi, step='M',
+                                     tol=control$refine.tol)$beta.rw)
           s02 <- mean(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
         } else {
           s02 <- mean(rho(y/z$scale, family = control$family, cc=control$tuning.psi))

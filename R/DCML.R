@@ -156,7 +156,8 @@ MMPY <- function(X, y, control, mf) {
 
   for(i in 1:kk) {
     tmp <- refine.sm(x=X, y=y, initial.beta=a$coefficients[,i], initial.scale=a$objective[i],
-                     k=control$refine.PY, conv=1, b=dee, family=control$family, cc=control$tuning.chi, step='S')
+                     k=control$refine.PY, conv=1, b=dee, family=control$family, cc=control$tuning.chi, step='S',
+                     tol=control$refine.tol)
     if(tmp$scale.rw < best.ss) {
       best.ss <- tmp$scale.rw # initial$objF[1]
       betapy <- tmp$beta.rw # initial$initCoef[,1]

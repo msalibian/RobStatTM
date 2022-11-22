@@ -14,7 +14,8 @@ refine.sm(
   b,
   cc,
   family,
-  step = "M"
+  step = "M",
+  tol
 )
 }
 \arguments{
@@ -39,8 +40,10 @@ or to force running k steps (0)}
 \item{family}{string specifying the name of the family of loss function to be used (current
 valid options are "bisquare", "opt" and "mopt")}
 
-\item{step}{a string indicating whether the iterations are to compute an S-estiamator
+\item{step}{a string indicating whether the iterations are to compute an S-estimator
 ('S') or an M-estimator ('M')}
+
+\item{tol}{tolerance to detect convergence (relative difference of consecutive vectors of parameters)}
 }
 \value{
 A list with the following components:
