@@ -210,7 +210,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
           tmp2 <- refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
                                      initial.scale=z$scale, k=500,
                                      conv=1, family = control$family, cc = control$tuning.psi, step='M',
-                                     tol = control$refine.tol)
+                                     tol = control$rel.tol)
           tmp <- as.vector(tmp2$beta.rw)
           z$iters.const <- tmp2$iterations
           s02 <- mean(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
