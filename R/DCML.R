@@ -153,11 +153,12 @@ MMPY <- function(X, y, control, mf) {
   # refine the PY candidates to get something closer to an S-estimator for y ~ X1
   kk <- dim(a$coefficients)[2]
   best.ss <- +Inf
-
+  iters.py <- vector('numeric', kk)
   for(i in 1:kk) {
     tmp <- refine.sm(x=X, y=y, initial.beta=a$coefficients[,i], initial.scale=a$objective[i],
                      k=control$refine.PY, conv=1, b=dee, family=control$family, cc=control$tuning.chi, step='S',
-                     tol=control$refine.tol)
+                     tol=control$refine.S.py)
+    iters.py[i] <- tmp$iterations
     if(tmp$scale.rw < best.ss) {
       best.ss <- tmp$scale.rw # initial$objF[1]
       betapy <- tmp$beta.rw # initial$initCoef[,1]
@@ -179,6 +180,7 @@ MMPY <- function(X, y, control, mf) {
     outMM$control <- orig.control
     coefnames <- names(coef(outMM))
     residnames <- names(resid(outMM))
+    outMM$iters.py <- iters.py
     # if weights were all zero, then return the S estimator
     # S.resid <- as.vector(y - X %*% S.init$coef) / S.init$scale
     # ws <- rhoprime(S.resid, family=orig.control$family, cc=orig.control$tuning.psi)
@@ -187,6 +189,7 @@ MMPY <- function(X, y, control, mf) {
     outMM$fitted.values <- as.vector(X %*% S.init$coef) # y - b$y # y = fitted + res
     outMM$residuals <- setNames(y - outMM$fitted.values, rownames(X))
     names(outMM$coefficients) <- colnames(X)
+    outMM$iters.py <- iters.py
     ## robustness weights
     outMM$rweights <- lmrob.rweights(outMM$residuals, 
                                      outMM$scale, 

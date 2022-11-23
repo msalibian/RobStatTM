@@ -57,6 +57,7 @@
 #' \item{x}{if requested, the model matrix used}
 #' \item{y}{if requested, the response vector used}
 #' \item{terms}{The \link{terms} object used.}
+#' \item{iters.py}{The number of refinement iterations for each Pena-Yohai candidate for the S-estimator.}
 #' \item{assign}{Used to separate continuous from categorical columns in the design matrix}
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 #'
@@ -361,8 +362,9 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' can be constructed using the functions \link{bisquare}, \link{mopt} and \link{opt}.
 #' @param efficiency desired asymptotic efficiency of the final regression M-estimator. Defaults to 0.95.
 #' @param max.it maximum number of IRWLS iterations for the MM-estimator
-#' @param refine.tol relative covergence tolerance for the S-estimator
-#' @param rel.tol relative covergence tolerance for the IRWLS iterations for the MM-estimator
+#' @param refine.tol relative convergence tolerance for the S-estimator
+#' @param refine.S.py relative convergence tolerance for the local improvements of the Pena-Yohai candidates for the S-estimator
+#' @param rel.tol relative convergence tolerance for the IRWLS iterations for the MM-estimator
 #' @param refine.PY number of refinement steps for the Pen~a-Yohai candidates
 #' @param solve.tol (for the S algorithm): relative tolerance for matrix inversion. Hence, this corresponds to \code{\link{solve.default}}'s tol.
 #' @param trace.lev positive values (increasingly) provide details on the progress of the MM-algorithm
@@ -420,6 +422,7 @@ lmrobdet.control <- function(bb = 0.5,
                              split.type = "f",
                              initial='S',
                              max.it = 100, refine.tol = 1e-7, rel.tol = 1e-7,
+                             refine.S.py = 1e-7,
                              refine.PY = 10,
                              solve.tol = 1e-7, trace.lev = 0,
                              psc_keep = 0.5, resid_keep_method = 'threshold',
@@ -454,6 +457,7 @@ lmrobdet.control <- function(bb = 0.5,
               max.it=max.it,
               refine.tol=refine.tol,
               corr.b = corr.b, refine.PY = refine.PY,
+              refine.S.py = refine.S.py,
               rel.tol=rel.tol,
               solve.tol=solve.tol, trace.lev=trace.lev,
               compute.rd=compute.rd,

@@ -76,6 +76,7 @@ A list with the following components:
 \item{x}{if requested, the model matrix used}
 \item{y}{if requested, the response vector used}
 \item{terms}{The \link{terms} object used.}
+\item{iters.py}{The number of refinement iterations for each Pena-Yohai candidate for the S-estimator.}
 \item{assign}{Used to separate continuous from categorical columns in the design matrix}
 \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 }

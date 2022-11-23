@@ -17,6 +17,7 @@ lmrobdet.control(
   max.it = 100,
   refine.tol = 1e-07,
   rel.tol = 1e-07,
+  refine.S.py = 1e-07,
   refine.PY = 10,
   solve.tol = 1e-07,
   trace.lev = 0,
@@ -65,9 +66,11 @@ appropriate when there are categorical explanatory variables in the model.}
 
 \item{max.it}{maximum number of IRWLS iterations for the MM-estimator}
 
-\item{refine.tol}{relative covergence tolerance for the S-estimator}
+\item{refine.tol}{relative convergence tolerance for the S-estimator}
 
-\item{rel.tol}{relative covergence tolerance for the IRWLS iterations for the MM-estimator}
+\item{rel.tol}{relative convergence tolerance for the IRWLS iterations for the MM-estimator}
+
+\item{refine.S.py}{relative convergence tolerance for the local improvements of the Pena-Yohai candidates for the S-estimator}
 
 \item{refine.PY}{number of refinement steps for the Pen~a-Yohai candidates}
 
