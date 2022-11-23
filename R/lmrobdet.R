@@ -58,6 +58,7 @@
 #' \item{y}{if requested, the response vector used}
 #' \item{terms}{The \link{terms} object used.}
 #' \item{iters.py}{The number of refinement iterations for each Pena-Yohai candidate for the S-estimator.}
+#' \item{iters.const}{The number of refinement iterations used to compute the estimator without covariates (to calculate the robust R^2).}
 #' \item{assign}{Used to separate continuous from categorical columns in the design matrix}
 #' \item{na.action}{(where relevant) information returned by model.frame on the special handling of NAs}
 #'
@@ -206,10 +207,12 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
           1L
         else 0L
         if(df.int == 1L) {
-          tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
+          tmp2 <- refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
                                      initial.scale=z$scale, k=500,
                                      conv=1, family = control$family, cc = control$tuning.psi, step='M',
-                                     tol = control$refine.tol)$beta.rw)
+                                     tol = control$refine.tol)
+          tmp <- as.vector(tmp2$beta.rw)
+          z$iters.const <- tmp2$iterations
           s02 <- mean(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
         } else {
           s02 <- mean(rho(y/z$scale, family = control$family, cc=control$tuning.psi))
