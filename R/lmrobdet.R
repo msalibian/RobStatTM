@@ -1273,7 +1273,7 @@ lmrobM <- function(formula, data, subset, weights, na.action,
           tmp <- as.vector(refine.sm(x=matrix(rep(1,n), n, 1), y=y, initial.beta=median(y),
                                      initial.scale=z$scale, k=500,
                                      conv=1, family = control$family, cc = control$tuning.psi, step='M',
-                                     tol=control$refine.tol)$beta.rw)
+                                     tol=control$rel.tol)$beta.rw)
           s02 <- mean(rho((y-tmp)/z$scale, family = control$family, cc=control$tuning.psi))
         } else {
           s02 <- mean(rho(y/z$scale, family = control$family, cc=control$tuning.psi))
