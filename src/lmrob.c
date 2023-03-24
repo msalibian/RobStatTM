@@ -302,7 +302,7 @@ void zero_mat(double **a, int n, int m);
 	}                                                       \
     } else {							\
         /* scale _X_ */                                         \
-        char equed;         					\
+        char equed = ' ';         					\
 	F77_CALL(dlaqge)(&_n_, &_p_, Xe, &_n_, Dr, Dc, &rowcnd,	\
 			 &colcnd, &amax, &equed FCONE);		\
         rowequ = equed == 'B' || equed == 'R';                  \
