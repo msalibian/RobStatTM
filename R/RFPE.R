@@ -358,7 +358,8 @@ step.lmrobdetMM <- function (object, scope, direction = c("both", "backward", "f
     Terms <- terms(update(formula(fit), eval(parse(text = paste("~ .", change)))))
     attr(Terms, "formula") <- new.formula <- formula(Terms)
     # control$method <- 'MM'
-    newfit <- lmrobdetMM(new.formula, data = m, control = control) #, init=object$init$control$method)
+    tmp.call <- call('lmrobdetMM', formula=new.formula, control=control, data = objectcall$data)
+    newfit <- eval.parent(tmp.call) # lmrobdetMM(new.formula, data = m, control = control) #, init=object$init$control$method)
     bRFPE <- aod[, "RFPE"][o]
     if (trace)
       cat("\nStep:  RFPE =", format(round(bRFPE, 4)), "\n",
