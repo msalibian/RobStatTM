@@ -1,9 +1,9 @@
-#' Robust linear regression estimators
+#' Optimal Robust Linear Regression Estimators
 #'
 #' This function computes an MM-regression estimators for linear models
 #' using deterministic starting points.
 #'
-#' This function computes MM-regression estimators
+#' @details This function computes MM-regression estimators
 #' computed using Pen~a-Yohai candidates (instead of subsampling ones).
 #' This function makes use of the functions \code{lmrob.fit},
 #' \code{lmrob..M..fit}, \code{.vcov.avar1}, \code{lmrob.S} and
@@ -12,18 +12,23 @@
 #' modified so as to include use of the analytic form of the
 #' optimal psi and rho functions (for the optimal psi function , see
 #' Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019).
-#' The choice of the rho loss function is made by the user choice pf
-#' family = "opt" or family = "mopt" in the function lmrobdet.control.
-#' As of RobStatTM Versopm 1.0.7, the opt and mopt rhos functions are
-#' calculated using polynomials, rather than using the standard normal
-#' error function (erf) as in versions of RobStatTM prior to 1.0.7.
-#' The numerical results one now gets with the opt or mopt choices will
-#' differ by small amounts from those in earlier RobStatTM versions
-#' Users who wish to replicate results from releases prior to 1.0.7 may
-#' do so using the family arguments family = "optV0" or family = "moptV0".
-#' Note that the derivative of the rho loss function, known as the "psi"
-#' function, is not the derivative of the rho polynomial, instead it is
-#' still the optimal psi function referred to abpve.
+#' 
+#' @section Choice of Rho Loss Function:
+#' 
+#' This is done by the user choice of family = "opt" or family = "mopt"
+#' in the function lmrobdet.control. As of RobStatTM Versopm 1.0.7, the
+#' opt and mopt rhos functions are calculated using polynomials, rather
+#' than using the standard normal error function (erf) as in versions of
+#' RobStatTM prior to 1.0.7. The numerical results one now gets with the
+#' opt or mopt choices will differ by small amounts from those in earlier
+#' RobStatTM versions. Users who wish to replicate results from releases
+#' prior to 1.0.7 may do so using the family arguments family = "optV0" 
+#' or family = "moptV0". Note that the derivative of the rho loss function,
+#' known as the "psi" function, is not the derivative of the rho polynomial,
+#' instead it is still the optimal psi function referred to above.
+#' 
+#' @section Related Vignettes: 
+#' 
 #' For further details, see the Vignettes "polynomialRhoFunctions", and
 #' "Optimal Bias Robust Regression Psi and Rho Revisited".
 #'
