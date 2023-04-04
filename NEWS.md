@@ -1,6 +1,6 @@
 # Version 1.0.7
 
-- The opt and mopt loss functions, specified by the choice family = "opt" or family = "mopt" in the function lmrobdet.control are now calculated using polynomials, rather than the standard normal error function (erf) as in past releases.  The numerical results one now gets with the opt or mopt choices will differ by small amounts from those in earlier package versions. Users who wish to replicate results from earlier package releases may do so by using the choice family = "optV0" or family = "moptV0".   Note that the derivative of the loss function, known as a "rho" function, is still an analytic function known as a "psi" function. For further details, see the Vignette "polynomialRhoFunctions".
+- The opt and mopt loss functions, known as rho functions, specified by the choice family = "opt" or family = "mopt" in the function lmrobdet.control are now calculated using polynomials, rather than using the standard normal error function (erf) as in versions of RobStatTM prior to 1.0.7.  The numerical results one now gets with the opt or mopt choices will differ by small amounts from those in earlier package versions. Users who wish to replicate results from releases prior to 1.0.7 may do so by using the family arguments family = "optV0" or family = "moptV0".   Note that the derivative of the rho loss function, known as the "psi" function, is still an analytic function. For further details, see the Vignette "polynomialRhoFunctions".
 
 # Version 1.0.6
 
