@@ -2,7 +2,7 @@
 % Please edit documentation in R/lmrobdet.R
 \name{lmrobdetMM}
 \alias{lmrobdetMM}
-\title{Optimal Robust Linear Regression Estimators}
+\title{Robust Linear Regression Estimators}
 \usage{
 lmrobdetMM(
   formula,

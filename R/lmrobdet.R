@@ -1,4 +1,4 @@
-#' Optimal Robust Linear Regression Estimators
+#' Robust Linear Regression Estimators
 #'
 #' This function computes an MM-regression estimators for linear models
 #' using deterministic starting points.
