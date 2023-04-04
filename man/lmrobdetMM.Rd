@@ -95,7 +95,6 @@ along with utility functions used by these functions,
 modified so as to include use of the analytic form of the
 optimal psi and rho functions (for the optimal psi function , see
 Section 5.8.1 of Maronna, Martin, Yohai and Salibian Barrera, 2019).
-
 The choice of the rho loss function is made by the user choice pf
 family = "opt" or family = "mopt" in the function lmrobdet.control.
 As of RobStatTM Versopm 1.0.7, the opt and mopt rhos functions are
@@ -108,7 +107,6 @@ do so using the family arguments family = "optV0" or family = "moptV0".
 Note that the derivative of the rho loss function, known as the "psi"
 function, is not the derivative of the rho polynomial, instead it is
 still the optimal psi function referred to abpve.
-
 For further details, see the Vignettes "polynomialRhoFunctions", and
 "Optimal Bias Robust Regression Psi and Rho Revisited".
 }
