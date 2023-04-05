@@ -29,8 +29,8 @@
 #' 
 #' @section Related Vignettes: 
 #' 
-#' For further details, see the Vignettes "polynomialRhoFunctions", and
-#' "Optimal Bias Robust Regression Psi and Rho Revisited".
+#' For further details, see the Vignettes "Polynomial Opt and mOpt Rho Functions",
+#' and "Optimal Bias Robust Regression Psi and Rho".
 #'
 #' @param formula a symbolic description of the model to be fit.
 #' @param data an optional data frame, list or environment containing
@@ -416,12 +416,29 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #'
 #' @return A list with the necessary tuning parameters.
 #'
-#' @details The argument \code{family} specifies the name of the family of loss function to be used. Current valid
-#' options are "bisquare", "opt" and "mopt"--"opt" refers to the optimal psi function defined in Section 5.8.1. of the
-#' book Robust Statistics: Theory and Methods (with R) by Maronna, Martin, Yohai and Salibian-Barrera,
-#' "mopt" is a modified  version of the optimal psi function to make it
-#' strictly increasing close to 0, and to make the corresponding weight function
-#' non-increasing near 0.
+#' @details The argument \code{family} specifies the name of the family of loss
+#' function to be used. Current valid options are "bisquare", "opt", "mopt", 
+#' "optV0" and "moptV0". "mopt" is a modified  version of the optimal psi 
+#' function to make it strictly increasing close to 0, and to make the
+#' corresponding weight function non-increasing.
+#' 
+#' @section Choice of Rho Loss Function:
+#' 
+#' As of RobStatTM Versopm 1.0.7, the opt and mopt rhos functions are
+#' calculated using polynomials, rather than using the standard normal error
+#' function (erf) as in versions of RobStatTM prior to 1.0.7. The numerical
+#' results one now gets with the opt or mopt choices will differ by small
+#' amounts from those in earlier RobStatTM versions. Users who wish to replicate
+#' results from releases prior to 1.0.7 may do so using the family arguments
+#' family = "optV0" or family = "moptV0". Note that the derivative of the rho
+#' loss function, known as the "psi" function, is not the derivative of the rho
+#' polynomial,instead it is still the analytic optimal psi function whose formula
+#' is given in the second of the Vignettes referenced just below.
+#' 
+#' @section Related Vignettes: 
+#' 
+#' For further details, see the Vignettes "Polynomial Opt and mOpt Rho Functions",
+#' and "Optimal Bias Robust Regression Psi and Rho".
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'

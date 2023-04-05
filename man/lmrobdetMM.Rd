@@ -115,8 +115,8 @@ instead it is still the optimal psi function referred to above.
 \section{Related Vignettes}{
  
 
-For further details, see the Vignettes "polynomialRhoFunctions", and
-"Optimal Bias Robust Regression Psi and Rho Revisited".
+For further details, see the Vignettes "Polynomial Opt and mOpt Rho Functions",
+and "Optimal Bias Robust Regression Psi and Rho".
 }
 
 \examples{
