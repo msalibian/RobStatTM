@@ -114,7 +114,7 @@ psiSupportFromTuningConst_optimalv0 <- function(a, tol = 1e-8)
     lower <- uniroot(f = g, interval = c(0.0, 1.0), a = a, check.conv = TRUE, tol = tol)
 
     if(lower$f.root < 0.0) {
-      x <- seq(lower$root, lower$root + lower$estim.prec, length = 100)
+      x <- seq(lower$root, lower$root + lower$estim.prec, length.out = 100)
       y <- g(x, a)
       i <- min(which(y >= 0.0))
       if(length(i)) {
@@ -129,7 +129,7 @@ psiSupportFromTuningConst_optimalv0 <- function(a, tol = 1e-8)
     upper <- uniroot(f = g, interval = c(1.0, 5.0), a = a, extendInt = "downX", check.conv = TRUE, tol = tol)
 
     if(upper$f.root < 0.0) {
-      x <- seq(upper$root - upper$estim.prec, upper$root, length = 100)
+      x <- seq(upper$root - upper$estim.prec, upper$root, length.out = 100)
       y <- g(x, a)
       i <- max(which(y >= 0.0))
       if(length(i)) {
@@ -156,7 +156,7 @@ psiSupportFromTuningConst_optimal <- function(a, tol = 1e-8)
     lower <- uniroot(f = g, interval = c(0.0, 1.0), a = a, check.conv = TRUE, tol = tol)
     
     if(lower$f.root < 0.0) {
-      x <- seq(lower$root, lower$root + lower$estim.prec, length = 100)
+      x <- seq(lower$root, lower$root + lower$estim.prec, length.out = 100)
       y <- g(x, a)
       i <- min(which(y >= 0.0))
       if(length(i)) {
@@ -171,7 +171,7 @@ psiSupportFromTuningConst_optimal <- function(a, tol = 1e-8)
     upper <- uniroot(f = g, interval = c(1.0, 5.0), a = a, extendInt = "downX", check.conv = TRUE, tol = tol)
     
     if(upper$f.root < 0.0) {
-      x <- seq(upper$root - upper$estim.prec, upper$root, length = 100)
+      x <- seq(upper$root - upper$estim.prec, upper$root, length.out = 100)
       y <- g(x, a)
       i <- max(which(y >= 0.0))
       if(length(i)) {
@@ -253,7 +253,7 @@ psiSupportFromTuningConst_modopt <- function(a, tol = 1e-8)
     upper <- uniroot(f = g, interval = c(1.0, 5.0), a = a, extendInt = "downX", check.conv = TRUE, tol = tol)
 
     if(upper$f.root < 0.0) {
-      x <- seq(upper$root - upper$estim.prec, upper$root, length = 100)
+      x <- seq(upper$root - upper$estim.prec, upper$root, length.out = 100)
       y <- g(x, a)
       i <- max(which(y >= 0.0))
       if(length(i)) {
@@ -279,7 +279,7 @@ psiSupportFromTuningConst_modoptv0 <- function(a, tol = 1e-8)
     upper <- uniroot(f = g, interval = c(1.0, 5.0), a = a, extendInt = "downX", check.conv = TRUE, tol = tol)
     
     if(upper$f.root < 0.0) {
-      x <- seq(upper$root - upper$estim.prec, upper$root, length = 100)
+      x <- seq(upper$root - upper$estim.prec, upper$root, length.out = 100)
       y <- g(x, a)
       i <- max(which(y >= 0.0))
       if(length(i)) {
