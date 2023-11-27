@@ -1,6 +1,7 @@
 # Version 1.0.8
 
-- Argument "length" of seq() should be "length.out"
+- Argument "length" of seq() fixed to "length.out"
+- Fixed Rprintf() and REprintf() bad arguments in lmrob.c
 
 # Version 1.0.7
 
