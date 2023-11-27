@@ -2164,7 +2164,7 @@ void fast_s(double *X, double *y,
 /* resampling approximation  */
 
     if (trace_lev)
-	Rprintf(" Subsampling to find candidate betas:\n", i);
+	Rprintf(" Subsampling to find candidate betas:\n");
 
     for(i=0; i < nResample; i++) {
 
@@ -2421,8 +2421,7 @@ void m_s_subsample(double *X1, double *y, int n, int p1, int p2,
 	    COPY(t1, b1, p1);
 	    COPY(t2, b2, p2);
 	    if (sc < EPS_SCALE) {
-		REprintf("\nScale too small\n",
-			 "Aborting m_s_subsample()\n\n");
+		REprintf("\nScale too small\nAborting m_s_subsample()\n\n");
 		*sscale = -1.;
 		goto cleanup_and_return;
 	    }
