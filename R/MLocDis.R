@@ -85,7 +85,7 @@ locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4, n
     a=mean(pp^2); b=mean(psipri(rek, kpsi))
     sigmu=sig0^2 *a/(n*b^2)
     sigmu=sqrt(sigmu)
-    scat <- mscale(u=x-mu, delta=.5, tuning.chi=1.56, family='bisquare')
+    scat <- scaleM(u=x-mu, delta=.5, family=psi)
     resu <- list(mu=mu, std.mu=sigmu, disper=scat)
   } else { #start of Kjell's code
     family <- psi
@@ -130,7 +130,7 @@ locScaleM <- MLocDis <- function(x, psi="mopt", eff=0.95, maxit=50, tol=1.e-4, n
       tmpc <- uniroot(f, c(0.01, 10), family = family, cc = cc)$root
       if( (family == "opt") | (family == "mopt") ) {
         cc["c2"] <- tmpc } else { cc["c"] <- tmpc }
-      scat <- mscale(x - mu, delta = 0.5, tuning.chi = cc, family = family)
+      scat <- scaleM(x - mu, delta = 0.5, family = family)
       resu <- list(mu = mu, std.mu = sigmu, disper = scat)
     } else { print(c(eff, " No such eff"))
       resu <- NA
