@@ -1,3 +1,7 @@
+# Version 1.0.10
+
+- scaleM and mscale are now separate functions. mscale is no longer exported.
+
 # Version 1.0.9
 
 - The robustarima Package Status: This package, which is used in the example scripts "ar1.R", "ar3.R", "resex.R", "identAR2.R", "identMA1.R" and "MA1-AO.R", is currently archived by CRAN due to a small problem in one of package’s supporting functions.  We anticipate having the package back on CRAN in 2024. Meanwhile, the package is available at the repository https://github.com/spkaluzny/robustarima of package maintainer Stephen Kaluzny.  To install robustarima, you need to have first installed the package devtools.  Then you can install the utility packages splusTimeDate and  splusTimeSeries, and robustarima with:
