@@ -1,6 +1,7 @@
 # Version 1.0.10
 
-- scaleM and mscale are now separate functions. mscale is no longer exported.
+- scaleM() and mscale() are now different functions. mscale() is no longer exported.
+- The argument "tuning.chi" of scaleM() has been removed, and it is now computed internally to obtain a consistent scale estimator for the chosen combination of "family" and "delta". 
 
 # Version 1.0.9
 
