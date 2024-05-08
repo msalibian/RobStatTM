@@ -10,7 +10,8 @@ scaleM(
   family = "bisquare",
   max.it = 100,
   tol = 1e-06,
-  tolerancezero = .Machine$double.eps
+  tolerancezero = .Machine$double.eps,
+  tuning.chi = lmrobdet.control(family = family, bb = delta)$tuning.chi
 )
 }
 \arguments{
@@ -26,6 +27,12 @@ options are "bisquare", "opt" and "mopt").}
 \item{tol}{relative tolerance for convergence}
 
 \item{tolerancezero}{smallest (in absolute value) non-zero value accepted as a scale. Defaults to \code{.Machine$double.eps}}
+
+\item{tuning.chi}{the tuning object as returned
+by \code{\link{lmrobdet.control}}, \code{\link{bisquare}}, \code{\link{mopt}},
+or \code{\link{opt}}. It defaults to the value that results
+in a consistent scale estimator for the specified \code{family} 
+of loss functions and breakdown point as set by \code{delta}.}
 }
 \value{
 The scale estimate value at the last iteration or at convergence.

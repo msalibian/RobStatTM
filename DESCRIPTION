@@ -1,6 +1,6 @@
 Package: RobStatTM
 Version: 1.0.10
-Date: 2024-04-22
+Date: 2024-05-08
 Title: Robust Statistics: Theory and Methods
 Authors@R: c(person("Matias", "Salibian-Barrera", role = c("cre"), email = "matias@stat.ubc.ca"),
              person("Victor", "Yohai", role = "aut", email = "vyohai@gmail.com"),
@@ -21,6 +21,6 @@ Imports: stats, pyinit, rrcov, robustbase
 Suggests: R.rsp
 LazyData: yes
 License: GPL (>= 3)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Encoding: UTF-8
 VignetteBuilder: R.rsp

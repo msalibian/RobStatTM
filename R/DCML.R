@@ -28,6 +28,11 @@
 #' @param tol relative tolerance for convergence
 #' @param max.it maximum number of iterations allowed
 #' @param tolerancezero smallest (in absolute value) non-zero value accepted as a scale. Defaults to \code{.Machine$double.eps}
+#' @param tuning.chi the tuning object as returned
+#' by \code{\link{lmrobdet.control}}, \code{\link{bisquare}}, \code{\link{mopt}},
+#' or \code{\link{opt}}. It defaults to the value that results
+#' in a consistent scale estimator for the specified \code{family} 
+#' of loss functions and breakdown point as set by \code{delta}. 
 #'
 #' @return The scale estimate value at the last iteration or at convergence.
 #'
@@ -45,10 +50,10 @@
 #' sd(r2)
 #'
 scaleM <- function(u, delta=0.5, family ="bisquare", 
-                   max.it=100, tol=1e-6, tolerancezero=.Machine$double.eps) {
+                   max.it=100, tol=1e-6, tolerancezero=.Machine$double.eps,
+                   tuning.chi=lmrobdet.control(family=family, bb=delta)$tuning.chi) {
   s0 <- median(abs(u))/.6745
   if(s0 < tolerancezero) return(0)
-  tuning.chi <- lmrobdet.control(family=family, bb=delta)$tuning.chi
   err <- tol + 1
   it <- 0
   while( (err > tol) && ( it < max.it) ) {
