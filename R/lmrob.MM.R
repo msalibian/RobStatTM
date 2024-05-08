@@ -982,6 +982,7 @@ lmrob.hatmatrix <- function(x, w = rep(1, NROW(x)), wqr = qr(sqrt(w) * x), names
     h
 }
 
+#' @exportS3Method 
 hatvalues.lmrob <- function(model, ...)
 {
     if (is.null(wqr <- model$qr))
