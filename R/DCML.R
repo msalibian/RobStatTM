@@ -139,7 +139,7 @@ cov.dcml <- function(res.LS, res.R, CC, sig.R, t0, p, n, control) {
 #' @param control a list of control parameters as returned by \code{\link{lmrobdet.control}}
 #' @param mf model frame
 #'
-#' @return an \code{\link{lmrob}} object witht the M-estimator
+#' @return an \code{lmrob} object witht the M-estimator
 #' obtained starting from the S-estimator computed with the
 #' Pen~a-Yohai initial candidates. The properties of the final
 #' estimator (efficiency, etc.) are determined by the tuning constants in
@@ -289,10 +289,10 @@ DCML <- function(x, y, z, z0, control) {
 #' @param mf model frame
 #' @param y response vector
 #' @param control a list of control parameters as returned by \code{\link{lmrobdet.control}}
-#' @param split a list as returned by \code{\link{splitFrame}} containing the continuous and
+#' @param split a list as returned by \code{splitFrame} containing the continuous and
 #' dummy components of the design matrix
 #'
-#' @return an \code{\link{lmrob}} object witht the M-estimator
+#' @return an \code{lmrob} object witht the M-estimator
 #' obtained starting from the MS-estimator computed with the
 #' Pen~a-Yohai initial candidates. The properties of the final
 #' estimator (efficiency, etc.) are determined by the tuning constants in

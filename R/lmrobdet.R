@@ -401,18 +401,18 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #' options are \code{'S'}, for an S-estimator and \code{'MS'} for an M-S estimator which is
 #' appropriate when there are categorical explanatory variables in the model.
 #' @param psc_keep For \code{pyinit}, proportion of observations to remove based on PSCs. The effective proportion of removed
-#' observations is adjusted according to the sample size to be \code{prosac*(1-p/n)}. See \code{\link{pyinit}}.
+#' observations is adjusted according to the sample size to be \code{prosac*(1-p/n)}. See \code{pyinit}.
 #' @param resid_keep_method For \code{pyinit}, how to clean the data based on large residuals. If
 #' \code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will
 #' be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will
-#' be removed. See \code{\link{pyinit}}.
-#' @param resid_keep_thresh See parameter \code{resid_keep_method} above. See \code{\link{pyinit}}.
-#' @param resid_keep_prop See parameter \code{resid_keep_method} above. See \code{\link{pyinit}}.
-#' @param py_maxit Maximum number of iterations. See \code{\link{pyinit}}.
-#' @param py_eps Relative tolerance for convergence.  See \code{\link{pyinit}}.
-#' @param mscale_maxit Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}} and \code{\link{mscale}}.
+#' be removed. See \code{pyinit}.
+#' @param resid_keep_thresh See parameter \code{resid_keep_method} above. See \code{pyinit}.
+#' @param resid_keep_prop See parameter \code{resid_keep_method} above. See \code{pyinit}.
+#' @param py_maxit Maximum number of iterations. See \code{pyinit}.
+#' @param py_eps Relative tolerance for convergence.  See \code{pyinit}.
+#' @param mscale_maxit Maximum number of iterations for the M-scale algorithm. See \code{pyinit} and \code{\link{mscale}}.
 #' @param mscale_tol Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}} and \code{\link{mscale}}.
-#' @param mscale_rho_fun String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.
+#' @param mscale_rho_fun String indicating the loss function used for the M-scale. See \code{pyinit}.
 #'
 #' @return A list with the necessary tuning parameters.
 #'
@@ -442,7 +442,7 @@ lmrobdetMM <- function(formula, data, subset, weights, na.action,
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
 #'
-#' @seealso \code{\link{pyinit}}, \code{\link{mscale}}.
+#' @seealso \code{\link{mscale}}.
 #'
 #' @examples
 #' data(coleman, package='robustbase')

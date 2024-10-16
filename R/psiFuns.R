@@ -211,7 +211,7 @@ mopt <- function(e)
 #' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
 #' and \link{opt}.
 #' @param standardize logical value determining whether the rho function is to be
-#' standardized so that its maximum value is 1. See \link{Mpsi}.
+#' standardized so that its maximum value is 1. See \code{Mpsi}.
 #'
 #' @return The value(s) of \code{rho} at \code{u}
 #'
@@ -245,7 +245,7 @@ rho <- function(u, family=" bisquare", cc, standardize = TRUE)
 #' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
 #' and \link{opt}.
 #' @param standardize logical value determining whether the rho function is to be
-#' standardized so that its maximum value is 1. See \link{Mpsi}.
+#' standardized so that its maximum value is 1. See \code{Mpsi}.
 #'
 #' @return The value of the first derivative \code{rho} evaluated at \code{u}
 #'
@@ -279,7 +279,7 @@ rhoprime <- function(u, family, cc, standardize = FALSE)
 #' considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
 #' and \link{opt}.
 #' @param standardize logical value determining whether the rho function is to be
-#' standardized so that its maximum value is 1. See \link{Mpsi}.
+#' standardized so that its maximum value is 1. See \code{Mpsi}.
 #'
 #' @return The value of the second derivative of \code{rho} evaluated at \code{u}
 #'

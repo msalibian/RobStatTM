@@ -62,7 +62,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL, bothVals = FALSE)
 #' It is used internally by \code{\link{step.lmrobdetMM}} and not meant to be used
 #' directly.
 #'
-#' @param object the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdetMM}}.
+#' @param object the \code{MM} element (of class \code{lmrob}) in an object of class \code{\link{lmrobdetMM}}.
 #' @param scope an optional \code{formula} giving the terms to be considered for dropping. Typically 
 #' this argument is omitted, in which case all possible terms are dropped (without breaking hierarchy 
 #' rules). The \code{scope} can also be a character vector of term labels. If the argument is supplied as a 
