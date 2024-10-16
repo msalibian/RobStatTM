@@ -1978,7 +1978,7 @@ void fast_s_large_n(double *X, double *y,
     R_Free(best_scales);
     k = *best_r * groups;
     for(i=0; i < k; i++) R_Free( best_betas[i] );
-    Free(best_betas); R_Free(indices);
+    R_Free(best_betas); R_Free(indices);
     for(i=0; i < *best_r; i++)
 	  R_Free(final_best_betas[i]);
     R_Free(final_best_betas);
