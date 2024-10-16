@@ -234,17 +234,6 @@ void zero_mat(double **a, int n, int m);
     work =    (double *) R_alloc(lwork, sizeof(double));                 \
     weights = (double *) R_alloc(n,     sizeof(double));
 
-#define CLEANUP_WLS                                             \
-    R_Free(work); R_Free(weights);
-
-#define CLEANUP_EQUILIBRATION                                   \
-    R_Free(Dr); R_Free(Dc); R_Free(Xe);
-
-#define CLEANUP_SUBSAMPLE                                       \
-    R_Free(ind_space); R_Free(idc); R_Free(idr); R_Free(pivot);         \
-    R_Free(lu); R_Free(v);                                          \
-    CLEANUP_EQUILIBRATION;
-
 #define FIT_WLS(_X_, _x_, _y_, _n_, _p_)			\
     /* add weights to _y_ and _x_ */                            \
     for (j=0; j<_n_; j++) {                                     \
@@ -258,14 +247,12 @@ void zero_mat(double **a, int n, int m);
 		    &_n_, work, &lwork, &info FCONE);                 \
     if (info) {					                \
 	if (info < 0) {                                         \
-	    CLEANUP_WLS;					\
 	    error("DGELS: illegal argument in %i. argument.", info); \
 	} else {                                                \
 	    if (trace_lev >= 4) {				\
 		Rprintf(" Robustness weights in failing step: ");	\
 		disp_vec(weights, _n_);				\
 	    }                                                   \
-	    CLEANUP_WLS;					\
 	    error("DGELS: weighted design matrix not of full rank (column %d).\nUse control parameter 'trace.lev = 4' to get diagnostic output.", info); \
 	}                                                       \
     }
@@ -286,7 +273,6 @@ void zero_mat(double **a, int n, int m);
     		     &colcnd, &amax, &info);                    \
     if (info) {                                                 \
 	if (info < 0) {                                         \
-	    CLEANUP_EQUILIBRATION;				\
 	    error("DGEEQ: illegal argument in %i. argument", -1 * info); \
 	} else if (info > _n_) {                                \
 	    if (_large_n_) {                                    \
@@ -530,7 +516,7 @@ void R_subsample(const double x[], const double y[], int *n, int *m,
     *_rowequ = rowequ;
     *_colequ = colequ;
 
-    CLEANUP_EQUILIBRATION;
+    // CLEANUP_EQUILIBRATION;
 
     PutRNGstate();
 }
@@ -1747,7 +1733,7 @@ Rboolean rwls(const double X[], const double y[], int n, int p,
 
     *max_it = iterations;
 
-    CLEANUP_WLS;
+    // CLEANUP_WLS;
 
     return converged;
 } /* rwls() */
@@ -1809,9 +1795,10 @@ void fast_s_large_n(double *X, double *y,
  * *bbeta  = final estimator
  * *sscale = associated scale estimator (or -1 when problem)
  */
-    int i,j,k, k2, it_k, ij, freedsamp = 0, initwls = 0;
+    int i, j, k2, it_k, ij;
     int n = *nn, p = *pp, kk = *K, ipsi = *iipsi;
     int groups = *ggroups, n_group = *nn_group, sg = groups * n_group;
+    int k = groups * *best_r;  
     double b = *bb, sc, best_sc, worst_sc;
     int pos_worst_scale;
     Rboolean conv;
@@ -1847,7 +1834,7 @@ void fast_s_large_n(double *X, double *y,
     /* FIXME: define groups using nonsingular subsampling? */
     /*        would also need to allow observations to be part */
     /*        of multiple groups at the same time */
-    R_Free(ind_space);
+    // R_Free(ind_space);
     /* FIXME: Also look at lqs_setup(),
      * -----  and  xr[.,.] "fortran-like" matrix can be used from there!*/
 
@@ -1876,7 +1863,7 @@ void fast_s_large_n(double *X, double *y,
 	}
     }
 
-    R_Free(xsamp); R_Free(ysamp); freedsamp = 1;
+    // R_Free(xsamp); R_Free(ysamp); freedsamp = 1;
 #undef xsamp
 
 /* now	iterate (refine) these "best_r * groups"
@@ -1890,7 +1877,7 @@ void fast_s_large_n(double *X, double *y,
     wy =  (double *) R_alloc(n,   sizeof(double)); // but n in the last step
     xsamp =     (double *) Calloc(sg*p, double);
     ysamp =     (double *) Calloc(sg,   double);
-    freedsamp = 0;
+    // freedsamp = 0;
 
 #define xsamp(_k_,_j_) xsamp[_j_*sg+_k_]
 
@@ -1902,7 +1889,7 @@ void fast_s_large_n(double *X, double *y,
 
     int lwork = -1, one = 1, info = 1;
     double work0, *work, *weights;
-    INIT_WLS(wx, wy, n, p); initwls = 1;
+    INIT_WLS(wx, wy, n, p); // initwls = 1;
 
     conv = FALSE;
     pos_worst_scale = 0;
@@ -1937,7 +1924,7 @@ void fast_s_large_n(double *X, double *y,
 	}
     }
 
-    R_Free(xsamp); R_Free(ysamp); freedsamp = 1;
+    // R_Free(xsamp); R_Free(ysamp); freedsamp = 1;
 
 /* now iterate the best "best_r"
  * betas in the whole sample until convergence (max_k, rel_tol)
@@ -1975,23 +1962,23 @@ void fast_s_large_n(double *X, double *y,
   cleanup_and_return:
     PutRNGstate();
 
-    R_Free(best_scales);
-    k = *best_r * groups;
-    for(i=0; i < k; i++) R_Free( best_betas[i] );
-    R_Free(best_betas); R_Free(indices);
-    for(i=0; i < *best_r; i++)
-	  R_Free(final_best_betas[i]);
+    // R_Free(best_scales);
+    // k = *best_r * groups;
+    // for(i=0; i < k; i++) R_Free( best_betas[i] );
+    R_Free(best_betas); // R_Free(indices);
+//     for(i=0; i < *best_r; i++)
+// 	  R_Free(final_best_betas[i]);
     R_Free(final_best_betas);
-    R_Free(final_best_scales);
-    R_Free(beta_ref);
+    // R_Free(final_best_scales);
+    // R_Free(beta_ref);
 
-    if (freedsamp == 0) {
-    R_Free(xsamp); R_Free(ysamp);
-    }
+    // if (freedsamp == 0) {
+    // R_Free(xsamp); R_Free(ysamp);
+    // }
 
-    if (initwls) {
-    CLEANUP_WLS;
-    }
+    // if (initwls) {
+    // CLEANUP_WLS;
+    // }
 
 #undef X
 #undef xsamp
@@ -2089,11 +2076,13 @@ int fast_s_with_memory(double *X, double *y,
 
   cleanup_and_return:
 
-    CLEANUP_SUBSAMPLE;
-    CLEANUP_WLS;
-
-    R_Free(res); R_Free(wx); R_Free(wy);
-    R_Free(beta_cand); R_Free(beta_ref);
+    // CLEANUP_SUBSAMPLE;
+    // CLEANUP_WLS;
+    // 
+    // R_Free(res); R_Free(wx); R_Free(wy);
+    // R_Free(beta_cand); R_Free(beta_ref);
+    // R_Free(best_betas);
+    // R_Free(final_best_betas);
 
     return sing;
 } /* fast_s_with_memory() */
@@ -2251,14 +2240,14 @@ void fast_s(double *X, double *y,
 
     PutRNGstate();
 
-    CLEANUP_SUBSAMPLE;
-    CLEANUP_WLS;
-
-    R_Free(best_scales);
-    R_Free(beta_cand);
-    R_Free(beta_ref);
-    for(i=0; i < *best_r; i++)
-      R_Free(best_betas[i]);
+    // CLEANUP_SUBSAMPLE;
+    // CLEANUP_WLS;
+    // 
+    // R_Free(best_scales);
+    // R_Free(beta_cand);
+    // R_Free(beta_ref);
+    // for(i=0; i < *best_r; i++)
+    //   R_Free(best_betas[i]);
     R_Free(best_betas);
 
     return;
@@ -2439,7 +2428,7 @@ void m_s_subsample(double *X1, double *y, int n, int p1, int p2,
     }
 
   cleanup_and_return:
-    CLEANUP_SUBSAMPLE;
+    // CLEANUP_SUBSAMPLE;
     PutRNGstate();
 } /* m_s_subsample() */
 
@@ -2503,7 +2492,7 @@ Rboolean m_s_descent(double *X1, double *X2, double *y,
 			   NIT, K, KODE, SIGMA, t1, res2,
 			   SC1, SC2, SC3, SC4, BET0);
 	if (*KODE > 1) {
-	    CLEANUP_WLS;
+	    // CLEANUP_WLS;
 	    error("m_s_descent(): Problem in RLLARSBI (RILARS). KODE=%d. Exiting.",
 		  *KODE);
 	}
@@ -2558,7 +2547,7 @@ Rboolean m_s_descent(double *X1, double *X2, double *y,
 	maybe_SHOW_b1_b2;
     }
 
-    CLEANUP_WLS;
+    // CLEANUP_WLS;
 
     return converged;
 } /* m_s_descent() */
