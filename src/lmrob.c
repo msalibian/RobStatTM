@@ -44,22 +44,21 @@
    - Code clean up: removed all subroutines that were unused.
 */
 
-#define USE_FC_LEN_T
+#ifndef  USE_FC_LEN_T
+# define USE_FC_LEN_T
+#endif
 #include <Rconfig.h>
 #include <Rmath.h>
 #include <complex.h>
-// #include <R.h>
-
 #include <R_ext/BLAS.h>
-#include <R_ext/Applic.h>
 #include <R_ext/Lapack.h>
+#include <R_ext/Applic.h>
 
 #ifndef FCONE
 # define FCONE
 #endif
 
 #include "RobStatTM.h"
-//-> <R.h>, <Rinternals.h>  -> XLENGTH, R_xlen_t
 
 
 /* these  will also move to "lmrob.h" ---
@@ -232,18 +231,18 @@ void zero_mat(double **a, int n, int m);
 	Rprintf(" Optimal block size for DGELS: %d\n", lwork); \
                                                                 \
     /* allocate */                                              \
-    work =    (double *) Calloc(lwork, double);                 \
-    weights = (double *) Calloc(n,     double);
+    work =    (double *) R_alloc(lwork, sizeof(double));                 \
+    weights = (double *) R_alloc(n,     sizeof(double));
 
 #define CLEANUP_WLS                                             \
-    Free(work); Free(weights);
+    R_Free(work); R_Free(weights);
 
 #define CLEANUP_EQUILIBRATION                                   \
-    Free(Dr); Free(Dc); Free(Xe);
+    R_Free(Dr); R_Free(Dc); R_Free(Xe);
 
 #define CLEANUP_SUBSAMPLE                                       \
-    Free(ind_space); Free(idc); Free(idr); Free(pivot);         \
-    Free(lu); Free(v);                                          \
+    R_Free(ind_space); R_Free(idc); R_Free(idr); R_Free(pivot);         \
+    R_Free(lu); R_Free(v);                                          \
     CLEANUP_EQUILIBRATION;
 
 #define FIT_WLS(_X_, _x_, _y_, _n_, _p_)			\
@@ -279,9 +278,9 @@ void zero_mat(double **a, int n, int m);
     /*     Section 2.5.2 Equilibration                      */  \
     double *Dr, *Dc, *Xe, rowcnd, colcnd, amax;			\
     int rowequ = 0 , colequ = 0;                                \
-    Dr =        (double *) Calloc(_n_,     double);             \
-    Dc =        (double *) Calloc(_p_,     double);             \
-    Xe =        (double *) Calloc(_n_*_p_, double);             \
+    Dr =        (double *) R_alloc(_n_,     sizeof(double));             \
+    Dc =        (double *) R_alloc(_p_,     sizeof(double));             \
+    Xe =        (double *) R_alloc(_n_*_p_, sizeof(double));             \
     COPY(_X_, Xe, _n_*_p_);                                     \
     F77_CALL(dgeequ)(&_n_, &_p_, Xe, &_n_, Dr, Dc, &rowcnd,	\
     		     &colcnd, &amax, &info);                    \
@@ -313,12 +312,12 @@ void zero_mat(double **a, int n, int m);
     /* (Pointers to) Arrays - to be allocated */                \
     int *ind_space, *idc, *idr, *pivot;				\
     double *lu, *v;						\
-    ind_space = (int *)    Calloc(_n_,     int);                \
-    idc =       (int *)    Calloc(_n_,     int);                \
-    idr =       (int *)    Calloc(_p_,     int);                \
-    pivot =     (int *)    Calloc(_p_-1,   int);                \
-    lu =        (double *) Calloc(_p_*_p_, double);             \
-    v =         (double *) Calloc(_p_,     double);             \
+    ind_space = (int *)    R_alloc(_n_,     sizeof(int));                \
+    idc =       (int *)    R_alloc(_n_,     sizeof(int));                \
+    idr =       (int *)    R_alloc(_p_,     sizeof(int));                \
+    pivot =     (int *)    R_alloc(_p_-1,   sizeof(int));                \
+    lu =        (double *) R_alloc(_p_*_p_, sizeof(double));             \
+    v =         (double *) R_alloc(_p_,     sizeof(double));             \
     SETUP_EQUILIBRATION(_n_, _p_, _X_, _large_n_);
 
 #define COPY(from, to, len) Memcpy(to, from, len)
@@ -1823,20 +1822,20 @@ void fast_s_large_n(double *X, double *y,
     double **final_best_betas, *final_best_scales;
 
 #define CALLOC_MAT(_M_, _n_, _d_)			\
-    _M_ = (double **) Calloc(_n_, double *);		\
-    for(int i=0; i < _n_; i++)				\
-	_M_[i] = (double *) Calloc(_d_, double)
-
-    beta_ref = (double *) Calloc(p, double);
+    _M_ = (double **) R_Calloc(_n_, double *);		\
+    for(int i=0; i < _n_; i++)				          \
+      _M_[i] = (double *) R_alloc(_d_, sizeof(double))
+      
+    beta_ref = (double *) R_alloc(p, sizeof(double));
     CALLOC_MAT(final_best_betas, *best_r, p);
-    final_best_scales = (double *) Calloc(*best_r, double);
+    final_best_scales = (double *) R_alloc(*best_r, sizeof(double));
     k = *best_r * groups;
-    best_scales = (double *) Calloc(k,	double );
+    best_scales = (double *) R_alloc(k,	sizeof(double));
     CALLOC_MAT(best_betas, k, p);
-    indices =   (int *)    Calloc(sg,   int);
-    ind_space = (int *)    Calloc(n,   int);
-    xsamp =     (double *) Calloc(n_group*p, double);
-    ysamp =     (double *) Calloc(n_group,   double);
+    indices =   (int *)    R_alloc(sg,   sizeof(int));
+    ind_space = (int *)    R_alloc(n,   sizeof(int));
+    xsamp =     (double *) R_alloc(n_group*p, sizeof(double));
+    ysamp =     (double *) R_alloc(n_group,   sizeof(double));
 
     /* assume that n > 2000 */
 
@@ -1848,7 +1847,7 @@ void fast_s_large_n(double *X, double *y,
     /* FIXME: define groups using nonsingular subsampling? */
     /*        would also need to allow observations to be part */
     /*        of multiple groups at the same time */
-    Free(ind_space);
+    R_Free(ind_space);
     /* FIXME: Also look at lqs_setup(),
      * -----  and  xr[.,.] "fortran-like" matrix can be used from there!*/
 
@@ -1877,7 +1876,7 @@ void fast_s_large_n(double *X, double *y,
 	}
     }
 
-    Free(xsamp); Free(ysamp); freedsamp = 1;
+    R_Free(xsamp); R_Free(ysamp); freedsamp = 1;
 #undef xsamp
 
 /* now	iterate (refine) these "best_r * groups"
@@ -1938,7 +1937,7 @@ void fast_s_large_n(double *X, double *y,
 	}
     }
 
-    Free(xsamp); Free(ysamp); freedsamp = 1;
+    R_Free(xsamp); R_Free(ysamp); freedsamp = 1;
 
 /* now iterate the best "best_r"
  * betas in the whole sample until convergence (max_k, rel_tol)
@@ -1976,22 +1975,22 @@ void fast_s_large_n(double *X, double *y,
   cleanup_and_return:
     PutRNGstate();
 
-    Free(best_scales);
+    R_Free(best_scales);
     k = *best_r * groups;
-    for(i=0; i < k; i++) Free( best_betas[i] );
-    Free(best_betas); Free(indices);
+    for(i=0; i < k; i++) R_Free( best_betas[i] );
+    Free(best_betas); R_Free(indices);
     for(i=0; i < *best_r; i++)
-	Free(final_best_betas[i]);
-    Free(final_best_betas);
-    Free(final_best_scales);
-    Free(beta_ref);
+	  R_Free(final_best_betas[i]);
+    R_Free(final_best_betas);
+    R_Free(final_best_scales);
+    R_Free(beta_ref);
 
     if (freedsamp == 0) {
-	Free(xsamp); Free(ysamp);
+    R_Free(xsamp); R_Free(ysamp);
     }
 
     if (initwls) {
-	CLEANUP_WLS;
+    CLEANUP_WLS;
     }
 
 #undef X
@@ -2093,8 +2092,8 @@ int fast_s_with_memory(double *X, double *y,
     CLEANUP_SUBSAMPLE;
     CLEANUP_WLS;
 
-    Free(res); Free(wx); Free(wy);
-    Free(beta_cand); Free(beta_ref);
+    R_Free(res); R_Free(wx); R_Free(wy);
+    R_Free(beta_cand); R_Free(beta_ref);
 
     return sing;
 } /* fast_s_with_memory() */
@@ -2255,12 +2254,12 @@ void fast_s(double *X, double *y,
     CLEANUP_SUBSAMPLE;
     CLEANUP_WLS;
 
-    Free(best_scales);
-    Free(beta_cand);
-    Free(beta_ref);
+    R_Free(best_scales);
+    R_Free(beta_cand);
+    R_Free(beta_ref);
     for(i=0; i < *best_r; i++)
-	Free(best_betas[i]);
-    Free(best_betas);
+      R_Free(best_betas[i]);
+    R_Free(best_betas);
 
     return;
 } /* fast_s() */
