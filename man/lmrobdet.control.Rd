@@ -79,26 +79,26 @@ appropriate when there are categorical explanatory variables in the model.}
 \item{trace.lev}{positive values (increasingly) provide details on the progress of the MM-algorithm}
 
 \item{psc_keep}{For \code{pyinit}, proportion of observations to remove based on PSCs. The effective proportion of removed
-observations is adjusted according to the sample size to be \code{prosac*(1-p/n)}. See \code{\link{pyinit}}.}
+observations is adjusted according to the sample size to be \code{prosac*(1-p/n)}. See \code{pyinit}.}
 
 \item{resid_keep_method}{For \code{pyinit}, how to clean the data based on large residuals. If
 \code{"threshold"}, all observations with scaled residuals larger than \code{C.res} will
 be removed, if \code{"proportion"}, observations with the largest \code{prop} residuals will
-be removed. See \code{\link{pyinit}}.}
+be removed. See \code{pyinit}.}
 
-\item{resid_keep_thresh}{See parameter \code{resid_keep_method} above. See \code{\link{pyinit}}.}
+\item{resid_keep_thresh}{See parameter \code{resid_keep_method} above. See \code{pyinit}.}
 
-\item{resid_keep_prop}{See parameter \code{resid_keep_method} above. See \code{\link{pyinit}}.}
+\item{resid_keep_prop}{See parameter \code{resid_keep_method} above. See \code{pyinit}.}
 
-\item{py_maxit}{Maximum number of iterations. See \code{\link{pyinit}}.}
+\item{py_maxit}{Maximum number of iterations. See \code{pyinit}.}
 
-\item{py_eps}{Relative tolerance for convergence.  See \code{\link{pyinit}}.}
+\item{py_eps}{Relative tolerance for convergence.  See \code{pyinit}.}
 
-\item{mscale_maxit}{Maximum number of iterations for the M-scale algorithm. See \code{\link{pyinit}} and \code{\link{mscale}}.}
+\item{mscale_maxit}{Maximum number of iterations for the M-scale algorithm. See \code{pyinit} and \code{\link{mscale}}.}
 
 \item{mscale_tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}} and \code{\link{mscale}}.}
 
-\item{mscale_rho_fun}{String indicating the loss function used for the M-scale. See \code{\link{pyinit}}.}
+\item{mscale_rho_fun}{String indicating the loss function used for the M-scale. See \code{pyinit}.}
 }
 \value{
 A list with the necessary tuning parameters.
@@ -145,7 +145,7 @@ summary(m2)
 
 }
 \seealso{
-\code{\link{pyinit}}, \code{\link{mscale}}.
+\code{\link{mscale}}.
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}

@@ -17,7 +17,7 @@ considerations. See \link{lmrobdet.control}, \link{bisquare}, \link{mopt}
 and \link{opt}.}
 
 \item{standardize}{logical value determining whether the rho function is to be
-standardized so that its maximum value is 1. See \link{Mpsi}.}
+standardized so that its maximum value is 1. See \code{Mpsi}.}
 }
 \value{
 The value of the second derivative of \code{rho} evaluated at \code{u}

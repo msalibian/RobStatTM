@@ -7,7 +7,7 @@
 \method{drop1}{lmrobdetMM}(object, scope, scale, keep, ...)
 }
 \arguments{
-\item{object}{the \code{MM} element (of class \code{\link{lmrob}}) in an object of class \code{\link{lmrobdetMM}}.}
+\item{object}{the \code{MM} element (of class \code{lmrob}) in an object of class \code{\link{lmrobdetMM}}.}
 
 \item{scope}{an optional \code{formula} giving the terms to be considered for dropping. Typically 
 this argument is omitted, in which case all possible terms are dropped (without breaking hierarchy 

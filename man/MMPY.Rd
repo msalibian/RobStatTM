@@ -16,7 +16,7 @@ MMPY(X, y, control, mf)
 \item{mf}{model frame}
 }
 \value{
-an \code{\link{lmrob}} object witht the M-estimator
+an \code{lmrob} object witht the M-estimator
 obtained starting from the S-estimator computed with the
 Pen~a-Yohai initial candidates. The properties of the final
 estimator (efficiency, etc.) are determined by the tuning constants in

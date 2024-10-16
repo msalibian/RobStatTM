@@ -13,11 +13,11 @@ SMPY(mf, y, control, split)
 
 \item{control}{a list of control parameters as returned by \code{\link{lmrobdet.control}}}
 
-\item{split}{a list as returned by \code{\link{splitFrame}} containing the continuous and
+\item{split}{a list as returned by \code{splitFrame} containing the continuous and
 dummy components of the design matrix}
 }
 \value{
-an \code{\link{lmrob}} object witht the M-estimator
+an \code{lmrob} object witht the M-estimator
 obtained starting from the MS-estimator computed with the
 Pen~a-Yohai initial candidates. The properties of the final
 estimator (efficiency, etc.) are determined by the tuning constants in
