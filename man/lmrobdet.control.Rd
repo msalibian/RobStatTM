@@ -94,9 +94,9 @@ be removed. See \code{pyinit}.}
 
 \item{py_eps}{Relative tolerance for convergence.  See \code{pyinit}.}
 
-\item{mscale_maxit}{Maximum number of iterations for the M-scale algorithm. See \code{pyinit} and \code{\link{mscale}}.}
+\item{mscale_maxit}{Maximum number of iterations for the M-scale algorithm. See \code{pyinit} and \code{\link{scaleM}}.}
 
-\item{mscale_tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}} and \code{\link{mscale}}.}
+\item{mscale_tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{scaleM}}.}
 
 \item{mscale_rho_fun}{String indicating the loss function used for the M-scale. See \code{pyinit}.}
 }
@@ -145,7 +145,7 @@ summary(m2)
 
 }
 \seealso{
-\code{\link{mscale}}.
+\code{\link{scaleM}}.
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}

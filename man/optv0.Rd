@@ -19,7 +19,7 @@ This function computes the tuning constant that yields an MM-regression
 estimator with a desired asymptotic efficiency when computed with a
 rho function in the corresponding family. The output of this
 function can be passed to the functions \link{lmrobdet.control},
-\link{mscale} and \link{rho}.
+\link{scaleM} and \link{rho}.
 }
 \examples{
 # Tuning parameters for an 85\%-efficient M-estimator at a Gaussian model

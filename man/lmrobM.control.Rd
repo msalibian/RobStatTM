@@ -41,9 +41,9 @@ can be constructed using the functions \link{bisquare}, \link{mopt} and \link{op
 
 \item{rel.tol}{relative covergence tolerance for the IRWLS iterations for the M-estimator}
 
-\item{mscale_tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{mscale}}.}
+\item{mscale_tol}{Convergence tolerance for the M-scale algorithm. See \code{\link{scaleM}}.}
 
-\item{mscale_maxit}{Maximum number of iterations for the M-scale algorithm. See \code{\link{mscale}}.}
+\item{mscale_maxit}{Maximum number of iterations for the M-scale algorithm. See \code{\link{scaleM}}.}
 
 \item{trace.lev}{positive values (increasingly) provide details on the progress of the M-algorithm}
 }

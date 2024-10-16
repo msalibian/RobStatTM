@@ -9,7 +9,7 @@ FAMILY.NAMES <- c("bisquare", "mopt", "opt", "moptv0", "optv0", "huber")
 #' estimator with a desired asymptotic efficiency when computed with a
 #' rho function in the corresponding family. The output of this
 #' function can be passed to the functions \link{lmrobdet.control},
-#' \link{mscale} and \link{rho}.
+#' \link{scaleM} and \link{rho}.
 #'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
@@ -36,7 +36,7 @@ huber <- function(e) #, breakdown.point)
 #' estimator with a desired asymptotic efficiency when computed with a
 #' rho function in the corresponding family. The output of this
 #' function can be passed to the functions \link{lmrobdet.control},
-#' \link{mscale} and \link{rho}.
+#' \link{scaleM} and \link{rho}.
 #'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
@@ -62,7 +62,7 @@ bisquare <- function(e) #, breakdown.point)
 #' estimator with a desired asymptotic efficiency when computed with a
 #' rho function in the corresponding family. The output of this
 #' function can be passed to the functions \link{lmrobdet.control},
-#' \link{mscale} and \link{rho}.
+#' \link{scaleM} and \link{rho}.
 #'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
@@ -97,7 +97,7 @@ optv0 <- function(e)
 #' estimator with a desired asymptotic efficiency when computed with a
 #' rho function in the corresponding family. The output of this
 #' function can be passed to the functions \link{lmrobdet.control},
-#' \link{mscale} and \link{rho}.
+#' \link{scaleM} and \link{rho}.
 #'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
@@ -135,7 +135,7 @@ opt <- function(e)
 #' estimator with a desired asymptotic efficiency when computed with a
 #' rho function in the corresponding family. The output of this
 #' function can be passed to the functions \link{lmrobdet.control},
-#' \link{mscale} and \link{rho}.
+#' \link{scaleM} and \link{rho}.
 #'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
@@ -170,7 +170,7 @@ moptv0 <- function(e)
 #' estimator with a desired asymptotic efficiency when computed with a
 #' rho function in the corresponding family. The output of this
 #' function can be passed to the functions \link{lmrobdet.control},
-#' \link{mscale} and \link{rho}.
+#' \link{scaleM} and \link{rho}.
 #'
 #' @param e the desired efficiency of the corresponding regression
 #' estimator for Gaussian errors
