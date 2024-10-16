@@ -1875,8 +1875,8 @@ void fast_s_large_n(double *X, double *y,
     res = (double *) R_alloc(n,   sizeof(double));
     wx =  (double *) R_alloc(n*p, sizeof(double)); // need only k here,
     wy =  (double *) R_alloc(n,   sizeof(double)); // but n in the last step
-    xsamp =     (double *) Calloc(sg*p, double);
-    ysamp =     (double *) Calloc(sg,   double);
+    xsamp =     (double *) R_alloc(sg*p, sizeof(double));
+    ysamp =     (double *) R_alloc(sg,   sizeof(double));
     // freedsamp = 0;
 
 #define xsamp(_k_,_j_) xsamp[_j_*sg+_k_]
@@ -2024,14 +2024,14 @@ int fast_s_with_memory(double *X, double *y,
     SETUP_SUBSAMPLE(n, p, X, 1);
     INIT_WLS(X, y, n, p);
 
-    res	=       (double *) Calloc(n,   double);
-    wx =        (double *) Calloc(n*p, double);
-    wy =        (double *) Calloc(n,   double);
-    beta_cand = (double *) Calloc(p,   double);
-    beta_ref  = (double *) Calloc(p,   double);
+    res	=       (double *) R_alloc(n,   sizeof(double));
+    wx =        (double *) R_alloc(n*p, sizeof(double));
+    wy =        (double *) R_alloc(n,   sizeof(double));
+    beta_cand = (double *) R_alloc(p,   sizeof(double));
+    beta_ref  = (double *) R_alloc(p,   sizeof(double));
 
     for(i=0; i < *best_r; i++)
-	best_scales[i] = INFI;
+      best_scales[i] = INFI;
     pos_worst_scale = 0;
 
 /* resampling approximation  */
@@ -2131,14 +2131,14 @@ void fast_s(double *X, double *y,
     wx     = (double *) R_alloc(n*p, sizeof(double));
     wy     = (double *) R_alloc(n,   sizeof(double));
 
-    best_betas = (double **) Calloc(*best_r, double *);
-    best_scales = (double *) Calloc(*best_r, double);
+    best_betas = (double **) R_Calloc(*best_r, double *);
+    best_scales = (double *) R_alloc(*best_r, sizeof(double));
     for(i=0; i < *best_r; i++) {
-	best_betas[i] = (double*) Calloc(p, double);
+	best_betas[i] = (double*) R_alloc(p, sizeof(double));
 	best_scales[i] = INFI;
     }
-    beta_cand = (double *) Calloc(p, double);
-    beta_ref  = (double *) Calloc(p, double);
+    beta_cand = (double *) R_alloc(p, sizeof(double));
+    beta_ref  = (double *) R_alloc(p, sizeof(double));
 
     INIT_WLS(wx, wy, n, p);
 
