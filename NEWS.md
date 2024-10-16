@@ -1,3 +1,6 @@
+# Version 1.0.11
+- fixed C code to work with _R_USE_STRICT_R_HEADERS_ = true, (STRICT_R_HEADERS = 1)
+
 # Version 1.0.10
 
 - scaleM() and mscale() are now different functions. mscale() is no longer exported.
