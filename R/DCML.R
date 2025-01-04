@@ -17,7 +17,7 @@
 #'
 #' The iterative algorithm starts from the scaled median of
 #' the absolute values of the input vector, and then
-#' cycles through the equation \code{s^2 = s^2 * mean(rho(r/s, cc)) / delta}.
+#' cycles through the equation \code{s_{k+1}^2 = s_k^2 * mean(rho(r/s_k, cc)) / delta}.
 #'
 #' @export  scaleM
 #'
