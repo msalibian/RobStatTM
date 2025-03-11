@@ -7,7 +7,7 @@
 lsRobTestMM(object, test = c("T2", "T1"), ...)
 }
 \arguments{
-\item{object}{An MM regression fitted model whose class is "lmrobdetMM".}
+\item{object}{An MM regression fitted model whose class is *lmrobdetMM*.}
 
 \item{test}{A character vector indicating which of two type of tests "T" or 
 "T0: are used, with type "T" the default.}
@@ -21,8 +21,8 @@ A list with component names coefs, full, test, efficiency
 Test for Differences between LS and Robust MM Regressions
 }
 \details{
-The original version of \code(lsRobTestMM) is the \code(lsRobTest)
-in the package robust. The function \code(lsRobTest) had options *T1* and
+The original version of \code{lsRobTestMM} is the \code{lsRobTest}
+in the package *robust*. The function \code{lsRobTest} had options *T1* and
 *T2*. However, we only recommend *T2*, and deprecate *T1*. Accordingly we
 use *T* for the former *T2*, and use *T0* for the former *T1*, and we
 deprecate *T0*.
