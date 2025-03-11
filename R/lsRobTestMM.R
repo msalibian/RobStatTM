@@ -1,4 +1,4 @@
-#' @title Test for Differences between LS and Robust MM Regressions
+#' @title Test for Least Squares Bias Using Robust MM Regressions
 #'
 #' @param object An MM regression fitted model whose class is *lmrobdetMM*.
 #' @param test A character vector indicating which of two type of tests "T" or 
@@ -34,7 +34,7 @@
 #'
 #' @examples
 #' args(lsRobTestMM)
-lsRobTestMM <- function(object, test = c("T2", "T1"), ...)
+lsRobTestMM <- function(object, test = c("T", "T0"), ...)
 {
   # require(RobStatTM)
   test <- match.arg(test)
@@ -73,13 +73,13 @@ lsRobTestMM <- function(object, test = c("T2", "T1"), ...)
   V <- (t(rw * X) %*% X) / sum(rw) 
   V.inv <- solve(V)
   
-  if(test == "T1") {
+  if(test == "T0") {
     d <- mean(rhoprime2(rmm/rob.sigma, family=family,cc=tune))
     tau <- n * mean( (rhoprime(rmm/rob.sigma, family=family,cc=tune)/d)^2 ) / (n - p)
     mat <- (1 - eff)/n * tau * rob.sigma^2 * V.inv 
   }
   
-  if(test == "T2") {
+  if(test == "T") {
     d <- mean(rhoprime2(rmm/rob.sigma, family=family,cc=tune))
     delta2 <- mean( (rls - (rob.sigma * rhoprime(rmm/rob.sigma, family=family,cc=tune)) / d)^2 )
     mat <- delta2 / n * V.inv

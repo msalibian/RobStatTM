@@ -2,9 +2,9 @@
 % Please edit documentation in R/lsRobTestMM.R
 \name{lsRobTestMM}
 \alias{lsRobTestMM}
-\title{Test for Differences between LS and Robust MM Regressions}
+\title{Test for Least Squares Bias Using Robust MM Regressions}
 \usage{
-lsRobTestMM(object, test = c("T2", "T1"), ...)
+lsRobTestMM(object, test = c("T", "T0"), ...)
 }
 \arguments{
 \item{object}{An MM regression fitted model whose class is *lmrobdetMM*.}
@@ -18,7 +18,7 @@ lsRobTestMM(object, test = c("T2", "T1"), ...)
 A list with component names coefs, full, test, efficiency
 }
 \description{
-Test for Differences between LS and Robust MM Regressions
+Test for Least Squares Bias Using Robust MM Regressions
 }
 \details{
 The original version of \code{lsRobTestMM} is the \code{lsRobTest}
