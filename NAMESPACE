@@ -3,6 +3,7 @@
 S3method(drop1,lmrobdetMM)
 S3method(hatvalues,lmrob)
 S3method(print,lmrobdetMM)
+S3method(print,lsRobTest)
 S3method(print,prcompRob)
 S3method(print,summary.covClassic)
 S3method(print,summary.covRob)
