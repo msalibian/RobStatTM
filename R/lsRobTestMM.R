@@ -24,9 +24,12 @@
 #' model quadratic form chi-squared statistic value (*stat*), the degrees of 
 #' freedom (*df*), and the full model p value (*p.value*).
 #' 
-#' The test component . . . 
+#' The *test* component of the list is a character value indicating which of the 
+#' tests *T* and *T0* has been computed.
 #' 
-#' The efficiency component . . .
+#' The *efficiency* component of the list is *NULL* when test *T* has been used,
+#' and is equal to the normal distribution efficiency of the *lmrobdetMM*
+#' estimate when test *T0* has been used. 
 #' 
 #' @author Kjell Konis
 #' 
