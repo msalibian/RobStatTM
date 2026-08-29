@@ -728,8 +728,7 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
   the.call <- match.call(expand.dots = FALSE)
 
   data <- na.action(data)
-  if(!is.matrix(data))
-    data <- as.matrix(data)
+  data <- as.matrix(data)
 
   n <- nrow(data)
   p <- ncol(data)
