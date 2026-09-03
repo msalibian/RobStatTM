@@ -45,7 +45,23 @@
 #' tmp$mu
 #'
 covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4, corr=FALSE)  {
+  
   cl <- match.call()
+  
+  # data <- na.action(data)
+  X <- as.matrix(X)
+  
+  n <- nrow(X)
+  p <- ncol(X)
+  dn <- dimnames(X)
+  dimnames(X) <- NULL
+  rowNames <- dn[[1]]
+  if(is.null(rowNames)) rowNames <- 1:n
+  colNames <- dn[[2]]
+  if(is.null(colNames)) colNames <- paste("V", 1:p, sep = "")
+  
+  
+  
 if (type=="auto") {
   p=dim(X)[2]
   if (p<10) {type="MM"
@@ -57,10 +73,17 @@ if (type=="auto") {
  } else {resu=MMultiSHR(X, maxit=maxit, tolpar=tol, corr=corr)  #MM
  }
   mu=resu$mu; V=resu$V
+  
+  dimnames(V) <- list(colNames, colNames)
 
+  dist <- mahalanobis(X,mu,V)
+  names(dist) <- rowNames
+  wts <- resu$wts
+  names(wts) <- rowNames
+  
   # Feed list into object and give class
-  z <- list(center=mu, cov=V, cor=resu$cor, dist=mahalanobis(X,mu,V), 
-            wts = resu$wts, call=cl, mu=mu, V=V)
+  z <- list(center=mu, cov=V, cor=resu$cor, dist=dist, 
+            wts = wts, call=cl, mu=mu, V=V)
   class(z) <- c("covRob")
   return(z)
 }
