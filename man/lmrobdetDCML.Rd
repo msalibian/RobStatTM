@@ -96,7 +96,7 @@ summary(m1)
 
 }
 \references{
-\url{http://www.wiley.com/go/maronna/robust}
+\url{https://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}

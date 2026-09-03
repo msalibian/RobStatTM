@@ -11,12 +11,12 @@
 #'
 #' @return If the argument \code{bothVals} is \code{FALSE}, the robust final prediction error (numeric). Otherwise,
 #' the two terms of the RFPE expression in equation (5.39), Section 5.6.2 of Maronna
-#' et al. (2019), \url{http://www.wiley.com/go/maronna/robust}, are returned separately 
+#' et al. (2019), \url{https://www.wiley.com/go/maronna/robust}, are returned separately 
 #' in a list with components named \code{minRhoMM.C} and \code{penaltyRFPE}
 #' 
 #' @rdname lmrobdetMM.RFPE
 #' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{lmrobdetMM}}
 #' 
 #' @examples
@@ -83,7 +83,7 @@ lmrobdetMM.RFPE <- function(object, scale = NULL, bothVals = FALSE)
 #'
 #' @rdname drop1.lmrobdetMM
 #' @author Victor Yohai, \email{victoryohai@gmail.com},  Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{lmrobdetMM}}
 #'
 #' @export
@@ -198,7 +198,7 @@ drop1.lmrobdetMM <- function (object, scope, scale, keep, ...)
 #' @aliases step.lmrobdetMM step.lmrobdet
 #' @rdname step.lmrobdetMM
 #' @author Victor Yohai, \email{victoryohai@gmail.com}, Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #' @seealso \code{\link{DCML}}, \code{\link{MMPY}}, \code{\link{SMPY}}
 #'
 #' @examples

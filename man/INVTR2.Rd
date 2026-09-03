@@ -30,7 +30,7 @@ It is used internally by \code{\link{lmrobdetMM}},
 and not meant to be used directly.
 }
 \references{
-\url{http://www.wiley.com/go/maronna/robust}
+\url{https://www.wiley.com/go/maronna/robust}
 }
 \author{
 Victor Yohai, \email{victoryohai@gmail.com}

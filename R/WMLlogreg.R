@@ -21,7 +21,7 @@
 #' \item{xweights}{vector of zeros and ones used to compute the weighted maimum likelihood estimator}
 #'
 #' @author Victor Yohai
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
 #' @examples
 #' data(skin)

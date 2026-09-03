@@ -38,7 +38,7 @@ It is used internally by \code{\link{step.lmrobdetMM}} and not meant to be used
 directly.
 }
 \references{
-\url{http://www.wiley.com/go/maronna/robust}
+\url{https://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \code{\link{lmrobdetMM}}

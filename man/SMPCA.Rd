@@ -44,7 +44,7 @@ round(rr$eigvec, 3)
 
 }
 \references{
-\url{http://www.wiley.com/go/maronna/robust}
+\url{https://www.wiley.com/go/maronna/robust}
 }
 \author{
 Ricardo Maronna, \email{rmaronna@retina.ar}, based on original code

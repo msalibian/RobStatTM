@@ -28,7 +28,7 @@
 #' \item{objective}{value of the objective function at the minimum}
 #'
 #' @author Christophe Croux, Gentiane Haesbroeck, Victor Yohai
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
 #' @examples
 #' data(skin)

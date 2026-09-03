@@ -34,7 +34,7 @@
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
 #' @seealso \code{\link{covRobRocke}}, \code{\link{covRobMM}}
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
 #' @examples
 #' data(bus)
@@ -63,7 +63,7 @@ covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4, corr=FALSE) 
   
   
 if (type=="auto") {
-  p=dim(X)[2]
+  # p=dim(X)[2]
   if (p<10) {type="MM"
   } else {type="Rocke"}
 }
@@ -124,7 +124,7 @@ if (type=="auto") {
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https//www.wiley.com/go/maronna/robust}
 #'
 #' @examples
 #' data(bus)
@@ -362,7 +362,7 @@ rhoinv <- function(x)
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https//www.wiley.com/go/maronna/robust}
 #'
 #' @examples
 #' data(bus)

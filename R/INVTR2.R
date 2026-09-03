@@ -20,7 +20,7 @@
 #'
 #' @rdname INVTR2
 #' @author Victor Yohai, \email{victoryohai@gmail.com}
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
 #' @export
 INVTR2 <- function(RR2, family, cc) {

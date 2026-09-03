@@ -43,7 +43,7 @@ tmp$mu
 
 }
 \references{
-\url{http://www.wiley.com/go/maronna/robust}
+\url{https//www.wiley.com/go/maronna/robust}
 }
 \author{
 Ricardo Maronna, \email{rmaronna@retina.ar}

@@ -27,7 +27,7 @@
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}, based on original code
 #' by D. Pen~a and J. Prieto
 #'
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
 #' @examples
 #' data(bus)

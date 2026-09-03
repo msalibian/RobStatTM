@@ -127,7 +127,7 @@ summary(m2)
 
 }
 \references{
-\url{http://www.wiley.com/go/maronna/robust}
+\url{https://www.wiley.com/go/maronna/robust}
 }
 \seealso{
 \link{DCML}, \link{MMPY}, \link{SMPY}

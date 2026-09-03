@@ -24,7 +24,7 @@
 #' that failed (resulting in singular initial values)}
 #'
 #' @author Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
 #' @examples
 #' data(bus)

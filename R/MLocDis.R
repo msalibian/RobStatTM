@@ -26,7 +26,7 @@
 #'
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
-#' @references \url{http://www.wiley.com/go/maronna/robust}
+#' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
 #' @examples
 #' set.seed(123)

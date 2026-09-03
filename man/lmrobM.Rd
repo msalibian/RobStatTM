@@ -99,7 +99,7 @@ summary(shockrob)
 
 }
 \references{
-\url{http://www.wiley.com/go/maronna/robust}
+\url{https://www.wiley.com/go/maronna/robust}
 }
 \author{
 Victor Yohai, \email{vyohai@gmail.com}, based on \code{lmrob}

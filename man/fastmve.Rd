@@ -44,7 +44,7 @@ tmp$center
 
 }
 \references{
-\url{http://www.wiley.com/go/maronna/robust}
+\url{https://www.wiley.com/go/maronna/robust}
 }
 \author{
 Matias Salibian-Barrera, \email{matias@stat.ubc.ca}
