@@ -687,12 +687,16 @@ lmrob.S <- function (x, y, control, trace.lev = control$trace.lev, mf = NULL)
             warning("'control$n.group' is not much larger than 'p', probably too small")
     }
     if (length(seed <- control$seed) > 0) {
-        if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
-            seed.keep <- get(".Random.seed", envir = .GlobalEnv,
-                             inherits = FALSE)
-            on.exit(assign(".Random.seed", seed.keep, envir = .GlobalEnv))
-        }
-        assign(".Random.seed", seed, envir = .GlobalEnv) ## why not set.seed(seed)
+      seed.keep <- get0(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+      if(!is.null(seed.keep)) { 
+        on.exit(assign(".Random.seed", seed.keep, envir = .GlobalEnv))
+      }
+        # if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+        #     seed.keep <- get(".Random.seed", envir = .GlobalEnv,
+        #                      inherits = FALSE)
+        #     on.exit(assign(".Random.seed", seed.keep, envir = .GlobalEnv))
+        # }
+      assign(".Random.seed", seed, envir = .GlobalEnv) ## why not set.seed(seed)
     }
 
     bb <- as.double(control$bb)
