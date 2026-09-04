@@ -36,6 +36,8 @@
 #' @seealso \code{\link{covRobRocke}}, \code{\link{covRobMM}}
 #' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
+#' @importFrom zoo index
+#'
 #' @examples
 #' data(bus)
 #' X0 <- as.matrix(bus)
@@ -49,8 +51,7 @@ covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4, corr=FALSE) 
   cl <- match.call()
 
   X.xts <- inherits(X, 'xts')
-  row.xts <- index(X)
-  
+  if(X.xts) row.xts <- zoo::index(X)
   
   # data <- na.action(data)
   X <- as.matrix(X)
@@ -85,8 +86,8 @@ if (type=="auto") {
   names(wts) <- rowNames
 
   if(X.xts) {
-    dist <- as.xts(dist, order.by=row.xts)
-    wts <- as.xts(wts, order.by=row.xts)
+    dist <- xts::as.xts(dist, order.by=row.xts)
+    wts <- xts::as.xts(wts, order.by=row.xts)
   }
   
   # Feed list into object and give class
@@ -134,6 +135,8 @@ if (type=="auto") {
 #'
 #' @references \url{https//www.wiley.com/go/maronna/robust}
 #'
+#' @importFrom zoo index
+#' 
 #' @examples
 #' data(bus)
 #' X0 <- as.matrix(bus)
@@ -146,9 +149,24 @@ covRobRocke <- RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=
 {
   # Henceforth 'eq' refers to equation numbers in Maronna et al.(2019)
   cl <- match.call()
-  d <- dim(X)
-  n <- d[1]
-  p <- d[2]
+  
+  X.xts <- inherits(X, 'xts')
+  if(X.xts) row.xts <- zoo::index(X)
+  
+  X <- as.matrix(X)
+  
+  n <- nrow(X)
+  p <- ncol(X)
+  dn <- dimnames(X)
+  dimnames(X) <- NULL
+  rowNames <- dn[[1]]
+  if(is.null(rowNames)) rowNames <- 1:n
+  colNames <- dn[[2]]
+  if(is.null(colNames)) colNames <- paste("V", 1:p, sep = "")
+
+  # d <- dim(X)
+  # n <- d[1]
+  # p <- d[2]
   gamma0 <- consRocke(p=p, n=n, initial )$gamma # gamma in eq. (6.40)
   if(initial=='K') {  #KSD start
     out=KurtSDNew(X)
@@ -217,6 +235,15 @@ covRobRocke <- RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=
   if(corr) {
     cor.mat <- cov2cor(V)
   } else cor.mat <- NULL
+  
+  names(dista) <- rowNames
+  names(w) <- rowNames
+  
+  if(X.xts) {
+    dista <- xts::as.xts(dista, order.by=row.xts)
+    w <- xts::as.xts(w, order.by=row.xts)
+  }
+  
   z <- list(center=mu, cov=V, cor=cor.mat, dist=dista, wts=w, call = cl, 
             mu=mu, V=V, sig=sig, gamma=gamma)
   class(z) <- c("covRob")
@@ -368,6 +395,8 @@ rhoinv <- function(x)
 #' \item{mu}{The location estimate. Same as \code{center} above.}
 #' \item{V}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution}
 #'
+#' @importFrom zoo index
+#' 
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
 #' @references \url{https//www.wiley.com/go/maronna/robust}
@@ -383,10 +412,10 @@ rhoinv <- function(x)
 covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, corr=FALSE) {
   
   cl <- match.call()
-  
+
   X.xts <- inherits(X, 'xts')
-  row.xts <- index(X)
-  
+  if(X.xts) row.xts <- zoo::index(X)
+
   # data <- na.action(data)
   X <- as.matrix(X)
   
@@ -443,8 +472,8 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, corr=FALSE) {
   names(w) <- rowNames
   
   if(X.xts) {
-    dista <- as.xts(dista, order.by=row.xts)
-    w <- as.xts(w, order.by=row.xts)
+    dista <- xts::as.xts(dista, order.by=row.xts)
+    w <- xts::as.xts(w, order.by=row.xts)
   }
   
   z <- list(center=mu0, cov=tmp$V, cor=cor.mat, dist=dista, wts=w, 
@@ -783,6 +812,9 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
 {
   the.call <- match.call(expand.dots = FALSE)
 
+  X.xts <- inherits(data, 'xts')
+  if(X.xts) row.xts <- zoo::index(data)
+  
   data <- na.action(data)
   data <- as.matrix(data)
 
@@ -817,7 +849,11 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
 
   if(distance)
     names(dist) <- rowNames
-
+  
+  if(X.xts) {
+    dist <- xts::as.xts(dist, order.by=row.xts)
+  }
+  
   ans <- list(center = center, cov = covmat, cor=cormat, dist = dist, call = the.call)
   # oldClass(ans) <- c("covClassic")
   class(ans) <- c("covClassic")
