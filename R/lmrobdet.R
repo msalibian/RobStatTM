@@ -92,6 +92,7 @@
 #' summary(m2)
 #'
 #' @import stats
+#' @import xts
 #' @useDynLib RobStatTM, .registration = TRUE
 #' @export
 lmrobdetMM <- function(formula, data, subset, weights, na.action,
