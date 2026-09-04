@@ -1,3 +1,6 @@
+# Version 1.0.13
+- added support for xts objects in functions for robust covariance matrix estimation
+
 # Version 1.0.12
 - added lsRobTestMM()
 
