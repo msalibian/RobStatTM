@@ -47,6 +47,10 @@
 covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4, corr=FALSE)  {
   
   cl <- match.call()
+
+  X.xts <- inherits(X, 'xts')
+  row.xts <- index(X)
+  
   
   # data <- na.action(data)
   X <- as.matrix(X)
@@ -60,8 +64,7 @@ covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4, corr=FALSE) 
   colNames <- dn[[2]]
   if(is.null(colNames)) colNames <- paste("V", 1:p, sep = "")
   
-  
-  
+
 if (type=="auto") {
   # p=dim(X)[2]
   if (p<10) {type="MM"
@@ -80,6 +83,11 @@ if (type=="auto") {
   names(dist) <- rowNames
   wts <- resu$wts
   names(wts) <- rowNames
+
+  if(X.xts) {
+    dist <- as.xts(dist, order.by=row.xts)
+    wts <- as.xts(wts, order.by=row.xts)
+  }
   
   # Feed list into object and give class
   z <- list(center=mu, cov=V, cor=resu$cor, dist=dist, 
@@ -373,9 +381,26 @@ rhoinv <- function(x)
 #' tmp$mu
 #'
 covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, corr=FALSE) {
+  
   cl <- match.call()
-  d <- dim(X)
-  n <- d[1]; p <- d[2]
+  
+  X.xts <- inherits(X, 'xts')
+  row.xts <- index(X)
+  
+  # data <- na.action(data)
+  X <- as.matrix(X)
+  
+  n <- nrow(X)
+  p <- ncol(X)
+  dn <- dimnames(X)
+  dimnames(X) <- NULL
+  rowNames <- dn[[1]]
+  if(is.null(rowNames)) rowNames <- 1:n
+  colNames <- dn[[2]]
+  if(is.null(colNames)) colNames <- paste("V", 1:p, sep = "")
+  
+  # d <- dim(X)
+  # n <- d[1]; p <- d[2]
   delta <- 0.5*(1-p/n) #max. breakdown
   cc <- consMMKur(p,n)
   const <- cc[1]
@@ -414,6 +439,14 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, corr=FALSE) {
     cor.mat <- cov2cor(tmp$V)
   } else cor.mat <- NULL
 
+  names(dista) <- rowNames
+  names(w) <- rowNames
+  
+  if(X.xts) {
+    dista <- as.xts(dista, order.by=row.xts)
+    w <- as.xts(w, order.by=row.xts)
+  }
+  
   z <- list(center=mu0, cov=tmp$V, cor=cor.mat, dist=dista, wts=w, 
             call = cl, mu=mu0, V=tmp$V)
   class(z) <- c("covRob")
