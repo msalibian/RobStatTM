@@ -37,6 +37,7 @@
 #' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
 #' @importFrom zoo index
+#' @import xts
 #'
 #' @examples
 #' data(bus)
@@ -85,11 +86,8 @@ if (type=="auto") {
   wts <- resu$wts
   names(wts) <- rowNames
 
-  if(X.xts) {
-    dist <- xts::as.xts(dist, order.by=row.xts)
-    wts <- xts::as.xts(wts, order.by=row.xts)
-  }
-  
+  if(X.xts) dist <- xts::as.xts(dist, order.by=row.xts)
+
   # Feed list into object and give class
   z <- list(center=mu, cov=V, cor=resu$cor, dist=dist, 
             wts = wts, call=cl, mu=mu, V=V)
@@ -239,11 +237,8 @@ covRobRocke <- RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=
   names(dista) <- rowNames
   names(w) <- rowNames
   
-  if(X.xts) {
-    dista <- xts::as.xts(dista, order.by=row.xts)
-    w <- xts::as.xts(w, order.by=row.xts)
-  }
-  
+  if(X.xts) dista <- xts::as.xts(dista, order.by=row.xts)
+
   z <- list(center=mu, cov=V, cor=cor.mat, dist=dista, wts=w, call = cl, 
             mu=mu, V=V, sig=sig, gamma=gamma)
   class(z) <- c("covRob")
@@ -471,10 +466,7 @@ covRobMM <- MMultiSHR <- function(X, maxit=50, tolpar=1e-4, corr=FALSE) {
   names(dista) <- rowNames
   names(w) <- rowNames
   
-  if(X.xts) {
-    dista <- xts::as.xts(dista, order.by=row.xts)
-    w <- xts::as.xts(w, order.by=row.xts)
-  }
+  if(X.xts) dista <- xts::as.xts(dista, order.by=row.xts)
   
   z <- list(center=mu0, cov=tmp$V, cor=cor.mat, dist=dista, wts=w, 
             call = cl, mu=mu0, V=tmp$V)
@@ -850,9 +842,7 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
   if(distance)
     names(dist) <- rowNames
   
-  if(X.xts) {
-    dist <- xts::as.xts(dist, order.by=row.xts)
-  }
+  if(X.xts) dist <- xts::as.xts(dist, order.by=row.xts)
   
   ans <- list(center = center, cov = covmat, cor=cormat, dist = dist, call = the.call)
   # oldClass(ans) <- c("covClassic")
