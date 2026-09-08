@@ -36,9 +36,9 @@
 #' @seealso \code{\link{covRobRocke}}, \code{\link{covRobMM}}
 #' @references \url{https://www.wiley.com/go/maronna/robust}
 #'
-#' @importFrom zoo index
 #' @import xts
-#'
+#' @importFrom zoo index
+#' 
 #' @examples
 #' data(bus)
 #' X0 <- as.matrix(bus)
@@ -48,12 +48,12 @@
 #' tmp$mu
 #'
 covRob <- Multirobu <- function(X, type="auto", maxit=50, tol=1e-4, corr=FALSE)  {
-  
+
   cl <- match.call()
 
   X.xts <- inherits(X, 'xts')
   if(X.xts) row.xts <- zoo::index(X)
-  
+
   # data <- na.action(data)
   X <- as.matrix(X)
   
@@ -133,8 +133,6 @@ if (type=="auto") {
 #'
 #' @references \url{https//www.wiley.com/go/maronna/robust}
 #'
-#' @importFrom zoo index
-#' 
 #' @examples
 #' data(bus)
 #' X0 <- as.matrix(bus)
@@ -150,7 +148,7 @@ covRobRocke <- RockeMulti <- function(X, initial='K', maxsteps=5, propmin=2, qs=
   
   X.xts <- inherits(X, 'xts')
   if(X.xts) row.xts <- zoo::index(X)
-  
+
   X <- as.matrix(X)
   
   n <- nrow(X)
@@ -390,8 +388,6 @@ rhoinv <- function(x)
 #' \item{mu}{The location estimate. Same as \code{center} above.}
 #' \item{V}{The scatter or correlation matrix estimate, scaled for consistency at the normal distribution}
 #'
-#' @importFrom zoo index
-#' 
 #' @author Ricardo Maronna, \email{rmaronna@retina.ar}
 #'
 #' @references \url{https//www.wiley.com/go/maronna/robust}
@@ -806,7 +802,7 @@ covClassic <- function(data, corr = FALSE, center = TRUE, distance = TRUE,
 
   X.xts <- inherits(data, 'xts')
   if(X.xts) row.xts <- zoo::index(data)
-  
+
   data <- na.action(data)
   data <- as.matrix(data)
 
